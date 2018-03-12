@@ -63,5 +63,19 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+	<distributionManagement>
+       <repository>
+          <id>nexus-internal</id>
+          <name>NAV internal Nexus</name>
+          <url>https://repo.adeo.no/repository/maven-releases</url>
+        </repository>
+        <!-- 
+        <snapshotRepository>
+            <id>m2snapshot</id>
+            <name>NAV Maven2 Snapshot Repository</name>
+            <url>http://maven.adeo.no/nexus/content/repositories/m2snapshot</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+         -->
+    </distributionManagement>
 </project>
