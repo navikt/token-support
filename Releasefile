@@ -34,7 +34,14 @@ node {
 		
 		def pom = readMavenPom file: 'pom.xml'
 		def ver = pom.version
-		releaseVersion = ver.replace('-SNAPSHOT','') + ".${env.BUILD_NUMBER}-${commitHashShort}"
+		
+		script {
+			if (env.releaseLabel != null) {
+				releaseVersion = ver.replace('-SNAPSHOT','') + ".${env.BUILD_NUMBER}-${env.releaseLabel}"
+			} else {
+				releaseVersion = ver.replace('-SNAPSHOT','') + ".${env.BUILD_NUMBER}-${commitHashShort}"
+			}
+		}
 		
         sh "${mvn} versions:set -B -DnewVersion=${releaseVersion}"
         sh "${mvn} clean deploy -Djava.io.tmpdir=/tmp/${app} -B -e"
