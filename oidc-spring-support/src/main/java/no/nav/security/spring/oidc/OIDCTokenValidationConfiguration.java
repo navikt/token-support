@@ -5,17 +5,18 @@ import javax.servlet.DispatcherType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import no.nav.security.oidc.configuration.OIDCValidationConfiguraton;
 import no.nav.security.oidc.configuration.OIDCProperties;
+import no.nav.security.oidc.configuration.OIDCValidationConfiguraton;
 import no.nav.security.oidc.filter.OIDCRequestContextHolder;
 import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
 import no.nav.security.oidc.http.HttpClient;
@@ -23,23 +24,38 @@ import no.nav.security.spring.oidc.validation.interceptor.BearerTokenClientHttpR
 import no.nav.security.spring.oidc.validation.interceptor.OIDCTokenControllerHandlerInterceptor;
 
 @Configuration
-public class OIDCTokenValidationConfiguration implements WebMvcConfigurer {
+public class OIDCTokenValidationConfiguration implements WebMvcConfigurer, EnvironmentAware {
 
 	private Logger logger = LoggerFactory.getLogger(OIDCTokenValidationConfiguration.class);
 	
-	@Autowired
-	HttpClient client;
-	
-	@Autowired
-	OIDCProperties props;
+	private Environment env;
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(getControllerInterceptor());
 	}
 	
+	@Override
+	public void setEnvironment(Environment env) {
+		this.env = env;
+	}
+	
 	@Bean
-	public OIDCValidationConfiguraton config() {
+	public OIDCProperties oidcProperties(){
+		SpringOIDCProperties props = new SpringOIDCProperties();
+		props.setEnvironment(env);
+		return props;
+	}
+	
+	@Bean
+	public HttpClient httpClient(){
+		SpringHttpClient shttpClient = new SpringHttpClient();
+		shttpClient.setEnvironment(env);
+		return shttpClient;
+	}
+	
+	@Bean
+	public OIDCValidationConfiguraton config(OIDCProperties props, HttpClient client) {
 		return new OIDCValidationConfiguraton(props, client);
 	}
 	
@@ -58,15 +74,6 @@ public class OIDCTokenValidationConfiguration implements WebMvcConfigurer {
 		return new OIDCTokenValidationFilter(config, oidcRequestContextHolder);
 
 	}
-
-	/*@Bean
-	@ConditionalOnMissingBean
-	public RestTemplate jada(BearerTokenClientHttpRequestInterceptor interceptor) {
-		logger.info("Adding interceptor " + interceptor);
-		RestTemplate restClient = new RestTemplate();		
-		restClient.setInterceptors(asList(interceptor));
-		return restClient;
-	}*/
 
 	@Bean
 	public BearerTokenClientHttpRequestInterceptor bearerTokenClientHttpRequestInterceptor(OIDCRequestContextHolder oidcRequestContextHolder){

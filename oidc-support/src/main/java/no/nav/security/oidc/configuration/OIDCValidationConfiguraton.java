@@ -10,7 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import no.nav.security.oidc.exceptions.MetaDataNotAvailableException;
+import no.nav.security.oidc.exceptions.MissingPropertyException;
 import no.nav.security.oidc.http.HttpClient;
 
 public class OIDCValidationConfiguraton {
@@ -32,10 +35,10 @@ public class OIDCValidationConfiguraton {
 	}
 
 	private void load() {
-		String[] issuerNames = properties.get(OIDCProperties.ISSUERS).split(",");
+		String[] issuerNames = getNotBlank(OIDCProperties.ISSUERS).split(",");
 		for (String issuerName : issuerNames) {
 			issuerName = issuerName.trim();
-			String uri = properties.get(String.format(OIDCProperties.URI, issuerName));
+			String uri = getNotBlank(String.format(OIDCProperties.URI, issuerName));
 			if (uri.trim().length() > 0) {
 				this.issuerNames.add(issuerName);
 				IssuerMetaData metaData = null;
@@ -46,7 +49,7 @@ public class OIDCValidationConfiguraton {
 					}
 
 					IssuerValidationConfiguration config = new IssuerValidationConfiguration(issuerName, metaData,
-							properties.get(String.format(OIDCProperties.ACCEPTED_AUDIENCE, issuerName)), 
+							getNotBlank(String.format(OIDCProperties.ACCEPTED_AUDIENCE, issuerName)), 
 							client);
 					
 					config.setCookieName(properties.get(String.format(OIDCProperties.COOKIE_NAME, issuerName)));
@@ -63,5 +66,12 @@ public class OIDCValidationConfiguraton {
 	public List<String>getIssuerNames() {
 		return this.issuerNames;
 	}
-
+	
+	private String getNotBlank(String key){
+		String value = properties.get(key);
+		if(StringUtils.isBlank(value)){
+			throw new MissingPropertyException(String.format("missing required property with key %s", key));
+		}
+		return value;
+	}
 }
