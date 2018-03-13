@@ -37,31 +37,39 @@ node {
 		
 		script {
 			if (env.releaseLabel != null) {
-				releaseVersion = ver.replace('-SNAPSHOT','') + ".${env.BUILD_NUMBER}-${env.releaseLabel}"
+				releaseVersion = ver.replace('-SNAPSHOT','') + "-${env.releaseLabel}"
 			} else {
-				releaseVersion = ver.replace('-SNAPSHOT','') + ".${env.BUILD_NUMBER}-${commitHashShort}"
+				releaseVersion = ver.replace('-SNAPSHOT','')
 			}
 		}
 		
         sh "${mvn} versions:set -B -DnewVersion=${releaseVersion}"
-        sh "${mvn} clean deploy -Djava.io.tmpdir=/tmp/${app} -B -e"
-
-        sh "${mvn} versions:revert"
-        notifyGithub(repo, app, 'continuous-integration/jenkins', commitHash, 'success', "Build #${env.BUILD_NUMBER} has finished")
+        sh "${mvn} clean deploy -Djava.io.tmpdir=/tmp/${app} -B -e"          
     }
 
-    stage("Tag") {
-        // TODO: Tag only releases that go to production
+    stage("Tag & Update dev version") {
+        
         withEnv(['HTTPS_PROXY=http://webproxy-utvikler.nav.no:8088']) {
             withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-                sh ("git tag -a ${releaseVersion} -m ${releaseVersion}")
+				sh ("git tag -a ${releaseVersion} -m ${releaseVersion}")
                 sh ("git push https://${token}:x-oauth-basic@github.com/${repo}/${app}.git --tags")
             }
         }
+		def devVersion = incrementVersion(ver, "-SNAPSHOT")
+		sh "${mvn} versions:set -B -DnewVersion=${devVersion}-SNAPSHOT"
+		
+		withEnv(['HTTPS_PROXY=http://webproxy-utvikler.nav.no:8088']) {
+			withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
+				sh ("git commit -a -m ${devVersion}")
+				sh ("git push https://${token}:x-oauth-basic@github.com/${repo}/${app}.git origin master")
+			}
+		}
+		
         /*slackSend([
                 color: 'good',
                 message: "Build <${env.BUILD_URL}|#${env.BUILD_NUMBER}> (<${commitUrl}|${commitHashShort}>) of ${repo}/${app}@master by ${committer} passed  (${changelog})"
         ])*/
+		notifyGithub(repo, app, 'continuous-integration/jenkins', commitHash, 'success', "Build #${env.BUILD_NUMBER} has finished")
     }
 }
 
