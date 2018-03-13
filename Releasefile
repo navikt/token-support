@@ -55,7 +55,7 @@ node {
                 sh ("git push https://${token}:x-oauth-basic@github.com/${repo}/${app}.git --tags")
             }
         }
-		def devVersion = incrementVersion(ver, "-SNAPSHOT")
+		def devVersion = incrementVersion(releaseVersion, "-${env.releaseLabel}")
 		sh "${mvn} versions:set -B -DnewVersion=${devVersion}-SNAPSHOT"
 		
 		withEnv(['HTTPS_PROXY=http://webproxy-utvikler.nav.no:8088']) {
