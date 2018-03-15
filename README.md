@@ -1,4 +1,4 @@
-# token-support
+# token-support (WORK IN PROGRESS)
 This project consist of common modules to support security token handling in a java spring microservices architecture, with emphasis on OpenID Connect ID Tokens. The source code is based on the output from a Proof-of-concept with Azure AD B2C - found here https://github.com/navikt/AzureAdPoc - many thanks to the original author.
 
 Applications can use these modules in order to be able to verify tokens on exposed HTTP endpoints, according to the configured OIDC providers they trust. Multiple providers are allowed, and various validation rules for various OIDC providers can be applied to rest controllers at the method level. Tokens will be transported through the service, and will be attached to the client request as "Bearer" token when calling another service/api. 
