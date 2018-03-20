@@ -1,0 +1,8 @@
+logging.level.no.nav.security: DEBUG
+server.port: 7001
+
+no.nav.security.oidc.issuers: localhost
+
+no.nav.security.oidc.issuer.localhost:
+  uri: /local/metadata
+  accepted_audience: aud-local

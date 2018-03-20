@@ -9,6 +9,7 @@
     <modules>
 		<module>oidc-support</module>
 		<module>oidc-spring-support</module>
+		<module>oidc-spring-test</module>
 	</modules>    
 
     <properties>
@@ -16,6 +17,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <java.version>1.8</java.version>
         <spring-boot.version>2.0.0.RELEASE</spring-boot.version>
+		<oauth2-oidc-sdk.version>5.17.1</oauth2-oidc-sdk.version>
+        
     </properties>
 	
 	<dependencyManagement>
@@ -26,14 +29,29 @@
 				<version>${spring-boot.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-test</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>no.nav.security</groupId>
 				<artifactId>oidc-support</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>no.nav.security</groupId>
+				<artifactId>oidc-spring-support</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>no.nav.security</groupId>
+				<artifactId>oidc-spring-test</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>com.nimbusds</groupId>
 				<artifactId>oauth2-oidc-sdk</artifactId>
-				<version>5.17.1</version>
+				<version>${oauth2-oidc-sdk.version}</version>
 			</dependency>
 	
 			<dependency>
@@ -52,13 +70,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.11</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>2.7.5</version>
+				<version>4.12</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
