@@ -36,10 +36,10 @@ node {
 		def ver = pom.version
 		
 		script {
-			if (env.releaseLabel != null) {
-				releaseVersion = ver.replace('-SNAPSHOT','') + "-${env.releaseLabel}"
-			} else {
+			if (!env.releaseLabel?.trim()) {
 				releaseVersion = ver.replace('-SNAPSHOT','')
+			} else {
+				releaseVersion = ver.replace('-SNAPSHOT','') + "-${env.releaseLabel}"
 			}
 		}
 		
@@ -55,7 +55,16 @@ node {
                 sh ("git push https://${token}:x-oauth-basic@github.com/${repo}/${app}.git --tags")
             }
         }
-		def devVersion = incrementVersion(releaseVersion, "-${env.releaseLabel}")
+		def devVersion;
+		
+		script {
+			if (!env.releaseLabel?.trim()) {
+				devVersion = incrementVersion(releaseVersion, "")
+			} else {
+				devVersion = incrementVersion(releaseVersion, "-${env.releaseLabel}")
+			}
+		}
+		
 		sh "${mvn} versions:set -B -DnewVersion=${devVersion}-SNAPSHOT"
 		
 		withEnv(['HTTPS_PROXY=http://webproxy-utvikler.nav.no:8088']) {
