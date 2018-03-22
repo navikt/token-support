@@ -30,20 +30,20 @@ public class OIDCValidationContext {
 		this.issuers.add(issuer);
 	}
 	
-	public boolean hasValidTokenFor(String issuer){
-		return this.validatedTokens.containsKey(issuer);
+	public boolean hasValidTokenFor(String issuerName){
+		return this.validatedTokens.containsKey(issuerName);
 	}
 	
-	public boolean hasTokenFor(String issuer) {
-		return this.validatedTokens.containsKey(issuer);
+	public boolean hasTokenFor(String issuerName) {
+		return this.validatedTokens.containsKey(issuerName);
 	}
 	
-	public TokenContext getToken(String issuer) {
-		return this.validatedTokens.get(issuer);
+	public TokenContext getToken(String issuerName) {
+		return this.validatedTokens.get(issuerName);
 	}
 	
-	public OIDCClaims getClaims(String issuer) {
-		return this.validatedClaims.get(issuer);
+	public OIDCClaims getClaims(String issuerName) {
+		return this.validatedClaims.get(issuerName);
 	}
 	
 	public boolean hasValidToken() {

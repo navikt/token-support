@@ -23,5 +23,9 @@
 			<groupId>no.nav.security</groupId>
 			<artifactId>oidc-support</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
 	</dependencies>
 </project>
