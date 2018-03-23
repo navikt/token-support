@@ -9,7 +9,7 @@ public interface OIDCProperties {
 
 	public static final String ISSUERS = "no.nav.security.oidc.issuers";
 	public static final String URI = "no.nav.security.oidc.issuer.%s.uri";
-	public static final String ACCEPTED_AUDIENCE = "no.nav.security.oidc.issuer.%s.accepted_audience";
+	public static final String ACCEPTEDAUDIENCE = "no.nav.security.oidc.issuer.%s.acceptedaudience";
 	public static final String COOKIE_NAME = "no.nav.security.oidc.issuer.%s.cookie_name";
 	
 	String get(String key);

@@ -49,7 +49,7 @@ public class OIDCValidationConfiguraton {
 					}
 
 					IssuerValidationConfiguration config = new IssuerValidationConfiguration(issuerName, metaData,
-							getNotBlank(String.format(OIDCProperties.ACCEPTED_AUDIENCE, issuerName)), 
+							getNotBlank(String.format(OIDCProperties.ACCEPTEDAUDIENCE, issuerName)), 
 							client);
 					
 					config.setCookieName(properties.get(String.format(OIDCProperties.COOKIE_NAME, issuerName)));
