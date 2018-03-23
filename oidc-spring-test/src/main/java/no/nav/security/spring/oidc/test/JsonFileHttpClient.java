@@ -9,6 +9,8 @@ package no.nav.security.spring.oidc.test;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import org.springframework.core.io.ClassPathResource;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.util.IOUtils;
 
@@ -32,10 +34,10 @@ public class JsonFileHttpClient implements HttpClient {
     public <T> T get(String uri, HttpHeaders headers, Class<T> clazz) {
         try {
             if (uri.contains("metadata")) {
-                return JSON.readValue(this.getClass().getResourceAsStream(metadataFile), clazz);
+                return JSON.readValue(IOUtils.readInputStreamToString(new ClassPathResource(metadataFile).getInputStream(),Charset.forName("UTF-8")),clazz);
             }
             if (uri.contains("jwks")) {
-                String s = IOUtils.readInputStreamToString(this.getClass().getResourceAsStream(jwksFile),
+                String s = IOUtils.readInputStreamToString(new ClassPathResource(jwksFile).getInputStream(),
                         Charset.forName("UTF-8"));
                 System.out.println("content in metadata: " + s);
                 return (T) s;

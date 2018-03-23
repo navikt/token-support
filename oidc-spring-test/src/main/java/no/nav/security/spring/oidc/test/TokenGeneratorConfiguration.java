@@ -17,7 +17,7 @@ public class TokenGeneratorConfiguration {
      * To be able to ovverride the oidc validation properties in OIDCTokenValidationConfiguration in oidc-spring-support
      */
     HttpClient overrideSpringHttpClient(){
-    	return new JsonFileHttpClient("/metadata.json", "/jwkset.json");
+    	return new JsonFileHttpClient("metadata.json", "jwkset.json");
     }
 	
 }
