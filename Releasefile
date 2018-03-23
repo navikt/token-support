@@ -34,7 +34,7 @@ node {
 		
 		def pom = readMavenPom file: 'pom.xml'
 		def ver = pom.version
-		
+		println "current version is " + ver
 		script {
 			if (!env.releaseLabel?.trim()) {
 				releaseVersion = ver.replace('-SNAPSHOT','')
