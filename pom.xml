@@ -4,7 +4,7 @@
 
     <groupId>no.nav.security</groupId>
     <artifactId>token-support</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
 		<module>oidc-support</module>
