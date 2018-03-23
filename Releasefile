@@ -57,15 +57,17 @@ node {
         }
 		def devVersion;
 		
-		script {
+		/*script {
 			if (!env.releaseLabel?.trim()) {
 				devVersion = incrementVersion(releaseVersion, "")
 			} else {
 				devVersion = incrementVersion(releaseVersion, "-${env.releaseLabel}")
 			}
-		}
+		}*/
 		
-		sh "${mvn} versions:set -B -DnewVersion=${devVersion}-SNAPSHOT"
+		sh "${mvn} build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit"
+		
+//		sh "${mvn} versions:set -B -DnewVersion=${devVersion}-SNAPSHOT"
 		
 		withEnv(['HTTPS_PROXY=http://webproxy-utvikler.nav.no:8088']) {
 			withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
