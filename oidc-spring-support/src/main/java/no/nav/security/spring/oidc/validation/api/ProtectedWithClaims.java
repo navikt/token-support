@@ -18,11 +18,4 @@ public @interface ProtectedWithClaims {
 	 * @return array containing claims as key=value
 	 */
 	String[] claimMap() default {};
-	
-	public enum Level {
-		Level3,
-		Level4;
-	}
-	
-	Level[] level() default {};
 }

@@ -74,12 +74,6 @@ public class OIDCTokenControllerHandlerInterceptorTest {
 			public String issuer() { return issuer; }
 
 			public String[] claimMap() { return claimMap; }
-			
-			@Override
-			public Level[] level() {
-				// TODO Auto-generated method stub
-				return new Level[]{Level.Level4};
-			}
 		};
 	}
 	
