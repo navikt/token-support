@@ -24,5 +24,5 @@ import no.nav.security.spring.oidc.OIDCTokenValidationConfiguration;
     OIDCTokenValidationConfiguration.class
 })
 public @interface EnableOIDCTokenValidation {
-	String[] ignore() default("");
+	String[] ignore() default {};
 }

@@ -7,9 +7,8 @@ package no.nav.security.spring.oidc.test;
  * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
  */
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
-
-import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.util.IOUtils;
@@ -34,12 +33,10 @@ public class JsonFileHttpClient implements HttpClient {
     public <T> T get(String uri, HttpHeaders headers, Class<T> clazz) {
         try {
             if (uri.contains("metadata")) {
-                return JSON.readValue(IOUtils.readInputStreamToString(new ClassPathResource(metadataFile).getInputStream(),Charset.forName("UTF-8")),clazz);
+                return JSON.readValue(IOUtils.readInputStreamToString( getInputStream(metadataFile), Charset.forName("UTF-8")),clazz);
             }
             if (uri.contains("jwks")) {
-                String s = IOUtils.readInputStreamToString(new ClassPathResource(jwksFile).getInputStream(),
-                        Charset.forName("UTF-8"));
-                System.out.println("content in metadata: " + s);
+                String s = IOUtils.readInputStreamToString(getInputStream(jwksFile), Charset.forName("UTF-8"));
                 return (T) s;
             }
             return null;
@@ -47,11 +44,15 @@ public class JsonFileHttpClient implements HttpClient {
             throw new RuntimeException(e);
         }
     }
-
+    
     @Override
     public <T> T post(String uri, String body, HttpHeaders headers, Class<T> clazz) {
         return null;
     }
+    private InputStream getInputStream(String file) throws IOException {
+    	return JsonFileHttpClient.class.getResourceAsStream(file);
+    }
+    
 
     @Override
     public String toString() {

@@ -23,17 +23,19 @@ Contains config for setting up a local signed JWT token generator (can also be u
 
 - There should now be RestController available in your app at <app-contextroot>**/local**
 
-  - **/jwt** with optional query param subject: 
+  - Accessing the controller at root you should see list of supported endpoints, some of these listed below:
 
-    Returns a signed jwt in its serialized format
+    - **/jwt** with optional query param subject: 
 
-  - **/cookie** with optional query param subject, redirect and cookiename: 
+      Returns a signed jwt in its serialized format
 
-    Sets the token as a cookie and redirect to where you want to use the token
+    - **/cookie** with optional query param subject, redirect and cookiename: 
 
-  - **/jwtclaims** 
+      Sets the token as a cookie and redirect to where you want to use the token
 
-    Generates and shows the content of a token
+    - **/claims** 
+
+      Generates and shows the content of a token
 
 ## How to use 
 

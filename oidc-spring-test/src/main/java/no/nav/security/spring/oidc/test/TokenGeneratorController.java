@@ -21,7 +21,19 @@ import no.nav.security.spring.oidc.validation.api.Unprotected;
 @RestController
 @RequestMapping("/local")
 public class TokenGeneratorController {
-
+	
+	@Unprotected
+	@GetMapping()
+	public TokenEndpoint[] endpoints(HttpServletRequest request){
+		String base = request.getRequestURL().toString();
+		return new TokenEndpoint[]{	new TokenEndpoint("Get JWT as serialized string", base + "/jwt","subject"),
+									new TokenEndpoint("Get JWT as SignedJWT object with claims", base + "/claims","subject"),
+									new TokenEndpoint("Add JWT as a cookie, (optional) redirect to secured uri", base + "/cookie", "subject", "redirect", "cookiename"),
+									new TokenEndpoint("Get JWKS used to sign token", base + "/jwks"),
+									new TokenEndpoint("Get JWKS used to sign token as JWKSet object", base + "/jwkset"),
+									new TokenEndpoint("Get token issuer metadata (ref oidc .well-known)", base + "/metadata")};
+	}
+	
     @Unprotected
     @GetMapping("/jwt")
     public String issueToken(@RequestParam(value = "subject", defaultValue = "12345678910") String subject) {
@@ -29,7 +41,7 @@ public class TokenGeneratorController {
     }
 
     @Unprotected
-    @GetMapping("/jwtclaims")
+    @GetMapping("/claims")
     public SignedJWT jwtClaims(@RequestParam(value = "subject", defaultValue = "12345678910") String subject) {
         return JwtTokenGenerator.createSignedJWT(subject);
     }
@@ -60,16 +72,36 @@ public class TokenGeneratorController {
     }
 
     @Unprotected
+    @GetMapping("/jwkset")
+    public JWKSet jwkSet() {
+        return JwkGenerator.getJWKSet();
+    }
+    
+    @Unprotected
     @GetMapping("/metadata")
     public String metadata() throws IOException {
         return IOUtils.readInputStreamToString(getClass().getResourceAsStream("/metadata.json"),
                 Charset.defaultCharset());
     }
-
-    @Unprotected
-    @GetMapping("/jwksfull")
-    public JWKSet jwkSet() {
-        return JwkGenerator.getJWKSet();
+    
+    class TokenEndpoint {
+    	String desc;
+    	String uri;
+    	String[] params;
+		public TokenEndpoint(String desc, String uri, String... params) {
+			this.desc = desc;
+			this.uri = uri;
+			this.params = params;
+			
+		}
+		public String getDesc() {
+			return desc;
+		}
+		public String getUri() {
+			return uri;
+		}
+		public String[] getParams() {
+			return params;
+		}
     }
-
 }

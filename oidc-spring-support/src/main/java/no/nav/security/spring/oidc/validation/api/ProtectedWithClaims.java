@@ -7,17 +7,22 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.springframework.core.annotation.AliasFor;
-
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
 @Protected
 public @interface ProtectedWithClaims {
+		
 	String issuer();
 	/**
 	 * Required claims in token in key=value format
 	 * @return array containing claims as key=value
 	 */
 	String[] claimMap() default {};
-		
+	
+	public enum Level {
+		Level3,
+		Level4;
+	}
+	
+	Level[] level() default {};
 }

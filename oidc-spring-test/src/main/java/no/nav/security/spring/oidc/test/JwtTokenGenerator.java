@@ -46,7 +46,6 @@ public class JwtTokenGenerator {
                 .audience(audience)
                 .jwtID(UUID.randomUUID().toString())
                 .claim("acr", authLevel)
-                .claim("amr", new String[] { "BankID" })
                 .claim("ver", "1.0")
                 .claim("nonce", "myNonce")
                 .claim("auth_time", now)
