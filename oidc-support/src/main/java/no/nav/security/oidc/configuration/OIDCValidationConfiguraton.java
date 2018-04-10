@@ -1,4 +1,8 @@
 package no.nav.security.oidc.configuration;
+
+
+import java.io.IOException;
+import java.net.URL;
 /*
  * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
  * OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
@@ -12,20 +16,27 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.nimbusds.jose.util.DefaultResourceRetriever;
+import com.nimbusds.jose.util.ResourceRetriever;
+import com.nimbusds.oauth2.sdk.ParseException;
+import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
+
 import no.nav.security.oidc.exceptions.MetaDataNotAvailableException;
 import no.nav.security.oidc.exceptions.MissingPropertyException;
-import no.nav.security.oidc.http.HttpClient;
 
 public class OIDCValidationConfiguraton {
 
+	public static int DEFAULT_HTTP_CONNECT_TIMEOUT = 21050;
+	public static int DEFAULT_HTTP_READ_TIMEOUT = 30000;
+	public static int DEFAULT_HTTP_SIZE_LIMIT = 50 * 1024;
+	
 	private OIDCProperties properties;
 	private Map<String, IssuerValidationConfiguration> issuers = new HashMap<String, IssuerValidationConfiguration>();
-	private HttpClient client;
 	private List<String> issuerNames;
-
-	public OIDCValidationConfiguraton(OIDCProperties props, HttpClient client) {
+	private ResourceRetriever resourceRetriever;
+	
+	public OIDCValidationConfiguraton(OIDCProperties props) {
 		this.properties = props;
-		this.client = client;
 		this.issuerNames = new ArrayList<>();
 		load();
 	}
@@ -41,21 +52,17 @@ public class OIDCValidationConfiguraton {
 			String uri = getNotBlank(String.format(OIDCProperties.URI, issuerName));
 			if (uri.trim().length() > 0) {
 				this.issuerNames.add(issuerName);
-				IssuerMetaData metaData = null;
 				try {
-					metaData = client.get(uri, null, IssuerMetaData.class);
-					if(metaData == null) {
-						
-					}
-
-					IssuerValidationConfiguration config = new IssuerValidationConfiguration(issuerName, metaData,
+					OIDCProviderMetadata metadata = getProviderMetadata(uri);
+				
+					IssuerValidationConfiguration config = new IssuerValidationConfiguration(issuerName, metadata,
 							getNotBlank(String.format(OIDCProperties.ACCEPTEDAUDIENCE, issuerName)), 
-							client);
+							getResourceRetriever());
 					
 					config.setCookieName(properties.get(String.format(OIDCProperties.COOKIE_NAME, issuerName)));
 					
 					issuers.put(issuerName, config);
-					issuers.put(metaData.getIssuer(), config);
+					issuers.put(metadata.getIssuer().toString(), config);
 				} catch (Exception e) {
 					throw new MetaDataNotAvailableException(e);
 				}
@@ -63,10 +70,31 @@ public class OIDCValidationConfiguraton {
 		}
 	}
 	
+	protected OIDCProviderMetadata getProviderMetadata(String uri){	
+		try {
+			return OIDCProviderMetadata.parse(getResourceRetriever().retrieveResource(
+			                new URL(uri)).getContent());
+		} catch (ParseException | IOException e) {
+			throw new MetaDataNotAvailableException(e);
+		}
+	}
+	
 	public List<String>getIssuerNames() {
 		return this.issuerNames;
 	}
 	
+	public ResourceRetriever getResourceRetriever() {
+		if(resourceRetriever == null){
+			resourceRetriever = new DefaultResourceRetriever(
+											DEFAULT_HTTP_CONNECT_TIMEOUT, DEFAULT_HTTP_READ_TIMEOUT, DEFAULT_HTTP_SIZE_LIMIT);
+		}
+		return resourceRetriever;
+	}
+
+	public void setResourceRetriever(ResourceRetriever resourceRetriever) {
+		this.resourceRetriever = resourceRetriever;
+	}
+
 	private String getNotBlank(String key){
 		String value = properties.get(key);
 		if(StringUtils.isBlank(value)){

@@ -17,7 +17,6 @@ import org.springframework.http.client.ClientHttpResponse;
 import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.context.OIDCValidationContext;
 import no.nav.security.oidc.filter.OIDCRequestContextHolder;
-import no.nav.security.oidc.http.HttpHeaders;
 
 public class BearerTokenClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
@@ -34,7 +33,7 @@ public class BearerTokenClientHttpRequestInterceptor implements ClientHttpReques
 			throws IOException {
 		OIDCValidationContext context = (OIDCValidationContext) contextHolder
 				.getRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT);
-		HttpHeaders propagatedHeaders = (HttpHeaders)contextHolder.getRequestAttribute(OIDCConstants.PROPAGATED_HEADERS);
+		
 		if(context != null) {
 			logger.debug("adding tokens to Authorization header");
 			StringBuffer headerValue = new StringBuffer();
@@ -47,22 +46,6 @@ public class BearerTokenClientHttpRequestInterceptor implements ClientHttpReques
 				headerValue.append("Bearer " + context.getToken(issuer).getIdToken());				
 			}			
 			request.getHeaders().add(OIDCConstants.AUTHORIZATION_HEADER, headerValue.toString());
-			try {
-				if(propagatedHeaders != null) {
-					for(int i = 0; i < propagatedHeaders.size(); i++) {
-						logger.debug("adding header [" + propagatedHeaders.getKey(i) + "] to request with value " + propagatedHeaders.getValue(i));
-						request.getHeaders().add(propagatedHeaders.getKey(i), propagatedHeaders.getValue(i));
-					}
-					if(propagatedHeaders.size() == 0) {
-						logger.debug("no propagated headers found (0)");
-					}
-				} else {
-					logger.debug("found no headers to propagate");
-				}
-				
-			} catch(Exception e){
-				logger.warn("failed to add propagated headers", e);
-			}
 		} else {
 			logger.debug("no tokens found, nothing added to request");
 		}

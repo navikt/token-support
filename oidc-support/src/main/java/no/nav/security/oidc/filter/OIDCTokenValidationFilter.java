@@ -93,11 +93,6 @@ public class OIDCTokenValidationFilter implements Filter {
 			}
 		}
 		contextHolder.setRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT, validationContext);
-		try {
-			contextHolder.setRequestAttribute(OIDCConstants.PROPAGATED_HEADERS, PropagatedHeaders.getDefaults(request));
-		} catch(Exception e){
-			logger.error("failed to add propagated headers", e);
-		}
 		chain.doFilter(request, response);
 		
 	}
