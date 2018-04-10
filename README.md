@@ -1,4 +1,4 @@
-# token-support (WORK IN PROGRESS)
+# token-support
 This project consist of common modules to support security token handling in a java spring microservices architecture, with emphasis on OpenID Connect ID Tokens. The source code is based on the output from a Proof-of-concept with Azure AD B2C - found here https://github.com/navikt/AzureAdPoc - many thanks to the original author.
 
 Applications can use these modules in order to be able to verify tokens on exposed HTTP endpoints, according to the configured OIDC providers they trust. Multiple providers are allowed, and various validation rules for various OIDC providers can be applied to rest controllers at the method level. Tokens will be transported through the service, and will be attached to the client request as "Bearer" token when calling another service/api. 
@@ -11,7 +11,7 @@ Provides token validation support through servlet filters, using the [Nimbus OAu
 
 ### oidc-spring-support
 
-Spring Boot specific wrapper around the oidc-support library above. To enable the oidc token validation for a spring boot application, simply annotate your SpringApplication with **`@EnableOIDCTokenValidation`**. Optionally list the packages or classses you dont want token validations for (e.g. error controllers). A good start is listing the **`org.springframework`** - e.g. **`@EnableOIDCTokenValidation(ignore="org.springframework")`**. Use the **`@Unprotected`** or **`@Protected`** annotation at rest controller method level to indicate if token is required or not for your method. The Protected annotation can also have the issuer name specified. This will require a token from that specific issuer - e.g. **`@Protected(issuer="selbetjening")`**
+Spring Boot specific wrapper around the oidc-support library above. To enable the oidc token validation for a spring boot application, simply annotate your SpringApplication with **`@EnableOIDCTokenValidation`**. Optionally list the packages or classses you dont want token validations for (e.g. error controllers). A good start is listing the **`org.springframework`** - e.g. **`@EnableOIDCTokenValidation(ignore="org.springframework")`**. Use the **`@Unprotected`** or **`@Protected`** annotation at rest controller method level to indicate if token is required or not for your method. The Protected annotation can also have the issuer name specified. This will require a token from that specific issuer - e.g. **`@Protected(issuer="selvbetjening")`**
 
 #### SpringApplication sample
 
@@ -25,7 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import io.ztpoc.spring.oidc.validation.api.EnableOIDCTokenValidation;
 
-@SpringBootApplication(scanBasePackages="io.ztpoc")
+@SpringBootApplication
 @EnableOIDCTokenValidation(ignore="org.springframework")
 public class ProductServiceApplication {
 
@@ -44,7 +44,6 @@ This example shows
 - Second method - A protected endpoint. This endpoint will require a valid token from the "employee" issuer. 
 - Third method - A protected endpoint. This endpoint will require a valid token from one of the configured issuers.
 - Fourth method - A non-annotated endpoint. This endpoint will not be accessible from outside the server (will return a 501 NOT_IMPLEMENTED). 
-- Fifth method - A protected endpoint. This endpoint will require a valid token from one of the configured issuers. If no valid token is found, a 302 redirect to the configured url of "loginurlemployee" will be returned. This is typical scenario for ui application, or for a redirect aware SPA application using this API
 
 ```java
 @RestController
@@ -71,12 +70,6 @@ public class ProductController {
 		Product product = Product.sample();
 		product.setId(UUID.randomUUID().toString());
 		return product;
-	}
-
-	@Protected(issuer="employee", redirectEnvKey="loginurlemployee")
-	@RequestMapping(value = "/productui", method = RequestMethod.POST)
-	public Product create(@RequestBody Product product) {		
-		return productService.create(product);
 	}
 
 	@RequestMapping(value = "/product/{id}/variant", method = RequestMethod.GET)
