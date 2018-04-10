@@ -98,6 +98,14 @@ public class OIDCTokenControllerHandlerInterceptorTest {
 			public Object getRequestAttribute(String name) {
 				return validationContext;
 			}
+			@Override
+			public OIDCValidationContext getOIDCValidationContext() {
+				return validationContext;
+			}
+			@Override
+			public void setOIDCValidationContext(OIDCValidationContext oidcValidationContext) {
+				this.validationContext = oidcValidationContext;		
+			}
 		};
 	}
 	

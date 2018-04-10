@@ -7,8 +7,8 @@ node {
     def commitHash, commitHashShort, commitUrl
     def repo = "navikt"
     def app = "token-support"
-    def committer, committerEmail, changelog, releaseVersion
-    def mvnHome = tool "maven-3.3.9"
+    def releaseVersion, devVersion
+    def mvnHome = tool "maven-3.5.2"
     def mvn = "${mvnHome}/bin/mvn"
 
     stage("Initialization") {
@@ -21,64 +21,21 @@ node {
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         commitUrl = "https://github.com/${repo}/${app}/commit/${commitHash}"
-        committer = sh(script: 'git log -1 --pretty=format:"%an"', returnStdout: true).trim()
-        committerEmail = sh(script: 'git log -1 --pretty=format:"%ae"', returnStdout: true).trim()
-        changelog = sh(script: 'git log `git describe --tags --abbrev=0`..HEAD --oneline', returnStdout: true)
 
         notifyGithub(repo, app, 'continuous-integration/jenkins', commitHash, 'pending', "Build #${env.BUILD_NUMBER} has started")
-
-        //releaseVersion = "${env.major_version}.${env.BUILD_NUMBER}-${commitHashShort}"
     }
 
-    stage("Minor release") {
-		
+    stage("Perform Maven release") {
 		def pom = readMavenPom file: 'pom.xml'
 		def ver = pom.version
-		println "current version is " + ver
-		script {
-			if (!env.releaseLabel?.trim()) {
-				releaseVersion = ver.replace('-SNAPSHOT','')
-			} else {
-				releaseVersion = ver.replace('-SNAPSHOT','') + "-${env.releaseLabel}"
-			}
-		}
-		
-        sh "${mvn} versions:set -B -DnewVersion=${releaseVersion}"
-        sh "${mvn} clean deploy -Djava.io.tmpdir=/tmp/${app} -B -e"          
-    }
+		releaseVersion = ver.replace('-SNAPSHOT','')
+		devVersion = incrementVersion(releaseVersion, "") + "-SNAPSHOT"
 
-    stage("Tag & Update dev version") {
-        
-        withEnv(['HTTPS_PROXY=http://webproxy-utvikler.nav.no:8088']) {
-            withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-				sh ("git tag -a ${releaseVersion} -m ${releaseVersion}")
-                sh ("git push https://${token}:x-oauth-basic@github.com/${repo}/${app}.git --tags")
-            }
-        }
-		def devVersion;
-		
-		script {
-			if (!env.releaseLabel?.trim()) {
-				devVersion = incrementVersion(releaseVersion, "")
-			} else {
-				devVersion = incrementVersion(releaseVersion, "-${env.releaseLabel}")
-			}
-		}
-				
-		sh "${mvn} versions:set -B -DnewVersion=${devVersion}-SNAPSHOT"
-		
-		withEnv(['HTTPS_PROXY=http://webproxy-utvikler.nav.no:8088']) {
-			withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-				sh ("git commit -a -m ${devVersion}")
-				sh ("git push https://${token}:x-oauth-basic@github.com/${repo}/${app}.git origin master")
-			}
-		}
-		
-        slackSend([
-                color: 'good',
-                message: "Build <${env.BUILD_URL}|#${env.BUILD_NUMBER}> (<${commitUrl}|${commitHashShort}>) of ${repo}/${app}@master by ${committer} passed  (${changelog})"
-        ])
-		notifyGithub(repo, app, 'continuous-integration/jenkins', commitHash, 'success', "Build #${env.BUILD_NUMBER} has finished")
+		println "current version is " + ver
+		println "release version is " + releaseVersion
+		println "new dev version is " + devVersion
+
+        sh "${mvn} release:clean release:prepare release:perform -DnewVersion=${releaseVersion} -DdevelopmentVersion=${devVersion}"
     }
 }
 

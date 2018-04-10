@@ -92,7 +92,7 @@ public class OIDCTokenValidationFilter implements Filter {
 				logger.warn("failed to parse token despite validated: " + e, e);
 			}
 		}
-		contextHolder.setRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT, validationContext);
+		contextHolder.setOIDCValidationContext(validationContext);
 		try {
 			contextHolder.setRequestAttribute(OIDCConstants.PROPAGATED_HEADERS, PropagatedHeaders.getDefaults(request));
 		} catch(Exception e){
