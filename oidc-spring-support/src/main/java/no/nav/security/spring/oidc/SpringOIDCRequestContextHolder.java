@@ -8,9 +8,11 @@ package no.nav.security.spring.oidc;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import no.nav.security.oidc.OIDCConstants;
+import no.nav.security.oidc.context.OIDCValidationContext;
 import no.nav.security.oidc.filter.OIDCRequestContextHolder;
 
-public class SpringRequestContextHolder implements OIDCRequestContextHolder {
+public class SpringOIDCRequestContextHolder implements OIDCRequestContextHolder {
 
 	@Override
 	public Object getRequestAttribute(String name) {
@@ -22,4 +24,13 @@ public class SpringRequestContextHolder implements OIDCRequestContextHolder {
 		RequestContextHolder.currentRequestAttributes().setAttribute(name, value, RequestAttributes.SCOPE_REQUEST);
 	}
 
+	@Override
+	public OIDCValidationContext getOIDCValidationContext() {
+		return (OIDCValidationContext)getRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT);
+	}
+
+	@Override
+	public void setOIDCValidationContext(OIDCValidationContext oidcValidationContext) {
+		setRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT, oidcValidationContext);
+	}
 }
