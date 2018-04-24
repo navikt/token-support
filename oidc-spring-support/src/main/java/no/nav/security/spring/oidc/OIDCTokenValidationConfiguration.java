@@ -61,7 +61,7 @@ public class OIDCTokenValidationConfiguration implements WebMvcConfigurer, Envir
 	
 	@Bean
 	public OIDCRequestContextHolder oidcRequestContextHolder() {
-		return new SpringRequestContextHolder();
+		return new SpringOIDCRequestContextHolder();
 	}
 
 	@Bean
@@ -86,7 +86,7 @@ public class OIDCTokenValidationConfiguration implements WebMvcConfigurer, Envir
 		logger.debug("registering OIDC token controller handler interceptor");
 		OIDCTokenControllerHandlerInterceptor c = new OIDCTokenControllerHandlerInterceptor(
 				deduceMainApplicationClass(), // read config annotation from main class, deduce from this thread
-				new SpringRequestContextHolder());
+				new SpringOIDCRequestContextHolder());
 		return c;
 	}
 

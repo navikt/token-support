@@ -31,6 +31,7 @@ public class BearerTokenClientHttpRequestInterceptor implements ClientHttpReques
 	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 			throws IOException {
+
 		OIDCValidationContext context = (OIDCValidationContext) contextHolder
 				.getRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT);
 		
