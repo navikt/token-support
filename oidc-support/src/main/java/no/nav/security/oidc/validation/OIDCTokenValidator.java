@@ -8,13 +8,18 @@ package no.nav.security.oidc.validation;
  */
 
 import java.net.URL;
-import com.nimbusds.jose.*;
-import com.nimbusds.jose.util.DefaultResourceRetriever;
+
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.ResourceRetriever;
-import com.nimbusds.jwt.*;
-import com.nimbusds.oauth2.sdk.id.*;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.oauth2.sdk.id.ClientID;
+import com.nimbusds.oauth2.sdk.id.Issuer;
 import com.nimbusds.openid.connect.sdk.Nonce;
-import com.nimbusds.openid.connect.sdk.validators.*;
+import com.nimbusds.openid.connect.sdk.validators.IDTokenValidator;
+
+import no.nav.security.oidc.exceptions.OIDCTokenValidatorException;
+
 
 public class OIDCTokenValidator {
 	

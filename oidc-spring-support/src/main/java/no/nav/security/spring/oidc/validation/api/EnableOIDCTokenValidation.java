@@ -14,14 +14,14 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
 
-import no.nav.security.spring.oidc.OIDCTokenValidationConfiguration;
+import no.nav.security.spring.oidc.EnableOIDCTokenValidationConfiguration;
 
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Import({
-    OIDCTokenValidationConfiguration.class
+    EnableOIDCTokenValidationConfiguration.class
 })
 public @interface EnableOIDCTokenValidation {
 	String[] ignore() default {};

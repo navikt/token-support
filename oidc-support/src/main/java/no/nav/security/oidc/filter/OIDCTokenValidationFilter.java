@@ -24,12 +24,12 @@ import org.slf4j.LoggerFactory;
 
 import com.nimbusds.jwt.JWTParser;
 
-import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.configuration.OIDCValidationConfiguraton;
+import no.nav.security.oidc.context.OIDCClaims;
+import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.context.OIDCValidationContext;
 import no.nav.security.oidc.context.TokenContext;
-import no.nav.security.oidc.validation.OIDCClaims;
-import no.nav.security.oidc.validation.OIDCTokenValidatorException;
+import no.nav.security.oidc.exceptions.OIDCTokenValidatorException;
 
 public class OIDCTokenValidationFilter implements Filter {
 
@@ -44,8 +44,7 @@ public class OIDCTokenValidationFilter implements Filter {
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -60,7 +59,6 @@ public class OIDCTokenValidationFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -78,7 +76,7 @@ public class OIDCTokenValidationFilter implements Filter {
 				validatedTokens.add(token);
 				logger.debug("token " + token.getIssuer() + " validated OK");
 			} catch(OIDCTokenValidatorException ve) {
-				logger.debug("invalid token [" + token.getIssuer() + "]: " + ve);
+				logger.warn("invalid token for issuer [" + token.getIssuer() + "].", ve);
 			}
 			long stop = System.currentTimeMillis();
 			logger.debug("validated token [" + token.getIssuer() + "] in " + (stop-start) + "ms");

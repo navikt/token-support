@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import no.nav.security.oidc.validation.OIDCClaims;
-
 public class OIDCValidationContext {
 	
 	private Map<String, TokenContext> validatedTokens;

@@ -5,19 +5,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
-import no.nav.security.oidc.http.HttpClient;
+import no.nav.security.oidc.configuration.OIDCResourceRetriever;
 
 @Configuration
 @Import(TokenGeneratorController.class)
 public class TokenGeneratorConfiguration {
 	
+	/**
+	 * To be able to ovverride the oidc validation properties in
+	 * EnableOIDCTokenValidationConfiguration in oidc-spring-support
+	 */
 	@Bean
     @Primary
-    /**
-     * To be able to ovverride the oidc validation properties in OIDCTokenValidationConfiguration in oidc-spring-support
-     */
-    HttpClient overrideSpringHttpClient(){
-    	return new JsonFileHttpClient("/metadata.json", "/jwkset.json");
-    }
-	
+    OIDCResourceRetriever overrideOidcResourceRetriever(){
+    	return new FileResourceRetriever("/metadata.json", "/jwkset.json");
+    }	
 }

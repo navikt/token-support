@@ -15,9 +15,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import no.nav.security.oidc.OIDCConstants;
+import no.nav.security.oidc.context.OIDCClaims;
+import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.context.OIDCValidationContext;
-import no.nav.security.oidc.filter.OIDCRequestContextHolder;
-import no.nav.security.oidc.validation.OIDCClaims;
 import no.nav.security.spring.oidc.validation.api.EnableOIDCTokenValidation;
 import no.nav.security.spring.oidc.validation.api.Protected;
 import no.nav.security.spring.oidc.validation.api.ProtectedWithClaims;
@@ -48,8 +48,6 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
 	@Override
 	public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object handler, Exception arg3)
 			throws Exception {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

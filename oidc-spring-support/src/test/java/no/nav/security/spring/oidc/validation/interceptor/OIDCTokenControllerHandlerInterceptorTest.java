@@ -13,10 +13,10 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 
+import no.nav.security.oidc.context.OIDCClaims;
+import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.context.OIDCValidationContext;
 import no.nav.security.oidc.context.TokenContext;
-import no.nav.security.oidc.filter.OIDCRequestContextHolder;
-import no.nav.security.oidc.validation.OIDCClaims;
 import no.nav.security.spring.oidc.validation.api.EnableOIDCTokenValidation;
 import no.nav.security.spring.oidc.validation.api.ProtectedWithClaims;
 

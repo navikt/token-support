@@ -1,4 +1,4 @@
-package no.nav.security.oidc.validation;
+package no.nav.security.oidc.exceptions;
 
 /*
  * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS

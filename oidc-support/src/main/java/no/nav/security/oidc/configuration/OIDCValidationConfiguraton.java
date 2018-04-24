@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
@@ -25,10 +24,6 @@ import no.nav.security.oidc.exceptions.MetaDataNotAvailableException;
 import no.nav.security.oidc.exceptions.MissingPropertyException;
 
 public class OIDCValidationConfiguraton {
-
-	public static int DEFAULT_HTTP_CONNECT_TIMEOUT = 21050;
-	public static int DEFAULT_HTTP_READ_TIMEOUT = 30000;
-	public static int DEFAULT_HTTP_SIZE_LIMIT = 50 * 1024;
 	
 	private OIDCProperties properties;
 	private Map<String, IssuerValidationConfiguration> issuers = new HashMap<String, IssuerValidationConfiguration>();
@@ -38,6 +33,13 @@ public class OIDCValidationConfiguraton {
 	public OIDCValidationConfiguraton(OIDCProperties props) {
 		this.properties = props;
 		this.issuerNames = new ArrayList<>();
+		load();
+	}
+	
+	public OIDCValidationConfiguraton(OIDCProperties props, ResourceRetriever resourceRetriever) {
+		this.properties = props;
+		this.issuerNames = new ArrayList<>();
+		this.resourceRetriever = resourceRetriever;
 		load();
 	}
 
@@ -85,8 +87,7 @@ public class OIDCValidationConfiguraton {
 	
 	public ResourceRetriever getResourceRetriever() {
 		if(resourceRetriever == null){
-			resourceRetriever = new DefaultResourceRetriever(
-											DEFAULT_HTTP_CONNECT_TIMEOUT, DEFAULT_HTTP_READ_TIMEOUT, DEFAULT_HTTP_SIZE_LIMIT);
+			resourceRetriever = new OIDCResourceRetriever();
 		}
 		return resourceRetriever;
 	}

@@ -1,4 +1,6 @@
 package no.nav.security.spring.oidc;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
@@ -15,18 +17,20 @@ import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.nimbusds.jose.util.ResourceRetriever;
+
 import no.nav.security.oidc.configuration.OIDCProperties;
+import no.nav.security.oidc.configuration.OIDCResourceRetriever;
 import no.nav.security.oidc.configuration.OIDCValidationConfiguraton;
-import no.nav.security.oidc.filter.OIDCRequestContextHolder;
+import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
-import no.nav.security.oidc.http.HttpClient;
 import no.nav.security.spring.oidc.validation.interceptor.BearerTokenClientHttpRequestInterceptor;
 import no.nav.security.spring.oidc.validation.interceptor.OIDCTokenControllerHandlerInterceptor;
 
 @Configuration
-public class OIDCTokenValidationConfiguration implements WebMvcConfigurer, EnvironmentAware {
+public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer, EnvironmentAware {
 
-	private Logger logger = LoggerFactory.getLogger(OIDCTokenValidationConfiguration.class);
+	private Logger logger = LoggerFactory.getLogger(EnableOIDCTokenValidationConfiguration.class);
 	
 	private Environment env;
 	
@@ -47,16 +51,18 @@ public class OIDCTokenValidationConfiguration implements WebMvcConfigurer, Envir
 		return props;
 	}
 	
-	@Bean
-	public HttpClient httpClient(){
-		SpringHttpClient shttpClient = new SpringHttpClient();
-		shttpClient.setEnvironment(env);
-		return shttpClient;
+	@Bean 
+	public OIDCResourceRetriever oidcResourceRetriever(){
+		OIDCResourceRetriever resourceRetriever = new OIDCResourceRetriever();
+		resourceRetriever.setProxyUrl(getConfiguredProxy());
+		resourceRetriever.setUsePlainTextForHttps(Boolean.parseBoolean(env.getProperty("https.plaintext", "false")));
+		return resourceRetriever;
 	}
 	
 	@Bean
-	public OIDCValidationConfiguraton config(OIDCProperties props, HttpClient client) {
-		return new OIDCValidationConfiguraton(props, client);
+	public OIDCValidationConfiguraton oidcValidationConfiguration(OIDCProperties props, OIDCResourceRetriever resourceRetriever) {
+		OIDCValidationConfiguraton config = new OIDCValidationConfiguraton(props, resourceRetriever);
+		return config;
 	}
 	
 	@Bean
@@ -117,5 +123,22 @@ public class OIDCTokenValidationConfiguration implements WebMvcConfigurer, Envir
 			// Swallow and continue
 		}
 		return null;
+	}
+	
+	private URL getConfiguredProxy() {
+		String proxyParameterName = env.getProperty("http.proxy.parametername", "http.proxy");
+		String proxyconfig = env.getProperty(proxyParameterName);
+		URL proxy = null;
+		if(proxyconfig != null && proxyconfig.trim().length() > 0) {
+			logger.info("Proxy configuration found [" + proxyParameterName +"] was " + proxyconfig);
+			try {
+				proxy = new URL(proxyconfig);
+			} catch (MalformedURLException e) {
+				throw new RuntimeException("config [" + proxyParameterName + "] is misconfigured: " + e, e);				
+			}
+		} else {
+			logger.info("No proxy configuration found [" + proxyParameterName +"]");
+		}
+		return proxy;		
 	}
 }
