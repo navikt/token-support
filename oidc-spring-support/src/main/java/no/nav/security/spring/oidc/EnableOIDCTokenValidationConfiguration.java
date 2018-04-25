@@ -17,11 +17,10 @@ import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.nimbusds.jose.util.ResourceRetriever;
-
 import no.nav.security.oidc.configuration.OIDCProperties;
 import no.nav.security.oidc.configuration.OIDCResourceRetriever;
-import no.nav.security.oidc.configuration.OIDCValidationConfiguraton;
+import no.nav.security.oidc.configuration.MultiIssuerPropertiesConfiguration;
+import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
 import no.nav.security.spring.oidc.validation.interceptor.BearerTokenClientHttpRequestInterceptor;
@@ -60,8 +59,8 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 	}
 	
 	@Bean
-	public OIDCValidationConfiguraton oidcValidationConfiguration(OIDCProperties props, OIDCResourceRetriever resourceRetriever) {
-		OIDCValidationConfiguraton config = new OIDCValidationConfiguraton(props, resourceRetriever);
+	public MultiIssuerConfiguraton oidcValidationConfiguration(OIDCProperties props, OIDCResourceRetriever resourceRetriever) {
+		MultiIssuerPropertiesConfiguration config = new MultiIssuerPropertiesConfiguration(props, resourceRetriever);
 		return config;
 	}
 	
@@ -76,7 +75,7 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 	}
 
 	@Bean
-	public OIDCTokenValidationFilter tokenValidationFilter(OIDCValidationConfiguraton config, OIDCRequestContextHolder oidcRequestContextHolder) {
+	public OIDCTokenValidationFilter tokenValidationFilter(MultiIssuerConfiguraton config, OIDCRequestContextHolder oidcRequestContextHolder) {
 		return new OIDCTokenValidationFilter(config, oidcRequestContextHolder);
 
 	}

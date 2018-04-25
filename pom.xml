@@ -70,7 +70,11 @@
 				<artifactId>oauth2-oidc-sdk</artifactId>
 				<version>${oauth2-oidc-sdk.version}</version>
 			</dependency>
-
+			<dependency>
+			    <groupId>javax.validation</groupId>
+			    <artifactId>validation-api</artifactId>
+			    <version>2.0.1.Final</version>
+			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>

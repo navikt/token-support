@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.nimbusds.jwt.JWTParser;
 
-import no.nav.security.oidc.configuration.OIDCValidationConfiguraton;
+import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
 import no.nav.security.oidc.context.OIDCClaims;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.context.OIDCValidationContext;
@@ -34,10 +34,10 @@ import no.nav.security.oidc.exceptions.OIDCTokenValidatorException;
 public class OIDCTokenValidationFilter implements Filter {
 
 	private Logger logger = LoggerFactory.getLogger(OIDCTokenValidationFilter.class);
-	private final OIDCValidationConfiguraton config;
+	private final MultiIssuerConfiguraton config;
 	private final OIDCRequestContextHolder contextHolder;
 	
-	public OIDCTokenValidationFilter(OIDCValidationConfiguraton oidcConfig, OIDCRequestContextHolder contextHolder) {
+	public OIDCTokenValidationFilter(MultiIssuerConfiguraton oidcConfig, OIDCRequestContextHolder contextHolder) {
 		this.config = oidcConfig;
 		this.contextHolder = contextHolder;
 	}

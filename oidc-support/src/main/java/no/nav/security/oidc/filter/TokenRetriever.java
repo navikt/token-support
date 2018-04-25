@@ -18,17 +18,16 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 
 import no.nav.security.oidc.OIDCConstants;
-import no.nav.security.oidc.configuration.OIDCValidationConfiguraton;
+import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
 import no.nav.security.oidc.context.TokenContext;
 
 public class TokenRetriever {
 
 	private static Logger logger = LoggerFactory.getLogger(TokenRetriever.class);
 
-	public static List<TokenContext> retrieveTokens(OIDCValidationConfiguraton config, HttpServletRequest request) {
+	public static List<TokenContext> retrieveTokens(MultiIssuerConfiguraton config, HttpServletRequest request) {
 		List<TokenContext> tokens = new ArrayList<>();
 
-		// find tokens store in Authorization header
 		logger.debug("checking authorization header ...");
 		String auth = request.getHeader(OIDCConstants.AUTHORIZATION_HEADER);
 		if(auth != null) {
@@ -42,6 +41,7 @@ public class TokenRetriever {
 						if (config.getIssuer(jwt.getJWTClaimsSet().getIssuer()) != null) {
 							String issuer = config.getIssuer(jwt.getJWTClaimsSet().getIssuer()).getName();
 							tokens.add(new TokenContext(issuer, token));
+							logger.debug("found bearer token for issuer {} in Authorization header. adding new unvalidated tokencontext.", issuer);
 						}
 					}
 				} catch (Exception e) {
@@ -51,16 +51,16 @@ public class TokenRetriever {
 			}
 		}
 
-		// find tokens stored in cookies
 		logger.debug("checking for tokens in cookies ...");
 		Cookie[] cookies = request.getCookies();
 		if(cookies != null) {
-			for (String issuer : config.getIssuerNames()) {
+			for (String issuer : config.getIssuerShortNames()) {
 				String expectedName = config.getIssuer(issuer).getCookieName();
 				expectedName = expectedName == null ? OIDCConstants.getDefaultCookieName(issuer) : expectedName;
 				for (Cookie cookie : cookies) {
 					if (cookie.getName().equalsIgnoreCase(expectedName)) {
 						tokens.add(new TokenContext(issuer, cookie.getValue()));
+						logger.debug("found cookie with expected name {}, adding new unvalidated TokenContext.", expectedName);
 					}
 				}
 			}
