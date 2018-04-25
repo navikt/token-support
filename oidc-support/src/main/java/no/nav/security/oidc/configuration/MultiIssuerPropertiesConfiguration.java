@@ -29,7 +29,6 @@ public class MultiIssuerPropertiesConfiguration extends MultiIssuerConfiguraton 
 			URL url = getDiscoveryUrlByIssuerName(OIDCProperties.URI, properties, issuerName);
 			String acceptedAudience = getPropertyByIssuerName(OIDCProperties.ACCEPTEDAUDIENCE, properties, issuerName);
 			String cookieName = getPropertyByIssuerName(OIDCProperties.COOKIE_NAME, properties, issuerName);
-			
 			issuerPropertiesList.add(new IssuerProperties(issuerName, url, cookieName, acceptedAudience));
 		}
 		return issuerPropertiesList;

@@ -31,6 +31,7 @@ public class IssuerConfiguration {
 			issuerProperties.getDiscoveryUrl(), 
 			issuerProperties.getAcceptedAudience(),
 			resourceRetriever);
+		this.cookieName = issuerProperties.getCookieName();
 	}
 	
 	public IssuerConfiguration(String name, URL discoveryUrl, String acceptedAudience,

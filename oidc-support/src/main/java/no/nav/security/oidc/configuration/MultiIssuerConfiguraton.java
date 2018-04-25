@@ -1,6 +1,7 @@
 package no.nav.security.oidc.configuration;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,7 @@ import com.nimbusds.jose.util.ResourceRetriever;
 
 public class MultiIssuerConfiguraton {
 	
-	private List<String> issuerShortNames;
+	private List<String> issuerShortNames = new ArrayList<>();
 	private ResourceRetriever resourceRetriever;
 	private Map<String, IssuerConfiguration> issuers = new HashMap<String, IssuerConfiguration>();
 		
