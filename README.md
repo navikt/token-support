@@ -103,9 +103,11 @@ The following properties must be defined in the environment where your applicati
 
 ### Properties
 
-- **`no.nav.security.oidc.issuers`** - a comma separated list of issuers names (not the actual issuer value from the OIDC token, but a chosen name to represent config for the actual OIDC issuer) you trust, e.g. **`citizen,employee`**
-- **`no.nav.security.oidc.issuer.[issuer name].uri`** - The OIDC provider configuration endpoint (meta-data)
-- **`no.nav.security.oidc.issuer.[issuer name].accepted_audience`** - The value of the audience (aud) claim in the ID token. For OIDC it is the client ID of the client responsible for aquiring the token.
+- **`no.nav.security.oidc.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a chosen short name for that issuer (not the actual issuer value from the OIDC token, but a chosen name to represent config for the actual OIDC issuer) you trust, e.g. **`citizen`** or **`employee`** 
+~~- **`no.nav.security.oidc.issuer.[issuer name].uri`** - The OIDC provider configuration endpoint (meta-data)~~
+- **`no.nav.security.oidc.issuer.[issuer shortname].discoveryurl`** - The OIDC provider configuration endpoint (meta-data)
+- **`no.nav.security.oidc.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the ID token. For OIDC it is the client ID of the client responsible for aquiring the token.
+- **`no.nav.security.oidc.issuer.[issuer shortname].cookiename`** - The value of the cookie containing the ID token (not required, only neccessary if your api receives calls from a browser)
 
 ## Proxy support
 
