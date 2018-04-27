@@ -26,8 +26,8 @@ public class IssuerConfiguration {
 	private OIDCTokenValidator tokenValidator;
 	private ResourceRetriever resourceRetriever;
 
-	public IssuerConfiguration(IssuerProperties issuerProperties, ResourceRetriever resourceRetriever) {	
-		this(issuerProperties.getShortName(), 
+	public IssuerConfiguration(String shortName, IssuerProperties issuerProperties, ResourceRetriever resourceRetriever) {	
+		this(shortName, 
 			issuerProperties.getDiscoveryUrl(), 
 			issuerProperties.getAcceptedAudience(),
 			resourceRetriever);
@@ -104,6 +104,9 @@ public class IssuerConfiguration {
 	}
 	
 	protected static OIDCProviderMetadata getProviderMetadata(ResourceRetriever resourceRetriever, URL url){	
+		if(url == null){
+			throw new MetaDataNotAvailableException("discoveryUrl cannot be null, check your configuration.");
+		}
 		try {
 			return OIDCProviderMetadata.parse(resourceRetriever.retrieveResource(url).getContent());
 		} catch (ParseException | IOException e) {

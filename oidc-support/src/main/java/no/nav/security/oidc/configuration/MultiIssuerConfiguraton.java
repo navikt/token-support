@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.nimbusds.jose.util.ResourceRetriever;
 
@@ -14,14 +15,14 @@ public class MultiIssuerConfiguraton {
 	private ResourceRetriever resourceRetriever;
 	private Map<String, IssuerConfiguration> issuers = new HashMap<String, IssuerConfiguration>();
 		
-	private List<IssuerProperties> issuerPropertiesList;
+	private Map<String, IssuerProperties> issuerPropertiesMap;
 	
-	public MultiIssuerConfiguraton(List<IssuerProperties> issuerPropertiesList){
-		this(issuerPropertiesList, null);
+	public MultiIssuerConfiguraton(Map<String, IssuerProperties> issuerPropertiesMap){
+		this(issuerPropertiesMap, null);
 	}
 	
-	public MultiIssuerConfiguraton(List<IssuerProperties> issuerPropertiesList, ResourceRetriever resourceRetriever){
-		this.issuerPropertiesList = issuerPropertiesList;
+	public MultiIssuerConfiguraton(Map<String, IssuerProperties> issuerPropertiesMap, ResourceRetriever resourceRetriever){
+		this.issuerPropertiesMap = issuerPropertiesMap;
 		this.resourceRetriever = resourceRetriever;
 		loadIssuerConfigurations();
 	}
@@ -48,14 +49,16 @@ public class MultiIssuerConfiguraton {
 	@Override
 	public String toString() {
 		return "MultiIssuerConfiguraton [issuerShortNames=" + issuerShortNames + ", resourceRetriever="
-				+ resourceRetriever + ", issuers=" + issuers + ", issuerPropertiesList=" + issuerPropertiesList + "]";
+				+ resourceRetriever + ", issuers=" + issuers + ", issuerPropertiesMap=" + issuerPropertiesMap + "]";
 	}
 	
 	protected void loadIssuerConfigurations(){
-		for (IssuerProperties issuerProperties : issuerPropertiesList) {
-			this.issuerShortNames.add(issuerProperties.getShortName());
-			IssuerConfiguration config = new IssuerConfiguration(issuerProperties, getResourceRetriever());
-			issuers.put(issuerProperties.getShortName(), config);
+		
+		for (Entry<String, IssuerProperties> entry : issuerPropertiesMap.entrySet()) {
+			String name = entry.getKey();
+			this.issuerShortNames.add(name);
+			IssuerConfiguration config = new IssuerConfiguration(name, entry.getValue(), getResourceRetriever());
+			issuers.put(name, config);
 			issuers.put(config.getMetaData().getIssuer().toString(), config);
 		}
 	}

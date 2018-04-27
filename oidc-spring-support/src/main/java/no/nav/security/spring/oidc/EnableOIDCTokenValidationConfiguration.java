@@ -7,6 +7,7 @@ import javax.servlet.DispatcherType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -17,9 +18,7 @@ import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import no.nav.security.oidc.configuration.OIDCProperties;
 import no.nav.security.oidc.configuration.OIDCResourceRetriever;
-import no.nav.security.oidc.configuration.MultiIssuerPropertiesConfiguration;
 import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
@@ -27,6 +26,7 @@ import no.nav.security.spring.oidc.validation.interceptor.BearerTokenClientHttpR
 import no.nav.security.spring.oidc.validation.interceptor.OIDCTokenControllerHandlerInterceptor;
 
 @Configuration
+@EnableConfigurationProperties(MultiIssuerProperties.class)
 public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer, EnvironmentAware {
 
 	private Logger logger = LoggerFactory.getLogger(EnableOIDCTokenValidationConfiguration.class);
@@ -43,13 +43,6 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 		this.env = env;
 	}
 	
-	@Bean
-	public OIDCProperties oidcProperties(){
-		SpringOIDCProperties props = new SpringOIDCProperties();
-		props.setEnvironment(env);
-		return props;
-	}
-	
 	@Bean 
 	public OIDCResourceRetriever oidcResourceRetriever(){
 		OIDCResourceRetriever resourceRetriever = new OIDCResourceRetriever();
@@ -59,9 +52,8 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 	}
 	
 	@Bean
-	public MultiIssuerConfiguraton oidcValidationConfiguration(OIDCProperties props, OIDCResourceRetriever resourceRetriever) {
-		MultiIssuerPropertiesConfiguration config = new MultiIssuerPropertiesConfiguration(props, resourceRetriever);
-		return config;
+	public MultiIssuerConfiguraton multiIssuerConfiguration(MultiIssuerProperties issuerProperties, OIDCResourceRetriever resourceRetriever) {	
+		return new MultiIssuerConfiguraton(issuerProperties.getIssuer(), resourceRetriever);
 	}
 	
 	@Bean
