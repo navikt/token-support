@@ -104,7 +104,7 @@ The following properties must be defined in the environment where your applicati
 ### Properties
 
 - **`no.nav.security.oidc.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a chosen short name for that issuer (not the actual issuer value from the OIDC token, but a chosen name to represent config for the actual OIDC issuer) you trust, e.g. **`citizen`** or **`employee`** 
-~~- **`no.nav.security.oidc.issuer.[issuer name].uri`** - The OIDC provider configuration endpoint (meta-data)~~
+- ~~**`no.nav.security.oidc.issuer.[issuer name].uri`** - The OIDC provider configuration endpoint (meta-data)~~
 - **`no.nav.security.oidc.issuer.[issuer shortname].discoveryurl`** - The OIDC provider configuration endpoint (meta-data)
 - **`no.nav.security.oidc.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the ID token. For OIDC it is the client ID of the client responsible for aquiring the token.
 - **`no.nav.security.oidc.issuer.[issuer shortname].cookiename`** - The value of the cookie containing the ID token (not required, only neccessary if your api receives calls from a browser)
@@ -116,3 +116,7 @@ Request to external endpoints (i.e. your OpenID Connect provider) can be configu
 ## Running inside an Istio enabled Kubernetes cluster
 
 When running inside an [Istio](https://istio.io) enabled Kubernetes cluster, outbound SSL connections are required to go through the PODs Envoy proxy sitting in front of the application. The way [Istio recommends doing this](https://istio.io/docs/tasks/traffic-management/egress.html), is by translating all https://hostname/path requests to http://hostname:443/path, and let the request be routed through the Envoy proxy. The Envoy proxy will establish the SSL connection to the request host. From a security point of view, the POD it self is considered the trusted security context for the application in an Istio enabled cluster. To enable this for all outgoing SSL communication,  **`https.plaintext`** must be set to **`true`**. This means that all communication using the SpringHttpClient will be translated to a plaintext request on port 443. For applications using the spring-oidc-support libraries, this means that all request to OIDC provider metadata endpoints, OIDC provider token endpoints and the OIDC token signing keys retrieval endpoints will be handled this way. 
+
+## Running your app locally while using these modules
+
+There is a separate module **oidc-spring-test** which you can use to generate token for local use. Please see separate [README](https://github.com/navikt/token-support/tree/master/oidc-spring-test) for more information.
