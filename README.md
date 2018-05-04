@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/navikt/token-support.svg?branch=master)](https://travis-ci.org/navikt/token-support)
+[![Published on Maven](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/no/nav/security/token-support/maven-metadata.xml.svg)](http://central.maven.org/maven2/no/nav/security/token-support/)
+
 # token-support
 This project consist of common modules to support security token handling in a java spring microservices architecture, with emphasis on OpenID Connect ID Tokens. The source code is based on the output from a Proof-of-concept with Azure AD B2C - found here https://github.com/navikt/AzureAdPoc - many thanks to the original author.
 
@@ -120,3 +123,38 @@ When running inside an [Istio](https://istio.io) enabled Kubernetes cluster, out
 ## Running your app locally while using these modules
 
 There is a separate module **oidc-spring-test** which you can use to generate token for local use. Please see separate [README](https://github.com/navikt/token-support/tree/master/oidc-spring-test) for more information.
+
+#### Snapshot versions
+
+Every commit to the `master` branch (or merged pull request) will trigger a
+release to the [Sonatype OSS snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/no/nav/java-codestyle/).
+
+#### Releases
+
+In order to release a new version, clone this repository, and
+
+```bash
+# make sure we're up to date!
+git checkout master && git pull
+
+# This is the release command itself
+mvn release:prepare
+
+# This will clean up any local temporary files
+# that were used during the release.
+mvn release:clean
+```
+
+The `mvn release:prepare` command will ask for a version number to release,
+as well as which version number to bump to. This command will also do
+a `git push` on your behalf, which will update the remote git repository.
+Then, Travis CI will trigger a build, and deploy the artifact.
+
+First, it will appear in [Sonatype OSS releases](https://oss.sonatype.org/content/repositories/releases/no/nav/java-codestyle/),
+before eventually (a couple of minutes later) if is synced to [Maven Central](http://central.maven.org/maven2/no/nav/java-codestyle/).
+
+
+#### Contact
+
+If you have any questions, please open an issue on the Github issue tracker.
+For NAV employees, you can ask questions at the Slack channel #bris.
