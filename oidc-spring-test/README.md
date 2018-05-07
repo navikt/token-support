@@ -6,13 +6,15 @@ Contains config for setting up a local signed JWT token generator (can also be u
 
 - Add as dependency with **test** scope
 
-- Import TokenGeneratorConfiguration In your test configuration:
+- Import TokenGeneratorConfiguration in your test configuration:
 
   ```java
   @Import(TokenGeneratorConfiguration.class)	
   ```
 
 - If your code uses oidc-spring-support for token validation set the following properties in your local profile:
+
+  **Please make sure to never use the local mode properties in any other environment than your local development environment as the private keys to sign the token provided by oidc-spring-test is fully available here on github for all to see and use.**
 
   `no.nav.security.oidc.issuers=selvbetjening`
 

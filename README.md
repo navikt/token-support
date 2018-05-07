@@ -4,17 +4,17 @@
 # token-support
 This project consist of common modules to support security token handling in a java spring microservices architecture, with emphasis on OpenID Connect ID Tokens. The source code is based on the output from a Proof-of-concept with Azure AD B2C - found here https://github.com/navikt/AzureAdPoc - many thanks to the original author.
 
-Applications can use these modules in order to be able to verify tokens on exposed HTTP endpoints, according to the configured OIDC providers they trust. Multiple providers are allowed, and various validation rules for various OIDC providers can be applied to rest controllers at the method level. Tokens will be transported through the service, and will be attached to the client request as "Bearer" token when calling another service/api. 
+Applications can use these modules in order to verify security tokens on exposed HTTP endpoints, according to the configured OIDC providers they trust. Multiple providers are allowed, and can be applied to rest controllers through annotations. Tokens can be propagated through the service and attached to client requests as a "Bearer" token when calling another service/api. 
 
 ## Main components
 
 ### oidc-support
 
-Provides token validation support through servlet filters, using the [Nimbus OAuth 2.0 SDK with OpenID Connect extensions](https://connect2id.com/products/nimbus-oauth-openid-connect-sdk). Please see **`no.nav.security.oidc.filter.OIDCTokenValidationFilter.java`** for more details. Token signing keys are cached in a single-ton instance of the **`no.nav.security.oidc.validation.OIDCTokenValidator`**, using the  **`com.nimbusds.openid.connect.sdk.validators.IDTokenValidator`**. Token signing keys are fetched from the jwt_keys endpoint configured in the OIDC provider configuration meta data endpoint when required (e.g. new signing keys are detected). This module can be used standalone if you do not use Spring, if you are using spring you can use the module described below.
+Provides token validation support through servlet filters, using the [Nimbus OAuth 2.0 SDK with OpenID Connect extensions](https://connect2id.com/products/nimbus-oauth-openid-connect-sdk). Please see **`no.nav.security.oidc.filter.OIDCTokenValidationFilter.java`** for more details. Token signing keys are cached in a singleton instance of the **`no.nav.security.oidc.validation.OIDCTokenValidator`**, using the  **`com.nimbusds.openid.connect.sdk.validators.IDTokenValidator`**. Token signing keys will be fetched from the jwt_keys endpoint configured in the OIDC provider configuration metadata endpoint when required (e.g. new signing keys are detected). This module can be used standalone (if you do not use Spring). If you do use Spring you can use the module described below, providing Spring specific mechanisms for securing rest controllers.
 
 ### oidc-spring-support
 
-Spring Boot specific wrapper around the oidc-support library above. To enable the oidc token validation for a spring boot application, simply annotate your SpringApplication with **`@EnableOIDCTokenValidation`**. Optionally list the packages or classses you dont want token validations for (e.g. error controllers). A good start is listing the **`org.springframework`** - e.g. **`@EnableOIDCTokenValidation(ignore="org.springframework")`**. Use the **`@Unprotected`** or **`@Protected`** annotation at rest controller method level to indicate if token is required or not for your method. The Protected annotation can also have the issuer name specified. This will require a token from that specific issuer - e.g. **`@Protected(issuer="selvbetjening")`**
+Spring Boot specific wrapper around oidc-support. To enable oidc token validation for a spring boot application, simply annotate your SpringApplication class with **`@EnableOIDCTokenValidation`**. Optionally list the packages or classses you dont want token validations for (e.g. error controllers). A good start is listing the **`org.springframework`** - e.g. **`@EnableOIDCTokenValidation(ignore="org.springframework")`**. Use the **`@Unprotected`** or **`@Protected`** annotations at rest controller method/class level to indicate if token validation is required or not. 
 
 #### SpringApplication sample
 
@@ -89,7 +89,7 @@ public class ProductController {
 
 Add the modules as Maven dependencies.
 
-With Spring:
+<u>With Spring:</u>
 
 ```xml
    <dependency>     
@@ -98,23 +98,20 @@ With Spring:
         <version>${oidc-spring-support.version}</version>
     </dependency>
 ```
-Without Spring: Add only the oidc-support artifact.
+<u>Without Spring:</u> Add only the oidc-support artifact.
 
-If using Spring the modules will be autoconfigured in the applicationcontext.
+If using Spring, the modules will be autoconfigured in the applicationcontext if you have the  **`@EnableOIDCTokenValidation`** annotation on your SpringApplication class.
 
-The following properties must be defined in the environment where your application run, or you can adjust the application.properties files. The same properties can be configured in your environment. Replace all **`dots`** with under score, e.g. **`server.port`** can also be specified in an environment using **`server_port`**. This is valid for all configuration/properties. 
+### Required properties (yaml or properties)
 
-### Properties
-
-- **`no.nav.security.oidc.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a chosen short name for that issuer (not the actual issuer value from the OIDC token, but a chosen name to represent config for the actual OIDC issuer) you trust, e.g. **`citizen`** or **`employee`** 
-- ~~**`no.nav.security.oidc.issuer.[issuer name].uri`** - The OIDC provider configuration endpoint (meta-data)~~
-- **`no.nav.security.oidc.issuer.[issuer shortname].discoveryurl`** - The OIDC provider configuration endpoint (meta-data)
-- **`no.nav.security.oidc.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the ID token. For OIDC it is the client ID of the client responsible for aquiring the token.
+- **`no.nav.security.oidc.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a short name for that issuer (not the actual issuer value from the OIDC token, but a chosen name to represent config for the actual OIDC issuer) you trust, e.g. **`citizen`** or **`employee`** 
+- **`no.nav.security.oidc.issuer.[issuer shortname].discoveryurl`** - The OIDC provider configuration/discovery endpoint (metadata)
+- **`no.nav.security.oidc.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the ID token. For OIDC it is the client ID of the client responsible for acquiring the token.
 - **`no.nav.security.oidc.issuer.[issuer shortname].cookiename`** - The value of the cookie containing the ID token (not required, only neccessary if your api receives calls from a browser)
 
 ## Proxy support
 
-Request to external endpoints (i.e. your OpenID Connect provider) can be configured to use a proxy server. By default, the servers tries to read the property/environment value **`http.proxy`** or **`http_proxy`**. The value must be a valid URL, containing protocol, hostname and port - e.g. **`http://myproxy:8080`**. If no proxy configuration is specified, all communication to external services (internet bound), will be achieved without proxy (direct communication). If the **`http.proxy`** parameter name does not fit your environment (e.g. you want a common name for proxy config for all servers other than **`http.proxy`**, you can specify your own parameter name by configuring the **`http.proxy.parametername`**, or **`http_proxy_parametername`**. Example: **`http_proxy_parametername=http_proxy_uri`**. 
+Request to external endpoints (i.e. your OpenID Connect provider) can be configured to use a proxy server. By default, the module tries to read the property/environment value **`http.proxy`** or **`http_proxy`**. The value must be a valid URL, containing protocol, hostname and port - e.g. **`http://myproxy:8080`**. If no proxy configuration is specified, all communication to external services (internet bound), will be achieved without proxy (direct communication). If the **`http.proxy`** parameter name does not fit your environment (e.g. you want a common name for proxy config for all servers other than **`http.proxy`**, you can specify your own parameter name by configuring the **`http.proxy.parametername`**, or **`http_proxy_parametername`**. Example: **`http_proxy_parametername=http_proxy_uri`**. 
 
 ## Running inside an Istio enabled Kubernetes cluster
 
@@ -122,16 +119,20 @@ When running inside an [Istio](https://istio.io) enabled Kubernetes cluster, out
 
 ## Running your app locally while using these modules
 
-There is a separate module **oidc-spring-test** which you can use to generate token for local use. Please see separate [README](https://github.com/navikt/token-support/tree/master/oidc-spring-test) for more information.
+There is a separate module **oidc-spring-test** which you can use to generate tokens for local use. Please see separate [README](https://github.com/navikt/token-support/tree/master/oidc-spring-test) for more information. *Please make sure to never use the local mode properties in any other environment than your local development environment as the private keys to sign the token provided by oidc-spring-test is fully available here on github for all to see and use.*
 
-#### Snapshot versions
+
+
+## Build & Release
+
+### Snapshot versions
 
 Every commit to the `master` branch (or merged pull request) will trigger a
-release to the [Sonatype OSS snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/no/nav/java-codestyle/).
+release to the [Sonatype OSS snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/no/nav/security/).
 
-#### Releases
+### Releases
 
-In order to release a new version, clone this repository, and
+In order to release a new version (provided you have access), clone this repository, and
 
 ```bash
 # make sure we're up to date!
@@ -150,11 +151,11 @@ as well as which version number to bump to. This command will also do
 a `git push` on your behalf, which will update the remote git repository.
 Then, Travis CI will trigger a build, and deploy the artifact.
 
-First, it will appear in [Sonatype OSS releases](https://oss.sonatype.org/content/repositories/releases/no/nav/java-codestyle/),
-before eventually (a couple of minutes later) if is synced to [Maven Central](http://central.maven.org/maven2/no/nav/java-codestyle/).
+First, it will appear in [Sonatype OSS releases](https://oss.sonatype.org/content/repositories/releases/no/nav/security/),
+before eventually (a couple of minutes later) it is synced to [Maven Central](http://central.maven.org/maven2/no/nav/security/).
 
 
-#### Contact
+## Contact
 
 If you have any questions, please open an issue on the Github issue tracker.
 For NAV employees, you can ask questions at the Slack channel #bris.
