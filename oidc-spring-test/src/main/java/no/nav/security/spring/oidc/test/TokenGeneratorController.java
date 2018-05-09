@@ -60,6 +60,7 @@ public class TokenGeneratorController {
         response.addCookie(cookie);
         if (redirect != null) {
             response.sendRedirect(redirect);
+            return null;
         }
         return cookie;
     }
