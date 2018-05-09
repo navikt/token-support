@@ -132,7 +132,7 @@ release to the NAV internal snaphot repository
 
 #### Releases
 
-In order to release a new version run the following job in Jenkins - https://jenkins-bris.adeo.no/job/token-support/. 
+In order to release a new version run the following job in Jenkins -https://jenkins-bris.adeo.no/job/token-support-release/
 
 ### Sonatype OSS & Maven Central (coming soon)
 
