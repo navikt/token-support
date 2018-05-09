@@ -121,16 +121,29 @@ When running inside an [Istio](https://istio.io) enabled Kubernetes cluster, out
 
 There is a separate module **oidc-spring-test** which you can use to generate tokens for local use. Please see separate [README](https://github.com/navikt/token-support/tree/master/oidc-spring-test) for more information. *Please make sure to never use the local mode properties in any other environment than your local development environment as the private keys to sign the token provided by oidc-spring-test is fully available here on github for all to see and use.*
 
-
-
 ## Build & Release
 
-### Snapshot versions
+### NAV internal Nexus
+
+#### Snapshot versions
+
+Every commit to the `master` branch (or merged pull request) will trigger a
+release to the NAV internal snaphot repository
+
+#### Releases
+
+In order to release a new version run the following job in Jenkins - https://jenkins-bris.adeo.no/job/token-support/. 
+
+### Sonatype OSS & Maven Central (coming soon)
+
+The repo is currently set to private so releasing to Sonatype OSS and Maven Central will not work until the repo is set to public (in order for Travis to perform the build). 
+
+#### Snapshot versions
 
 Every commit to the `master` branch (or merged pull request) will trigger a
 release to the [Sonatype OSS snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/no/nav/security/).
 
-### Releases
+#### Releases
 
 In order to release a new version (provided you have access), clone this repository, and
 
@@ -139,7 +152,7 @@ In order to release a new version (provided you have access), clone this reposit
 git checkout master && git pull
 
 # This is the release command itself
-mvn release:prepare
+mvn -Pdeploy-to-sonatype release:prepare
 
 # This will clean up any local temporary files
 # that were used during the release.
