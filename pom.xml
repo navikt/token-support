@@ -35,6 +35,7 @@
 	</modules>
 
 	<properties>
+		<project.scm.id>github</project.scm.id>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<java.version>1.8</java.version>
