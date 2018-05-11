@@ -21,15 +21,22 @@ public class MultiIssuerConfigurationPropertiesTest {
 	@Test
 	public void test() {
 		assertFalse(config.getIssuer().isEmpty());
+		
 		assertTrue(config.getIssuer().containsKey("number1"));
 		assertEquals("http://metadata", config.getIssuer().get("number1").getDiscoveryUrl().toString());
-		assertEquals("aud1", config.getIssuer().get("number1").getAcceptedAudience());
+		assertTrue(config.getIssuer().get("number1").getAcceptedAudience().contains("aud1"));
 		assertEquals("idtoken", config.getIssuer().get("number1").getCookieName());
+		
 		assertTrue(config.getIssuer().containsKey("number2"));
 		assertEquals("http://metadata2", config.getIssuer().get("number2").getDiscoveryUrl().toString());
-		assertEquals("aud2", config.getIssuer().get("number2").getAcceptedAudience());
+		assertTrue(config.getIssuer().get("number2").getAcceptedAudience().contains("aud2"));
 		assertEquals(null, config.getIssuer().get("number2").getCookieName());
 		
+		assertTrue(config.getIssuer().containsKey("number3"));
+		assertEquals("http://metadata3", config.getIssuer().get("number3").getDiscoveryUrl().toString());
+		System.out.println("config: " + config.getIssuer().get("number3").getAcceptedAudience());
+		assertTrue(config.getIssuer().get("number3").getAcceptedAudience().contains("aud3") 
+					&& config.getIssuer().get("number3").getAcceptedAudience().contains("aud4"));
 	}
 
 }

@@ -10,6 +10,10 @@ package no.nav.security.oidc.exceptions;
 @SuppressWarnings("serial")
 public class OIDCTokenValidatorException extends Exception {
 	
+	public OIDCTokenValidatorException(String message){
+		super(message);
+	}
+	
 	public OIDCTokenValidatorException(String message, Throwable cause){
 		super(message,  cause);
 	}

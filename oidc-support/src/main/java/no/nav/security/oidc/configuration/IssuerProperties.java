@@ -1,25 +1,26 @@
 package no.nav.security.oidc.configuration;
 
 import java.net.URL;
+import java.util.List;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class IssuerProperties {
 	@NotNull
 	private URL discoveryUrl;
-	@NotBlank
-	private String acceptedAudience;
+	@NotEmpty
+	private List<String> acceptedAudience;
 	private String cookieName;
 	
 	public IssuerProperties() {}
 	
-	public IssuerProperties(URL discoveryUrl, String acceptedAudience) {
+	public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience) {
 		this.discoveryUrl = discoveryUrl;
 		this.acceptedAudience = acceptedAudience;
 	}
 	
-	public IssuerProperties(URL discoveryUrl, String acceptedAudience, String cookieName){
+	public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName){
 		this(discoveryUrl, acceptedAudience);
 		this.cookieName = cookieName;
 	}
@@ -40,11 +41,11 @@ public class IssuerProperties {
 		this.cookieName = cookieName;
 	}
 
-	public String getAcceptedAudience() {
-		return acceptedAudience != null ? acceptedAudience.trim() : acceptedAudience;
+	public List<String> getAcceptedAudience() {
+		return acceptedAudience;
 	}
 
-	public void setAcceptedAudience(String acceptedAudience) {
+	public void setAcceptedAudience(List<String> acceptedAudience) {
 		this.acceptedAudience = acceptedAudience;
 	}
 

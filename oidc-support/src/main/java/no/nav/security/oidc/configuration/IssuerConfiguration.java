@@ -9,6 +9,7 @@ import java.io.IOException;
  */
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.oauth2.sdk.ParseException;
@@ -21,7 +22,7 @@ public class IssuerConfiguration {
 
 	private String name;
 	private OIDCProviderMetadata metaData;
-	private String acceptedAudience;
+	private List<String> acceptedAudience;
 	private String cookieName;
 	private OIDCTokenValidator tokenValidator;
 	private ResourceRetriever resourceRetriever;
@@ -34,12 +35,12 @@ public class IssuerConfiguration {
 		this.cookieName = issuerProperties.getCookieName();
 	}
 	
-	public IssuerConfiguration(String name, URL discoveryUrl, String acceptedAudience,
+	public IssuerConfiguration(String name, URL discoveryUrl, List<String> acceptedAudience,
 			ResourceRetriever resourceRetriever) {
 		this(name, getProviderMetadata(resourceRetriever, discoveryUrl), acceptedAudience, resourceRetriever);
 	}
 	
-	public IssuerConfiguration(String name, OIDCProviderMetadata metaData, String acceptedAudience,
+	public IssuerConfiguration(String name, OIDCProviderMetadata metaData, List<String> acceptedAudience,
 			ResourceRetriever resourceRetriever)  {
 		this.name = name;
 		this.metaData = metaData;
@@ -52,7 +53,7 @@ public class IssuerConfiguration {
 		return name;
 	}
 
-	public String getAcceptedAudience() {
+	public List<String> getAcceptedAudience() {
 		return acceptedAudience;
 	}
 
