@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,7 +19,6 @@ import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.context.OIDCClaims;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.context.OIDCValidationContext;
-import no.nav.security.spring.oidc.validation.api.EnableOIDCTokenValidation;
 import no.nav.security.spring.oidc.validation.api.Protected;
 import no.nav.security.spring.oidc.validation.api.ProtectedWithClaims;
 import no.nav.security.spring.oidc.validation.api.Unprotected;
@@ -30,12 +30,12 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
     private String[] ignoreConfig;
     private Map<Object, Boolean> handlerFlags = new ConcurrentHashMap<>();
 
-    public OIDCTokenControllerHandlerInterceptor(Class<?> annotatedConfigurationClass,
+    public OIDCTokenControllerHandlerInterceptor(AnnotationAttributes enableOIDCTokenValidation,
             OIDCRequestContextHolder contextHolder) {
         this.contextHolder = contextHolder;
-        EnableOIDCTokenValidation config = annotatedConfigurationClass.getAnnotation(EnableOIDCTokenValidation.class);
-        if (config != null) {
-            ignoreConfig = config.ignore();
+                
+        if (enableOIDCTokenValidation != null) {
+            ignoreConfig = enableOIDCTokenValidation.getStringArray("ignore");
             if (ignoreConfig == null) {
                 ignoreConfig = new String[0];
             }

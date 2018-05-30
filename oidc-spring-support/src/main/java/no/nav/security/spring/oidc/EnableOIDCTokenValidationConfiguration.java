@@ -1,4 +1,5 @@
 package no.nav.security.spring.oidc;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.EnumSet;
@@ -12,8 +13,11 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -22,16 +26,19 @@ import no.nav.security.oidc.configuration.OIDCResourceRetriever;
 import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
+import no.nav.security.spring.oidc.validation.api.EnableOIDCTokenValidation;
 import no.nav.security.spring.oidc.validation.interceptor.BearerTokenClientHttpRequestInterceptor;
 import no.nav.security.spring.oidc.validation.interceptor.OIDCTokenControllerHandlerInterceptor;
 
 @Configuration
 @EnableConfigurationProperties(MultiIssuerProperties.class)
-public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer, EnvironmentAware {
+public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer, EnvironmentAware, ImportAware {
 
 	private Logger logger = LoggerFactory.getLogger(EnableOIDCTokenValidationConfiguration.class);
 	
 	private Environment env;
+	
+	private AnnotationAttributes enableOIDCTokenValidation;
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -42,6 +49,16 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 	public void setEnvironment(Environment env) {
 		this.env = env;
 	}
+	
+	@Override
+    public void setImportMetadata(AnnotationMetadata importMetadata) {
+        this.enableOIDCTokenValidation = AnnotationAttributes.fromMap(
+                importMetadata.getAnnotationAttributes(EnableOIDCTokenValidation.class.getName(), false));
+        if (this.enableOIDCTokenValidation == null) {
+            throw new IllegalArgumentException(
+                "@EnableOIDCTokenValidation is not present on importing class " + importMetadata.getClassName());
+        }
+    }
 	
 	@Bean 
 	public OIDCResourceRetriever oidcResourceRetriever(){
@@ -82,7 +99,7 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 	public OIDCTokenControllerHandlerInterceptor getControllerInterceptor() {
 		logger.debug("registering OIDC token controller handler interceptor");
 		OIDCTokenControllerHandlerInterceptor c = new OIDCTokenControllerHandlerInterceptor(
-				deduceMainApplicationClass(), // read config annotation from main class, deduce from this thread
+				enableOIDCTokenValidation,
 				new SpringOIDCRequestContextHolder());
 		return c;
 	}
@@ -101,21 +118,6 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 		return filterRegistration;
 	}
 	
-	private Class<?> deduceMainApplicationClass() {
-		try {
-			StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
-			for (StackTraceElement stackTraceElement : stackTrace) {
-				if ("main".equals(stackTraceElement.getMethodName())) {
-					return Class.forName(stackTraceElement.getClassName());
-				}
-			}
-		}
-		catch (ClassNotFoundException ex) {
-			// Swallow and continue
-		}
-		return null;
-	}
-	
 	private URL getConfiguredProxy() {
 		String proxyParameterName = env.getProperty("http.proxy.parametername", "http.proxy");
 		String proxyconfig = env.getProperty(proxyParameterName);
@@ -132,4 +134,8 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 		}
 		return proxy;		
 	}
+
+	AnnotationAttributes getEnableOIDCTokenValidation() {
+      return enableOIDCTokenValidation;
+    }
 }

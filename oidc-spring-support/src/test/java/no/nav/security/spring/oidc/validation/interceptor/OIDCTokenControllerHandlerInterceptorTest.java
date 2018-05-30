@@ -4,10 +4,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.annotation.Annotation;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.core.annotation.AnnotationAttributes;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -26,7 +31,11 @@ public class OIDCTokenControllerHandlerInterceptorTest {
 	public ExpectedException thrown = ExpectedException.none();
 	
 	private OIDCRequestContextHolder contextHolder = createContextHolder();
-	private OIDCTokenControllerHandlerInterceptor interceptor = new OIDCTokenControllerHandlerInterceptor(TestMainClass.class, contextHolder);
+    private Map<String, Object> annotationAttributesMap =
+        Stream.of(new AbstractMap.SimpleEntry<>("ignore", new String[] {"org.springframework"}))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));	    
+	private AnnotationAttributes annotationAttrs = AnnotationAttributes.fromMap(annotationAttributesMap);
+	private OIDCTokenControllerHandlerInterceptor interceptor = new OIDCTokenControllerHandlerInterceptor(annotationAttrs, contextHolder);
 	
 	@Test
 	public void testHandleProtectedAnnotation() {
