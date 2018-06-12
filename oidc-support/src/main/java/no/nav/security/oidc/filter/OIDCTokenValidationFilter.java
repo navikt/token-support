@@ -91,7 +91,11 @@ public class OIDCTokenValidationFilter implements Filter {
 			}
 		}
 		contextHolder.setOIDCValidationContext(validationContext);
-		chain.doFilter(request, response);		
+		try {
+			chain.doFilter(request, response);
+		} finally {
+			contextHolder.setOIDCValidationContext(null);
+		}
 	}
 
 }
