@@ -16,6 +16,8 @@ Provides token validation support through servlet filters, using the [Nimbus OAu
 
 Spring Boot specific wrapper around oidc-support. To enable oidc token validation for a spring boot application, simply annotate your SpringApplication class with **`@EnableOIDCTokenValidation`**. Optionally list the packages or classses you dont want token validations for (e.g. error controllers). A good start is listing the **`org.springframework`** - e.g. **`@EnableOIDCTokenValidation(ignore="org.springframework")`**. Use the **`@Unprotected`** or **`@Protected`** annotations at rest controller method/class level to indicate if token validation is required or not. 
 
+ 
+
 #### SpringApplication sample
 
 This annotation will enable token validation and token transportation/propagation through the service
@@ -84,23 +86,108 @@ public class ProductController {
 ```
 
 
+### oidc-jersey-support
+
+JAX-RS wrapper around oidc-support. Two steps are necessary to enable token validation:
+* Register the servlet filter **`JaxrsOIDCTokenValidationFilter`** with your servlet container to pick up the token of incoming requests  
+* Register the **`OidcContainerRequestFilter`** with your **`Application`** (plain JAX-RS) or **`ResourceConfig`** (Jersey) 
+  
+Use the **`@Unprotected`**, **`@Protected`** or **`@ProtectedWithClaims`** annotations on resource methods and/or classes indicate if token validation is required or not. Method annotations have precedence
+One additional step is required to pass the token do other services
+
+* Register **`OidcClientRequestFilter`** with your client
+
+
+#### Example
+
+Register the servlet filter with your container, as done in spring boots **`@SpringBootConfiguration`** in the snippet below. How you get hold of the configuration map of issuers is up to the implementor.
+
+```java
+    @Bean
+    public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterBean(MultiIssuerConfiguraton config) {
+        return new FilterRegistrationBean<>(new JaxrsOIDCTokenValidationFilter(config));
+    }
+
+    @Bean
+    public MultiIssuerConfiguraton multiIssuerConfiguration(Map<String, IssuerProperties> issuerConfiguration, OIDCResourceRetriever resourceRetriever) {
+        return new MultiIssuerConfiguraton(issuerConfiguration, resourceRetriever);
+    }
+
+    @Bean
+    public OIDCResourceRetriever oidcResourceRetriever() {
+        return new OIDCResourceRetriever();
+    }
+```
+
+How you configure the servlet filter is dependent on how you lauch your app, e.g. if you use spring or not, and wether you use tomcat or jetty
+
+#### Configure jersey
+
+There are two options, explicit registering of resources
+```java
+new ResourceConfig()
+  .register(OidcContainerRequestFilter.class)
+  // ...
+  .register(Resource.class);
+```
+or let jersey scan for Resources and/or **`@Provider`**-annotated classes
+```java
+new ResourceConfig()
+  .packages("no.nav.security.oidc.jaxrs", "x.y.z.resourcepackage");
+```
+
+#### Rest controller sample with method annotations
+
+This example shows
+
+- First method - An unprotected endpoint. No token is required to use this endpoint.
+- Second method - A protected endpoint. This endpoint will require a valid token from the "employee" issuer. 
+- Third method - A protected endpoint. This endpoint will require a valid token from one of the configured issuers.
+- Fourth method - A non-annotated endpoint. This endpoint will not be accessible from outside the server (will return a 501 NOT_IMPLEMENTED). 
+
+```java
+@Path("/rest")
+public class ProductResource {
+	
+    // ...
+	
+  @GET
+  @PATH("/product/")
+  @Unprotected
+  public List<Product> list() {
+    return service.list();
+  }
+	
+  @POST
+  @PATH("/product")
+  @Protected
+  public Product add(Product product) {		
+    return service.create(product);
+  }
+	
+  @DELETE
+  @PATH("/product/{id}")
+  @ProtectedWithClaims(issuer = "manager", claimMap = { "acr=Level4" })
+  public void add(String id) {		
+    return service.delete(id);   
+  }
+
+}
+```
+
+
 
 ## Configuration
 
 Add the modules as Maven dependencies.
 
-<u>With Spring:</u>
-
 ```xml
    <dependency>     
         <groupId>no.nav.security</groupId>
-        <artifactId>oidc-spring-support</artifactId>
-        <version>${oidc-spring-support.version}</version>
+        <artifactId>oidc-jersey-support</artifactId>
+        <version>${oidc-support.version}</version>
     </dependency>
 ```
-<u>Without Spring:</u> Add only the oidc-support artifact.
-
-If using Spring, the modules will be autoconfigured in the applicationcontext if you have the  **`@EnableOIDCTokenValidation`** annotation on your SpringApplication class.
 
 ### Required properties (yaml or properties)
 
