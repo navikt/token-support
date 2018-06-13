@@ -76,7 +76,6 @@ public class OidcContainerRequestFilter implements ContainerRequestFilter {
         }
         logger.debug("method " + resourceInfo.getResourceMethod() + " not marked, access denied (returning NOT_IMPLEMENTED)");
 
-        // TODO throw proper exception
         throw new WebApplicationException("Server misconfigured - controller/method ["
                     + resourceInfo.getResourceClass().getName() + "." + resourceInfo.getResourceMethod().getName()
                     + "] not annotated @Unprotected, @Protected or added to ignore list",
@@ -109,12 +108,10 @@ public class OidcContainerRequestFilter implements ContainerRequestFilter {
                         "could not find token for issuer '%s' in validation context. check your configuration.",
                         issuer));
                 throw new WebApplicationException("Authorization token not authorized", Response.Status.UNAUTHORIZED);
-                //throw new OIDCUnauthorizedException("Authorization token not authorized");
             }
             if (!containsRequiredClaims(tokenClaims, claims)) {
                 logger.error("token does not contain all annotated claims");
                 throw new WebApplicationException("Authorization token not authorized", Response.Status.FORBIDDEN);
-                //throw new OIDCUnauthorizedException("Authorization token not authorized");
             }
         }
     }
