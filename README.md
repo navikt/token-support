@@ -179,12 +179,28 @@ public class ProductResource {
 
 ## Configuration
 
-Add the modules as Maven dependencies.
-
+Add the modules that you need as Maven dependencies.
+* oidc-spring-support:
+```xml
+   <dependency>     
+        <groupId>no.nav.security</groupId>
+        <artifactId>oidc-spring-support</artifactId>
+        <version>${oidc-support.version}</version>
+    </dependency>
+```
+* oidc-jersey-support:
 ```xml
    <dependency>     
         <groupId>no.nav.security</groupId>
         <artifactId>oidc-jersey-support</artifactId>
+        <version>${oidc-support.version}</version>
+    </dependency>
+```
+* oidc-support:
+```xml
+   <dependency>     
+        <groupId>no.nav.security</groupId>
+        <artifactId>oidc-support</artifactId>
         <version>${oidc-support.version}</version>
     </dependency>
 ```
