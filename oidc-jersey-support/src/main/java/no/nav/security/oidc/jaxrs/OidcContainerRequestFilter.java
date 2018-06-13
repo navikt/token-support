@@ -1,16 +1,13 @@
 package no.nav.security.oidc.jaxrs;
 
+import no.nav.security.oidc.api.Protected;
+import no.nav.security.oidc.api.ProtectedWithClaims;
+import no.nav.security.oidc.api.Unprotected;
 import no.nav.security.oidc.context.OIDCClaims;
 import no.nav.security.oidc.context.OIDCValidationContext;
-import no.nav.security.spring.oidc.validation.api.Protected;
-import no.nav.security.spring.oidc.validation.api.ProtectedWithClaims;
-import no.nav.security.spring.oidc.validation.api.Unprotected;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -22,12 +19,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.lang.annotation.Annotation;
 
-// Should considering making it completely spring free.. It is not possible to make it spring free while also keepign
-// the filters spring enabled. Spring will not inject the request scoped variables (ResourceInfo) correctly if
-// @Scope + @Component is removed
-// TODO or can it be configured with the @Bean annotation - as long as the class isn't autodiscovered/scanned
-@Component
-@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Provider
 public class OidcContainerRequestFilter implements ContainerRequestFilter {
 

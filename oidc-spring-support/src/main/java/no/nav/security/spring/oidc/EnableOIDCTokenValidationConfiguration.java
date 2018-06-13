@@ -26,7 +26,7 @@ import no.nav.security.oidc.configuration.OIDCResourceRetriever;
 import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
-import no.nav.security.spring.oidc.validation.api.EnableOIDCTokenValidation;
+import no.nav.security.spring.oidc.api.EnableOIDCTokenValidation;
 import no.nav.security.spring.oidc.validation.interceptor.BearerTokenClientHttpRequestInterceptor;
 import no.nav.security.spring.oidc.validation.interceptor.OIDCTokenControllerHandlerInterceptor;
 

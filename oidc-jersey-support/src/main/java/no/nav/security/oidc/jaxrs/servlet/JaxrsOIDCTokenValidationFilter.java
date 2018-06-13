@@ -4,9 +4,9 @@ import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
 import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
 import no.nav.security.oidc.jaxrs.OidcRequestContext;
 
-public class JerseyOIDCTokenValidationFilter extends OIDCTokenValidationFilter {
+public class JaxrsOIDCTokenValidationFilter extends OIDCTokenValidationFilter {
 
-    public JerseyOIDCTokenValidationFilter(MultiIssuerConfiguraton oidcConfig) {
+    public JaxrsOIDCTokenValidationFilter(MultiIssuerConfiguraton oidcConfig) {
         super(oidcConfig, OidcRequestContext.getHolder());
     }
 }

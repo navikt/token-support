@@ -1,6 +1,6 @@
 package no.nav.security.oidc.jaxrs.rest;
 
-import no.nav.security.spring.oidc.validation.api.Protected;
+import no.nav.security.oidc.api.Protected;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;

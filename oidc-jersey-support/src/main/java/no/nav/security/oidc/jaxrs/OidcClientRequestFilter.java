@@ -4,7 +4,6 @@ import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.context.OIDCValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.ClientRequestContext;
@@ -13,11 +12,6 @@ import java.io.IOException;
 
 import static java.util.Collections.singletonList;
 
-// Should considering making it completely spring free.. It is not possible to make it spring free while also keepign
-// the filters spring enabled. Spring will not inject the request scoped variables (ResourceInfo) correctly if
-// @Scope + @Component is removed
-// TODO or can it be configured with the @Bean annotation - as long as the class isn't autodiscovered/scanned
-@Component
 public class OidcClientRequestFilter implements ClientRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(OidcClientRequestFilter.class);

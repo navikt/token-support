@@ -1,4 +1,4 @@
-package no.nav.security.spring.oidc.validation.api;
+package no.nav.security.oidc.api;
 /*
  * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
  * OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION

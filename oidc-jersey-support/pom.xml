@@ -28,11 +28,16 @@
 		</dependency>
 
 		<dependency>
-			<!-- TODO this needs to be removed, the API should be in its own module or maybe in token-support -->
-			<groupId>${project.groupId}</groupId>
-			<artifactId>oidc-spring-support</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
