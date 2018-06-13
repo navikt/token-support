@@ -16,7 +16,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jwt.SignedJWT;
 
-import no.nav.security.spring.oidc.validation.api.Unprotected;
+import no.nav.security.oidc.api.Unprotected;
 
 @RestController
 @RequestMapping("/local")

@@ -22,8 +22,8 @@ import no.nav.security.oidc.context.OIDCClaims;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.context.OIDCValidationContext;
 import no.nav.security.oidc.context.TokenContext;
-import no.nav.security.spring.oidc.validation.api.EnableOIDCTokenValidation;
-import no.nav.security.spring.oidc.validation.api.ProtectedWithClaims;
+import no.nav.security.spring.oidc.api.EnableOIDCTokenValidation;
+import no.nav.security.oidc.api.ProtectedWithClaims;
 
 public class OIDCTokenControllerHandlerInterceptorTest {
 

@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import no.nav.security.spring.oidc.validation.api.EnableOIDCTokenValidation;
+import no.nav.security.spring.oidc.api.EnableOIDCTokenValidation;
 
 @RunWith(SpringRunner.class)
 @EnableOIDCTokenValidation(ignore = {EnableOIDCTokenValidationConfigurationTest.PACKAGE_TO_IGNORE})

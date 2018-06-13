@@ -19,9 +19,9 @@ import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.context.OIDCClaims;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.context.OIDCValidationContext;
-import no.nav.security.spring.oidc.validation.api.Protected;
-import no.nav.security.spring.oidc.validation.api.ProtectedWithClaims;
-import no.nav.security.spring.oidc.validation.api.Unprotected;
+import no.nav.security.oidc.api.Protected;
+import no.nav.security.oidc.api.ProtectedWithClaims;
+import no.nav.security.oidc.api.Unprotected;
 
 public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor {
 

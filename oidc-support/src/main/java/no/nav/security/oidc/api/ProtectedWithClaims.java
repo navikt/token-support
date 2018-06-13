@@ -1,4 +1,4 @@
-package no.nav.security.spring.oidc.validation.api;
+package no.nav.security.oidc.api;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
