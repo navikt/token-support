@@ -28,6 +28,7 @@ node {
     }
 
     stage("Build & Deploy Snapshot") {
+        sh "mkdir -p /tmp/${application}"   
 		def pom = readMavenPom file: 'pom.xml'
 		
 		script {
