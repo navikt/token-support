@@ -24,7 +24,7 @@ public class Config {
 
     @Bean
     ServletWebServerFactory servletWebServerFactory() {
-        return new JettyServletWebServerFactory();
+        return new JettyServletWebServerFactory(0);
     }
 
     @Bean
