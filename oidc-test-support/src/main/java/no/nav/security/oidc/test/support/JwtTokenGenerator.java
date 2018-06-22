@@ -1,4 +1,4 @@
-package no.nav.security.spring.oidc.test;
+package no.nav.security.oidc.test.support;
 
 import java.util.Date;
 import java.util.UUID;

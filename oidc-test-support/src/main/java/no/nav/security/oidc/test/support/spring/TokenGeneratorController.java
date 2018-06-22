@@ -1,4 +1,4 @@
-package no.nav.security.spring.oidc.test;
+package no.nav.security.oidc.test.support.spring;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -7,6 +7,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import no.nav.security.oidc.test.support.JwkGenerator;
+import no.nav.security.oidc.test.support.JwtTokenGenerator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

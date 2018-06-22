@@ -1,4 +1,4 @@
-package no.nav.security.spring.oidc.test;
+package no.nav.security.oidc.test.support;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,14 +10,10 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
-
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.IOUtils;
 
-@Component
 public class JwkGenerator {
 	public static String DEFAULT_KEYID = "localhost-signer";
 	public static String DEFAULT_JWKSET_FILE = "/jwkset.json";
@@ -34,7 +30,7 @@ public class JwkGenerator {
 	
 	public static JWKSet getJWKSet() {
 		try {
-			return JWKSet.parse(IOUtils.readInputStreamToString(new ClassPathResource(DEFAULT_JWKSET_FILE).getInputStream(), Charset.forName("UTF-8")));	
+			return JWKSet.parse(IOUtils.readInputStreamToString(JwkGenerator.class.getResourceAsStream(DEFAULT_JWKSET_FILE), Charset.forName("UTF-8")));
 		} catch (IOException | ParseException io){
 			throw new RuntimeException(io);
 		}

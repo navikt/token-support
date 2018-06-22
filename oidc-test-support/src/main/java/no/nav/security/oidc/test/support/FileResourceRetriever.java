@@ -1,4 +1,4 @@
-package no.nav.security.spring.oidc.test;
+package no.nav.security.oidc.test.support;
 
 /*
  * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS

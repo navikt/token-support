@@ -7,7 +7,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-@Component
 @Path("class/protected/with/claims")
 @ProtectedWithClaims(issuer = "protected", claimMap = {"acr=Level4"})
 public class ProtectedWithClaimsClassResource {

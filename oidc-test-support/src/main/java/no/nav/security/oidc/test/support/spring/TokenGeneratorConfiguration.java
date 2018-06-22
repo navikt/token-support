@@ -1,5 +1,7 @@
-package no.nav.security.spring.oidc.test;
+package no.nav.security.oidc.test.support.spring;
 
+import no.nav.security.oidc.test.support.FileResourceRetriever;
+import no.nav.security.oidc.test.support.JwkGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -19,5 +21,10 @@ public class TokenGeneratorConfiguration {
     @Primary
     OIDCResourceRetriever overrideOidcResourceRetriever(){
     	return new FileResourceRetriever("/metadata.json", "/jwkset.json");
-    }	
+    }
+
+    @Bean
+	JwkGenerator jwkGenerator() {
+		return new JwkGenerator();
+	}
 }
