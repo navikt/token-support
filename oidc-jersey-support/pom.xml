@@ -96,7 +96,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>oidc-spring-test</artifactId>
+            <artifactId>oidc-test-support</artifactId>
             <scope>test</scope>
         </dependency>
 

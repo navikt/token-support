@@ -1,8 +1,8 @@
 package no.nav.security.oidc.jaxrs;
 
 import no.nav.security.oidc.OIDCConstants;
-import no.nav.security.spring.oidc.test.JwtTokenGenerator;
-import no.nav.security.spring.oidc.test.TokenGeneratorConfiguration;
+import no.nav.security.oidc.test.support.JwtTokenGenerator;
+import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +23,7 @@ import static org.hamcrest.core.Is.is;
 @RunWith(SpringRunner.class)
 @DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = {Config.class,TokenGeneratorConfiguration.class})
+        classes = Config.class)
 public class ServerFilterProtectedMethodUnknownIssuerTest {
 
     @Value("${local.server.port}")

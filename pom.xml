@@ -30,7 +30,7 @@
 	<modules>
 		<module>oidc-support</module>
 		<module>oidc-spring-support</module>
-		<module>oidc-spring-test</module>
+		<module>oidc-test-support</module>
 		<module>oidc-jersey-support</module>
 	</modules>
 
@@ -174,7 +174,7 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>oidc-spring-test</artifactId>
+				<artifactId>oidc-test-support</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

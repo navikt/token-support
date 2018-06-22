@@ -92,7 +92,7 @@ public class OidcContainerRequestFilter implements ContainerRequestFilter {
     private void handleProtectedAnnotation(OIDCValidationContext validationContext) {
 
         if (!validationContext.hasValidToken()) {
-            logger.error("no token found in validation context");
+            logger.info("No token found in validation context");
             throw new WebApplicationException("Authorization token required", Response.Status.UNAUTHORIZED);
         }
     }
@@ -104,13 +104,13 @@ public class OidcContainerRequestFilter implements ContainerRequestFilter {
         if (StringUtils.isNotBlank(issuer)) {
             OIDCClaims tokenClaims = validationContext.getClaims(issuer);
             if (tokenClaims == null) {
-                logger.error(String.format(
+                logger.info(String.format(
                         "could not find token for issuer '%s' in validation context. check your configuration.",
                         issuer));
                 throw new WebApplicationException("Authorization token not authorized", Response.Status.UNAUTHORIZED);
             }
             if (!containsRequiredClaims(tokenClaims, claims)) {
-                logger.error("token does not contain all annotated claims");
+                logger.info("token does not contain all annotated claims");
                 throw new WebApplicationException("Authorization token not authorized", Response.Status.FORBIDDEN);
             }
         }

@@ -6,6 +6,8 @@ import no.nav.security.oidc.configuration.OIDCResourceRetriever;
 import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
 import no.nav.security.oidc.jaxrs.rest.*;
 import no.nav.security.oidc.jaxrs.servlet.JaxrsOIDCTokenValidationFilter;
+import no.nav.security.oidc.test.support.FileResourceRetriever;
+import no.nav.security.oidc.test.support.jersey.TestTokenGeneratorResource;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
@@ -16,6 +18,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.context.request.RequestContextListener;
 
 @SpringBootConfiguration
@@ -37,14 +40,15 @@ public class Config {
         return jerseyServletRegistration;
     }
 
+
     @Bean
     public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterBean(MultiIssuerConfiguraton config) {
         return new FilterRegistrationBean<>(new JaxrsOIDCTokenValidationFilter(config));
     }
 
     @Bean
-    public MultiIssuerConfiguraton multiIssuerConfiguration(MultiIssuerProperties issuerProperties, OIDCResourceRetriever resourceRetriever) {
-        return new MultiIssuerConfiguraton(issuerProperties.getIssuer(), resourceRetriever);
+    public MultiIssuerConfiguraton multiIssuerConfiguration(MultiIssuerProperties issuerProperties) {
+        return new MultiIssuerConfiguraton(issuerProperties.getIssuer(), new FileResourceRetriever("/metadata.json", "/jwkset.json"));
     }
 
     @Bean
@@ -70,6 +74,7 @@ public class Config {
             register(UnprotectedClassResource.class);
             register(WithoutAnnotationsResource.class);
 
+            register(TestTokenGeneratorResource.class);
         }
 
     }

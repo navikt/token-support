@@ -1,4 +1,4 @@
-package no.nav.security.spring.oidc.test;
+package no.nav.security.oidc.test.support.spring;
 
 import static org.springframework.boot.SpringApplication.run;
 
