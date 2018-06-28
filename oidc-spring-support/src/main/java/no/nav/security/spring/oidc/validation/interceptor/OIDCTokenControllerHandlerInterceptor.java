@@ -16,12 +16,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import no.nav.security.oidc.OIDCConstants;
-import no.nav.security.oidc.context.OIDCClaims;
-import no.nav.security.oidc.context.OIDCRequestContextHolder;
-import no.nav.security.oidc.context.OIDCValidationContext;
 import no.nav.security.oidc.api.Protected;
 import no.nav.security.oidc.api.ProtectedWithClaims;
 import no.nav.security.oidc.api.Unprotected;
+import no.nav.security.oidc.context.OIDCClaims;
+import no.nav.security.oidc.context.OIDCRequestContextHolder;
+import no.nav.security.oidc.context.OIDCValidationContext;
 
 public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor {
 
@@ -33,7 +33,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
     public OIDCTokenControllerHandlerInterceptor(AnnotationAttributes enableOIDCTokenValidation,
             OIDCRequestContextHolder contextHolder) {
         this.contextHolder = contextHolder;
-                
+
         if (enableOIDCTokenValidation != null) {
             ignoreConfig = enableOIDCTokenValidation.getStringArray("ignore");
             if (ignoreConfig == null) {
@@ -130,8 +130,8 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         if (StringUtils.isNotBlank(issuer)) {
             OIDCClaims tokenClaims = validationContext.getClaims(issuer);
             if (tokenClaims == null) {
-                logger.error(String.format(
-                        "could not find token for issuer '%s' in validation context. check your configuration.",
+                logger.trace(String.format(
+                        "could not find token for issuer '%s' in validation context. Login may be required.",
                         issuer));
                 throw new OIDCUnauthorizedException("Authorization token not authorized");
             }
