@@ -6,7 +6,6 @@ package no.nav.security.oidc.context;
  * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
  */
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.List;
 
 import com.nimbusds.jwt.JWT;
