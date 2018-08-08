@@ -6,10 +6,12 @@ package no.nav.security.oidc.context;
  * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
  */
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
+import net.minidev.json.JSONArray;
 
 public class OIDCClaims {
 	
@@ -47,8 +49,18 @@ public class OIDCClaims {
 	}
 	
 	public boolean containsClaim(String name, String value){
-		String claimValue = get(name); 
-		return claimValue != null && claimValue.equals(value); 
+		Object claim = getClaimSet().getClaim(name);
+		if (claim == null) {
+			return false;
+		}
+		if (claim instanceof String ) {
+			String claimAsString = (String)claim;
+			return claimAsString.equals(value);
+		}
+		if (claim instanceof JSONArray) {
+			JSONArray claimasList = (JSONArray) claim;
+			return claimasList.contains(value);
+		}
+		return false;
 	}
-
 }
