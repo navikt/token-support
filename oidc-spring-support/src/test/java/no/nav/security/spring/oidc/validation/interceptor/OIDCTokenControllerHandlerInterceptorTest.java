@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.minidev.json.JSONArray;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -65,8 +66,10 @@ public class OIDCTokenControllerHandlerInterceptorTest {
 		OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
 		assertTrue("claims do not match", interceptor.containsRequiredClaims(claims, "customClaim=shouldmatch", "acr=Level4", ""));
 		assertTrue("claims do not match", interceptor.containsRequiredClaims(claims, " customClaim = shouldmatch "));
+		assertTrue("groups claim do not match", interceptor.containsRequiredClaims(claims, "groups=123", "groups=456"));
 		assertFalse("claims match", interceptor.containsRequiredClaims(claims, "customClaim=shouldNOTmatch"));
-		assertFalse("claims match", interceptor.containsRequiredClaims(claims, "notintoken=value"));
+		assertFalse("claims mach", interceptor.containsRequiredClaims(claims, "notintoken=value"));
+		assertFalse("group claim match", interceptor.containsRequiredClaims(claims, "groups=notexist"));
 	}
 	
 	private OIDCValidationContext createOidcValidationContext(OIDCClaims claims1){
@@ -91,6 +94,7 @@ public class OIDCTokenControllerHandlerInterceptorTest {
 				    .subject("subject")
 				    .issuer("http//issuer1")
 				    .claim("acr", "Level4")
+				 	.claim("groups", new JSONArray().appendElement("123").appendElement("456"))
 				    .claim(name, value).build());
 		 OIDCClaims claims = new OIDCClaims(jwt);
 		 return claims;
