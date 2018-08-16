@@ -14,7 +14,7 @@ node {
     stage("Initialization") {
         cleanWs()
         withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-           withEnv(['HTTPS_PROXY=http://webproxy-utvikler.nav.no:8088']) {
+           withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
             sh(script: "git clone https://${token}:x-oauth-basic@github.com/${repo}/${app}.git .")
            }
          }
@@ -48,7 +48,7 @@ def notifyGithub(owner, app, context, sha, state, description) {
     ]
     def postBodyString = groovy.json.JsonOutput.toJson(postBody)
 
-    withEnv(['HTTPS_PROXY=http://webproxy-utvikler.nav.no:8088']) {
+    withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
         withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
             sh """
                 curl -H 'Authorization: token ${token}' \
