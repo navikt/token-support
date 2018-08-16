@@ -18,6 +18,8 @@ import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jose.util.Resource;
 
+import static no.nav.security.oidc.OIDCConstants.NO_PROXY_HOSTNAME;
+
 
 public class OIDCResourceRetriever extends DefaultResourceRetriever {
 
@@ -117,7 +119,7 @@ public class OIDCResourceRetriever extends DefaultResourceRetriever {
 	private HttpURLConnection openConnection(URL url) throws IOException, URISyntaxException{
 		Proxy proxy = getProxy();
 		URL urlToOpen = isUsePlainTextForHttps() ? urlWithPlainTextForHttps(url) : url;
-		if(proxy == null){
+		if(proxy == null || url.getHost().contains(NO_PROXY_HOSTNAME)){
 			return (HttpURLConnection) urlToOpen.openConnection();		
 		} else {
 			return (HttpURLConnection) urlToOpen.openConnection(proxy);
