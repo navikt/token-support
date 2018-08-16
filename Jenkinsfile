@@ -8,7 +8,7 @@ node {
     def repo = "navikt"
     def app = "token-support"
     def committer, committerEmail, changelog, releaseVersion
-    def mvnHome = tool "maven-3.3.9"
+    def mvnHome = tool "maven-3.5.3"
     def mvn = "${mvnHome}/bin/mvn"
    
 
