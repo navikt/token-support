@@ -20,14 +20,14 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 
 import no.nav.security.oidc.OIDCConstants;
-import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
+import no.nav.security.oidc.configuration.MultiIssuerConfiguration;
 import no.nav.security.oidc.context.TokenContext;
 
 public class TokenRetriever {
 
 	private static Logger logger = LoggerFactory.getLogger(TokenRetriever.class);
 
-	public static List<TokenContext> retrieveTokens(MultiIssuerConfiguraton config, HttpServletRequest request) {
+	public static List<TokenContext> retrieveTokens(MultiIssuerConfiguration config, HttpServletRequest request) {
 		List<TokenContext> tokens = new ArrayList<>();
 
 		logger.debug("checking authorization header ...");
@@ -75,7 +75,7 @@ public class TokenRetriever {
 		return tokens;
 	}
 
-	private static Optional<TokenContext> createTokenContext(MultiIssuerConfiguraton config, String token){
+	private static Optional<TokenContext> createTokenContext(MultiIssuerConfiguration config, String token){
 		try {
 			JWT jwt = JWTParser.parse(token);
 			if (config.getIssuer(jwt.getJWTClaimsSet().getIssuer()) != null) {

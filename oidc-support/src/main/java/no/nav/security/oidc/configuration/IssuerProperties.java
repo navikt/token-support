@@ -12,6 +12,8 @@ public class IssuerProperties {
 	@NotEmpty
 	private List<String> acceptedAudience;
 	private String cookieName;
+	private URL proxyUrl;
+	private boolean usePlaintextForHttps = false;
 	
 	public IssuerProperties() {}
 	
@@ -49,9 +51,29 @@ public class IssuerProperties {
 		this.acceptedAudience = acceptedAudience;
 	}
 
+	public URL getProxyUrl() {
+		return proxyUrl;
+	}
+
+	public void setProxyUrl(URL proxyUrl) {
+		this.proxyUrl = proxyUrl;
+	}
+
+	public boolean isUsePlaintextForHttps() {
+		return usePlaintextForHttps;
+	}
+
+	public void setUsePlaintextForHttps(boolean usePlaintextForHttps) {
+		this.usePlaintextForHttps = usePlaintextForHttps;
+	}
+
 	@Override
 	public String toString() {
-		return "IssuerProperties [discoveryUrl=" + discoveryUrl + ", cookieName="
-				+ cookieName + ", acceptedAudience=" + acceptedAudience + "]";
+		return "IssuerProperties{" +
+				"discoveryUrl=" + discoveryUrl +
+				", acceptedAudience=" + acceptedAudience +
+				", cookieName='" + cookieName + '\'' +
+				", proxyUrl=" + proxyUrl +
+				'}';
 	}
 }

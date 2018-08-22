@@ -1,7 +1,7 @@
 package no.nav.security.oidc.jaxrs;
 
 import no.nav.security.oidc.config.MultiIssuerProperties;
-import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
+import no.nav.security.oidc.configuration.MultiIssuerConfiguration;
 import no.nav.security.oidc.configuration.OIDCResourceRetriever;
 import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
 import no.nav.security.oidc.jaxrs.rest.*;
@@ -18,7 +18,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.web.context.request.RequestContextListener;
 
 @SpringBootConfiguration
@@ -42,13 +41,13 @@ public class Config {
 
 
     @Bean
-    public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterBean(MultiIssuerConfiguraton config) {
+    public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterBean(MultiIssuerConfiguration config) {
         return new FilterRegistrationBean<>(new JaxrsOIDCTokenValidationFilter(config));
     }
 
     @Bean
-    public MultiIssuerConfiguraton multiIssuerConfiguration(MultiIssuerProperties issuerProperties) {
-        return new MultiIssuerConfiguraton(issuerProperties.getIssuer(), new FileResourceRetriever("/metadata.json", "/jwkset.json"));
+    public MultiIssuerConfiguration multiIssuerConfiguration(MultiIssuerProperties issuerProperties) {
+        return new MultiIssuerConfiguration(issuerProperties.getIssuer(), new FileResourceRetriever("/metadata.json", "/jwkset.json"));
     }
 
     @Bean
