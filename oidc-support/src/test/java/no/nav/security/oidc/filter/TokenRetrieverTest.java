@@ -21,7 +21,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -65,11 +69,12 @@ public class TokenRetrieverTest {
         Map<String, IssuerProperties> issuerPropertiesMap = createIssuerPropertiesMap("issuer1", "cookie1");
         issuerPropertiesMap.putAll(createIssuerPropertiesMap("issuer2", "cookie1"));
 
-        MultiIssuerConfiguraton config = new MultiIssuerConfiguraton(issuerPropertiesMap, new NoopResourceRetriever("issuer1"));
+        MultiIssuerConfiguraton config = new MultiIssuerConfiguraton(issuerPropertiesMap, new NoopResourceRetriever());
+
         String issuer1Token = createJWT("issuer1");
         when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("cookie1",issuer1Token)});
-        assertEquals("issuer1", TokenRetriever.retrieveTokens(config, request).get(0).getIssuer());
         assertEquals(1, TokenRetriever.retrieveTokens(config, request).size());
+        assertEquals("issuer1", TokenRetriever.retrieveTokens(config, request).get(0).getIssuer());
     }
 
     private Map<String, IssuerProperties> createIssuerPropertiesMap(String issuer, String cookieName) throws URISyntaxException, MalformedURLException {
@@ -88,25 +93,14 @@ public class TokenRetrieverTest {
 
     class NoopResourceRetriever extends OIDCResourceRetriever {
 
-        private String issuer;
-
-        public NoopResourceRetriever(){
-
-        }
-        public NoopResourceRetriever(String issuer){
-            this.issuer = issuer;
-        }
-
         @Override
         public Resource retrieveResource(URL url) throws IOException {
-            String content = getContentFromFile(url);
-            if(issuer != null){
-                content = content.replace("$ISSUER", this.issuer);
-            }
+            String content = getContentFromFile();
+            content = content.replace("$ISSUER", url.toString());
             return new Resource(content, "application/json");
         }
 
-        private String getContentFromFile(URL url) throws IOException {
+        private String getContentFromFile() throws IOException {
             return IOUtils.readInputStreamToString( getInputStream("/metadata.json"), Charset.forName("UTF-8"));
         }
 
