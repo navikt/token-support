@@ -5,7 +5,7 @@ import com.nimbusds.jose.util.Resource;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import no.nav.security.oidc.configuration.IssuerProperties;
-import no.nav.security.oidc.configuration.MultiIssuerConfiguraton;
+import no.nav.security.oidc.configuration.MultiIssuerConfiguration;
 import no.nav.security.oidc.configuration.OIDCResourceRetriever;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class TokenRetrieverTest {
 
     @Test
     public void testRetrieveTokensInHeader() throws URISyntaxException, MalformedURLException {
-        MultiIssuerConfiguraton config = new MultiIssuerConfiguraton(createIssuerPropertiesMap("issuer1", "cookie1"), new NoopResourceRetriever());
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"), new NoopResourceRetriever());
         String issuer1Token = createJWT("issuer1");
         when(request.getHeader("Authorization")).thenReturn("Bearer " + issuer1Token);
         assertEquals("issuer1", TokenRetriever.retrieveTokens(config, request).get(0).getIssuer());
@@ -50,7 +50,7 @@ public class TokenRetrieverTest {
 
     @Test
     public void testRetrieveTokensInHeaderIssuerNotConfigured() throws URISyntaxException, MalformedURLException {
-        MultiIssuerConfiguraton config = new MultiIssuerConfiguraton(createIssuerPropertiesMap("issuer1", "cookie1"), new NoopResourceRetriever());
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"), new NoopResourceRetriever());
         String issuer1Token = createJWT("issuerNotConfigured");
         when(request.getHeader("Authorization")).thenReturn("Bearer " + issuer1Token);
         assertEquals(0, TokenRetriever.retrieveTokens(config, request).size());
@@ -58,7 +58,7 @@ public class TokenRetrieverTest {
 
     @Test
     public void testRetrieveTokensInCookie() throws URISyntaxException, MalformedURLException {
-        MultiIssuerConfiguraton config = new MultiIssuerConfiguraton(createIssuerPropertiesMap("issuer1", "cookie1"), new NoopResourceRetriever());
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"), new NoopResourceRetriever());
         String issuer1Token = createJWT("issuer1");
         when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("cookie1",issuer1Token)});
         assertEquals("issuer1", TokenRetriever.retrieveTokens(config, request).get(0).getIssuer());
@@ -69,7 +69,7 @@ public class TokenRetrieverTest {
         Map<String, IssuerProperties> issuerPropertiesMap = createIssuerPropertiesMap("issuer1", "cookie1");
         issuerPropertiesMap.putAll(createIssuerPropertiesMap("issuer2", "cookie1"));
 
-        MultiIssuerConfiguraton config = new MultiIssuerConfiguraton(issuerPropertiesMap, new NoopResourceRetriever());
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(issuerPropertiesMap, new NoopResourceRetriever());
 
         String issuer1Token = createJWT("issuer1");
         when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("cookie1",issuer1Token)});
