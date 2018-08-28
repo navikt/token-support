@@ -5,8 +5,10 @@ package no.nav.security.oidc.filter;
  * ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
  * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
  */
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -37,11 +39,10 @@ public class TokenRetriever {
 					String[] pair = authElement.split(" ");
 					if (pair[0].trim().equalsIgnoreCase("bearer")) {
 						String token = pair[1].trim();
-						JWT jwt = JWTParser.parse(token);
-						if (config.getIssuer(jwt.getJWTClaimsSet().getIssuer()) != null) {
-							String issuer = config.getIssuer(jwt.getJWTClaimsSet().getIssuer()).getName();
-							tokens.add(new TokenContext(issuer, token));
-							logger.debug("found bearer token for issuer {} in Authorization header. adding new unvalidated tokencontext.", issuer);
+						Optional<TokenContext> tokenContext = createTokenContext(config, token);
+						if (tokenContext.isPresent()) {
+							tokens.add(tokenContext.get());
+							logger.debug("found token for issuer {}. adding new unvalidated tokencontext.", tokenContext.get().getIssuer());
 						}
 					}
 				} catch (Exception e) {
@@ -59,8 +60,13 @@ public class TokenRetriever {
 				expectedName = expectedName == null ? OIDCConstants.getDefaultCookieName(issuer) : expectedName;
 				for (Cookie cookie : cookies) {
 					if (cookie.getName().equalsIgnoreCase(expectedName)) {
-						tokens.add(new TokenContext(issuer, cookie.getValue()));
-						logger.debug("found cookie with expected name {}, adding new unvalidated TokenContext.", expectedName);
+						logger.debug("found cookie with expected name {}", expectedName);
+						Optional<TokenContext> tokenContext = createTokenContext(config, cookie.getValue());
+						if (tokenContext.isPresent()) {
+							tokens.add(tokenContext.get());
+							logger.debug("found token for issuer {}. adding new unvalidated tokencontext.", tokenContext.get().getIssuer());
+						}
+						return tokens;
 					}
 				}
 			}
@@ -69,4 +75,16 @@ public class TokenRetriever {
 		return tokens;
 	}
 
+	private static Optional<TokenContext> createTokenContext(MultiIssuerConfiguraton config, String token){
+		try {
+			JWT jwt = JWTParser.parse(token);
+			if (config.getIssuer(jwt.getJWTClaimsSet().getIssuer()) != null) {
+				String issuer = config.getIssuer(jwt.getJWTClaimsSet().getIssuer()).getName();
+				return Optional.of(new TokenContext(issuer, token));
+			}
+			return Optional.empty();
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
