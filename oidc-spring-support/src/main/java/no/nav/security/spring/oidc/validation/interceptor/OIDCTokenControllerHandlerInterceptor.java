@@ -119,7 +119,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         if (validationContext.hasValidToken()) {
             return true;
         }
-        logger.error("no token found in validation context");
+        logger.info("no token found in validation context");
         throw new OIDCUnauthorizedException("Authorization token required");
     }
 
@@ -136,7 +136,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
                 throw new OIDCUnauthorizedException("Authorization token not authorized");
             }
             if (!containsRequiredClaims(tokenClaims, claims)) {
-                logger.error("token does not contain all annotated claims");
+                logger.info("token does not contain all annotated claims");
                 throw new OIDCUnauthorizedException("Authorization token not authorized");
             }
         }
