@@ -26,7 +26,8 @@ public class SpringOIDCRequestContextHolder implements OIDCRequestContextHolder 
 
 	@Override
 	public OIDCValidationContext getOIDCValidationContext() {
-		return (OIDCValidationContext)getRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT);
+		OIDCValidationContext oidcValidationContext = (OIDCValidationContext)getRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT);
+		return oidcValidationContext != null ? oidcValidationContext : new OIDCValidationContext();
 	}
 
 	@Override
