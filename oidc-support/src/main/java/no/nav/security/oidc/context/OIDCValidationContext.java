@@ -5,9 +5,11 @@ package no.nav.security.oidc.context;
  * ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
  * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
  */
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OIDCValidationContext {
@@ -50,6 +52,12 @@ public class OIDCValidationContext {
 	
 	public List<String> getIssuers(){
 		return issuers;
+	}
+
+	public Optional<TokenContext> getFirstValidToken(){
+		Optional<String> issuer = getIssuers().stream().findFirst();
+		return issuer.isPresent()
+				? Optional.of(getToken(issuer.get())) : Optional.empty();
 	}
 	
 }

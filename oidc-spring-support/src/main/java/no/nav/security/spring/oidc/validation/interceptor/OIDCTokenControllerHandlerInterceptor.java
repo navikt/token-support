@@ -61,7 +61,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         OIDCValidationContext validationContext = (OIDCValidationContext) contextHolder
-                .getRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT);
+                .getOIDCValidationContext();
 
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;

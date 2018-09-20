@@ -33,9 +33,9 @@ public class BearerTokenClientHttpRequestInterceptor implements ClientHttpReques
 			throws IOException {
 
 		OIDCValidationContext context = (OIDCValidationContext) contextHolder
-				.getRequestAttribute(OIDCConstants.OIDC_VALIDATION_CONTEXT);
+				.getOIDCValidationContext();
 		
-		if(context != null) {
+		if(context != null && context.hasValidToken()) {
 			logger.debug("adding tokens to Authorization header");
 			StringBuffer headerValue = new StringBuffer();
 			boolean first = true;

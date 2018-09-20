@@ -24,7 +24,7 @@ public class OidcClientRequestFilter implements ClientRequestFilter {
 
         OIDCValidationContext context = OidcRequestContext.getHolder().getOIDCValidationContext();
 
-        if(context != null) {
+        if(context != null && context.hasValidToken()) {
             logger.debug("adding tokens to Authorization header");
             StringBuilder headerValue = new StringBuilder();
             for(String issuer : context.getIssuers()) {
