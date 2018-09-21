@@ -4,7 +4,7 @@
     <parent>
         <groupId>no.nav.security</groupId>
         <artifactId>token-support</artifactId>
-        <version>0.2.9</version>
+        <version>0.2.10-SNAPSHOT</version>
     </parent>
     <artifactId>oidc-jersey-support</artifactId>
     <name>jersey-oidc-support</name>
