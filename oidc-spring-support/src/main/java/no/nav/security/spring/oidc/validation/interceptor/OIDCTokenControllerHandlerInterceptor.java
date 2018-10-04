@@ -135,7 +135,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
                         issuer));
                 throw new OIDCUnauthorizedException("Authorization token not authorized");
             }
-            if (!containsRequiredClaims(tokenClaims, claims)) {
+            if (!containsRequiredClaims(tokenClaims, annotation.combineWithOr(), annotation.claimMap())) {
                 logger.info("token does not contain all annotated claims");
                 throw new OIDCUnauthorizedException("Authorization token not authorized");
             }
@@ -143,7 +143,13 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         return true;
     }
 
-    protected boolean containsRequiredClaims(OIDCClaims tokenClaims, String... claims) {
+    protected boolean containsRequiredClaims(OIDCClaims tokenClaims, boolean combineWithOr, String... claims){
+        logger.debug("choose matching logic based on combineWithOr=" + combineWithOr);
+        return combineWithOr ? containsAnyClaim(tokenClaims,claims)
+                : containsAllClaims(tokenClaims, claims);
+    }
+
+    protected boolean containsAllClaims(OIDCClaims tokenClaims, String... claims) {
         for (String string : claims) {
             String name = StringUtils.substringBefore(string, "=").trim();
             String value = StringUtils.substringAfter(string, "=").trim();
@@ -154,6 +160,24 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
                 }
             }
         }
+        return true;
+    }
+
+    protected boolean containsAnyClaim(OIDCClaims tokenClaims, String... claims){
+        if(claims != null && claims.length > 0){
+            for (String string : claims) {
+                String name = StringUtils.substringBefore(string, "=").trim();
+                String value = StringUtils.substringAfter(string, "=").trim();
+                if (StringUtils.isNotBlank(name)) {
+                    if (tokenClaims.containsClaim(name, value)) {
+                        return true;
+                    }
+                }
+            }
+            logger.debug("token does not contain any of the listed claims");
+            return false;
+        }
+        logger.debug("no claims listed, so claim checking is ok.");
         return true;
     }
 

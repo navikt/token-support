@@ -18,4 +18,14 @@ public @interface ProtectedWithClaims {
 	 * @return array containing claims as key=value
 	 */
 	String[] claimMap() default {};
+
+	/**
+	 * How to check for the presence of claims,
+	 * default is false which will require all claims in the list
+	 * to be present in token. If set to true, any claim in the list
+	 * will suffice.
+	 *
+	 * @return boolean
+	 */
+	boolean combineWithOr() default false;
 }

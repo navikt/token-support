@@ -51,7 +51,7 @@ public class OIDCTokenControllerHandlerInterceptorTest {
 	@Test
 	public void testHandleProtectedWithClaimsAnnotation() {
 		ProtectedWithClaims annotation = createProtectedWithClaims("issuer1", "customClaim=shouldmatch");
-		
+
 		OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
 		OIDCValidationContext context = createOidcValidationContext(claims);
 		assertTrue(interceptor.handleProtectedWithClaimsAnnotation(context, annotation));
@@ -62,15 +62,41 @@ public class OIDCTokenControllerHandlerInterceptorTest {
 	}
 
 	@Test
-	public void testContainsRequiredClaims() {
+	public void testHandleProtectedWithClaimsAnnotationCombineWithOr() {
+		ProtectedWithClaims annotation = createProtectedWithClaims("issuer1", true,"customClaim=shouldmatch","notintoken=foo");
 		OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
-		assertTrue("claims do not match", interceptor.containsRequiredClaims(claims, "customClaim=shouldmatch", "acr=Level4", ""));
-		assertTrue("claims do not match", interceptor.containsRequiredClaims(claims, " customClaim = shouldmatch "));
-		assertTrue("groups claim do not match", interceptor.containsRequiredClaims(claims, "groups=123", "groups=456"));
-		assertFalse("claims match", interceptor.containsRequiredClaims(claims, "customClaim=shouldNOTmatch"));
-		assertFalse("claims mach", interceptor.containsRequiredClaims(claims, "notintoken=value"));
-		assertFalse("group claim match", interceptor.containsRequiredClaims(claims, "groups=notexist"));
+		OIDCValidationContext context = createOidcValidationContext(claims);
+		assertTrue(interceptor.handleProtectedWithClaimsAnnotation(context, annotation));
+		claims = createOIDCClaims("customClaim", "shouldNOTmatch");
+		context = createOidcValidationContext(claims);
+		thrown.expect(OIDCUnauthorizedException.class);
+		interceptor.handleProtectedWithClaimsAnnotation(context, annotation);
 	}
+
+	@Test
+	public void testContainsRequiredClaimsDefaultBehaviour() {
+		OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
+		assertTrue("claims do not match", interceptor.containsRequiredClaims(claims,false, "customClaim=shouldmatch", "acr=Level4", ""));
+		assertTrue("claims do not match", interceptor.containsRequiredClaims(claims,false, " customClaim = shouldmatch "));
+		assertTrue("groups claim do not match", interceptor.containsRequiredClaims(claims, false, "groups=123", "groups=456"));
+		assertFalse("claims match", interceptor.containsRequiredClaims(claims, false, "customClaim=shouldNOTmatch"));
+		assertFalse("claims mach", interceptor.containsRequiredClaims(claims, false,"notintoken=value"));
+		assertFalse("group claim match", interceptor.containsRequiredClaims(claims,false, "groups=notexist"));
+	}
+
+	@Test
+	public void testContainsRequiredClaimsCombineWithOr() {
+		OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
+
+		assertTrue("claims do not match", interceptor.containsRequiredClaims(claims,true, "customClaim=shouldmatch", "notintoken=foo", ""));
+		assertTrue("claims do not match", interceptor.containsRequiredClaims(claims,true, "customClaim=shouldmatch", "acr=Level4", ""));
+		assertTrue("claims do not match", interceptor.containsRequiredClaims(claims,true));
+		assertTrue("claims match", interceptor.containsRequiredClaims(claims, true, "customClaim=shouldNOTmatch", "customClaim=shouldmatch"));
+		assertFalse("claims match", interceptor.containsRequiredClaims(claims, true, "customClaim=shouldNOTmatch", "anotherClaim=foo"));
+		assertFalse("claims mach", interceptor.containsRequiredClaims(claims, true,"notintoken=value"));
+
+	}
+
 	
 	private OIDCValidationContext createOidcValidationContext(OIDCClaims claims1){
 		OIDCValidationContext context = new OIDCValidationContext();
@@ -79,15 +105,25 @@ public class OIDCTokenControllerHandlerInterceptorTest {
 	}
 	
 	private ProtectedWithClaims createProtectedWithClaims(String issuer, String... claimMap){
-		return new ProtectedWithClaims() {		
+		return createProtectedWithClaims(issuer,false, claimMap);
+	}
+
+	private ProtectedWithClaims createProtectedWithClaims(String issuer, boolean combineWithOr, String... claimMap){
+		return new ProtectedWithClaims() {
 			public Class<? extends Annotation> annotationType() {
 				return ProtectedWithClaims.class;
 			}
 			public String issuer() { return issuer; }
 
 			public String[] claimMap() { return claimMap; }
+
+			@Override
+			public boolean combineWithOr() {
+				return combineWithOr;
+			}
 		};
 	}
+
 	
 	private OIDCClaims createOIDCClaims(String name, String value){
 		 JWT jwt = new PlainJWT( new JWTClaimsSet.Builder()
