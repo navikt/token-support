@@ -53,7 +53,7 @@ public class OIDCTokenValidatorTest {
 	public void setupKeys() throws NoSuchAlgorithmException {
 
 		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-		gen.initialize(1024); // just for testing so 1024 is ok
+		gen.initialize(2048); // just for testing so 1024 is ok
 		KeyPair keyPair = gen.generateKeyPair();
 		rsaJwk = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
 				.privateKey((RSAPrivateKey) keyPair.getPrivate())
