@@ -32,6 +32,7 @@
 		<module>oidc-spring-support</module>
 		<module>oidc-test-support</module>
 		<module>oidc-jersey-support</module>
+		<module>oidc-spring-support-demo</module>
 	</modules>
 
 	<properties>

@@ -6,8 +6,12 @@ import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 
+import no.nav.security.oidc.filter.OIDCTokenExpiryFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.EnvironmentAware;
@@ -106,7 +110,8 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 
 
 	@Bean
-	public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterBean(OIDCTokenValidationFilter validationFilter) {
+	@Qualifier("oidcTokenValidationFilterRegistrationBean")
+	public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterRegistrationBean(OIDCTokenValidationFilter validationFilter) {
 		logger.info("Registering validation filter");
 		final FilterRegistrationBean<OIDCTokenValidationFilter> filterRegistration = new FilterRegistrationBean<OIDCTokenValidationFilter>();
 		filterRegistration.setFilter(validationFilter);
@@ -115,6 +120,22 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 				.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC));
 		filterRegistration.setAsyncSupported(true);
 		filterRegistration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		return filterRegistration;
+	}
+
+	@Bean
+    @Qualifier("oidcTokenExpiryFilterRegistrationBean")
+	@ConditionalOnProperty(name="no.nav.security.oidc.expirythreshold", matchIfMissing = false)
+	public FilterRegistrationBean<OIDCTokenExpiryFilter> oidcTokenExpiryFilterRegistrationBean(OIDCRequestContextHolder oidcRequestContextHolder,
+																									 @Value("${no.nav.security.oidc.expirythreshold}") long expiryThreshold) {
+		logger.info("Registering expiry filter");
+		final FilterRegistrationBean<OIDCTokenExpiryFilter> filterRegistration = new FilterRegistrationBean<>();
+		filterRegistration.setFilter(new OIDCTokenExpiryFilter(oidcRequestContextHolder, expiryThreshold));
+		filterRegistration.setMatchAfter(false);
+		filterRegistration
+				.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC));
+		filterRegistration.setAsyncSupported(true);
+		filterRegistration.setOrder(2);
 		return filterRegistration;
 	}
 
