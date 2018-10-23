@@ -110,7 +110,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
                     + "] not annotated @Unprotected, @Protected or added to ignore list");
 
         }
-        logger.info("Handler is of type {}, allowing unprotected access to the resources it accesses",
+        logger.debug("Handler is of type {}, allowing unprotected access to the resources it accesses",
                 handler.getClass().getSimpleName());
         return true;
     }
@@ -119,7 +119,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         if (validationContext.hasValidToken()) {
             return true;
         }
-        logger.info("no token found in validation context");
+        logger.debug("no token found in validation context");
         throw new OIDCUnauthorizedException("Authorization token required");
     }
 
