@@ -2,6 +2,7 @@ package no.nav.security.oidc.test.support;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
@@ -19,7 +20,7 @@ public class JwtTokenGenerator {
     public static String ISS = "iss-localhost";
     public static String AUD = "aud-localhost";
     public static String ACR = "Level4";
-    public static int EXPIRY = 60 * 60 * 3600;
+    public static long EXPIRY = 60 * 60 * 3600;
 
     private JwtTokenGenerator() {
     }
@@ -29,7 +30,11 @@ public class JwtTokenGenerator {
     }
 
     public static SignedJWT createSignedJWT(String subject) {
-        JWTClaimsSet claimsSet = buildClaimSet(subject, ISS, AUD, ACR, EXPIRY);
+        return createSignedJWT(subject, EXPIRY);
+    }
+
+    public static SignedJWT createSignedJWT(String subject, long expiryInMinutes) {
+        JWTClaimsSet claimsSet = buildClaimSet(subject, ISS, AUD, ACR, TimeUnit.MINUTES.toMillis(expiryInMinutes));
         return createSignedJWT(JwkGenerator.getDefaultRSAKey(), claimsSet);
     }
 
@@ -38,7 +43,7 @@ public class JwtTokenGenerator {
     }
 
     public static JWTClaimsSet buildClaimSet(String subject, String issuer, String audience, String authLevel,
-            int expiry) {
+            long expiry) {
         Date now = new Date();
         return new JWTClaimsSet.Builder()
                 .subject(subject)

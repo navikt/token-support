@@ -53,9 +53,10 @@ public class TokenGeneratorController {
     public Cookie addCookie(@RequestParam(value = "subject", defaultValue = "12345678910") String subject,
             @RequestParam(value = "cookiename", defaultValue = "localhost-idtoken") String cookieName,
             @RequestParam(value = "redirect", required = false) String redirect,
+            @RequestParam(value = "expiry", required = false) String expiry,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        SignedJWT token = JwtTokenGenerator.createSignedJWT(subject);
+        long expiryTime = expiry != null ? Long.parseLong(expiry) : JwtTokenGenerator.EXPIRY;
+        SignedJWT token = JwtTokenGenerator.createSignedJWT(subject, expiryTime);
         Cookie cookie = new Cookie(cookieName, token.serialize());
         cookie.setDomain("localhost");
         cookie.setPath("/");
