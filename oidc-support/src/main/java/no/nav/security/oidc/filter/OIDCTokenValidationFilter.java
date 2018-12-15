@@ -34,7 +34,7 @@ import no.nav.security.oidc.exceptions.OIDCTokenValidatorException;
 
 public class OIDCTokenValidationFilter implements Filter {
 
-    private Logger logger = LoggerFactory.getLogger(OIDCTokenValidationFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OIDCTokenValidationFilter.class);
     private final MultiIssuerConfiguration config;
     private final OIDCRequestContextHolder contextHolder;
 
@@ -72,15 +72,14 @@ public class OIDCTokenValidationFilter implements Filter {
         for (TokenContext token : tokensOnRequest) {
             long start = System.currentTimeMillis();
             try {
-
                 config.getIssuer(token.getIssuer()).getTokenValidator().assertValidToken(token.getIdToken());
                 validatedTokens.add(token);
-                logger.debug("token " + token.getIssuer() + " validated OK");
+                LOG.debug("Token {} validated OK", token.getIssuer());
             } catch (OIDCTokenValidatorException ve) {
-                logger.warn("Invalid token for issuer [{}, expires at {}]", token.getIssuer(), ve.getExpiryDate(), ve);
+                LOG.warn("Invalid token for issuer [{}, expires at {}]", token.getIssuer(), ve.getExpiryDate(), ve);
             }
             long stop = System.currentTimeMillis();
-            logger.debug("validated token [" + token.getIssuer() + "] in " + (stop - start) + "ms");
+            LOG.debug("Validated token [{}] in {}ms", token.getIssuer(), (stop - start));
         }
         OIDCValidationContext validationContext = new OIDCValidationContext();
         for (TokenContext validatedToken : validatedTokens) {
@@ -88,7 +87,7 @@ public class OIDCTokenValidationFilter implements Filter {
                 validationContext.addValidatedToken(validatedToken.getIssuer(), validatedToken,
                         new OIDCClaims(JWTParser.parse(validatedToken.getIdToken())));
             } catch (ParseException e) {
-                logger.warn("failed to parse token despite validated: " + e, e);
+                LOG.warn("Failed to parse token despite validated", e);
             }
         }
         contextHolder.setOIDCValidationContext(validationContext);

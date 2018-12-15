@@ -7,73 +7,79 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class IssuerProperties {
-	@NotNull
-	private URL discoveryUrl;
-	@NotEmpty
-	private List<String> acceptedAudience;
-	private String cookieName;
-	private URL proxyUrl;
-	private boolean usePlaintextForHttps = false;
-	
-	public IssuerProperties() {}
-	
-	public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience) {
-		this.discoveryUrl = discoveryUrl;
-		this.acceptedAudience = acceptedAudience;
-	}
-	
-	public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName){
-		this(discoveryUrl, acceptedAudience);
-		this.cookieName = cookieName;
-	}
+    @NotNull
+    private URL discoveryUrl;
+    @NotEmpty
+    private List<String> acceptedAudience;
+    private String cookieName;
+    private URL proxyUrl;
+    private boolean usePlaintextForHttps = false;
 
-	public URL getDiscoveryUrl() {
-		return discoveryUrl;
-	}
+    // TODO needed?
+    public IssuerProperties() {
+    }
 
-	public void setDiscoveryUrl(URL discoveryUrl) {
-		this.discoveryUrl = discoveryUrl;
-	}
+    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience) {
+        this.discoveryUrl = discoveryUrl;
+        this.acceptedAudience = acceptedAudience;
+    }
 
-	public String getCookieName() {
-		return cookieName != null ? cookieName.trim() : cookieName;
-	}
+    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName) {
+        this(discoveryUrl, acceptedAudience);
+        this.cookieName = cookieName;
+    }
 
-	public void setCookieName(String cookieName) {
-		this.cookieName = cookieName;
-	}
+    public URL getDiscoveryUrl() {
+        return discoveryUrl;
+    }
 
-	public List<String> getAcceptedAudience() {
-		return acceptedAudience;
-	}
+    // TODO needed?
+    public void setDiscoveryUrl(URL discoveryUrl) {
+        this.discoveryUrl = discoveryUrl;
+    }
 
-	public void setAcceptedAudience(List<String> acceptedAudience) {
-		this.acceptedAudience = acceptedAudience;
-	}
+    public String getCookieName() {
+        return cookieName != null ? cookieName.trim() : cookieName;
+    }
 
-	public URL getProxyUrl() {
-		return proxyUrl;
-	}
+    // TODO needed?
+    public void setCookieName(String cookieName) {
+        this.cookieName = cookieName;
+    }
 
-	public void setProxyUrl(URL proxyUrl) {
-		this.proxyUrl = proxyUrl;
-	}
+    public List<String> getAcceptedAudience() {
+        return acceptedAudience;
+    }
 
-	public boolean isUsePlaintextForHttps() {
-		return usePlaintextForHttps;
-	}
+    // TODO needed?
+    public void setAcceptedAudience(List<String> acceptedAudience) {
+        this.acceptedAudience = acceptedAudience;
+    }
 
-	public void setUsePlaintextForHttps(boolean usePlaintextForHttps) {
-		this.usePlaintextForHttps = usePlaintextForHttps;
-	}
+    public URL getProxyUrl() {
+        return proxyUrl;
+    }
 
-	@Override
-	public String toString() {
-		return "IssuerProperties{" +
-				"discoveryUrl=" + discoveryUrl +
-				", acceptedAudience=" + acceptedAudience +
-				", cookieName='" + cookieName + '\'' +
-				", proxyUrl=" + proxyUrl +
-				'}';
-	}
+    // TODO needed?
+    public void setProxyUrl(URL proxyUrl) {
+        this.proxyUrl = proxyUrl;
+    }
+
+    public boolean isUsePlaintextForHttps() {
+        return usePlaintextForHttps;
+    }
+
+    public void setUsePlaintextForHttps(boolean usePlaintextForHttps) {
+        this.usePlaintextForHttps = usePlaintextForHttps;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" +
+                "discoveryUrl=" + discoveryUrl +
+                ", acceptedAudience=" + acceptedAudience +
+                ", cookieName='" + cookieName + '\'' +
+                ", proxyUrl=" + proxyUrl +
+                '}';
+    }
 }
