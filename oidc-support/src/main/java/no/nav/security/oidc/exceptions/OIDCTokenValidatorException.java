@@ -2,21 +2,20 @@ package no.nav.security.oidc.exceptions;
 
 import java.util.Date;
 
-@SuppressWarnings("serial")
-public class OIDCTokenValidatorException extends Exception {
+public class OIDCTokenValidatorException extends RuntimeException {
 
     private final Date expiryDate;
 
-    public OIDCTokenValidatorException(String message) {
-        this(message, null, null);
+    public OIDCTokenValidatorException(String msg) {
+        this(msg, null, null);
     }
 
-    public OIDCTokenValidatorException(String message, Date expiryDate) {
-        this(message, expiryDate, null);
+    public OIDCTokenValidatorException(String msg, Date expiryDate) {
+        this(msg, expiryDate, null);
     }
 
-    public OIDCTokenValidatorException(String message, Date expiryDate, Throwable cause) {
-        super(message, cause);
+    public OIDCTokenValidatorException(String msg, Date expiryDate, Throwable cause) {
+        super(msg, cause);
         this.expiryDate = expiryDate;
     }
 
