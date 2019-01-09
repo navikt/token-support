@@ -4,7 +4,7 @@
 
 	<groupId>no.nav.security</groupId>
 	<artifactId>token-support</artifactId>
-	<version>0.2.14-SNAPSHOT</version>
+	<version>0.2.15-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>token-support</name>
