@@ -40,8 +40,12 @@ public class OIDCValidationContext {
         return validatedClaims.get(issuerName);
     }
 
-    public Map<String, OIDCClaims> getClaims(){
+    public Map<String, OIDCClaims> getAllClaims(){
         return validatedClaims;
+    }
+
+    public Optional<OIDCClaims> getAnyValidClaims(){
+        return validatedClaims.values().stream().findFirst();
     }
 
     public boolean hasValidToken() {
