@@ -40,6 +40,10 @@ public class OIDCValidationContext {
         return validatedClaims.get(issuerName);
     }
 
+    public Map<String, OIDCClaims> getClaims(){
+        return validatedClaims;
+    }
+
     public boolean hasValidToken() {
         return !validatedTokens.isEmpty();
     }
