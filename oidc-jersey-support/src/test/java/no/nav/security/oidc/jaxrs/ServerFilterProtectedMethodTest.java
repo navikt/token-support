@@ -1,39 +1,36 @@
 package no.nav.security.oidc.jaxrs;
 
-import no.nav.security.oidc.OIDCConstants;
-import no.nav.security.oidc.test.support.JwtTokenGenerator;
-import no.nav.security.oidc.test.support.spring.TokenGeneratorConfiguration;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+
+import no.nav.security.oidc.OIDCConstants;
+import no.nav.security.oidc.test.support.JwtTokenGenerator;
 
 @ActiveProfiles("protected")
-@RunWith(SpringRunner.class)
 @DirtiesContext
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = Config.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Config.class)
 public class ServerFilterProtectedMethodTest {
 
-    @Value("${local.server.port}")
+    @LocalServerPort
     private int port;
 
     private Invocation.Builder requestWithValidToken(String path) {
         return ClientBuilder.newClient().target("http://localhost:" + port)
                 .path(path)
                 .request()
-                .header(OIDCConstants.AUTHORIZATION_HEADER, "Bearer " + JwtTokenGenerator.createSignedJWT("12345678911").serialize());
+                .header(OIDCConstants.AUTHORIZATION_HEADER,
+                        "Bearer " + JwtTokenGenerator.createSignedJWT("12345678911").serialize());
     }
 
     private Invocation.Builder requestWithoutToken(String path) {
@@ -97,6 +94,5 @@ public class ServerFilterProtectedMethodTest {
 
         assertThat(response.getStatus(), is(equalTo(403)));
     }
-
 
 }
