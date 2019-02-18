@@ -17,16 +17,16 @@ import no.nav.security.oidc.configuration.IssuerProperties;
 @EnableConfigurationProperties
 @Validated
 public class MultiIssuerProperties {
-	
-	@Valid
-	private final Map<String, IssuerProperties> issuer = new HashMap<>();
-	
-	public Map<String, IssuerProperties> getIssuer(){
-		return issuer;
-	}
 
-	@Override
-	public String toString() {
-		return "MultiIssuerConfigurationProperties [issuer=" + issuer + "]";
-	}
+    @Valid
+    private final Map<String, IssuerProperties> issuer = new HashMap<>();
+
+    public Map<String, IssuerProperties> getIssuer() {
+        return issuer;
+    }
+
+    @Override
+    public String toString() {
+        return "MultiIssuerConfigurationProperties [issuer=" + issuer + "]";
+    }
 }

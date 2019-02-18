@@ -1,29 +1,36 @@
 package no.nav.security.oidc.filter;
 
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
-import no.nav.security.oidc.context.OIDCClaims;
-import no.nav.security.oidc.context.OIDCRequestContextHolder;
-import no.nav.security.oidc.context.OIDCValidationContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+
+import no.nav.security.oidc.context.OIDCClaims;
+import no.nav.security.oidc.context.OIDCRequestContextHolder;
+import no.nav.security.oidc.context.OIDCValidationContext;
+
+@ExtendWith(MockitoExtension.class)
 public class OIDCTokenExpiryFilterTest {
 
     @Mock
@@ -36,17 +43,13 @@ public class OIDCTokenExpiryFilterTest {
     private OIDCValidationContext oidcValidationContext;
     private static final long EXPIRY_THRESHOLD = 1;
 
-    @Before
-    public void setUp(){
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
     public void tokenExpiresBeforeThreshold() throws IOException, ServletException {
         setupMocks(LocalDateTime.now().plusMinutes(2));
 
-        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(oidcRequestContextHolder, EXPIRY_THRESHOLD);
-        oidcTokenExpiryFilter.doFilter(servletRequest,  servletResponse, filterChain);
+        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(oidcRequestContextHolder,
+                EXPIRY_THRESHOLD);
+        oidcTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
         verify(servletResponse).setHeader(OIDCTokenExpiryFilter.TOKEN_EXPIRES_SOON_HEADER, "true");
     }
 
@@ -54,18 +57,20 @@ public class OIDCTokenExpiryFilterTest {
     public void tokenExpiresAfterThreshold() throws IOException, ServletException {
         setupMocks(LocalDateTime.now().plusMinutes(3));
 
-        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(oidcRequestContextHolder, EXPIRY_THRESHOLD);
-        oidcTokenExpiryFilter.doFilter(servletRequest,  servletResponse, filterChain);
+        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(oidcRequestContextHolder,
+                EXPIRY_THRESHOLD);
+        oidcTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
         verify(servletResponse, never()).setHeader(OIDCTokenExpiryFilter.TOKEN_EXPIRES_SOON_HEADER, "true");
     }
 
     @Test
     public void noValidToken() throws IOException, ServletException {
-        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(mock(OIDCRequestContextHolder.class), EXPIRY_THRESHOLD);
-        oidcTokenExpiryFilter.doFilter(servletRequest,  servletResponse, filterChain);
+        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(mock(OIDCRequestContextHolder.class),
+                EXPIRY_THRESHOLD);
+        oidcTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
     }
 
-    private void setupMocks(LocalDateTime expiry){
+    private void setupMocks(LocalDateTime expiry) {
         oidcRequestContextHolder = mock(OIDCRequestContextHolder.class);
         oidcValidationContext = mock(OIDCValidationContext.class);
         when(oidcRequestContextHolder.getOIDCValidationContext()).thenReturn(oidcValidationContext);
@@ -76,8 +81,8 @@ public class OIDCTokenExpiryFilterTest {
         when(oidcValidationContext.getClaims(anyString())).thenReturn(createOIDCClaims(expiryDate));
     }
 
-    private static OIDCClaims createOIDCClaims(Date expiry){
-        JWT jwt = new PlainJWT( new JWTClaimsSet.Builder()
+    private static OIDCClaims createOIDCClaims(Date expiry) {
+        JWT jwt = new PlainJWT(new JWTClaimsSet.Builder()
                 .subject("subject")
                 .issuer("http//issuer1")
                 .expirationTime(expiry).build());
