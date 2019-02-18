@@ -8,17 +8,17 @@ node {
     def repo = "navikt"
     def app = "token-support"
     def committer, committerEmail, changelog, releaseVersion
-    def mvnHome = tool "maven-3.5.3"
+    def mvnHome = tool "maven-3.6.0"
     def mvn = "${mvnHome}/bin/mvn"
    
 
     stage("Initialization") {
         cleanWs()
-        withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-           withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
-            sh(script: "git clone https://${token}:x-oauth-basic@github.com/${repo}/${app}.git .")
-           }
-         }
+        
+        git branch: 'master',
+            credentialsId: 'token-support-deploy-key',
+            url: 'ssh://git@github.com/navikt/token-support.git'
+
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         commitUrl = "https://github.com/${repo}/${app}/commit/${commitHash}"
