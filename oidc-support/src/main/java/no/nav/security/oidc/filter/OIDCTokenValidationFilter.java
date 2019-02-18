@@ -76,7 +76,7 @@ public class OIDCTokenValidationFilter implements Filter {
                 validatedTokens.add(token);
                 LOG.debug("Token {} validated OK", token.getIssuer());
             } catch (OIDCTokenValidatorException ve) {
-                logger.info("Invalid token for issuer [{}, expires at {}]", token.getIssuer(), ve.getExpiryDate(), ve);
+                LOG.info("Invalid token for issuer [{}, expires at {}]", token.getIssuer(), ve.getExpiryDate(), ve);
             }
             long stop = System.currentTimeMillis();
             LOG.debug("Validated token [{}] in {}ms", token.getIssuer(), (stop - start));
