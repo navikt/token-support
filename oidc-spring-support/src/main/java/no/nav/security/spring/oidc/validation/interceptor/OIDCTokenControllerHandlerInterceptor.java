@@ -15,7 +15,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.api.Protected;
 import no.nav.security.oidc.api.ProtectedWithClaims;
 import no.nav.security.oidc.api.Unprotected;
@@ -60,7 +59,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        OIDCValidationContext validationContext = (OIDCValidationContext) contextHolder
+        OIDCValidationContext validationContext = contextHolder
                 .getOIDCValidationContext();
 
         if (handler instanceof HandlerMethod) {
@@ -143,9 +142,9 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         return true;
     }
 
-    protected boolean containsRequiredClaims(OIDCClaims tokenClaims, boolean combineWithOr, String... claims){
+    protected boolean containsRequiredClaims(OIDCClaims tokenClaims, boolean combineWithOr, String... claims) {
         logger.debug("choose matching logic based on combineWithOr=" + combineWithOr);
-        return combineWithOr ? containsAnyClaim(tokenClaims,claims)
+        return combineWithOr ? containsAnyClaim(tokenClaims, claims)
                 : containsAllClaims(tokenClaims, claims);
     }
 
@@ -163,8 +162,8 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         return true;
     }
 
-    protected boolean containsAnyClaim(OIDCClaims tokenClaims, String... claims){
-        if(claims != null && claims.length > 0){
+    protected boolean containsAnyClaim(OIDCClaims tokenClaims, String... claims) {
+        if (claims != null && claims.length > 0) {
             for (String string : claims) {
                 String name = StringUtils.substringBefore(string, "=").trim();
                 String value = StringUtils.substringAfter(string, "=").trim();

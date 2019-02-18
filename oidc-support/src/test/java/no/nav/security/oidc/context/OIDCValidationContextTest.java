@@ -1,11 +1,9 @@
 package no.nav.security.oidc.context;
 
+import org.junit.jupiter.api.Test;
+
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import jdk.nashorn.internal.parser.Token;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class OIDCValidationContextTest {
 
@@ -17,7 +15,8 @@ public class OIDCValidationContextTest {
 
         System.out.println(oidcValidationContext.getFirstValidToken());
     }
-    private OIDCValidationContext addValidatedToken(String issuer, OIDCValidationContext oidcValidationContext){
+
+    private OIDCValidationContext addValidatedToken(String issuer, OIDCValidationContext oidcValidationContext) {
         oidcValidationContext.addValidatedToken(issuer, new TokenContext(issuer,
                 "tokenstring"), new OIDCClaims(new PlainJWT(new JWTClaimsSet.Builder().build())));
         return oidcValidationContext;

@@ -1,18 +1,23 @@
 package no.nav.security.oidc.exceptions;
-/*
- * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
- * OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
- * ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
- * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
- */
-@SuppressWarnings("serial")
+
+import java.net.URL;
+
 public class MetaDataNotAvailableException extends RuntimeException {
-	
-	public MetaDataNotAvailableException(String message){
-		super(message);
-	}
-	public MetaDataNotAvailableException(Throwable cause){
-		super(cause);
-	}
+
+    public MetaDataNotAvailableException(String msg) {
+        this(msg, null);
+    }
+
+    public MetaDataNotAvailableException(Throwable cause) {
+        this(null, cause);
+    }
+
+    public MetaDataNotAvailableException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
+    public MetaDataNotAvailableException(URL url, Exception e) {
+        this("Kunne ikke hente metadata fra " + url, e);
+    }
 
 }

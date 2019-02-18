@@ -1,19 +1,8 @@
 package no.nav.security.oidc.filter;
 
-import com.nimbusds.jose.util.IOUtils;
-import com.nimbusds.jose.util.Resource;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
-import no.nav.security.oidc.configuration.IssuerProperties;
-import no.nav.security.oidc.configuration.MultiIssuerConfiguration;
-import no.nav.security.oidc.configuration.OIDCResourceRetriever;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -26,23 +15,33 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.nimbusds.jose.util.IOUtils;
+import com.nimbusds.jose.util.Resource;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+
+import no.nav.security.oidc.configuration.IssuerProperties;
+import no.nav.security.oidc.configuration.MultiIssuerConfiguration;
+import no.nav.security.oidc.configuration.OIDCResourceRetriever;
+
+@ExtendWith(MockitoExtension.class)
 public class TokenRetrieverTest {
 
     @Mock
     private HttpServletRequest request;
 
-    @Before
-    public void setUp(){
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
     public void testRetrieveTokensInHeader() throws URISyntaxException, MalformedURLException {
-        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"), new NoopResourceRetriever());
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
+                new NoopResourceRetriever());
         String issuer1Token = createJWT("issuer1");
         when(request.getHeader("Authorization")).thenReturn("Bearer " + issuer1Token);
         assertEquals("issuer1", TokenRetriever.retrieveTokens(config, request).get(0).getIssuer());
@@ -50,7 +49,8 @@ public class TokenRetrieverTest {
 
     @Test
     public void testRetrieveTokensInHeaderIssuerNotConfigured() throws URISyntaxException, MalformedURLException {
-        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"), new NoopResourceRetriever());
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
+                new NoopResourceRetriever());
         String issuer1Token = createJWT("issuerNotConfigured");
         when(request.getHeader("Authorization")).thenReturn("Bearer " + issuer1Token);
         assertEquals(0, TokenRetriever.retrieveTokens(config, request).size());
@@ -58,9 +58,10 @@ public class TokenRetrieverTest {
 
     @Test
     public void testRetrieveTokensInCookie() throws URISyntaxException, MalformedURLException {
-        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"), new NoopResourceRetriever());
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
+                new NoopResourceRetriever());
         String issuer1Token = createJWT("issuer1");
-        when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("cookie1",issuer1Token)});
+        when(request.getCookies()).thenReturn(new Cookie[] { new Cookie("cookie1", issuer1Token) });
         assertEquals("issuer1", TokenRetriever.retrieveTokens(config, request).get(0).getIssuer());
     }
 
@@ -69,21 +70,24 @@ public class TokenRetrieverTest {
         Map<String, IssuerProperties> issuerPropertiesMap = createIssuerPropertiesMap("issuer1", "cookie1");
         issuerPropertiesMap.putAll(createIssuerPropertiesMap("issuer2", "cookie1"));
 
-        MultiIssuerConfiguration config = new MultiIssuerConfiguration(issuerPropertiesMap, new NoopResourceRetriever());
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(issuerPropertiesMap,
+                new NoopResourceRetriever());
 
         String issuer1Token = createJWT("issuer1");
-        when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("cookie1",issuer1Token)});
+        when(request.getCookies()).thenReturn(new Cookie[] { new Cookie("cookie1", issuer1Token) });
         assertEquals(1, TokenRetriever.retrieveTokens(config, request).size());
         assertEquals("issuer1", TokenRetriever.retrieveTokens(config, request).get(0).getIssuer());
     }
 
-    private Map<String, IssuerProperties> createIssuerPropertiesMap(String issuer, String cookieName) throws URISyntaxException, MalformedURLException {
+    private Map<String, IssuerProperties> createIssuerPropertiesMap(String issuer, String cookieName)
+            throws URISyntaxException, MalformedURLException {
         Map<String, IssuerProperties> issuerPropertiesMap = new HashMap<>();
-        issuerPropertiesMap.put(issuer, new IssuerProperties(new URI("https://" + issuer).toURL(), Arrays.asList("aud1"), cookieName));
+        issuerPropertiesMap.put(issuer,
+                new IssuerProperties(new URI("https://" + issuer).toURL(), Arrays.asList("aud1"), cookieName));
         return issuerPropertiesMap;
     }
 
-    private String createJWT(String issuer){
+    private String createJWT(String issuer) {
         Date now = new Date();
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject("foobar").issuer(issuer).notBeforeTime(now).issueTime(now)
@@ -101,10 +105,10 @@ public class TokenRetrieverTest {
         }
 
         private String getContentFromFile() throws IOException {
-            return IOUtils.readInputStreamToString( getInputStream("/metadata.json"), Charset.forName("UTF-8"));
+            return IOUtils.readInputStreamToString(getInputStream("/metadata.json"), Charset.forName("UTF-8"));
         }
 
-        private InputStream getInputStream(String file){
+        private InputStream getInputStream(String file) {
             return NoopResourceRetriever.class.getResourceAsStream(file);
         }
     }

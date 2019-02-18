@@ -7,8 +7,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import no.nav.security.oidc.test.support.JwkGenerator;
-import no.nav.security.oidc.test.support.JwtTokenGenerator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,23 +17,26 @@ import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jwt.SignedJWT;
 
 import no.nav.security.oidc.api.Unprotected;
+import no.nav.security.oidc.test.support.JwkGenerator;
+import no.nav.security.oidc.test.support.JwtTokenGenerator;
 
 @RestController
 @RequestMapping("/local")
 public class TokenGeneratorController {
-	
-	@Unprotected
-	@GetMapping()
-	public TokenEndpoint[] endpoints(HttpServletRequest request){
-		String base = request.getRequestURL().toString();
-		return new TokenEndpoint[]{	new TokenEndpoint("Get JWT as serialized string", base + "/jwt","subject"),
-									new TokenEndpoint("Get JWT as SignedJWT object with claims", base + "/claims","subject"),
-									new TokenEndpoint("Add JWT as a cookie, (optional) redirect to secured uri", base + "/cookie", "subject", "redirect", "cookiename"),
-									new TokenEndpoint("Get JWKS used to sign token", base + "/jwks"),
-									new TokenEndpoint("Get JWKS used to sign token as JWKSet object", base + "/jwkset"),
-									new TokenEndpoint("Get token issuer metadata (ref oidc .well-known)", base + "/metadata")};
-	}
-	
+
+    @Unprotected
+    @GetMapping()
+    public TokenEndpoint[] endpoints(HttpServletRequest request) {
+        String base = request.getRequestURL().toString();
+        return new TokenEndpoint[] { new TokenEndpoint("Get JWT as serialized string", base + "/jwt", "subject"),
+                new TokenEndpoint("Get JWT as SignedJWT object with claims", base + "/claims", "subject"),
+                new TokenEndpoint("Add JWT as a cookie, (optional) redirect to secured uri", base + "/cookie",
+                        "subject", "redirect", "cookiename"),
+                new TokenEndpoint("Get JWKS used to sign token", base + "/jwks"),
+                new TokenEndpoint("Get JWKS used to sign token as JWKSet object", base + "/jwkset"),
+                new TokenEndpoint("Get token issuer metadata (ref oidc .well-known)", base + "/metadata") };
+    }
+
     @Unprotected
     @GetMapping("/jwt")
     public String issueToken(@RequestParam(value = "subject", defaultValue = "12345678910") String subject) {
@@ -80,32 +81,36 @@ public class TokenGeneratorController {
     public JWKSet jwkSet() {
         return JwkGenerator.getJWKSet();
     }
-    
+
     @Unprotected
     @GetMapping("/metadata")
     public String metadata() throws IOException {
         return IOUtils.readInputStreamToString(getClass().getResourceAsStream("/metadata.json"),
                 Charset.defaultCharset());
     }
-    
+
     class TokenEndpoint {
-    	String desc;
-    	String uri;
-    	String[] params;
-		public TokenEndpoint(String desc, String uri, String... params) {
-			this.desc = desc;
-			this.uri = uri;
-			this.params = params;
-			
-		}
-		public String getDesc() {
-			return desc;
-		}
-		public String getUri() {
-			return uri;
-		}
-		public String[] getParams() {
-			return params;
-		}
+        String desc;
+        String uri;
+        String[] params;
+
+        public TokenEndpoint(String desc, String uri, String... params) {
+            this.desc = desc;
+            this.uri = uri;
+            this.params = params;
+
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+        public String[] getParams() {
+            return params;
+        }
     }
 }
