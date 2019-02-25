@@ -15,7 +15,7 @@ node {
         cleanWs()
         git branch: 'master',
             credentialsId: 'token-support-deploy-key',
-            url: 'ssh://git@token-support.github.com/navikt/token-support.git'
+            url: 'token-support.github.com/navikt/token-support.git'
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         commitUrl = "https://github.com/${repo}/${app}/commit/${commitHash}"
