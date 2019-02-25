@@ -8,43 +8,42 @@ node {
     def repo = "navikt"
     def app = "token-support"
     def releaseVersion, devVersion
-    def mvnHome = tool "maven-3.6.0"
+    def mvnHome = tool "maven-3.5.3"
     def mvn = "${mvnHome}/bin/mvn"
 
     stage("Initialization") {
         cleanWs()
-        git branch: 'master',
-            credentialsId: 'token-support-deploy-key',
-            url: 'ssh://git@token-support.github.com/navikt/token-support.git'
+        withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
+            withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
+                sh(script: "git clone ssh://git@github.com/${repo}/${app}.git .")
+            }
+        }
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         commitUrl = "https://github.com/${repo}/${app}/commit/${commitHash}"
+
+        //notifyGithub(repo, app, 'continuous-integration/jenkins', commitHash, 'pending', "Build #${env.BUILD_NUMBER} has started")
     }
 
     stage("Perform Maven release") {
-        git branch: 'master',
-            credentialsId: 'token-support-deploy-key',
-            url: 'ssh://git@token-support.github.com/navikt/token-support.git'
-        withCredentials([sshUserPrivateKey(credentialsId: 'token-support-deploy-key', keyFileVariable: 'KEYFILE', passphraseVariable: 'KEYPHRASE')]) {
-            def pom = readMavenPom file: 'pom.xml'
-            def ver = pom.version
-            releaseVersion = ver.replace('-SNAPSHOT','')
-            devVersion = incrementVersion(releaseVersion, "") + "-SNAPSHOT"
+        def pom = readMavenPom file: 'pom.xml'
+        def ver = pom.version
+        releaseVersion = ver.replace('-SNAPSHOT','')
+        devVersion = incrementVersion(releaseVersion, "") + "-SNAPSHOT"
 
-            println "current version is " + ver
-            println "release version is " + releaseVersion
-            println "new dev version is " + devVersion
+        println "current version is " + ver
+        println "release version is " + releaseVersion
+        println "new dev version is " + devVersion
 
-            sh "${mvn} -X release:clean release:prepare release:perform -DnewVersion=${releaseVersion} -DdevelopmentVersion=${devVersion}"
-        }
+        sh "${mvn} release:clean release:prepare release:perform -DnewVersion=${releaseVersion} -DdevelopmentVersion=${devVersion}"
     }
 }
 
 def incrementVersion(version, postfixLabel){
-	def ver = version.replace(postfixLabel,"")
-	def parts = ver.tokenize(".")
-	def number = parts.pop() as int
-	parts.push(number + 1)
-	def newVersion = parts.join(".")
-	return newVersion
+    def ver = version.replace(postfixLabel,"")
+    def parts = ver.tokenize(".")
+    def number = parts.pop() as int
+    parts.push(number + 1)
+    def newVersion = parts.join(".")
+    return newVersion
 }
