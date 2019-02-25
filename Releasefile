@@ -14,7 +14,7 @@ node {
     stage("Initialization") {
         cleanWs()
         git branch: 'master',
-            credentialsId: 'token-support-deploy-key',
+            //credentialsId: 'token-support-deploy-key',
             url: 'ssh://git@token-support.github.com/navikt/token-support.git'
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
@@ -23,7 +23,7 @@ node {
 
     stage("Perform Maven release") {
         git branch: 'master',
-            credentialsId: 'token-support-deploy-key',
+            //credentialsId: 'token-support-deploy-key',
             url: 'ssh://git@token-support.github.com/navikt/token-support.git'
         //withCredentials([sshUserPrivateKey(credentialsId: 'token-support-deploy-key', keyFileVariable: 'KEYFILE', passphraseVariable: 'KEYPHRASE')]) {
             def pom = readMavenPom file: 'pom.xml'
