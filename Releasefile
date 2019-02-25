@@ -13,16 +13,12 @@ node {
 
     stage("Initialization") {
         cleanWs()
-        withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-           withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
-            sh(script: "git clone https://${token}:x-oauth-basic@github.com/${repo}/${app}.git .")
-           }
-         }
+        git branch: 'master',
+            credentialsId: 'token-support-deploy-key',
+            url: 'ssh://git@github.com/navikt/token-support.git'
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         commitUrl = "https://github.com/${repo}/${app}/commit/${commitHash}"
-
-        notifyGithub(repo, app, 'continuous-integration/jenkins', commitHash, 'pending', "Build #${env.BUILD_NUMBER} has started")
     }
 
     stage("Perform Maven release") {
@@ -36,28 +32,6 @@ node {
 		println "new dev version is " + devVersion
 
         sh "${mvn} release:clean release:prepare release:perform -DnewVersion=${releaseVersion} -DdevelopmentVersion=${devVersion}"
-    }
-}
-
-def notifyGithub(owner, app, context, sha, state, description) {
-    def postBody = [
-            state: "${state}",
-            context: "${context}",
-            description: "${description}",
-            target_url: "${env.BUILD_URL}"
-    ]
-    def postBodyString = groovy.json.JsonOutput.toJson(postBody)
-
-    withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
-        withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-            sh """
-                curl -H 'Authorization: token ${token}' \
-                    -H 'Content-Type: application/json' \
-                    -X POST \
-                    -d '${postBodyString}' \
-                    'https://api.github.com/repos/${owner}/${app}/statuses/${sha}'
-            """
-        }
     }
 }
 
