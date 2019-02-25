@@ -43,6 +43,7 @@
         <spring-boot.version>2.1.3.RELEASE</spring-boot.version>
         <oauth2-oidc-sdk.version>5.56</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
+        <project.scm.id>token-support</project.scm.id>
     </properties>
 
     <scm>
