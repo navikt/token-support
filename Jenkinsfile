@@ -17,7 +17,7 @@ node {
         
         git branch: 'master',
             credentialsId: 'token-support-deploy-key',
-            url: 'ssh://git@github.com/navikt/token-support.git'
+            url: 'ssh://git@token-support.github.com/navikt/token-support.git'
 
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
