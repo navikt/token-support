@@ -15,7 +15,7 @@ node {
         cleanWs()
         git branch: 'master',
             credentialsId: 'token-support-deploy-key',
-            url: 'ssh://jenkins@token-support.github.com/navikt/token-support.git'
+            url: 'ssh://git@token-support.github.com/navikt/token-support.git'
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         commitUrl = "https://github.com/${repo}/${app}/commit/${commitHash}"
@@ -24,8 +24,8 @@ node {
     stage("Perform Maven release") {
         git branch: 'master',
             credentialsId: 'token-support-deploy-key',
-            url: 'ssh://token-support.github.com/navikt/token-support.git'
-        withCredentials([sshUserPrivateKey(credentialsId: 'token-support-deploy-key', keyFileVariable: 'KEYFILE', passphraseVariable: 'KEYPHRASE')]) {
+            url: 'ssh://git@token-support.github.com/navikt/token-support.git'
+        //withCredentials([sshUserPrivateKey(credentialsId: 'token-support-deploy-key', keyFileVariable: 'KEYFILE', passphraseVariable: 'KEYPHRASE')]) {
             def pom = readMavenPom file: 'pom.xml'
             def ver = pom.version
             releaseVersion = ver.replace('-SNAPSHOT','')
@@ -36,7 +36,7 @@ node {
             println "new dev version is " + devVersion
 
             sh "${mvn} release:clean release:prepare release:perform -DnewVersion=${releaseVersion} -DdevelopmentVersion=${devVersion}"
-        }
+        //}
     }
 }
 
