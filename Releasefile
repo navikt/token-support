@@ -25,7 +25,7 @@ node {
         git branch: 'master',
             credentialsId: 'token-support-deploy-key',
             url: 'ssh://git@token-support.github.com/navikt/token-support.git'
-        withCredentials([sshUserPrivateKey(credentialsId: "token-support-deploy-key", keyFileVariable: 'KEYFILE', passphraseVariable='KEYPHRASE')]) {
+        withCredentials([sshUserPrivateKey(credentialsId: 'token-support-deploy-key', keyFileVariable: 'KEYFILE', passphraseVariable: 'KEYPHRASE')]) {
             def pom = readMavenPom file: 'pom.xml'
             def ver = pom.version
             releaseVersion = ver.replace('-SNAPSHOT','')
