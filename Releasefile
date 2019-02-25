@@ -22,19 +22,21 @@ node {
     }
 
     stage("Perform Maven release") {
-           git branch: 'master',
-                credentialsId: 'token-support-deploy-key',
-                url: 'ssh://git@token-support.github.com/navikt/token-support.git'
-		def pom = readMavenPom file: 'pom.xml'
-		def ver = pom.version
-		releaseVersion = ver.replace('-SNAPSHOT','')
-		devVersion = incrementVersion(releaseVersion, "") + "-SNAPSHOT"
+        git branch: 'master',
+            credentialsId: 'token-support-deploy-key',
+            url: 'ssh://git@token-support.github.com/navikt/token-support.git'
+        withCredentials([sshUserPrivateKey(credentialsId: "token-support-deploy-key", keyFileVariable: 'KEYFILE', passphraseVariable='KEYPHRASE')]) {
+            def pom = readMavenPom file: 'pom.xml'
+            def ver = pom.version
+            releaseVersion = ver.replace('-SNAPSHOT','')
+            devVersion = incrementVersion(releaseVersion, "") + "-SNAPSHOT"
 
-		println "current version is " + ver
-		println "release version is " + releaseVersion
-		println "new dev version is " + devVersion
+            println "current version is " + ver
+            println "release version is " + releaseVersion
+            println "new dev version is " + devVersion
 
-        sh "${mvn} release:clean release:prepare release:perform -DnewVersion=${releaseVersion} -DdevelopmentVersion=${devVersion}"
+            sh "${mvn} release:clean release:prepare release:perform -DnewVersion=${releaseVersion} -DdevelopmentVersion=${devVersion}"
+        }
     }
 }
 
