@@ -47,8 +47,8 @@
 
     <scm>
         <url>https://github.com/navikt/token-support</url>
-        <connection>scm:git:ssh://jenkins@token-support.github.com/navikt/token-support.git</connection>
-        <developerConnection>scm:git:ssh://jenkins@token-support.github.com/navikt/token-support.git</developerConnection>
+        <connection>scm:git:ssh://token-support.github.com/navikt/token-support.git</connection>
+        <developerConnection>scm:git:ssh://token-support.github.com/navikt/token-support.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
