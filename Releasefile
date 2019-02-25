@@ -15,7 +15,7 @@ node {
         cleanWs()
 
         withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
-            sh(script: "git clone ssh://git@github.com/${repo}/${app}.git .")
+            sh(script: "git clone ssh://jenkins@github.com/${repo}/${app}.git .")
         }
 
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
