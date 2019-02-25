@@ -13,11 +13,11 @@ node {
 
     stage("Initialization") {
         cleanWs()
-        withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-            withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
-                sh(script: "git clone ssh://git@github.com/${repo}/${app}.git .")
-            }
+
+        withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
+            sh(script: "git clone ssh://git@github.com/${repo}/${app}.git .")
         }
+
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         commitUrl = "https://github.com/${repo}/${app}/commit/${commitHash}"
