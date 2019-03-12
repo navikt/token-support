@@ -6,20 +6,21 @@
 		<artifactId>token-support</artifactId>
 		<version>0.2.16-SNAPSHOT</version>
 	</parent>
-	<artifactId>oidc-support</artifactId>
-	<name>oidc-support</name>
+	<artifactId>oidc-support-filter</artifactId>
+	<name>oidc-support-filter</name>
 	<dependencies>
 		<dependency>
-			<groupId>com.nimbusds</groupId>
-			<artifactId>oauth2-oidc-sdk</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>oidc-support</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-		   <groupId>javax.validation</groupId>
-		   <artifactId>validation-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

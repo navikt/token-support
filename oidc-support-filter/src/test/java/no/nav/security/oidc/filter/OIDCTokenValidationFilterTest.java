@@ -276,7 +276,7 @@ class OIDCTokenValidationFilterTest {
         }
 
         private String getContentFromFile() throws IOException {
-            return IOUtils.readInputStreamToString(getInputStream("/metadata.json"), Charset.forName("UTF-8"));
+            return IOUtils.readInputStreamToString(getInputStream("/mockmetadata.json"), Charset.forName("UTF-8"));
         }
 
         private InputStream getInputStream(String file) {
