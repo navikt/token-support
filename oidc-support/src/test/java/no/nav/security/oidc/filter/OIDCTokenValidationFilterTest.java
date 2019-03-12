@@ -139,7 +139,7 @@ class OIDCTokenValidationFilterTest {
     }
 
     @Test
-    void testRequestConcerterShouldHandleWhenCookiesAreNULL() {
+    void testRequestConverterShouldHandleWhenCookiesAreNULL() {
         when(servletRequest.getCookies()).thenReturn(null);
         when(servletRequest.getHeader(OIDCConstants.AUTHORIZATION_HEADER)).thenReturn(null);
 
@@ -149,7 +149,7 @@ class OIDCTokenValidationFilterTest {
     }
 
     @Test
-    void testRequestConcerterShouldConvertCorrectly() {
+    void testRequestConverterShouldConvertCorrectly() {
         when(servletRequest.getCookies()).thenReturn(new Cookie[] {new Cookie("JSESSIONID", "ABCDEF"), new Cookie("IDTOKEN", "THETOKEN")});
         when(servletRequest.getHeader(OIDCConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA");
 
