@@ -1,4 +1,4 @@
-package no.nav.security.oidc.filter;
+package no.nav.security.oidc.http;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -11,12 +11,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,13 +31,13 @@ import no.nav.security.oidc.configuration.MultiIssuerConfiguration;
 import no.nav.security.oidc.configuration.OIDCResourceRetriever;
 
 @ExtendWith(MockitoExtension.class)
-public class TokenRetrieverTest {
+class TokenRetrieverTest {
 
     @Mock
-    private HttpServletRequest request;
+    private TokenRetriever.HttpRequest request;
 
     @Test
-    public void testRetrieveTokensInHeader() throws URISyntaxException, MalformedURLException {
+    void testRetrieveTokensInHeader() throws URISyntaxException, MalformedURLException {
         MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
                 new NoopResourceRetriever());
         String issuer1Token = createJWT("issuer1");
@@ -48,7 +46,7 @@ public class TokenRetrieverTest {
     }
 
     @Test
-    public void testRetrieveTokensInHeaderIssuerNotConfigured() throws URISyntaxException, MalformedURLException {
+    void testRetrieveTokensInHeaderIssuerNotConfigured() throws URISyntaxException, MalformedURLException {
         MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
                 new NoopResourceRetriever());
         String issuer1Token = createJWT("issuerNotConfigured");
@@ -57,7 +55,7 @@ public class TokenRetrieverTest {
     }
 
     @Test
-    public void testRetrieveTokensInCookie() throws URISyntaxException, MalformedURLException {
+    void testRetrieveTokensInCookie() throws URISyntaxException, MalformedURLException {
         MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
                 new NoopResourceRetriever());
         String issuer1Token = createJWT("issuer1");
@@ -66,7 +64,7 @@ public class TokenRetrieverTest {
     }
 
     @Test
-    public void testRetrieveTokensMultipleIssuersWithSameCookieName() throws URISyntaxException, MalformedURLException {
+    void testRetrieveTokensMultipleIssuersWithSameCookieName() throws URISyntaxException, MalformedURLException {
         Map<String, IssuerProperties> issuerPropertiesMap = createIssuerPropertiesMap("issuer1", "cookie1");
         issuerPropertiesMap.putAll(createIssuerPropertiesMap("issuer2", "cookie1"));
 
@@ -83,7 +81,7 @@ public class TokenRetrieverTest {
             throws URISyntaxException, MalformedURLException {
         Map<String, IssuerProperties> issuerPropertiesMap = new HashMap<>();
         issuerPropertiesMap.put(issuer,
-                new IssuerProperties(new URI("https://" + issuer).toURL(), Arrays.asList("aud1"), cookieName));
+                new IssuerProperties(new URI("https://" + issuer).toURL(), Collections.singletonList("aud1"), cookieName));
         return issuerPropertiesMap;
     }
 
@@ -110,6 +108,27 @@ public class TokenRetrieverTest {
 
         private InputStream getInputStream(String file) {
             return NoopResourceRetriever.class.getResourceAsStream(file);
+        }
+    }
+
+    private class Cookie implements TokenRetriever.NameValue {
+
+        private String name;
+        private String value;
+
+        Cookie(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getValue() {
+            return value;
         }
     }
 }

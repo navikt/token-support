@@ -1,12 +1,9 @@
-package no.nav.security.oidc.filter;
+package no.nav.security.oidc.http;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +17,19 @@ import no.nav.security.oidc.context.TokenContext;
 
 public class TokenRetriever {
 
+    public interface NameValue {
+        String getName();
+        String getValue();
+    }
+
+    public interface HttpRequest {
+        String getHeader(String headerName);
+        NameValue[] getCookies();
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(TokenRetriever.class);
 
-    public static List<TokenContext> retrieveTokens(MultiIssuerConfiguration config, HttpServletRequest request) {
+    static List<TokenContext> retrieveTokens(MultiIssuerConfiguration config, HttpRequest request) {
         List<TokenContext> tokens = new ArrayList<>();
 
         LOG.debug("Checking authorization header");
@@ -49,12 +56,12 @@ public class TokenRetriever {
         }
 
         LOG.debug("Checking for tokens in cookies");
-        Cookie[] cookies = request.getCookies();
+        NameValue[] cookies = request.getCookies();
         if (cookies != null) {
             for (String issuer : config.getIssuerShortNames()) {
                 String expectedName = config.getIssuer(issuer).getCookieName();
                 expectedName = expectedName == null ? OIDCConstants.getDefaultCookieName(issuer) : expectedName;
-                for (Cookie cookie : cookies) {
+                for (NameValue cookie : cookies) {
                     if (cookie.getName().equalsIgnoreCase(expectedName)) {
                         LOG.debug("Found cookie with expected name {}", expectedName);
                         Optional<TokenContext> tokenContext = createTokenContext(config, cookie.getValue());

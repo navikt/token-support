@@ -1,16 +1,10 @@
 package no.nav.security.oidc.filter;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import static no.nav.security.oidc.http.HTTPTokenValidator.validateTokensAndCreateContext;
 
-/*
- * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
- * OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
- * ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
- * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
- */
+import java.io.IOException;
+import java.util.Arrays;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -23,14 +17,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nimbusds.jwt.JWTParser;
-
 import no.nav.security.oidc.configuration.MultiIssuerConfiguration;
-import no.nav.security.oidc.context.OIDCClaims;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
-import no.nav.security.oidc.context.OIDCValidationContext;
-import no.nav.security.oidc.context.TokenContext;
-import no.nav.security.oidc.exceptions.OIDCTokenValidatorException;
+import no.nav.security.oidc.http.TokenRetriever;
+import no.nav.security.oidc.http.TokenRetriever.NameValue;
+
+/*
+ * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ * OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
+ * ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
+ * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
+ */
 
 public class OIDCTokenValidationFilter implements Filter {
 
@@ -60,42 +57,47 @@ public class OIDCTokenValidationFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
 
     }
 
     private void doTokenValidation(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        List<TokenContext> tokensOnRequest = TokenRetriever.retrieveTokens(config, request);
-        List<TokenContext> validatedTokens = new ArrayList<>();
-        for (TokenContext token : tokensOnRequest) {
-            long start = System.currentTimeMillis();
-            try {
-                config.getIssuer(token.getIssuer()).getTokenValidator().assertValidToken(token.getIdToken());
-                validatedTokens.add(token);
-                LOG.debug("Token {} validated OK", token.getIssuer());
-            } catch (OIDCTokenValidatorException ve) {
-                LOG.info("Invalid token for issuer [{}, expires at {}]", token.getIssuer(), ve.getExpiryDate(), ve);
-            }
-            long stop = System.currentTimeMillis();
-            LOG.debug("Validated token [{}] in {}ms", token.getIssuer(), (stop - start));
-        }
-        OIDCValidationContext validationContext = new OIDCValidationContext();
-        for (TokenContext validatedToken : validatedTokens) {
-            try {
-                validationContext.addValidatedToken(validatedToken.getIssuer(), validatedToken,
-                        new OIDCClaims(JWTParser.parse(validatedToken.getIdToken())));
-            } catch (ParseException e) {
-                LOG.warn("Failed to parse token despite validated", e);
-            }
-        }
-        contextHolder.setOIDCValidationContext(validationContext);
+        contextHolder.setOIDCValidationContext(validateTokensAndCreateContext(config, fromHttpServletRequest(request)));
         try {
             chain.doFilter(request, response);
         } finally {
             contextHolder.setOIDCValidationContext(null);
         }
+    }
+
+    static TokenRetriever.HttpRequest fromHttpServletRequest(final HttpServletRequest request) {
+        return new TokenRetriever.HttpRequest() {
+            @Override
+            public String getHeader(String headerName) {
+                return request.getHeader(headerName);
+            }
+
+            @Override
+            public NameValue[] getCookies() {
+                if (request.getCookies() == null) {
+                    return null;
+                }
+                return Arrays.stream(request.getCookies()).map(cookie -> new NameValue() {
+
+                    @Override
+                    public String getName() {
+                        return cookie.getName();
+                    }
+
+                    @Override
+                    public String getValue() {
+                        return cookie.getValue();
+                    }
+                }).toArray(NameValue[]::new);
+            }
+        };
     }
 
 }
