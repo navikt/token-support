@@ -32,6 +32,8 @@
         <module>oidc-test-support</module>
         <module>oidc-jersey-support</module>
         <module>oidc-spring-support-demo</module>
+        <module>oidc-ktor-support</module>
+        <module>oidc-ktor-support-demo</module>
     </modules>
 
     <properties>

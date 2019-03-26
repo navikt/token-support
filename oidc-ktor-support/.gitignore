@@ -1,8 +1,6 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
-.DS_Store
-
 ### STS ###
 .apt_generated
 .classpath
@@ -24,8 +22,3 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
-
-**/.project
-**/.settings
-**/.classpath
-**/target
