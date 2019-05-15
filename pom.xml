@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.nav.security</groupId>
     <artifactId>token-support</artifactId>
-    <version>0.2.18-SNAPSHOT</version>
+    <version>0.2.18</version>
     <packaging>pom</packaging>
     <name>token-support</name>
     <description>
@@ -46,7 +46,7 @@
         <url>https://github.com/navikt/token-support</url>
         <connection>scm:git:git@github.com:navikt/token-support.git</connection>
         <developerConnection>scm:git:git@github.com:navikt/token-support.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>token-support-0.2.18</tag>
     </scm>
 
     <distributionManagement>
