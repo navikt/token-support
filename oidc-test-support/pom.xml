@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>no.nav.security</groupId>
 		<artifactId>token-support</artifactId>
-		<version>0.2.17</version>
+		<version>0.2.18-SNAPSHOT</version>
 	</parent>
 	<artifactId>oidc-test-support</artifactId>
 	<name>oidc-test-support</name>
