@@ -1,42 +1,112 @@
 package no.nav.security.spring.oidc.validation.interceptor;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.lang.annotation.Annotation;
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.core.annotation.AnnotationAttributes;
-
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-
 import net.minidev.json.JSONArray;
+import no.nav.security.oidc.api.Protected;
 import no.nav.security.oidc.api.ProtectedWithClaims;
+import no.nav.security.oidc.api.Unprotected;
 import no.nav.security.oidc.context.OIDCClaims;
 import no.nav.security.oidc.context.OIDCRequestContextHolder;
 import no.nav.security.oidc.context.OIDCValidationContext;
 import no.nav.security.oidc.context.TokenContext;
-import no.nav.security.spring.oidc.api.EnableOIDCTokenValidation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.method.HandlerMethod;
 
-public class OIDCTokenControllerHandlerInterceptorTest {
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.Map;
 
-    private OIDCRequestContextHolder contextHolder = createContextHolder();
-    private Map<String, Object> annotationAttributesMap = Stream
-            .of(new AbstractMap.SimpleEntry<>("ignore", new String[] { "org.springframework" }))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    private AnnotationAttributes annotationAttrs = AnnotationAttributes.fromMap(annotationAttributesMap);
-    private OIDCTokenControllerHandlerInterceptor interceptor = new OIDCTokenControllerHandlerInterceptor(
-            annotationAttrs, contextHolder);
+import static org.junit.jupiter.api.Assertions.*;
+
+class OIDCTokenControllerHandlerInterceptorTest {
+
+    private OIDCRequestContextHolder contextHolder;
+
+    private OIDCTokenControllerHandlerInterceptor interceptor;
+    private MockHttpServletRequest request;
+    private MockHttpServletResponse response;
+
+    @BeforeEach
+    void setup() {
+        contextHolder = createContextHolder();
+        contextHolder.setOIDCValidationContext(new OIDCValidationContext());
+        Map<String, Object> annotationAttributesMap = new HashMap<>();
+        annotationAttributesMap.put("ignore", new String[]{"org.springframework", IgnoreClass.class.getName()});
+        AnnotationAttributes annotationAttrs = AnnotationAttributes.fromMap(annotationAttributesMap);
+        interceptor = new OIDCTokenControllerHandlerInterceptor(annotationAttrs, contextHolder);
+        request = new MockHttpServletRequest();
+        response = new MockHttpServletResponse();
+    }
 
     @Test
-    public void testHandleProtectedAnnotation() {
+    void classIsMarkedAsIgnore(){
+        HandlerMethod handlerMethod = handlerMethod(new IgnoreClass(), "test");
+        assertTrue(interceptor.preHandle(request,response, handlerMethod));
+    }
+
+    @Test
+    void notAnnotatedShouldThrowException() {
+        HandlerMethod handlerMethod = handlerMethod(new NotAnnotatedClass(), "test");
+        assertThrows(OIDCUnauthorizedException.class,
+                () -> interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodIsUnprotectedAccessShouldBeAllowed() {
+        HandlerMethod handlerMethod = handlerMethod(new UnprotectedClass(), "test");
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodShouldBeProtected() {
+        HandlerMethod handlerMethod = handlerMethod(new ProtectedClass(), "test");
+        assertThrows(OIDCUnauthorizedException.class,
+                () -> interceptor.preHandle(request, response, handlerMethod));
+        setupValidOidcContext();
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodShouldBeProtectedOnUnprotectedClass() {
+        HandlerMethod handlerMethod = handlerMethod(new UnprotectedClassProtectedMethod(), "protectedMethod");
+        assertThrows(OIDCUnauthorizedException.class,
+                () -> interceptor.preHandle(request, response, handlerMethod));
+        setupValidOidcContext();
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodShouldBeUnprotectedOnProtectedClass() {
+        HandlerMethod handlerMethod = handlerMethod(new ProtectedClassUnprotectedMethod(), "unprotectedMethod");
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodShouldBeProtectedWithClaims() {
+        HandlerMethod handlerMethod = handlerMethod(new ProtectedClassProtectedWithClaimsMethod(), "protectedMethod");
+        assertThrows(OIDCUnauthorizedException.class,
+                () -> interceptor.preHandle(request, response, handlerMethod));
+        setupValidOidcContext();
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodShouldBeProtectedOnClassProtectedWithClaims() {
+        HandlerMethod handlerMethod = handlerMethod(new ProtectedWithClaimsClassProtectedMethod(), "protectedMethod");
+        assertThrows(OIDCUnauthorizedException.class,
+                () -> interceptor.preHandle(request, response, handlerMethod));
+        setupValidOidcContext();
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void testHandleProtectedAnnotation() {
         assertThrows(OIDCUnauthorizedException.class,
                 () -> interceptor.handleProtectedAnnotation(new OIDCValidationContext()));
         OIDCClaims claims = createOIDCClaims("customClaim", "socustom");
@@ -45,8 +115,8 @@ public class OIDCTokenControllerHandlerInterceptorTest {
     }
 
     @Test
-    public void testHandleProtectedWithClaimsAnnotation() {
-        ProtectedWithClaims annotation = createProtectedWithClaims("issuer1", "customClaim=shouldmatch");
+    void testHandleProtectedWithClaimsAnnotation() {
+        ProtectedWithClaims annotation = createProtectedWithClaims("customClaim=shouldmatch");
 
         OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
         OIDCValidationContext context = createOidcValidationContext(claims);
@@ -58,7 +128,7 @@ public class OIDCTokenControllerHandlerInterceptorTest {
     }
 
     @Test
-    public void testHandleProtectedWithClaimsAnnotationCombineWithOr() {
+    void testHandleProtectedWithClaimsAnnotationCombineWithOr() {
         ProtectedWithClaims annotation = createProtectedWithClaims("issuer1", true, "customClaim=shouldmatch",
                 "notintoken=foo");
         assertTrue(interceptor.handleProtectedWithClaimsAnnotation(
@@ -70,7 +140,7 @@ public class OIDCTokenControllerHandlerInterceptorTest {
     }
 
     @Test
-    public void testContainsRequiredClaimsDefaultBehaviour() {
+    void testContainsRequiredClaimsDefaultBehaviour() {
         OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
         assertTrue(
                 interceptor.containsRequiredClaims(claims, false, "customClaim=shouldmatch", "acr=Level4", ""));
@@ -84,7 +154,7 @@ public class OIDCTokenControllerHandlerInterceptorTest {
     }
 
     @Test
-    public void testContainsRequiredClaimsCombineWithOr() {
+    void testContainsRequiredClaimsCombineWithOr() {
         OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
 
         assertTrue(
@@ -100,17 +170,17 @@ public class OIDCTokenControllerHandlerInterceptorTest {
 
     }
 
-    private OIDCValidationContext createOidcValidationContext(OIDCClaims claims1) {
+    private static OIDCValidationContext createOidcValidationContext(OIDCClaims claims1) {
         OIDCValidationContext context = new OIDCValidationContext();
         context.addValidatedToken("issuer1", new TokenContext("issuer1", "someidtoken"), claims1);
         return context;
     }
 
-    private ProtectedWithClaims createProtectedWithClaims(String issuer, String... claimMap) {
-        return createProtectedWithClaims(issuer, false, claimMap);
+    private static ProtectedWithClaims createProtectedWithClaims(String... claimMap) {
+        return createProtectedWithClaims("issuer1", false, claimMap);
     }
 
-    private ProtectedWithClaims createProtectedWithClaims(String issuer, boolean combineWithOr, String... claimMap) {
+    private static ProtectedWithClaims createProtectedWithClaims(String issuer, boolean combineWithOr, String... claimMap) {
         return new ProtectedWithClaims() {
             public Class<? extends Annotation> annotationType() {
                 return ProtectedWithClaims.class;
@@ -131,18 +201,23 @@ public class OIDCTokenControllerHandlerInterceptorTest {
         };
     }
 
-    private OIDCClaims createOIDCClaims(String name, String value) {
+    private void setupValidOidcContext() {
+        OIDCClaims claims = createOIDCClaims("aclaim", "value");
+        OIDCValidationContext context = createOidcValidationContext(claims);
+        contextHolder.setOIDCValidationContext(context);
+    }
+
+    private static OIDCClaims createOIDCClaims(String name, String value) {
         JWT jwt = new PlainJWT(new JWTClaimsSet.Builder()
                 .subject("subject")
                 .issuer("http//issuer1")
                 .claim("acr", "Level4")
                 .claim("groups", new JSONArray().appendElement("123").appendElement("456"))
                 .claim(name, value).build());
-        OIDCClaims claims = new OIDCClaims(jwt);
-        return claims;
+        return new OIDCClaims(jwt);
     }
 
-    private OIDCRequestContextHolder createContextHolder() {
+    private static OIDCRequestContextHolder createContextHolder() {
         return new OIDCRequestContextHolder() {
             OIDCValidationContext validationContext;
 
@@ -168,8 +243,81 @@ public class OIDCTokenControllerHandlerInterceptorTest {
         };
     }
 
-    @EnableOIDCTokenValidation
-    class TestMainClass {
+    private static HandlerMethod handlerMethod(Object object, String method) {
+        try {
+            return new HandlerMethod(object, method);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private class IgnoreClass {
+        public void test(){}
+    }
+
+    private class NotAnnotatedClass {
+        public void test() {
+        }
+    }
+
+    @Unprotected
+    private class UnprotectedClass {
+        public void test() {
+        }
+    }
+
+    @Protected
+    private class ProtectedClass {
+        public void test() {
+        }
+    }
+
+    @Protected
+    private class ProtectedClassUnprotectedMethod {
+        public void protectedMethod() {
+        }
+
+        @Unprotected
+        public void unprotectedMethod() {
+        }
+    }
+
+    @Unprotected
+    private class UnprotectedClassProtectedMethod {
+        @Protected
+        public void protectedMethod() {
+        }
+
+        public void unprotectedMethod() {
+        }
+    }
+
+    @Protected
+    private class ProtectedClassProtectedWithClaimsMethod {
+        @ProtectedWithClaims(issuer = "issuer1")
+        public void protectedMethod() {
+        }
+
+        @Unprotected
+        public void unprotectedMethod() {
+        }
+
+        public void unprotected() {
+        }
+    }
+
+    @ProtectedWithClaims(issuer = "issuer1")
+    private class ProtectedWithClaimsClassProtectedMethod {
+        @Protected
+        public void protectedMethod() {
+        }
+
+        @Unprotected
+        public void unprotectedMethod() {
+        }
+
+        public void protectedWithClaimsMethod() {
+        }
     }
 
 }
