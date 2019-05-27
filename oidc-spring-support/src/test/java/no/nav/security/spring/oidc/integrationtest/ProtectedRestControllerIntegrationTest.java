@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static no.nav.security.oidc.test.support.JwtTokenGenerator.*;
+import static no.nav.security.spring.oidc.integrationtest.ProtectedRestController.PROTECTED;
+import static no.nav.security.spring.oidc.integrationtest.ProtectedRestController.UNPROTECTED;
 
 @SpringBootTest
 @ContextConfiguration(classes = {ProtectedApplication.class, ProtectedApplicationConfig.class})
@@ -44,10 +46,21 @@ public class ProtectedRestControllerIntegrationTest {
     }
 
     @Test
+    void unprotectedMethod() {
+        given()
+                .when()
+                .get(UNPROTECTED)
+                .then()
+                .log().ifValidationFails()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+
+    @Test
     void noTokenInRequest() {
         given()
                 .when()
-                .get("/protected")
+                .get(PROTECTED)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.UNAUTHORIZED.value());
@@ -59,7 +72,7 @@ public class ProtectedRestControllerIntegrationTest {
         given()
                 .header("Authorization", "Bearer 123")
                 .when()
-                .get("/protected")
+                .get(PROTECTED)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.UNAUTHORIZED.value());
@@ -71,7 +84,7 @@ public class ProtectedRestControllerIntegrationTest {
         given()
                 .header("Authorization", "Bearer " + jwt.serialize())
                 .when()
-                .get("/protected")
+                .get(PROTECTED)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.UNAUTHORIZED.value());
@@ -83,7 +96,7 @@ public class ProtectedRestControllerIntegrationTest {
         given()
                 .header("Authorization", "Bearer " + jwt.serialize())
                 .when()
-                .get("/protected")
+                .get(PROTECTED)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.UNAUTHORIZED.value());
@@ -95,22 +108,27 @@ public class ProtectedRestControllerIntegrationTest {
         given()
                 .header("Authorization", "Bearer " + jwt.serialize())
                 .when()
-                .get("/protected")
+                .get(PROTECTED)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.UNAUTHORIZED.value());
     }
 
     @Test
-    void signedTokenInRequestAllGood() {
+    void signedTokenInRequestProtectedMethodShouldBeOk() {
         JWT jwt = createSignedJWT(jwtClaimsSetKnownIssuer());
         given()
                 .header("Authorization", "Bearer " + jwt.serialize())
                 .when()
-                .get("/protected")
+                .get(PROTECTED)
                 .then()
                 .log().ifValidationFails()
                 .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void signedTokenInRequestProtectedWithClaimsMethodShouldBeOk() {
+       //TODO
     }
 
     private static JWTClaimsSet jwtClaimsSetKnownIssuer() {
