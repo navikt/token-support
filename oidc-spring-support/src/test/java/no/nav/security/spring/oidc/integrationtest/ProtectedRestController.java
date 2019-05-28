@@ -9,20 +9,27 @@ import org.springframework.web.bind.annotation.RestController;
 @Protected
 @RestController
 public class ProtectedRestController {
-
+    private static final String ISSUER_SHORTNAME = "knownissuer";
     static final String UNPROTECTED = "/unprotected";
     static final String PROTECTED = "/protected";
     static final String PROTECTED_WITH_CLAIMS = "/protected/withclaims";
+    static final String PROTECTED_WITH_CLAIMS_ANY_CLAIMS = "/protected/anyclaims";
 
     @GetMapping(PROTECTED)
     public String protectedMethod() {
         return "protected";
     }
 
-    @ProtectedWithClaims(issuer = "knownissuer", claimMap = "importantclaim=vip, acr=Level4")
+    @ProtectedWithClaims(issuer = ISSUER_SHORTNAME, claimMap = {"importantclaim=vip", "acr=Level4"})
     @GetMapping(PROTECTED_WITH_CLAIMS)
     public String protectedWithClaimsMethod(){
         return "protected with some required claims";
+    }
+
+    @ProtectedWithClaims(issuer = ISSUER_SHORTNAME, claimMap = {"claim1=1", "claim2=2"}, combineWithOr = true)
+    @GetMapping(PROTECTED_WITH_CLAIMS_ANY_CLAIMS)
+    public String protectedWithClaimsAnyClaimMethod(){
+        return "protected with any of the registered claims";
     }
 
     @Unprotected
