@@ -15,8 +15,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.IOUtils;
 
 public class JwkGenerator {
-    public static String DEFAULT_KEYID = "localhost-signer";
-    public static String DEFAULT_JWKSET_FILE = "/jwkset.json";
+    public static final String DEFAULT_KEYID = "localhost-signer";
+    public static final String DEFAULT_JWKSET_FILE = "/jwkset.json";
 
     public JwkGenerator() {
     }
@@ -40,28 +40,26 @@ public class JwkGenerator {
 
     public static JWKSet getJWKSetFromFile(File file) {
         try {
-            JWKSet set = JWKSet.load(file);
-            return set;
+            return JWKSet.load(file);
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected static KeyPair generateKeyPair() {
+    public static KeyPair generateKeyPair() {
         try {
             KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-            gen.initialize(1024); // just for testing so 1024 is ok
+            gen.initialize(2048);
             return gen.generateKeyPair();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected static RSAKey createJWK(String keyID, KeyPair keyPair) {
-        RSAKey jwk = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
+    public static RSAKey createJWK(String keyID, KeyPair keyPair) {
+        return new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
                 .privateKey((RSAPrivateKey) keyPair.getPrivate())
                 .keyID(keyID)
                 .build();
-        return jwk;
     }
 }

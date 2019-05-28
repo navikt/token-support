@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>no.nav.security</groupId>
 		<artifactId>token-support</artifactId>
-		<version>0.2.16-SNAPSHOT</version>
+		<version>0.2.19-SNAPSHOT</version>
 	</parent>
 
 
@@ -50,6 +50,14 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

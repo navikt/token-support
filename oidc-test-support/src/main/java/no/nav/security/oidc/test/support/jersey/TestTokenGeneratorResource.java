@@ -7,7 +7,6 @@ import no.nav.security.oidc.api.Unprotected;
 import no.nav.security.oidc.test.support.JwkGenerator;
 import no.nav.security.oidc.test.support.JwtTokenGenerator;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
@@ -96,9 +95,9 @@ public class TestTokenGeneratorResource {
 
 
     private static class TokenEndpoint {
-        String desc;
-        String uri;
-        String[] params;
+        final String desc;
+        final String uri;
+        final String[] params;
 
         private TokenEndpoint(String desc, String uri, String... params) {
             this.desc = desc;

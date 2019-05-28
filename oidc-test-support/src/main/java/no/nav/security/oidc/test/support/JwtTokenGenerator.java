@@ -17,10 +17,10 @@ import com.nimbusds.jwt.SignedJWT;
 
 public class JwtTokenGenerator {
 
-    public static String ISS = "iss-localhost";
-    public static String AUD = "aud-localhost";
-    public static String ACR = "Level4";
-    public static long EXPIRY = 60 * 60 * 3600;
+    public static final String ISS = "iss-localhost";
+    public static final String AUD = "aud-localhost";
+    public static final String ACR = "Level4";
+    public static final long EXPIRY = 60 * 60 * 3600;
 
     private JwtTokenGenerator() {
     }
@@ -59,7 +59,7 @@ public class JwtTokenGenerator {
                 .expirationTime(new Date(now.getTime() + expiry)).build();
     }
 
-    protected static SignedJWT createSignedJWT(RSAKey rsaJwk, JWTClaimsSet claimsSet) {
+    public static SignedJWT createSignedJWT(RSAKey rsaJwk, JWTClaimsSet claimsSet) {
         try {
             JWSHeader.Builder header = new Builder(JWSAlgorithm.RS256)
                     .keyID(rsaJwk.getKeyID())

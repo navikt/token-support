@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>no.nav.security</groupId>
 		<artifactId>token-support</artifactId>
-		<version>0.2.16-SNAPSHOT</version>
+		<version>0.2.19-SNAPSHOT</version>
 	</parent>
 	<artifactId>oidc-test-support</artifactId>
 	<name>oidc-test-support</name>
@@ -26,7 +26,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>oidc-spring-support</artifactId>
+			<artifactId>oidc-support</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.nimbusds</groupId>
