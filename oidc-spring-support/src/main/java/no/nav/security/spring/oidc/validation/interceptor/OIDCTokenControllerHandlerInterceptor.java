@@ -46,19 +46,16 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object handler, Exception arg3)
-            throws Exception {
+    public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object handler, Exception arg3) {
     }
 
     @Override
-    public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object handler, ModelAndView arg3)
-            throws Exception {
+    public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object handler, ModelAndView arg3) {
 
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         OIDCValidationContext validationContext = contextHolder
                 .getOIDCValidationContext();
 

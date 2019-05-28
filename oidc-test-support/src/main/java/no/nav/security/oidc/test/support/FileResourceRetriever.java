@@ -27,9 +27,9 @@ public class FileResourceRetriever extends OIDCResourceRetriever {
     } 
     
     @Override
-	public Resource retrieveResource(URL url) throws IOException {
+	public Resource retrieveResource(URL url) {
 		String content = getContentFromFile(url); 	
-    	return new Resource(content, "application/json");
+    	return content != null ? new Resource(content, "application/json") : null;
 	}
 
     private String getContentFromFile(URL url){
@@ -46,7 +46,7 @@ public class FileResourceRetriever extends OIDCResourceRetriever {
          }
     }
   
-    private InputStream getInputStream(String file) throws IOException {
+    private InputStream getInputStream(String file) {
     	return FileResourceRetriever.class.getResourceAsStream(file);
     }
     

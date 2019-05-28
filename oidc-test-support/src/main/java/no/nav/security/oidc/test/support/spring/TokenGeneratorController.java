@@ -90,11 +90,11 @@ public class TokenGeneratorController {
     }
 
     class TokenEndpoint {
-        String desc;
-        String uri;
-        String[] params;
+        final String desc;
+        final String uri;
+        final String[] params;
 
-        public TokenEndpoint(String desc, String uri, String... params) {
+        TokenEndpoint(String desc, String uri, String... params) {
             this.desc = desc;
             this.uri = uri;
             this.params = params;
