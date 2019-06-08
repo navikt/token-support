@@ -1,6 +1,5 @@
 package no.nav.security.spring.oidc;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.EnumSet;
 
@@ -13,13 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -37,22 +34,15 @@ import no.nav.security.spring.oidc.validation.interceptor.OIDCTokenControllerHan
 @Configuration
 @EnableOIDCTokenValidation
 @EnableConfigurationProperties(MultiIssuerProperties.class)
-public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer, EnvironmentAware, ImportAware {
+public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer, ImportAware {
 
-    private Logger logger = LoggerFactory.getLogger(EnableOIDCTokenValidationConfiguration.class);
-
-    private Environment env;
+    private static final Logger LOG = LoggerFactory.getLogger(EnableOIDCTokenValidationConfiguration.class);
 
     private AnnotationAttributes enableOIDCTokenValidation;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(getControllerInterceptor());
-    }
-
-    @Override
-    public void setEnvironment(Environment env) {
-        this.env = env;
     }
 
     @Override
@@ -66,10 +56,11 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
     }
 
     @Bean
-    public OIDCResourceRetriever oidcResourceRetriever() {
+    public OIDCResourceRetriever oidcResourceRetriever(@Value("${https.plaintext:false}") boolean usePlaintext,
+            @Value("${http.proxy}") URL proxy) {
         OIDCResourceRetriever resourceRetriever = new OIDCResourceRetriever();
-        resourceRetriever.setProxyUrl(getConfiguredProxy());
-        resourceRetriever.setUsePlainTextForHttps(Boolean.parseBoolean(env.getProperty("https.plaintext", "false")));
+        resourceRetriever.setProxyUrl(proxy);
+        resourceRetriever.setUsePlainTextForHttps(usePlaintext);
         return resourceRetriever;
     }
 
@@ -99,13 +90,13 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
     @Bean
     public BearerTokenClientHttpRequestInterceptor bearerTokenClientHttpRequestInterceptor(
             OIDCRequestContextHolder oidcRequestContextHolder) {
-        logger.info("creating bean for HttpClientOIDCAuthorizationInterceptor");
+        LOG.info("creating bean for HttpClientOIDCAuthorizationInterceptor");
         return new BearerTokenClientHttpRequestInterceptor(oidcRequestContextHolder);
     }
 
     @Bean
     public OIDCTokenControllerHandlerInterceptor getControllerInterceptor() {
-        logger.debug("registering OIDC token controller handler interceptor");
+        LOG.debug("registering OIDC token controller handler interceptor");
         OIDCTokenControllerHandlerInterceptor c = new OIDCTokenControllerHandlerInterceptor(
                 enableOIDCTokenValidation,
                 new SpringOIDCRequestContextHolder());
@@ -116,7 +107,7 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
     @Qualifier("oidcTokenValidationFilterRegistrationBean")
     public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterRegistrationBean(
             OIDCTokenValidationFilter validationFilter) {
-        logger.info("Registering validation filter");
+        LOG.info("Registering validation filter");
         final FilterRegistrationBean<OIDCTokenValidationFilter> filterRegistration = new FilterRegistrationBean<OIDCTokenValidationFilter>();
         filterRegistration.setFilter(validationFilter);
         filterRegistration.setMatchAfter(false);
@@ -133,7 +124,7 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
     public FilterRegistrationBean<OIDCTokenExpiryFilter> oidcTokenExpiryFilterRegistrationBean(
             OIDCRequestContextHolder oidcRequestContextHolder,
             @Value("${no.nav.security.oidc.expirythreshold}") long expiryThreshold) {
-        logger.info("Registering expiry filter");
+        LOG.info("Registering expiry filter");
         final FilterRegistrationBean<OIDCTokenExpiryFilter> filterRegistration = new FilterRegistrationBean<>();
         filterRegistration.setFilter(new OIDCTokenExpiryFilter(oidcRequestContextHolder, expiryThreshold));
         filterRegistration.setMatchAfter(false);
@@ -142,23 +133,6 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
         filterRegistration.setAsyncSupported(true);
         filterRegistration.setOrder(2);
         return filterRegistration;
-    }
-
-    private URL getConfiguredProxy() {
-        String proxyParameterName = env.getProperty("http.proxy.parametername", "http.proxy");
-        String proxyconfig = env.getProperty(proxyParameterName);
-        URL proxy = null;
-        if (proxyconfig != null && proxyconfig.trim().length() > 0) {
-            logger.info("Proxy configuration found [" + proxyParameterName + "] was " + proxyconfig);
-            try {
-                proxy = new URL(proxyconfig);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException("config [" + proxyParameterName + "] is misconfigured: " + e, e);
-            }
-        } else {
-            logger.info("No proxy configuration found [" + proxyParameterName + "]");
-        }
-        return proxy;
     }
 
     AnnotationAttributes getEnableOIDCTokenValidation() {
