@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.security</groupId>
         <artifactId>token-support</artifactId>
-        <version>0.2.16-SNAPSHOT</version>
+        <version>0.2.19-SNAPSHOT</version>
     </parent>
     <artifactId>oidc-ktor-support</artifactId>
     <name>ktor-oidc-support</name>

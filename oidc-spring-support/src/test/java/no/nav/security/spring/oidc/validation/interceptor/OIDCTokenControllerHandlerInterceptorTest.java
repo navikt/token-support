@@ -4,13 +4,10 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import net.minidev.json.JSONArray;
-import no.nav.security.oidc.api.Protected;
-import no.nav.security.oidc.api.ProtectedWithClaims;
-import no.nav.security.oidc.api.Unprotected;
-import no.nav.security.oidc.context.OIDCClaims;
-import no.nav.security.oidc.context.OIDCRequestContextHolder;
-import no.nav.security.oidc.context.OIDCValidationContext;
-import no.nav.security.oidc.context.TokenContext;
+import no.nav.security.token.support.core.api.Protected;
+import no.nav.security.token.support.core.api.ProtectedWithClaims;
+import no.nav.security.token.support.core.api.Unprotected;
+import no.nav.security.token.support.core.context.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -19,14 +16,16 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OIDCTokenControllerHandlerInterceptorTest {
 
-    private OIDCRequestContextHolder contextHolder;
+    private JwtTokenValidationContextHolder contextHolder;
 
     private OIDCTokenControllerHandlerInterceptor interceptor;
     private MockHttpServletRequest request;
@@ -35,7 +34,7 @@ class OIDCTokenControllerHandlerInterceptorTest {
     @BeforeEach
     void setup() {
         contextHolder = createContextHolder();
-        contextHolder.setOIDCValidationContext(new OIDCValidationContext());
+        contextHolder.setOIDCValidationContext(new JwtTokenValidationContext(Collections.emptyMap()));
         Map<String, Object> annotationAttributesMap = new HashMap<>();
         annotationAttributesMap.put("ignore", new String[]{"org.springframework", IgnoreClass.class.getName()});
         AnnotationAttributes annotationAttrs = AnnotationAttributes.fromMap(annotationAttributesMap);
@@ -108,9 +107,9 @@ class OIDCTokenControllerHandlerInterceptorTest {
     @Test
     void testHandleProtectedAnnotation() {
         assertThrows(OIDCUnauthorizedException.class,
-                () -> interceptor.handleProtectedAnnotation(new OIDCValidationContext()));
-        OIDCClaims claims = createOIDCClaims("customClaim", "socustom");
-        OIDCValidationContext context = createOidcValidationContext(claims);
+                () -> interceptor.handleProtectedAnnotation(new JwtTokenValidationContext(Collections.emptyMap())));
+        JwtToken jwtToken = createJwtToken("customClaim", "socustom");
+        JwtTokenValidationContext context = createOidcValidationContext("issuer1", jwtToken);
         assertTrue(interceptor.handleProtectedAnnotation(context));
     }
 
@@ -118,12 +117,12 @@ class OIDCTokenControllerHandlerInterceptorTest {
     void testHandleProtectedWithClaimsAnnotation() {
         ProtectedWithClaims annotation = createProtectedWithClaims("customClaim=shouldmatch");
 
-        OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
-        OIDCValidationContext context = createOidcValidationContext(claims);
+        JwtToken jwtToken = createJwtToken("customClaim", "shouldmatch");
+        JwtTokenValidationContext context = createOidcValidationContext("issuer1", jwtToken);
         assertTrue(interceptor.handleProtectedWithClaimsAnnotation(context, annotation));
         assertThrows(OIDCUnauthorizedException.class,
                 () -> interceptor.handleProtectedWithClaimsAnnotation(
-                        createOidcValidationContext(createOIDCClaims("customClaim", "shouldNOTmatch")),
+                        createOidcValidationContext("issuer1", createJwtToken("customClaim", "shouldNOTmatch")),
                         annotation));
     }
 
@@ -132,16 +131,16 @@ class OIDCTokenControllerHandlerInterceptorTest {
         ProtectedWithClaims annotation = createProtectedWithClaims("issuer1", true, "customClaim=shouldmatch",
                 "notintoken=foo");
         assertTrue(interceptor.handleProtectedWithClaimsAnnotation(
-                createOidcValidationContext(createOIDCClaims("customClaim", "shouldmatch")), annotation));
+                createOidcValidationContext("issuer1", createJwtToken("customClaim", "shouldmatch")), annotation));
         assertThrows(OIDCUnauthorizedException.class,
                 () -> interceptor.handleProtectedWithClaimsAnnotation(
-                        createOidcValidationContext(createOIDCClaims("customClaim", "shouldNOTmatch")),
+                        createOidcValidationContext("issuer1", createJwtToken("customClaim", "shouldNOTmatch")),
                         annotation));
     }
 
     @Test
     void testContainsRequiredClaimsDefaultBehaviour() {
-        OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
+        JwtTokenClaims claims = createJwtToken("customClaim", "shouldmatch").getJwtTokenClaims();
         assertTrue(
                 interceptor.containsRequiredClaims(claims, false, "customClaim=shouldmatch", "acr=Level4", ""));
         assertTrue(
@@ -155,7 +154,7 @@ class OIDCTokenControllerHandlerInterceptorTest {
 
     @Test
     void testContainsRequiredClaimsCombineWithOr() {
-        OIDCClaims claims = createOIDCClaims("customClaim", "shouldmatch");
+        JwtTokenClaims claims = createJwtToken("customClaim", "shouldmatch").getJwtTokenClaims();
 
         assertTrue(
                 interceptor.containsRequiredClaims(claims, true, "customClaim=shouldmatch", "notintoken=foo", ""));
@@ -170,10 +169,10 @@ class OIDCTokenControllerHandlerInterceptorTest {
 
     }
 
-    private static OIDCValidationContext createOidcValidationContext(OIDCClaims claims1) {
-        OIDCValidationContext context = new OIDCValidationContext();
-        context.addValidatedToken("issuer1", new TokenContext("issuer1", "someidtoken"), claims1);
-        return context;
+    private static JwtTokenValidationContext createOidcValidationContext(String issuerShortName, JwtToken jwtToken) {
+        Map<String, JwtToken> map = new ConcurrentHashMap<>();
+        map.put(issuerShortName, jwtToken);
+        return new JwtTokenValidationContext(map);
     }
 
     private static ProtectedWithClaims createProtectedWithClaims(String... claimMap) {
@@ -202,28 +201,28 @@ class OIDCTokenControllerHandlerInterceptorTest {
     }
 
     private void setupValidOidcContext() {
-        OIDCClaims claims = createOIDCClaims("aclaim", "value");
-        OIDCValidationContext context = createOidcValidationContext(claims);
+        JwtToken claims = createJwtToken("aclaim", "value");
+        JwtTokenValidationContext context = createOidcValidationContext("issuer1", claims);
         contextHolder.setOIDCValidationContext(context);
     }
 
-    private static OIDCClaims createOIDCClaims(String name, String value) {
+    private static JwtToken createJwtToken(String claimName, String claimValue) {
         JWT jwt = new PlainJWT(new JWTClaimsSet.Builder()
                 .subject("subject")
                 .issuer("http//issuer1")
                 .claim("acr", "Level4")
                 .claim("groups", new JSONArray().appendElement("123").appendElement("456"))
-                .claim(name, value).build());
-        return new OIDCClaims(jwt);
+                .claim(claimName, claimValue).build());
+        return new JwtToken(jwt.serialize());
     }
 
-    private static OIDCRequestContextHolder createContextHolder() {
-        return new OIDCRequestContextHolder() {
-            OIDCValidationContext validationContext;
+    private static JwtTokenValidationContextHolder createContextHolder() {
+        return new JwtTokenValidationContextHolder() {
+            JwtTokenValidationContext validationContext;
 
             @Override
             public void setRequestAttribute(String name, Object value) {
-                validationContext = (OIDCValidationContext) value;
+                validationContext = (JwtTokenValidationContext) value;
             }
 
             @Override
@@ -232,13 +231,13 @@ class OIDCTokenControllerHandlerInterceptorTest {
             }
 
             @Override
-            public OIDCValidationContext getOIDCValidationContext() {
+            public JwtTokenValidationContext getOIDCValidationContext() {
                 return validationContext;
             }
 
             @Override
-            public void setOIDCValidationContext(OIDCValidationContext oidcValidationContext) {
-                this.validationContext = oidcValidationContext;
+            public void setOIDCValidationContext(JwtTokenValidationContext jwtTokenValidationContext) {
+                this.validationContext = jwtTokenValidationContext;
             }
         };
     }

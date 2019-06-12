@@ -7,7 +7,7 @@ import io.ktor.http.ContentType
 import io.ktor.response.*
 import io.ktor.routing.get
 import io.ktor.routing.routing
-import no.nav.security.oidc.ktor.oidcSupport
+import no.nav.security.token.support.core.ktor.oidcSupport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 

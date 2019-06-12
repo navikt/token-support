@@ -10,7 +10,7 @@ Applications can use these modules in order to verify security tokens on exposed
 
 ### oidc-support
 
-Provides token validation support through servlet filters, using the [Nimbus OAuth 2.0 SDK with OpenID Connect extensions](https://connect2id.com/products/nimbus-oauth-openid-connect-sdk). Please see **`no.nav.security.oidc.filter.OIDCTokenValidationFilter.java`** for more details. Token signing keys are cached in a singleton instance of the **`no.nav.security.oidc.validation.OIDCTokenValidator`**, using the  **`com.nimbusds.openid.connect.sdk.validators.IDTokenValidator`**. Token signing keys will be fetched from the jwt_keys endpoint configured in the OIDC provider configuration metadata endpoint when required (e.g. new signing keys are detected). This module can be used standalone (if you do not use Spring). If you do use Spring you can use the module described below, providing Spring specific mechanisms for securing rest controllers.
+Provides token validation support through servlet filters, using the [Nimbus OAuth 2.0 SDK with OpenID Connect extensions](https://connect2id.com/products/nimbus-oauth-openid-connect-sdk). Please see **`OIDCTokenValidationFilter.java`** for more details. Token signing keys are cached in a singleton instance of the **`OIDCTokenValidator`**, using the  **`com.nimbusds.openid.connect.sdk.validators.IDTokenValidator`**. Token signing keys will be fetched from the jwt_keys endpoint configured in the OIDC provider configuration metadata endpoint when required (e.g. new signing keys are detected). This module can be used standalone (if you do not use Spring). If you do use Spring you can use the module described below, providing Spring specific mechanisms for securing rest controllers.
 
 ### oidc-spring-support
 

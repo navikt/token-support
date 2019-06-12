@@ -6,7 +6,8 @@ import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 
-import no.nav.security.oidc.filter.OIDCTokenExpiryFilter;
+import no.nav.security.token.support.core.filter.OIDCTokenExpiryFilter;
+import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,10 +27,10 @@ import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import no.nav.security.oidc.configuration.OIDCResourceRetriever;
-import no.nav.security.oidc.configuration.MultiIssuerConfiguration;
-import no.nav.security.oidc.context.OIDCRequestContextHolder;
-import no.nav.security.oidc.filter.OIDCTokenValidationFilter;
+import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
+import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
+import no.nav.security.token.support.core.context.JwtTokenValidationContextHolder;
+import no.nav.security.token.support.core.filter.OIDCTokenValidationFilter;
 import no.nav.security.spring.oidc.api.EnableOIDCTokenValidation;
 import no.nav.security.spring.oidc.validation.interceptor.BearerTokenClientHttpRequestInterceptor;
 import no.nav.security.spring.oidc.validation.interceptor.OIDCTokenControllerHandlerInterceptor;
@@ -38,7 +39,7 @@ import no.nav.security.spring.oidc.validation.interceptor.OIDCTokenControllerHan
 @EnableConfigurationProperties(MultiIssuerProperties.class)
 public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer, EnvironmentAware, ImportAware {
 
-	private Logger logger = LoggerFactory.getLogger(EnableOIDCTokenValidationConfiguration.class);
+	private final Logger logger = LoggerFactory.getLogger(EnableOIDCTokenValidationConfiguration.class);
 
 	private Environment env;
 
@@ -64,22 +65,20 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 		}
 	}
 
+	//TODO remove support for global proxy - should be set per issuer config
 	@Bean
-	public OIDCResourceRetriever oidcResourceRetriever(){
-		OIDCResourceRetriever resourceRetriever = new OIDCResourceRetriever();
-		resourceRetriever.setProxyUrl(getConfiguredProxy());
-		resourceRetriever.setUsePlainTextForHttps(Boolean.parseBoolean(env.getProperty("https.plaintext", "false")));
-		return resourceRetriever;
+	public ProxyAwareResourceRetriever oidcResourceRetriever(){
+        return new ProxyAwareResourceRetriever(getConfiguredProxy(), Boolean.parseBoolean(env.getProperty("https.plaintext", "false")));
 	}
 
 	@Bean
-	public MultiIssuerConfiguration multiIssuerConfiguration(MultiIssuerProperties issuerProperties, OIDCResourceRetriever resourceRetriever) {
+	public MultiIssuerConfiguration multiIssuerConfiguration(MultiIssuerProperties issuerProperties, ProxyAwareResourceRetriever resourceRetriever) {
 		return new MultiIssuerConfiguration(issuerProperties.getIssuer(), resourceRetriever);
 	}
 
 	@Bean
-	public OIDCRequestContextHolder oidcRequestContextHolder() {
-		return new SpringOIDCRequestContextHolder();
+	public JwtTokenValidationContextHolder oidcRequestContextHolder() {
+		return new SpringJwtTokenValidationContextHolder();
 	}
 
 	@Bean
@@ -88,24 +87,23 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 	}
 
 	@Bean
-	public OIDCTokenValidationFilter tokenValidationFilter(MultiIssuerConfiguration config, OIDCRequestContextHolder oidcRequestContextHolder) {
-		return new OIDCTokenValidationFilter(config, oidcRequestContextHolder);
+	public OIDCTokenValidationFilter tokenValidationFilter(MultiIssuerConfiguration config, JwtTokenValidationContextHolder jwtTokenValidationContextHolder) {
+		return new OIDCTokenValidationFilter(new JwtTokenValidationHandler(config), jwtTokenValidationContextHolder);
 
 	}
 
 	@Bean
-	public BearerTokenClientHttpRequestInterceptor bearerTokenClientHttpRequestInterceptor(OIDCRequestContextHolder oidcRequestContextHolder){
+	public BearerTokenClientHttpRequestInterceptor bearerTokenClientHttpRequestInterceptor(JwtTokenValidationContextHolder jwtTokenValidationContextHolder){
 		logger.info("creating bean for HttpClientOIDCAuthorizationInterceptor");
-		return new BearerTokenClientHttpRequestInterceptor(oidcRequestContextHolder);
+		return new BearerTokenClientHttpRequestInterceptor(jwtTokenValidationContextHolder);
 	}
 
 	@Bean
 	public OIDCTokenControllerHandlerInterceptor getControllerInterceptor() {
 		logger.debug("registering OIDC token controller handler interceptor");
-		OIDCTokenControllerHandlerInterceptor c = new OIDCTokenControllerHandlerInterceptor(
-				enableOIDCTokenValidation,
-				new SpringOIDCRequestContextHolder());
-		return c;
+        return new OIDCTokenControllerHandlerInterceptor(
+                enableOIDCTokenValidation,
+                new SpringJwtTokenValidationContextHolder());
 	}
 
 
@@ -113,7 +111,7 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 	@Qualifier("oidcTokenValidationFilterRegistrationBean")
 	public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterRegistrationBean(OIDCTokenValidationFilter validationFilter) {
 		logger.info("Registering validation filter");
-		final FilterRegistrationBean<OIDCTokenValidationFilter> filterRegistration = new FilterRegistrationBean<OIDCTokenValidationFilter>();
+		final FilterRegistrationBean<OIDCTokenValidationFilter> filterRegistration = new FilterRegistrationBean<>();
 		filterRegistration.setFilter(validationFilter);
 		filterRegistration.setMatchAfter(false);
 		filterRegistration
@@ -126,11 +124,11 @@ public class EnableOIDCTokenValidationConfiguration implements WebMvcConfigurer,
 	@Bean
     @Qualifier("oidcTokenExpiryFilterRegistrationBean")
 	@ConditionalOnProperty(name="no.nav.security.oidc.expirythreshold", matchIfMissing = false)
-	public FilterRegistrationBean<OIDCTokenExpiryFilter> oidcTokenExpiryFilterRegistrationBean(OIDCRequestContextHolder oidcRequestContextHolder,
-																									 @Value("${no.nav.security.oidc.expirythreshold}") long expiryThreshold) {
+	public FilterRegistrationBean<OIDCTokenExpiryFilter> oidcTokenExpiryFilterRegistrationBean(JwtTokenValidationContextHolder jwtTokenValidationContextHolder,
+                                                                                               @Value("${no.nav.security.oidc.expirythreshold}") long expiryThreshold) {
 		logger.info("Registering expiry filter");
 		final FilterRegistrationBean<OIDCTokenExpiryFilter> filterRegistration = new FilterRegistrationBean<>();
-		filterRegistration.setFilter(new OIDCTokenExpiryFilter(oidcRequestContextHolder, expiryThreshold));
+		filterRegistration.setFilter(new OIDCTokenExpiryFilter(jwtTokenValidationContextHolder, expiryThreshold));
 		filterRegistration.setMatchAfter(false);
 		filterRegistration
 				.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC));

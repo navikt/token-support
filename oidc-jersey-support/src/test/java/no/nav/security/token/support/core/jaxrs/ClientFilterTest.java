@@ -1,0 +1,68 @@
+package no.nav.security.token.support.core.jaxrs;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
+
+import java.text.ParseException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+
+import no.nav.security.token.support.core.context.JwtToken;
+import no.nav.security.token.support.core.context.JwtTokenValidationContext;
+import no.nav.security.token.support.core.filter.OIDCTokenValidationFilter;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+
+import no.nav.security.token.support.core.test.support.JwtTokenGenerator;
+
+@ActiveProfiles("protected")
+@DirtiesContext
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Config.class)
+public class ClientFilterTest {
+
+    @LocalServerPort
+    private int port;
+
+    private Invocation.Builder request() {
+
+        return ClientBuilder.newClient()
+                .register(OidcClientRequestFilter.class)
+                .target("http://localhost:" + port)
+                .path("echo/token")
+                .request();
+    }
+
+    @Test
+    public void that_unprotected_returns_ok_with_valid_token() throws ParseException {
+
+        String token = JwtTokenGenerator.createSignedJWT("12345678911").serialize();
+
+        addTokenToContextHolder(token);
+
+        String returnedToken = request().get().readEntity(String.class);
+
+        assertThat(returnedToken, is(equalTo(token)));
+    }
+
+    /**
+     * Adds the token to the context holder, so it is available for the
+     * {@link OidcClientRequestFilter}. This is basically what the
+     * {@link OIDCTokenValidationFilter} filter does
+     */
+    private void addTokenToContextHolder(String token) {
+        JaxrsJwtTokenContextHolder.getHolder().setOIDCValidationContext(createOidcValidationContext("protected", new JwtToken(token)));
+    }
+
+    private static JwtTokenValidationContext createOidcValidationContext(String issuerShortName, JwtToken jwtToken) {
+        Map<String, JwtToken> map = new ConcurrentHashMap<>();
+        map.put(issuerShortName, jwtToken);
+        return new JwtTokenValidationContext(map);
+    }
+}

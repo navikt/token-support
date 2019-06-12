@@ -7,6 +7,7 @@ package no.nav.security.spring.oidc.validation.interceptor;
  */
 import java.io.IOException;
 
+import no.nav.security.token.support.core.context.JwtTokenValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
@@ -14,37 +15,36 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
-import no.nav.security.oidc.OIDCConstants;
-import no.nav.security.oidc.context.OIDCRequestContextHolder;
-import no.nav.security.oidc.context.OIDCValidationContext;
+import no.nav.security.token.support.core.OIDCConstants;
+import no.nav.security.token.support.core.context.JwtTokenValidationContextHolder;
 
 public class BearerTokenClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-	private OIDCRequestContextHolder contextHolder;
+	private final JwtTokenValidationContextHolder contextHolder;
 	
-	public BearerTokenClientHttpRequestInterceptor(OIDCRequestContextHolder contextHolder) {
+	public BearerTokenClientHttpRequestInterceptor(JwtTokenValidationContextHolder contextHolder) {
 		this.contextHolder = contextHolder;
 	}
 	
-	private Logger logger = LoggerFactory.getLogger(BearerTokenClientHttpRequestInterceptor.class);
+	private final Logger logger = LoggerFactory.getLogger(BearerTokenClientHttpRequestInterceptor.class);
 
 	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 			throws IOException {
 
-		OIDCValidationContext context = (OIDCValidationContext) contextHolder
-				.getOIDCValidationContext();
+		JwtTokenValidationContext context = contextHolder.getOIDCValidationContext();
 		
 		if(context != null && context.hasValidToken()) {
 			logger.debug("adding tokens to Authorization header");
-			StringBuffer headerValue = new StringBuffer();
+			StringBuilder headerValue = new StringBuilder();
 			boolean first = true;
 			for(String issuer : context.getIssuers()) {
 				logger.debug("adding token for issuer {}", issuer);
 				if(!first) {
 					headerValue.append(",");
 				}
-				headerValue.append("Bearer " + context.getToken(issuer).getIdToken());				
+				headerValue.append("Bearer " + context.getJwtToken(issuer).getTokenAsString());
+				first = false;
 			}			
 			request.getHeaders().add(OIDCConstants.AUTHORIZATION_HEADER, headerValue.toString());
 		} else {

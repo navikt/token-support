@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import no.nav.security.token.support.core.context.JwtTokenClaims;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,22 +16,21 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import no.nav.security.oidc.api.Protected;
-import no.nav.security.oidc.api.ProtectedWithClaims;
-import no.nav.security.oidc.api.Unprotected;
-import no.nav.security.oidc.context.OIDCClaims;
-import no.nav.security.oidc.context.OIDCRequestContextHolder;
-import no.nav.security.oidc.context.OIDCValidationContext;
+import no.nav.security.token.support.core.api.Protected;
+import no.nav.security.token.support.core.api.ProtectedWithClaims;
+import no.nav.security.token.support.core.api.Unprotected;
+import no.nav.security.token.support.core.context.JwtTokenValidationContextHolder;
+import no.nav.security.token.support.core.context.JwtTokenValidationContext;
 
 public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor {
 
-    private Logger logger = LoggerFactory.getLogger(OIDCTokenControllerHandlerInterceptor.class);
-    private OIDCRequestContextHolder contextHolder;
+    private final Logger logger = LoggerFactory.getLogger(OIDCTokenControllerHandlerInterceptor.class);
+    private final JwtTokenValidationContextHolder contextHolder;
     private String[] ignoreConfig;
-    private Map<Object, Boolean> handlerFlags = new ConcurrentHashMap<>();
+    private final Map<Object, Boolean> handlerFlags = new ConcurrentHashMap<>();
 
     public OIDCTokenControllerHandlerInterceptor(AnnotationAttributes enableOIDCTokenValidation,
-            OIDCRequestContextHolder contextHolder) {
+            JwtTokenValidationContextHolder contextHolder) {
         this.contextHolder = contextHolder;
 
         if (enableOIDCTokenValidation != null) {
@@ -56,7 +56,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        OIDCValidationContext validationContext = contextHolder
+        JwtTokenValidationContext validationContext = contextHolder
                 .getOIDCValidationContext();
 
         if (handler instanceof HandlerMethod) {
@@ -111,7 +111,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         return true;
     }
 
-    protected boolean handleProtectedAnnotation(OIDCValidationContext validationContext) {
+    protected boolean handleProtectedAnnotation(JwtTokenValidationContext validationContext) {
         if (validationContext.hasValidToken()) {
             return true;
         }
@@ -119,12 +119,12 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         throw new OIDCUnauthorizedException("Authorization token required");
     }
 
-    protected boolean handleProtectedWithClaimsAnnotation(OIDCValidationContext validationContext,
-            ProtectedWithClaims annotation) {
+    protected boolean handleProtectedWithClaimsAnnotation(JwtTokenValidationContext validationContext,
+                                                          ProtectedWithClaims annotation) {
         String issuer = annotation.issuer();
         String[] claims = annotation.claimMap();
         if (StringUtils.isNotBlank(issuer)) {
-            OIDCClaims tokenClaims = validationContext.getClaims(issuer);
+            JwtTokenClaims tokenClaims = validationContext.getClaims(issuer);
             if (tokenClaims == null) {
                 logger.trace(String.format(
                         "could not find token for issuer '%s' in validation context. Login may be required.",
@@ -139,13 +139,13 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         return true;
     }
 
-    protected boolean containsRequiredClaims(OIDCClaims tokenClaims, boolean combineWithOr, String... claims) {
+    protected boolean containsRequiredClaims(JwtTokenClaims tokenClaims, boolean combineWithOr, String... claims) {
         logger.debug("choose matching logic based on combineWithOr=" + combineWithOr);
         return combineWithOr ? containsAnyClaim(tokenClaims, claims)
                 : containsAllClaims(tokenClaims, claims);
     }
 
-    protected boolean containsAllClaims(OIDCClaims tokenClaims, String... claims) {
+    protected boolean containsAllClaims(JwtTokenClaims tokenClaims, String... claims) {
         for (String string : claims) {
             String name = StringUtils.substringBefore(string, "=").trim();
             String value = StringUtils.substringAfter(string, "=").trim();
@@ -159,7 +159,7 @@ public class OIDCTokenControllerHandlerInterceptor implements HandlerInterceptor
         return true;
     }
 
-    protected boolean containsAnyClaim(OIDCClaims tokenClaims, String... claims) {
+    protected boolean containsAnyClaim(JwtTokenClaims tokenClaims, String... claims) {
         if (claims != null && claims.length > 0) {
             for (String string : claims) {
                 String name = StringUtils.substringBefore(string, "=").trim();

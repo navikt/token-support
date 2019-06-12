@@ -4,7 +4,7 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import no.nav.security.oidc.test.support.JwkGenerator;
+import no.nav.security.token.support.core.test.support.JwkGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +23,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-import static no.nav.security.oidc.test.support.JwtTokenGenerator.*;
 import static no.nav.security.spring.oidc.integrationtest.ProtectedRestController.*;
+import static no.nav.security.token.support.core.test.support.JwtTokenGenerator.*;
 
 @SpringBootTest
 @ContextConfiguration(classes = {ProtectedApplication.class, ProtectedApplicationConfig.class})

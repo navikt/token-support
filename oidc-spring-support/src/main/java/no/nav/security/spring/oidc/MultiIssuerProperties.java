@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.annotation.Validated;
 
-import no.nav.security.oidc.configuration.IssuerProperties;
+import no.nav.security.token.support.core.configuration.IssuerProperties;
 
 @Configuration
 @ConfigurationProperties(prefix = "no.nav.security.oidc")

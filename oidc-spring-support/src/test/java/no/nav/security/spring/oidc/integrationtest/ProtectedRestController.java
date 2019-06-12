@@ -1,8 +1,8 @@
 package no.nav.security.spring.oidc.integrationtest;
 
-import no.nav.security.oidc.api.Protected;
-import no.nav.security.oidc.api.ProtectedWithClaims;
-import no.nav.security.oidc.api.Unprotected;
+import no.nav.security.token.support.core.api.Protected;
+import no.nav.security.token.support.core.api.ProtectedWithClaims;
+import no.nav.security.token.support.core.api.Unprotected;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
