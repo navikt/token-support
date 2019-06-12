@@ -1,6 +1,6 @@
 package no.nav.security.token.support.core.filter;
 
-import no.nav.security.token.support.core.context.JwtTokenValidationContextHolder;
+import no.nav.security.token.support.core.context.TokenContextHolder;
 import no.nav.security.token.support.core.http.HttpRequest;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
 import org.slf4j.Logger;
@@ -16,9 +16,9 @@ public class OIDCTokenValidationFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(OIDCTokenValidationFilter.class);
     private final JwtTokenValidationHandler jwtTokenValidationHandler;
-    private final JwtTokenValidationContextHolder contextHolder;
+    private final TokenContextHolder contextHolder;
 
-    public OIDCTokenValidationFilter(JwtTokenValidationHandler jwtTokenValidationHandler, JwtTokenValidationContextHolder contextHolder) {
+    public OIDCTokenValidationFilter(JwtTokenValidationHandler jwtTokenValidationHandler, TokenContextHolder contextHolder) {
         this.jwtTokenValidationHandler = jwtTokenValidationHandler;
         this.contextHolder = contextHolder;
     }
@@ -46,11 +46,11 @@ public class OIDCTokenValidationFilter implements Filter {
     private void doTokenValidation(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws IOException, ServletException {
 
-        contextHolder.setOIDCValidationContext(jwtTokenValidationHandler.getValidatedTokens(fromHttpServletRequest(request)));
+        contextHolder.setTokenValidationContext(jwtTokenValidationHandler.getValidatedTokens(fromHttpServletRequest(request)));
         try {
             chain.doFilter(request, response);
         } finally {
-            contextHolder.setOIDCValidationContext(null);
+            contextHolder.setTokenValidationContext(null);
         }
     }
 

@@ -11,8 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 
-import no.nav.security.token.support.core.context.JwtToken;
-import no.nav.security.token.support.core.context.JwtTokenValidationContext;
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.filter.OIDCTokenValidationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,12 +57,12 @@ public class ClientFilterTest {
      * {@link OIDCTokenValidationFilter} filter does
      */
     private void addTokenToContextHolder(String token) {
-        JaxrsJwtTokenContextHolder.getHolder().setOIDCValidationContext(createOidcValidationContext("protected", new JwtToken(token)));
+        JaxrsTokenContextHolder.getHolder().setTokenValidationContext(createOidcValidationContext("protected", new JwtToken(token)));
     }
 
-    private static JwtTokenValidationContext createOidcValidationContext(String issuerShortName, JwtToken jwtToken) {
+    private static TokenValidationContext createOidcValidationContext(String issuerShortName, JwtToken jwtToken) {
         Map<String, JwtToken> map = new ConcurrentHashMap<>();
         map.put(issuerShortName, jwtToken);
-        return new JwtTokenValidationContext(map);
+        return new TokenValidationContext(map);
     }
 }

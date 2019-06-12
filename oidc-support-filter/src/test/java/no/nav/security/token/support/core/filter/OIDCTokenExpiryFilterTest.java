@@ -3,9 +3,9 @@ package no.nav.security.token.support.core.filter;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import no.nav.security.token.support.core.context.JwtTokenClaims;
-import no.nav.security.token.support.core.context.JwtTokenValidationContext;
-import no.nav.security.token.support.core.context.JwtTokenValidationContextHolder;
+import no.nav.security.token.support.core.jwt.JwtTokenClaims;
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.context.TokenContextHolder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -33,14 +33,14 @@ public class OIDCTokenExpiryFilterTest {
     private FilterChain filterChain;
     @Mock
     private HttpServletResponse servletResponse;
-    private JwtTokenValidationContextHolder jwtTokenValidationContextHolder;
+    private TokenContextHolder tokenContextHolder;
     private static final long EXPIRY_THRESHOLD = 1;
 
     @Test
     public void tokenExpiresBeforeThreshold() throws IOException, ServletException {
         setupMocks(LocalDateTime.now().plusMinutes(2));
 
-        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(jwtTokenValidationContextHolder,
+        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(tokenContextHolder,
             EXPIRY_THRESHOLD);
         oidcTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
         verify(servletResponse).setHeader(OIDCTokenExpiryFilter.TOKEN_EXPIRES_SOON_HEADER, "true");
@@ -50,7 +50,7 @@ public class OIDCTokenExpiryFilterTest {
     public void tokenExpiresAfterThreshold() throws IOException, ServletException {
         setupMocks(LocalDateTime.now().plusMinutes(3));
 
-        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(jwtTokenValidationContextHolder,
+        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(tokenContextHolder,
             EXPIRY_THRESHOLD);
         oidcTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
         verify(servletResponse, never()).setHeader(OIDCTokenExpiryFilter.TOKEN_EXPIRES_SOON_HEADER, "true");
@@ -58,20 +58,20 @@ public class OIDCTokenExpiryFilterTest {
 
     @Test
     public void noValidToken() throws IOException, ServletException {
-        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(mock(JwtTokenValidationContextHolder.class),
+        OIDCTokenExpiryFilter oidcTokenExpiryFilter = new OIDCTokenExpiryFilter(mock(TokenContextHolder.class),
             EXPIRY_THRESHOLD);
         oidcTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
     }
 
     private void setupMocks(LocalDateTime expiry) {
-        jwtTokenValidationContextHolder = mock(JwtTokenValidationContextHolder.class);
-        JwtTokenValidationContext jwtTokenValidationContext = mock(JwtTokenValidationContext.class);
-        when(jwtTokenValidationContextHolder.getOIDCValidationContext()).thenReturn(jwtTokenValidationContext);
-        when(jwtTokenValidationContext.getIssuers()).thenReturn(Collections.singletonList("issuer1"));
+        tokenContextHolder = mock(TokenContextHolder.class);
+        TokenValidationContext tokenValidationContext = mock(TokenValidationContext.class);
+        when(tokenContextHolder.getTokenValidationContext()).thenReturn(tokenValidationContext);
+        when(tokenValidationContext.getIssuers()).thenReturn(Collections.singletonList("issuer1"));
 
         Date expiryDate = Date.from(expiry.atZone(ZoneId.systemDefault())
             .toInstant());
-        when(jwtTokenValidationContext.getClaims(anyString())).thenReturn(createOIDCClaims(expiryDate));
+        when(tokenValidationContext.getClaims(anyString())).thenReturn(createOIDCClaims(expiryDate));
     }
 
     private static JwtTokenClaims createOIDCClaims(Date expiry) {

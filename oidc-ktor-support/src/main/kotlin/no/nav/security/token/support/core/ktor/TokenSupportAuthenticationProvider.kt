@@ -11,12 +11,12 @@ import io.ktor.response.respond
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
-import no.nav.security.token.support.core.context.JwtTokenValidationContext
+import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.http.HttpRequest
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import java.net.URL
 
-data class OIDCValidationContextPrincipal(val context: JwtTokenValidationContext) : Principal
+data class OIDCValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
 @io.ktor.util.KtorExperimentalAPI
 class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfig) : AuthenticationProvider(name) {

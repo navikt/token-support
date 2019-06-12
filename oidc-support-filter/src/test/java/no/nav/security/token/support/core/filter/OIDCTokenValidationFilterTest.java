@@ -11,12 +11,12 @@ import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jose.util.Resource;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import no.nav.security.token.support.core.OIDCConstants;
+import no.nav.security.token.support.core.JwtTokenConstants;
 import no.nav.security.token.support.core.configuration.IssuerProperties;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
-import no.nav.security.token.support.core.context.JwtTokenValidationContext;
-import no.nav.security.token.support.core.context.JwtTokenValidationContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.context.TokenContextHolder;
 import no.nav.security.token.support.core.http.HttpRequest;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ class OIDCTokenValidationFilterTest {
         final String issuername = "myissuer";
         Map<String, IssuerProperties> issuerProps = createIssuerPropertiesMap(issuername, IDTOKENCOOKIENAME);
         MockResourceRetriever mockResources = new MockResourceRetriever(issuername);
-        final JwtTokenValidationContextHolder ctxHolder = new TestJwtTokenValidationContextHolder();
+        final TokenContextHolder ctxHolder = new TestTokenContextHolder();
 
         OIDCTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
         final String jwt = createJWT(issuername, mockResources.keysForIssuer(issuername).toRSAPrivateKey());
@@ -84,7 +84,7 @@ class OIDCTokenValidationFilterTest {
         Map<String, IssuerProperties> issuerProps = createIssuerPropertiesMap(anotherIssuer, IDTOKENCOOKIENAME);
 
         MockResourceRetriever mockResources = new MockResourceRetriever(anotherIssuer);
-        final JwtTokenValidationContextHolder ctxHolder = new TestJwtTokenValidationContextHolder();
+        final TokenContextHolder ctxHolder = new TestTokenContextHolder();
         OIDCTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
 
         final String jwt = createJWT(anotherIssuer, mockResources.keysForIssuer(anotherIssuer).toRSAPrivateKey());
@@ -92,7 +92,7 @@ class OIDCTokenValidationFilterTest {
         final int[] filterCallCounter = new int[]{0};
 
         when(servletRequest.getCookies()).thenReturn(null);
-        when(servletRequest.getHeader(OIDCConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer " + jwt);
+        when(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer " + jwt);
         filter.doFilter(servletRequest, servletResponse,
             mockFilterchainAsserting(anotherIssuer, "foobar", ctxHolder, filterCallCounter));
 
@@ -108,7 +108,7 @@ class OIDCTokenValidationFilterTest {
         issuerProps.putAll(createIssuerPropertiesMap(anotherIssuer, null));
 
         MockResourceRetriever mockResources = new MockResourceRetriever(issuer1, anotherIssuer);
-        final JwtTokenValidationContextHolder ctxHolder = new TestJwtTokenValidationContextHolder();
+        final TokenContextHolder ctxHolder = new TestTokenContextHolder();
         OIDCTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
 
         final String jwt1 = createJWT(issuer1, mockResources.keysForIssuer(issuer1).toRSAPrivateKey());
@@ -117,7 +117,7 @@ class OIDCTokenValidationFilterTest {
         final int[] filterCallCounter = new int[]{0};
 
         when(servletRequest.getCookies()).thenReturn(null);
-        when(servletRequest.getHeader(OIDCConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer " + jwt1 + ",Bearer " + jwt2);
+        when(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer " + jwt1 + ",Bearer " + jwt2);
         filter.doFilter(servletRequest, servletResponse,
             mockFilterchainAsserting(new String[]{issuer1, anotherIssuer}, new String[]{"foobar", "foobar"}, ctxHolder, filterCallCounter));
 
@@ -127,36 +127,36 @@ class OIDCTokenValidationFilterTest {
     @Test
     void testRequestConverterShouldHandleWhenCookiesAreNULL() {
         when(servletRequest.getCookies()).thenReturn(null);
-        when(servletRequest.getHeader(OIDCConstants.AUTHORIZATION_HEADER)).thenReturn(null);
+        when(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn(null);
 
         HttpRequest req = OIDCTokenValidationFilter.fromHttpServletRequest(servletRequest);
         assertNull(req.getCookies());
-        assertNull(req.getHeader(OIDCConstants.AUTHORIZATION_HEADER));
+        assertNull(req.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER));
     }
 
     @Test
     void testRequestConverterShouldConvertCorrectly() {
         when(servletRequest.getCookies()).thenReturn(new Cookie[]{new Cookie("JSESSIONID", "ABCDEF"), new Cookie("IDTOKEN", "THETOKEN")});
-        when(servletRequest.getHeader(OIDCConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA");
+        when(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA");
 
         HttpRequest req = OIDCTokenValidationFilter.fromHttpServletRequest(servletRequest);
         assertEquals("JSESSIONID", req.getCookies()[0].getName());
         assertEquals("ABCDEF", req.getCookies()[0].getValue());
         assertEquals("IDTOKEN", req.getCookies()[1].getName());
         assertEquals("THETOKEN", req.getCookies()[1].getValue());
-        assertEquals("Bearer eyAAA", req.getHeader(OIDCConstants.AUTHORIZATION_HEADER));
+        assertEquals("Bearer eyAAA", req.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER));
     }
 
 
-    private FilterChain mockFilterchainAsserting(String issuer, String subject, JwtTokenValidationContextHolder ctxHolder, int[] filterCallCounter) {
+    private FilterChain mockFilterchainAsserting(String issuer, String subject, TokenContextHolder ctxHolder, int[] filterCallCounter) {
         return mockFilterchainAsserting(new String[]{issuer}, new String[]{subject}, ctxHolder, filterCallCounter);
     }
 
-    private FilterChain mockFilterchainAsserting(String[] issuers, String[] subjects, JwtTokenValidationContextHolder ctxHolder, int[] filterCallCounter) {
+    private FilterChain mockFilterchainAsserting(String[] issuers, String[] subjects, TokenContextHolder ctxHolder, int[] filterCallCounter) {
         return (servletRequest, servletResponse) -> {
-            // JwtTokenValidationContext is nulled after filter-call, so we check it here:
+            // TokenValidationContext is nulled after filter-call, so we check it here:
             filterCallCounter[0]++;
-            final JwtTokenValidationContext ctx = ctxHolder.getOIDCValidationContext();
+            final TokenValidationContext ctx = ctxHolder.getTokenValidationContext();
             assertTrue(ctx.hasValidToken());
             assertEquals(issuers.length, ctx.getIssuers().size());
             for (int i = 0; i < issuers.length; i++) {
@@ -171,7 +171,7 @@ class OIDCTokenValidationFilterTest {
     ////////////////////////////////////////////////////////////////////////////
 
     private OIDCTokenValidationFilter createFilterToTest(Map<String, IssuerProperties> issuerProps,
-                                                         MockResourceRetriever mockResources, JwtTokenValidationContextHolder ctxHolder) {
+                                                         MockResourceRetriever mockResources, TokenContextHolder ctxHolder) {
         MultiIssuerConfiguration conf = new MultiIssuerConfiguration(issuerProps, mockResources);
         JwtTokenValidationHandler jwtTokenValidationHandler = new JwtTokenValidationHandler(conf);
         return new OIDCTokenValidationFilter(jwtTokenValidationHandler, ctxHolder);
@@ -198,10 +198,10 @@ class OIDCTokenValidationFilterTest {
         return signedJWT.serialize();
     }
 
-    private static class TestJwtTokenValidationContextHolder implements JwtTokenValidationContextHolder {
+    private static class TestTokenContextHolder implements TokenContextHolder {
 
         final Map<String, Object> attrs = new HashMap<>();
-        JwtTokenValidationContext jwtTokenValidationContext = new JwtTokenValidationContext(Collections.emptyMap());
+        TokenValidationContext tokenValidationContext = new TokenValidationContext(Collections.emptyMap());
 
         @Override
         public Object getRequestAttribute(String name) {
@@ -214,13 +214,13 @@ class OIDCTokenValidationFilterTest {
         }
 
         @Override
-        public JwtTokenValidationContext getOIDCValidationContext() {
-            return jwtTokenValidationContext;
+        public TokenValidationContext getTokenValidationContext() {
+            return tokenValidationContext;
         }
 
         @Override
-        public void setOIDCValidationContext(JwtTokenValidationContext jwtTokenValidationContext) {
-            this.jwtTokenValidationContext = jwtTokenValidationContext;
+        public void setTokenValidationContext(TokenValidationContext tokenValidationContext) {
+            this.tokenValidationContext = tokenValidationContext;
         }
     }
 

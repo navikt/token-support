@@ -1,9 +1,9 @@
 package no.nav.security.oidcspringsupportdemo.config;
 
-import no.nav.security.spring.oidc.api.EnableOIDCTokenValidation;
+import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.springframework.context.annotation.Configuration;
 
-@EnableOIDCTokenValidation
+@EnableJwtTokenValidation
 @Configuration
 public class SecurityConfiguration {
 }

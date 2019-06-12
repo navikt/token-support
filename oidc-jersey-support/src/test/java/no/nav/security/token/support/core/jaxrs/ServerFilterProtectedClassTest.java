@@ -8,7 +8,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 
-import no.nav.security.token.support.core.OIDCConstants;
+import no.nav.security.token.support.core.JwtTokenConstants;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -27,7 +27,7 @@ public class ServerFilterProtectedClassTest {
         return ClientBuilder.newClient().target("http://localhost:" + port)
                 .path(path)
                 .request()
-                .header(OIDCConstants.AUTHORIZATION_HEADER,
+                .header(JwtTokenConstants.AUTHORIZATION_HEADER,
                         "Bearer " + JwtTokenGenerator.createSignedJWT("12345678911").serialize());
     }
 

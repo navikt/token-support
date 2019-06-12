@@ -14,7 +14,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import no.nav.security.token.support.core.OIDCConstants;
+import no.nav.security.token.support.core.JwtTokenConstants;
 import no.nav.security.token.support.core.test.support.JwtTokenGenerator;
 
 @ActiveProfiles("invalid")
@@ -29,7 +29,7 @@ public class ServerFilterProtectedClassUnknownIssuerTest {
         return ClientBuilder.newClient().target("http://localhost:" + port)
                 .path(path)
                 .request()
-                .header(OIDCConstants.AUTHORIZATION_HEADER,
+                .header(JwtTokenConstants.AUTHORIZATION_HEADER,
                         "Bearer " + JwtTokenGenerator.createSignedJWT("12345678911").serialize());
     }
 

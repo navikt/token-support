@@ -15,12 +15,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import no.nav.security.token.support.core.context.JwtTokenValidationContext;
+import no.nav.security.token.support.core.context.TokenValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.nav.security.token.support.core.context.JwtTokenClaims;
-import no.nav.security.token.support.core.context.JwtTokenValidationContextHolder;
+import no.nav.security.token.support.core.jwt.JwtTokenClaims;
+import no.nav.security.token.support.core.context.TokenContextHolder;
 
 /**
  * Checks the expiry time in a validated token against a preconfigured threshold
@@ -33,10 +33,10 @@ public class OIDCTokenExpiryFilter implements Filter {
     public static final String TOKEN_EXPIRES_SOON_HEADER = "x-token-expires-soon";
 
     private static final Logger LOG = LoggerFactory.getLogger(OIDCTokenExpiryFilter.class);
-    private final JwtTokenValidationContextHolder contextHolder;
+    private final TokenContextHolder contextHolder;
     private final long expiryThresholdInMinutes;
 
-    public OIDCTokenExpiryFilter(JwtTokenValidationContextHolder contextHolder, long expiryThresholdInMinutes) {
+    public OIDCTokenExpiryFilter(TokenContextHolder contextHolder, long expiryThresholdInMinutes) {
         this.contextHolder = contextHolder;
         this.expiryThresholdInMinutes = expiryThresholdInMinutes;
     }
@@ -62,12 +62,12 @@ public class OIDCTokenExpiryFilter implements Filter {
     }
 
     private void addHeaderOnTokenExpiryThreshold(HttpServletResponse response) {
-        JwtTokenValidationContext jwtTokenValidationContext = contextHolder.getOIDCValidationContext();
-        LOG.debug("Getting JwtTokenValidationContext: {}", jwtTokenValidationContext);
-        if (jwtTokenValidationContext != null) {
-            LOG.debug("Getting issuers from validationcontext {}", jwtTokenValidationContext.getIssuers());
-            for (String issuer : jwtTokenValidationContext.getIssuers()) {
-                JwtTokenClaims jwtTokenClaims = jwtTokenValidationContext.getClaims(issuer);
+        TokenValidationContext tokenValidationContext = contextHolder.getTokenValidationContext();
+        LOG.debug("Getting TokenValidationContext: {}", tokenValidationContext);
+        if (tokenValidationContext != null) {
+            LOG.debug("Getting issuers from validationcontext {}", tokenValidationContext.getIssuers());
+            for (String issuer : tokenValidationContext.getIssuers()) {
+                JwtTokenClaims jwtTokenClaims = tokenValidationContext.getClaims(issuer);
                 if (tokenExpiresBeforeThreshold(jwtTokenClaims)) {
                     LOG.debug("Setting response header {}", TOKEN_EXPIRES_SOON_HEADER);
                     response.setHeader(TOKEN_EXPIRES_SOON_HEADER, "true");

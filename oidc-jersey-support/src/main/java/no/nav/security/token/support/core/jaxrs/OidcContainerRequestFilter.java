@@ -3,7 +3,8 @@ package no.nav.security.token.support.core.jaxrs;
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import no.nav.security.token.support.core.api.Unprotected;
-import no.nav.security.token.support.core.context.JwtTokenClaims;
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class OidcContainerRequestFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext containerRequestContext) {
 
-        no.nav.security.token.support.core.context.JwtTokenValidationContext validationContext = JaxrsJwtTokenContextHolder.getHolder().getOIDCValidationContext();
+        TokenValidationContext validationContext = JaxrsTokenContextHolder.getHolder().getTokenValidationContext();
 
         Unprotected unprotectedAnnotation = getMethodAnnotation(Unprotected.class);
         if (unprotectedAnnotation != null) {
@@ -88,7 +89,7 @@ public class OidcContainerRequestFilter implements ContainerRequestFilter {
         return resourceInfo.getResourceMethod().getDeclaredAnnotation(annotation);
     }
 
-    private void handleProtectedAnnotation(no.nav.security.token.support.core.context.JwtTokenValidationContext validationContext) {
+    private void handleProtectedAnnotation(TokenValidationContext validationContext) {
 
         if (!validationContext.hasValidToken()) {
             logger.info("No token found in validation context");
@@ -96,7 +97,7 @@ public class OidcContainerRequestFilter implements ContainerRequestFilter {
         }
     }
 
-    private void handleProtectedWithClaimsAnnotation(no.nav.security.token.support.core.context.JwtTokenValidationContext validationContext,
+    private void handleProtectedWithClaimsAnnotation(TokenValidationContext validationContext,
                                                      ProtectedWithClaims annotation) {
         String issuer = annotation.issuer();
         String[] claims = annotation.claimMap();

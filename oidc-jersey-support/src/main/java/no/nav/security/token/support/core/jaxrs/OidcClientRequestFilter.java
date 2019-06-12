@@ -1,6 +1,7 @@
 package no.nav.security.token.support.core.jaxrs;
 
-import no.nav.security.token.support.core.OIDCConstants;
+import no.nav.security.token.support.core.JwtTokenConstants;
+import no.nav.security.token.support.core.context.TokenValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class OidcClientRequestFilter implements ClientRequestFilter {
     @Override
     public void filter(ClientRequestContext requestContext) throws IOException {
 
-        no.nav.security.token.support.core.context.JwtTokenValidationContext context = JaxrsJwtTokenContextHolder.getHolder().getOIDCValidationContext();
+        TokenValidationContext context = JaxrsTokenContextHolder.getHolder().getTokenValidationContext();
 
         if(context != null && context.hasValidToken()) {
             logger.debug("adding tokens to Authorization header");
@@ -30,7 +31,7 @@ public class OidcClientRequestFilter implements ClientRequestFilter {
                 logger.debug("adding token for issuer {}", issuer);
                 headerValue.append("Bearer ").append(context.getJwtToken(issuer).getTokenAsString());
             }
-            requestContext.getHeaders().put(OIDCConstants.AUTHORIZATION_HEADER, singletonList(headerValue.toString()));
+            requestContext.getHeaders().put(JwtTokenConstants.AUTHORIZATION_HEADER, singletonList(headerValue.toString()));
         } else {
             logger.debug("no tokens found, nothing added to request");
         }

@@ -2,8 +2,8 @@ package no.nav.security.token.support.core.validation;
 
 import no.nav.security.token.support.core.configuration.IssuerConfiguration;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
-import no.nav.security.token.support.core.context.JwtToken;
-import no.nav.security.token.support.core.context.JwtTokenValidationContext;
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.exceptions.IssuerConfigurationException;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 import no.nav.security.token.support.core.http.HttpRequest;
@@ -26,7 +26,7 @@ public class JwtTokenValidationHandler {
         this.config = config;
     }
 
-    public JwtTokenValidationContext getValidatedTokens(HttpRequest request) {
+    public TokenValidationContext getValidatedTokens(HttpRequest request) {
 
         List<JwtToken> tokensOnRequest = JwtTokenRetriever.retrieveUnvalidatedTokens(config, request);
 
@@ -40,7 +40,7 @@ public class JwtTokenValidationHandler {
             ));
 
         LOG.debug("found {} tokens on request, number of validated tokens is {}", tokensOnRequest.size(), validatedTokens.size());
-        return new JwtTokenValidationContext(validatedTokens);
+        return new TokenValidationContext(validatedTokens);
     }
 
     private Optional<Map.Entry<String, JwtToken>> validate(JwtToken jwtToken) {

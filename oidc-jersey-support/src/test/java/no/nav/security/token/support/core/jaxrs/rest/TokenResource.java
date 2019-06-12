@@ -1,6 +1,6 @@
 package no.nav.security.token.support.core.jaxrs.rest;
 
-import no.nav.security.token.support.core.jaxrs.JaxrsJwtTokenContextHolder;
+import no.nav.security.token.support.core.jaxrs.JaxrsTokenContextHolder;
 import no.nav.security.token.support.core.api.Unprotected;
 
 import javax.ws.rs.GET;
@@ -15,7 +15,7 @@ public class TokenResource {
     @Path("token")
     public Response getToken() {
         return Response.ok()
-                .entity(JaxrsJwtTokenContextHolder.getHolder().getOIDCValidationContext().getJwtToken("protected").getTokenAsString())
+                .entity(JaxrsTokenContextHolder.getHolder().getTokenValidationContext().getJwtToken("protected").getTokenAsString())
                 .build();
     }
 }
