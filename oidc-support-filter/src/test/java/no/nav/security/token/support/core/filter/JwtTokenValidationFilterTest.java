@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class OIDCTokenValidationFilterTest {
+class JwtTokenValidationFilterTest {
 
     private static final String KEYID = "myKeyId";
     private static final String AUDIENCE = "aud1";
@@ -66,7 +66,7 @@ class OIDCTokenValidationFilterTest {
         MockResourceRetriever mockResources = new MockResourceRetriever(issuername);
         final TokenContextHolder ctxHolder = new TestTokenContextHolder();
 
-        OIDCTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
+        JwtTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
         final String jwt = createJWT(issuername, mockResources.keysForIssuer(issuername).toRSAPrivateKey());
 
         final int[] filterCallCounter = new int[]{0};
@@ -85,7 +85,7 @@ class OIDCTokenValidationFilterTest {
 
         MockResourceRetriever mockResources = new MockResourceRetriever(anotherIssuer);
         final TokenContextHolder ctxHolder = new TestTokenContextHolder();
-        OIDCTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
+        JwtTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
 
         final String jwt = createJWT(anotherIssuer, mockResources.keysForIssuer(anotherIssuer).toRSAPrivateKey());
 
@@ -109,7 +109,7 @@ class OIDCTokenValidationFilterTest {
 
         MockResourceRetriever mockResources = new MockResourceRetriever(issuer1, anotherIssuer);
         final TokenContextHolder ctxHolder = new TestTokenContextHolder();
-        OIDCTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
+        JwtTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
 
         final String jwt1 = createJWT(issuer1, mockResources.keysForIssuer(issuer1).toRSAPrivateKey());
         final String jwt2 = createJWT(anotherIssuer, mockResources.keysForIssuer(anotherIssuer).toRSAPrivateKey());
@@ -129,7 +129,7 @@ class OIDCTokenValidationFilterTest {
         when(servletRequest.getCookies()).thenReturn(null);
         when(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn(null);
 
-        HttpRequest req = OIDCTokenValidationFilter.fromHttpServletRequest(servletRequest);
+        HttpRequest req = JwtTokenValidationFilter.fromHttpServletRequest(servletRequest);
         assertNull(req.getCookies());
         assertNull(req.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER));
     }
@@ -139,7 +139,7 @@ class OIDCTokenValidationFilterTest {
         when(servletRequest.getCookies()).thenReturn(new Cookie[]{new Cookie("JSESSIONID", "ABCDEF"), new Cookie("IDTOKEN", "THETOKEN")});
         when(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA");
 
-        HttpRequest req = OIDCTokenValidationFilter.fromHttpServletRequest(servletRequest);
+        HttpRequest req = JwtTokenValidationFilter.fromHttpServletRequest(servletRequest);
         assertEquals("JSESSIONID", req.getCookies()[0].getName());
         assertEquals("ABCDEF", req.getCookies()[0].getValue());
         assertEquals("IDTOKEN", req.getCookies()[1].getName());
@@ -170,11 +170,11 @@ class OIDCTokenValidationFilterTest {
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    private OIDCTokenValidationFilter createFilterToTest(Map<String, IssuerProperties> issuerProps,
-                                                         MockResourceRetriever mockResources, TokenContextHolder ctxHolder) {
+    private JwtTokenValidationFilter createFilterToTest(Map<String, IssuerProperties> issuerProps,
+                                                        MockResourceRetriever mockResources, TokenContextHolder ctxHolder) {
         MultiIssuerConfiguration conf = new MultiIssuerConfiguration(issuerProps, mockResources);
         JwtTokenValidationHandler jwtTokenValidationHandler = new JwtTokenValidationHandler(conf);
-        return new OIDCTokenValidationFilter(jwtTokenValidationHandler, ctxHolder);
+        return new JwtTokenValidationFilter(jwtTokenValidationHandler, ctxHolder);
     }
 
     private Map<String, IssuerProperties> createIssuerPropertiesMap(String issuer, String cookieName)
@@ -200,18 +200,7 @@ class OIDCTokenValidationFilterTest {
 
     private static class TestTokenContextHolder implements TokenContextHolder {
 
-        final Map<String, Object> attrs = new HashMap<>();
         TokenValidationContext tokenValidationContext = new TokenValidationContext(Collections.emptyMap());
-
-        @Override
-        public Object getRequestAttribute(String name) {
-            return attrs.get("name");
-        }
-
-        @Override
-        public void setRequestAttribute(String name, Object value) {
-            attrs.put(name, value);
-        }
 
         @Override
         public TokenValidationContext getTokenValidationContext() {
@@ -273,7 +262,7 @@ class OIDCTokenValidationFilterTest {
         }
 
         private InputStream getInputStream(String file) {
-            return OIDCTokenValidationFilterTest.MockResourceRetriever.class.getResourceAsStream(file);
+            return JwtTokenValidationFilterTest.MockResourceRetriever.class.getResourceAsStream(file);
         }
 
         Resource retrieveJWKS(String issuer) {

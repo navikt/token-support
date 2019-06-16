@@ -20,14 +20,14 @@ import javax.ws.rs.ext.Provider;
 import java.lang.annotation.Annotation;
 
 @Provider
-public class OidcContainerRequestFilter implements ContainerRequestFilter {
+public class JwtTokenContainerRequestFilter implements ContainerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(OidcContainerRequestFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenContainerRequestFilter.class);
 
     private final ResourceInfo resourceInfo;
 
     @Inject
-    public OidcContainerRequestFilter(@Context ResourceInfo resourceInfo) {
+    public JwtTokenContainerRequestFilter(@Context ResourceInfo resourceInfo) {
 
         this.resourceInfo = resourceInfo;
     }

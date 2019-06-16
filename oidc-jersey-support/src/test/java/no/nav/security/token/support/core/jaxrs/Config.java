@@ -3,7 +3,7 @@ package no.nav.security.token.support.core.jaxrs;
 import no.nav.security.token.support.core.config.MultiIssuerProperties;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
-import no.nav.security.token.support.core.filter.OIDCTokenValidationFilter;
+import no.nav.security.token.support.core.filter.JwtTokenValidationFilter;
 import no.nav.security.token.support.core.test.support.FileResourceRetriever;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
@@ -23,7 +23,7 @@ import no.nav.security.token.support.core.jaxrs.rest.ProtectedWithClaimsClassRes
 import no.nav.security.token.support.core.jaxrs.rest.TokenResource;
 import no.nav.security.token.support.core.jaxrs.rest.UnprotectedClassResource;
 import no.nav.security.token.support.core.jaxrs.rest.WithoutAnnotationsResource;
-import no.nav.security.token.support.core.jaxrs.servlet.JaxrsOIDCTokenValidationFilter;
+import no.nav.security.token.support.core.jaxrs.servlet.JaxrsJwtTokenValidationFilter;
 import no.nav.security.token.support.core.test.support.jersey.TestTokenGeneratorResource;
 
 @SpringBootConfiguration
@@ -47,9 +47,9 @@ public class Config {
     }
 
     @Bean
-    public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterBean(
+    public FilterRegistrationBean<JwtTokenValidationFilter> oidcTokenValidationFilterBean(
             MultiIssuerConfiguration config) {
-        return new FilterRegistrationBean<>(new JaxrsOIDCTokenValidationFilter(config));
+        return new FilterRegistrationBean<>(new JaxrsJwtTokenValidationFilter(config));
     }
 
     @Bean
@@ -72,7 +72,7 @@ public class Config {
 
         public RestConfiguration() {
 
-            register(OidcContainerRequestFilter.class);
+            register(JwtTokenContainerRequestFilter.class);
 
             register(TokenResource.class);
             register(ProtectedClassResource.class);

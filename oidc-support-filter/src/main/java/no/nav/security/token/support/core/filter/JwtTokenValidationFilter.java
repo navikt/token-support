@@ -12,13 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class OIDCTokenValidationFilter implements Filter {
+public class JwtTokenValidationFilter implements Filter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OIDCTokenValidationFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JwtTokenValidationFilter.class);
     private final JwtTokenValidationHandler jwtTokenValidationHandler;
     private final TokenContextHolder contextHolder;
 
-    public OIDCTokenValidationFilter(JwtTokenValidationHandler jwtTokenValidationHandler, TokenContextHolder contextHolder) {
+    public JwtTokenValidationFilter(JwtTokenValidationHandler jwtTokenValidationHandler, TokenContextHolder contextHolder) {
         this.jwtTokenValidationHandler = jwtTokenValidationHandler;
         this.contextHolder = contextHolder;
     }

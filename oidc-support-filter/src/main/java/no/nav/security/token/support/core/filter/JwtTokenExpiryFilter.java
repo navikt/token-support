@@ -28,15 +28,15 @@ import no.nav.security.token.support.core.context.TokenContextHolder;
  * <p>
  * Can be used to check if the token is about to expire and inform the caller
  */
-public class OIDCTokenExpiryFilter implements Filter {
+public class JwtTokenExpiryFilter implements Filter {
 
     public static final String TOKEN_EXPIRES_SOON_HEADER = "x-token-expires-soon";
 
-    private static final Logger LOG = LoggerFactory.getLogger(OIDCTokenExpiryFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JwtTokenExpiryFilter.class);
     private final TokenContextHolder contextHolder;
     private final long expiryThresholdInMinutes;
 
-    public OIDCTokenExpiryFilter(TokenContextHolder contextHolder, long expiryThresholdInMinutes) {
+    public JwtTokenExpiryFilter(TokenContextHolder contextHolder, long expiryThresholdInMinutes) {
         this.contextHolder = contextHolder;
         this.expiryThresholdInMinutes = expiryThresholdInMinutes;
     }

@@ -13,7 +13,7 @@ import javax.ws.rs.client.Invocation;
 
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
-import no.nav.security.token.support.core.filter.OIDCTokenValidationFilter;
+import no.nav.security.token.support.core.filter.JwtTokenValidationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -33,7 +33,7 @@ public class ClientFilterTest {
     private Invocation.Builder request() {
 
         return ClientBuilder.newClient()
-                .register(OidcClientRequestFilter.class)
+                .register(JwtTokenClientRequestFilter.class)
                 .target("http://localhost:" + port)
                 .path("echo/token")
                 .request();
@@ -53,8 +53,8 @@ public class ClientFilterTest {
 
     /**
      * Adds the token to the context holder, so it is available for the
-     * {@link OidcClientRequestFilter}. This is basically what the
-     * {@link OIDCTokenValidationFilter} filter does
+     * {@link JwtTokenClientRequestFilter}. This is basically what the
+     * {@link JwtTokenValidationFilter} filter does
      */
     private void addTokenToContextHolder(String token) {
         JaxrsTokenContextHolder.getHolder().setTokenValidationContext(createOidcValidationContext("protected", new JwtToken(token)));

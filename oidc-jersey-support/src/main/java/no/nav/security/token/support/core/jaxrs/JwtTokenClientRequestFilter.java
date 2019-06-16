@@ -12,15 +12,15 @@ import java.io.IOException;
 
 import static java.util.Collections.singletonList;
 
-public class OidcClientRequestFilter implements ClientRequestFilter {
+public class JwtTokenClientRequestFilter implements ClientRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(OidcClientRequestFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenClientRequestFilter.class);
 
     @Inject
-    public OidcClientRequestFilter() { }
+    public JwtTokenClientRequestFilter() { }
 
     @Override
-    public void filter(ClientRequestContext requestContext) throws IOException {
+    public void filter(ClientRequestContext requestContext) {
 
         TokenValidationContext context = JaxrsTokenContextHolder.getHolder().getTokenValidationContext();
 
