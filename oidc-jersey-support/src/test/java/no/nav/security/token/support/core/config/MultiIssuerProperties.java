@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@ConfigurationProperties(prefix = "no.nav.security.oidc")
+@ConfigurationProperties(prefix = "no.nav.security.jwt")
 @EnableConfigurationProperties
 @Validated
 public class MultiIssuerProperties {

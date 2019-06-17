@@ -13,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import no.nav.security.token.support.core.configuration.IssuerProperties;
 
 @Configuration
-@ConfigurationProperties(prefix = "no.nav.security.oidc")
+@ConfigurationProperties(prefix = "no.nav.security.jwt")
 @EnableConfigurationProperties
 @Validated
 public class MultiIssuerProperties {

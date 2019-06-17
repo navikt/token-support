@@ -123,9 +123,9 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 
 	@Bean
     @Qualifier("oidcTokenExpiryFilterRegistrationBean")
-	@ConditionalOnProperty(name="no.nav.security.oidc.expirythreshold", matchIfMissing = false)
+	@ConditionalOnProperty(name="no.nav.security.jwt.expirythreshold", matchIfMissing = false)
 	public FilterRegistrationBean<JwtTokenExpiryFilter> oidcTokenExpiryFilterRegistrationBean(TokenValidationContextHolder tokenValidationContextHolder,
-                                                                                              @Value("${no.nav.security.oidc.expirythreshold}") long expiryThreshold) {
+                                                                                              @Value("${no.nav.security.jwt.expirythreshold}") long expiryThreshold) {
 		logger.info("Registering expiry filter");
 		final FilterRegistrationBean<JwtTokenExpiryFilter> filterRegistration = new FilterRegistrationBean<>();
 		filterRegistration.setFilter(new JwtTokenExpiryFilter(tokenValidationContextHolder, expiryThreshold));

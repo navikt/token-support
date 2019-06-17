@@ -1,7 +1,7 @@
 spring.main.allow-bean-definition-overriding: true
 http.proxy.parametername: notused
 
-no.nav.security.oidc:
+no.nav.security.jwt:
   expirythreshold: 1 #threshold in minutes until token expires
   issuer.knownissuer:
     discoveryurl: http://metadata

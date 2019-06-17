@@ -25,7 +25,7 @@ class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfi
 
     init {
         val issuerPropertiesMap: MutableMap<String, IssuerProperties> = hashMapOf()
-        for (issuerConfig in config.configList("no.nav.security.oidc.issuers")) {
+        for (issuerConfig in config.configList("no.nav.security.jwt.issuers")) {
             issuerPropertiesMap[issuerConfig.property("issuer_name").getString()] = IssuerProperties(
                 URL(issuerConfig.property("discoveryurl").getString()),
                 listOf(issuerConfig.property("accepted_audience").getString()),

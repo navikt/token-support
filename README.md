@@ -133,7 +133,7 @@ new ResourceConfig()
 or let jersey scan for Resources and/or **`@Provider`**-annotated classes
 ```java
 new ResourceConfig()
-  .packages("no.nav.security.oidc.jaxrs", "x.y.z.resourcepackage");
+  .packages("no.nav.security.token.support.core.jaxrs", "x.y.z.resourcepackage");
 ```
 
 #### Rest controller sample with method annotations
@@ -207,10 +207,10 @@ Add the modules that you need as Maven dependencies.
 
 ### Required properties (yaml or properties)
 
-- **`no.nav.security.oidc.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a short name for that issuer (not the actual issuer value from the OIDC token, but a chosen name to represent config for the actual OIDC issuer) you trust, e.g. **`citizen`** or **`employee`** 
-- **`no.nav.security.oidc.issuer.[issuer shortname].discoveryurl`** - The OIDC provider configuration/discovery endpoint (metadata)
-- **`no.nav.security.oidc.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the ID token. For OIDC it is the client ID of the client responsible for acquiring the token.
-- **`no.nav.security.oidc.issuer.[issuer shortname].cookiename`** - The value of the cookie containing the ID token (not required, only neccessary if your api receives calls from a browser)
+- **`no.nav.security.jwt.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a short name for that issuer (not the actual issuer value from the OIDC token, but a chosen name to represent config for the actual OIDC issuer) you trust, e.g. **`citizen`** or **`employee`** 
+- **`no.nav.security.jwt.issuer.[issuer shortname].discoveryurl`** - The OIDC provider configuration/discovery endpoint (metadata)
+- **`no.nav.security.jwt.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the ID token. For OIDC it is the client ID of the client responsible for acquiring the token.
+- **`no.nav.security.jwt.issuer.[issuer shortname].cookiename`** - The value of the cookie containing the ID token (not required, only neccessary if your api receives calls from a browser)
 
 ## Global proxy support (i.e. for all issuers)
 
@@ -218,7 +218,7 @@ Request to external endpoints (i.e. your OpenID Connect provider) can be configu
 
 ## Proxy support per issuer
 Each issuer can be configured to use or not use a proxy by specifying the following properties:
-- **`no.nav.security.oidc.issuer.[issuer shortname].proxyurl`** - The full url of the proxy, e.g. http://proxyhost:8088
+- **`no.nav.security.jwt.issuer.[issuer shortname].proxyurl`** - The full url of the proxy, e.g. http://proxyhost:8088
 
 ## Running inside an Istio enabled Kubernetes cluster
 

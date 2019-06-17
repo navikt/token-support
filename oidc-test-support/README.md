@@ -17,11 +17,11 @@ Contains config for setting up a local signed JWT token generator (can also be u
   **Please make sure to never use the local mode properties in any other environment than your local development environment as the private keys to sign the token provided by oidc-spring-test is fully available here on github for all to see and use.**
 
   
-  `no.nav.security.oidc.issuer.[your issuer name].discoveryurl=http://metadata`
+  `no.nav.security.jwt.issuer.[your issuer name].discoveryurl=http://metadata`
   
-  `no.nav.security.oidc.issuer.[your issuer name].acceptedaudience=aud-localhost`
+  `no.nav.security.jwt.issuer.[your issuer name].acceptedaudience=aud-localhost`
   
-  `no.nav.security.oidc.issuer.[your issuer name].cookiename=localhost-idtoken`
+  `no.nav.security.jwt.issuer.[your issuer name].cookiename=localhost-idtoken`
 
 - There should now be RestController available in your app at <app-contextroot>**/local**
 

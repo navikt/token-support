@@ -1,5 +1,5 @@
 spring.autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
-no.nav.security.oidc:
+no.nav.security.jwt:
   issuers: invalid
   issuer.invalid:
      discoveryurl: http://metadata
