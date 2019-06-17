@@ -43,17 +43,17 @@ class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfi
 }
 
 @io.ktor.util.KtorExperimentalAPI
-fun Authentication.Configuration.oidcSupport(
+fun Authentication.Configuration.tokenValidationSupport(
     name: String? = null,
     config: ApplicationConfig
 ) {
     val provider = TokenSupportAuthenticationProvider(name, config)
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
-        val oidcValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(
+        val tokenValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(
             JwtTokenHttpRequest(call.request.cookies, call.request.headers)
         )
-        if (oidcValidationContext.hasValidToken()) {
-            context.principal(OIDCValidationContextPrincipal(oidcValidationContext))
+        if (tokenValidationContext.hasValidToken()) {
+            context.principal(OIDCValidationContextPrincipal(tokenValidationContext))
             return@intercept
         }
         context.challenge("JWTAuthKey", AuthenticationFailedCause.InvalidCredentials) {
