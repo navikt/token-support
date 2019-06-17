@@ -1,4 +1,4 @@
-package no.nav.security.oidcspringsupportdemo.rest;
+package no.nav.security.token.support.demo.spring.rest;
 
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.Unprotected;

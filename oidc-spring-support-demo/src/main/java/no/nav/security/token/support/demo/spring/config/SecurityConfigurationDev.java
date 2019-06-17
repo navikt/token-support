@@ -1,4 +1,4 @@
-package no.nav.security.oidcspringsupportdemo.config;
+package no.nav.security.token.support.demo.spring.config;
 
 import no.nav.security.token.support.core.test.support.spring.TokenGeneratorConfiguration;
 import org.springframework.context.annotation.Configuration;
