@@ -1,6 +1,6 @@
 package no.nav.security.token.support.core.context;
 
-public interface TokenContextHolder {
+public interface TokenValidationContextHolder {
 
     TokenValidationContext getTokenValidationContext();
 

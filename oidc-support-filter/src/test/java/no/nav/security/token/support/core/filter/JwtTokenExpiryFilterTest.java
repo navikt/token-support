@@ -5,7 +5,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 import no.nav.security.token.support.core.context.TokenValidationContext;
-import no.nav.security.token.support.core.context.TokenContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -33,14 +33,14 @@ public class JwtTokenExpiryFilterTest {
     private FilterChain filterChain;
     @Mock
     private HttpServletResponse servletResponse;
-    private TokenContextHolder tokenContextHolder;
+    private TokenValidationContextHolder tokenValidationContextHolder;
     private static final long EXPIRY_THRESHOLD = 1;
 
     @Test
     public void tokenExpiresBeforeThreshold() throws IOException, ServletException {
         setupMocks(LocalDateTime.now().plusMinutes(2));
 
-        JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(tokenContextHolder,
+        JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(tokenValidationContextHolder,
             EXPIRY_THRESHOLD);
         jwtTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
         verify(servletResponse).setHeader(JwtTokenExpiryFilter.TOKEN_EXPIRES_SOON_HEADER, "true");
@@ -50,7 +50,7 @@ public class JwtTokenExpiryFilterTest {
     public void tokenExpiresAfterThreshold() throws IOException, ServletException {
         setupMocks(LocalDateTime.now().plusMinutes(3));
 
-        JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(tokenContextHolder,
+        JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(tokenValidationContextHolder,
             EXPIRY_THRESHOLD);
         jwtTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
         verify(servletResponse, never()).setHeader(JwtTokenExpiryFilter.TOKEN_EXPIRES_SOON_HEADER, "true");
@@ -58,15 +58,15 @@ public class JwtTokenExpiryFilterTest {
 
     @Test
     public void noValidToken() throws IOException, ServletException {
-        JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(mock(TokenContextHolder.class),
+        JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(mock(TokenValidationContextHolder.class),
             EXPIRY_THRESHOLD);
         jwtTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
     }
 
     private void setupMocks(LocalDateTime expiry) {
-        tokenContextHolder = mock(TokenContextHolder.class);
+        tokenValidationContextHolder = mock(TokenValidationContextHolder.class);
         TokenValidationContext tokenValidationContext = mock(TokenValidationContext.class);
-        when(tokenContextHolder.getTokenValidationContext()).thenReturn(tokenValidationContext);
+        when(tokenValidationContextHolder.getTokenValidationContext()).thenReturn(tokenValidationContext);
         when(tokenValidationContext.getIssuers()).thenReturn(Collections.singletonList("issuer1"));
 
         Date expiryDate = Date.from(expiry.atZone(ZoneId.systemDefault())

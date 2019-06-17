@@ -16,13 +16,13 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
 import no.nav.security.token.support.core.JwtTokenConstants;
-import no.nav.security.token.support.core.context.TokenContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 
 public class BearerTokenClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-	private final TokenContextHolder contextHolder;
+	private final TokenValidationContextHolder contextHolder;
 	
-	public BearerTokenClientHttpRequestInterceptor(TokenContextHolder contextHolder) {
+	public BearerTokenClientHttpRequestInterceptor(TokenValidationContextHolder contextHolder) {
 		this.contextHolder = contextHolder;
 	}
 	

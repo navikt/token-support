@@ -16,7 +16,7 @@ import no.nav.security.token.support.core.configuration.IssuerProperties;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 import no.nav.security.token.support.core.context.TokenValidationContext;
-import no.nav.security.token.support.core.context.TokenContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.http.HttpRequest;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ class JwtTokenValidationFilterTest {
         final String issuername = "myissuer";
         Map<String, IssuerProperties> issuerProps = createIssuerPropertiesMap(issuername, IDTOKENCOOKIENAME);
         MockResourceRetriever mockResources = new MockResourceRetriever(issuername);
-        final TokenContextHolder ctxHolder = new TestTokenContextHolder();
+        final TokenValidationContextHolder ctxHolder = new TestTokenValidationContextHolder();
 
         JwtTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
         final String jwt = createJWT(issuername, mockResources.keysForIssuer(issuername).toRSAPrivateKey());
@@ -84,7 +84,7 @@ class JwtTokenValidationFilterTest {
         Map<String, IssuerProperties> issuerProps = createIssuerPropertiesMap(anotherIssuer, IDTOKENCOOKIENAME);
 
         MockResourceRetriever mockResources = new MockResourceRetriever(anotherIssuer);
-        final TokenContextHolder ctxHolder = new TestTokenContextHolder();
+        final TokenValidationContextHolder ctxHolder = new TestTokenValidationContextHolder();
         JwtTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
 
         final String jwt = createJWT(anotherIssuer, mockResources.keysForIssuer(anotherIssuer).toRSAPrivateKey());
@@ -108,7 +108,7 @@ class JwtTokenValidationFilterTest {
         issuerProps.putAll(createIssuerPropertiesMap(anotherIssuer, null));
 
         MockResourceRetriever mockResources = new MockResourceRetriever(issuer1, anotherIssuer);
-        final TokenContextHolder ctxHolder = new TestTokenContextHolder();
+        final TokenValidationContextHolder ctxHolder = new TestTokenValidationContextHolder();
         JwtTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
 
         final String jwt1 = createJWT(issuer1, mockResources.keysForIssuer(issuer1).toRSAPrivateKey());
@@ -148,11 +148,11 @@ class JwtTokenValidationFilterTest {
     }
 
 
-    private FilterChain mockFilterchainAsserting(String issuer, String subject, TokenContextHolder ctxHolder, int[] filterCallCounter) {
+    private FilterChain mockFilterchainAsserting(String issuer, String subject, TokenValidationContextHolder ctxHolder, int[] filterCallCounter) {
         return mockFilterchainAsserting(new String[]{issuer}, new String[]{subject}, ctxHolder, filterCallCounter);
     }
 
-    private FilterChain mockFilterchainAsserting(String[] issuers, String[] subjects, TokenContextHolder ctxHolder, int[] filterCallCounter) {
+    private FilterChain mockFilterchainAsserting(String[] issuers, String[] subjects, TokenValidationContextHolder ctxHolder, int[] filterCallCounter) {
         return (servletRequest, servletResponse) -> {
             // TokenValidationContext is nulled after filter-call, so we check it here:
             filterCallCounter[0]++;
@@ -171,7 +171,7 @@ class JwtTokenValidationFilterTest {
     ////////////////////////////////////////////////////////////////////////////
 
     private JwtTokenValidationFilter createFilterToTest(Map<String, IssuerProperties> issuerProps,
-                                                        MockResourceRetriever mockResources, TokenContextHolder ctxHolder) {
+                                                        MockResourceRetriever mockResources, TokenValidationContextHolder ctxHolder) {
         MultiIssuerConfiguration conf = new MultiIssuerConfiguration(issuerProps, mockResources);
         JwtTokenValidationHandler jwtTokenValidationHandler = new JwtTokenValidationHandler(conf);
         return new JwtTokenValidationFilter(jwtTokenValidationHandler, ctxHolder);
@@ -198,7 +198,7 @@ class JwtTokenValidationFilterTest {
         return signedJWT.serialize();
     }
 
-    private static class TestTokenContextHolder implements TokenContextHolder {
+    private static class TestTokenValidationContextHolder implements TokenValidationContextHolder {
 
         TokenValidationContext tokenValidationContext = new TokenValidationContext(Collections.emptyMap());
 

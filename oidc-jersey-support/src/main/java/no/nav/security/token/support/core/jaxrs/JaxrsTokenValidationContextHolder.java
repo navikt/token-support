@@ -1,15 +1,15 @@
 package no.nav.security.token.support.core.jaxrs;
 
-import no.nav.security.token.support.core.context.TokenContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 
-public class JaxrsTokenContextHolder implements TokenContextHolder {
+public class JaxrsTokenValidationContextHolder implements TokenValidationContextHolder {
 
-    private static final TokenContextHolder JWT_BEARER_TOKEN_CONTEXT_HOLDER = new JaxrsTokenContextHolder();
+    private static final TokenValidationContextHolder JWT_BEARER_TOKEN_CONTEXT_HOLDER = new JaxrsTokenValidationContextHolder();
 
-    private JaxrsTokenContextHolder() {}
+    private JaxrsTokenValidationContextHolder() {}
 
-    public static TokenContextHolder getHolder() {
+    public static TokenValidationContextHolder getHolder() {
         return JWT_BEARER_TOKEN_CONTEXT_HOLDER;
     }
 

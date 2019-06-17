@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
-import no.nav.security.token.support.core.context.TokenContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 
 /**
  * Checks the expiry time in a validated token against a preconfigured threshold
@@ -33,10 +33,10 @@ public class JwtTokenExpiryFilter implements Filter {
     public static final String TOKEN_EXPIRES_SOON_HEADER = "x-token-expires-soon";
 
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenExpiryFilter.class);
-    private final TokenContextHolder contextHolder;
+    private final TokenValidationContextHolder contextHolder;
     private final long expiryThresholdInMinutes;
 
-    public JwtTokenExpiryFilter(TokenContextHolder contextHolder, long expiryThresholdInMinutes) {
+    public JwtTokenExpiryFilter(TokenValidationContextHolder contextHolder, long expiryThresholdInMinutes) {
         this.contextHolder = contextHolder;
         this.expiryThresholdInMinutes = expiryThresholdInMinutes;
     }

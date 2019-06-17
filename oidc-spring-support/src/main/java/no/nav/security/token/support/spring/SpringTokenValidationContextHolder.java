@@ -4,13 +4,13 @@ import no.nav.security.token.support.core.context.TokenValidationContext;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import no.nav.security.token.support.core.context.TokenContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 
 import java.util.Collections;
 
-public class SpringTokenContextHolder implements TokenContextHolder {
+public class SpringTokenValidationContextHolder implements TokenValidationContextHolder {
 
-    private static final String TOKEN_VALIDATION_CONTEXT_ATTRIBUTE = SpringTokenContextHolder.class.getName();
+    private static final String TOKEN_VALIDATION_CONTEXT_ATTRIBUTE = SpringTokenValidationContextHolder.class.getName();
 
 	@Override
 	public TokenValidationContext getTokenValidationContext() {

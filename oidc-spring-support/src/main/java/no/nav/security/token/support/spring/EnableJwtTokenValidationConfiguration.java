@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 
 import no.nav.security.token.support.core.filter.JwtTokenExpiryFilter;
+import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
-import no.nav.security.token.support.core.context.TokenContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.filter.JwtTokenValidationFilter;
 import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor;
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenHandlerInterceptor;
@@ -77,8 +78,8 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 	}
 
 	@Bean
-	public TokenContextHolder oidcRequestContextHolder() {
-		return new SpringTokenContextHolder();
+	public TokenValidationContextHolder oidcRequestContextHolder() {
+		return new SpringTokenValidationContextHolder();
 	}
 
 	@Bean
@@ -87,23 +88,22 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 	}
 
 	@Bean
-	public JwtTokenValidationFilter tokenValidationFilter(MultiIssuerConfiguration config, TokenContextHolder tokenContextHolder) {
-		return new JwtTokenValidationFilter(new JwtTokenValidationHandler(config), tokenContextHolder);
+	public JwtTokenValidationFilter tokenValidationFilter(MultiIssuerConfiguration config, TokenValidationContextHolder tokenValidationContextHolder) {
+		return new JwtTokenValidationFilter(new JwtTokenValidationHandler(config), tokenValidationContextHolder);
 
 	}
 
 	@Bean
-	public BearerTokenClientHttpRequestInterceptor bearerTokenClientHttpRequestInterceptor(TokenContextHolder tokenContextHolder){
+	public BearerTokenClientHttpRequestInterceptor bearerTokenClientHttpRequestInterceptor(TokenValidationContextHolder tokenValidationContextHolder){
 		logger.info("creating bean for HttpClientOIDCAuthorizationInterceptor");
-		return new BearerTokenClientHttpRequestInterceptor(tokenContextHolder);
+		return new BearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder);
 	}
 
 	@Bean
 	public JwtTokenHandlerInterceptor getControllerInterceptor() {
 		logger.debug("registering OIDC token controller handler interceptor");
-        return new JwtTokenHandlerInterceptor(
-                enableOIDCTokenValidation,
-                new SpringTokenContextHolder());
+        return new JwtTokenHandlerInterceptor(enableOIDCTokenValidation,
+                new JwtTokenAnnotationHandler(new SpringTokenValidationContextHolder()));
 	}
 
 
@@ -124,11 +124,11 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 	@Bean
     @Qualifier("oidcTokenExpiryFilterRegistrationBean")
 	@ConditionalOnProperty(name="no.nav.security.oidc.expirythreshold", matchIfMissing = false)
-	public FilterRegistrationBean<JwtTokenExpiryFilter> oidcTokenExpiryFilterRegistrationBean(TokenContextHolder tokenContextHolder,
+	public FilterRegistrationBean<JwtTokenExpiryFilter> oidcTokenExpiryFilterRegistrationBean(TokenValidationContextHolder tokenValidationContextHolder,
                                                                                               @Value("${no.nav.security.oidc.expirythreshold}") long expiryThreshold) {
 		logger.info("Registering expiry filter");
 		final FilterRegistrationBean<JwtTokenExpiryFilter> filterRegistration = new FilterRegistrationBean<>();
-		filterRegistration.setFilter(new JwtTokenExpiryFilter(tokenContextHolder, expiryThreshold));
+		filterRegistration.setFilter(new JwtTokenExpiryFilter(tokenValidationContextHolder, expiryThreshold));
 		filterRegistration.setMatchAfter(false);
 		filterRegistration
 				.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC));

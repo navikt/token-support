@@ -11,4 +11,7 @@ public class JwtTokenUnauthorizedException extends RuntimeException {
 		super(msg);
 	}
 
+    public JwtTokenUnauthorizedException(Throwable cause) {
+        super(cause);
+    }
 }

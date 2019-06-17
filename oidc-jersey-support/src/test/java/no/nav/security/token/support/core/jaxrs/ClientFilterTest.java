@@ -57,7 +57,7 @@ public class ClientFilterTest {
      * {@link JwtTokenValidationFilter} filter does
      */
     private void addTokenToContextHolder(String token) {
-        JaxrsTokenContextHolder.getHolder().setTokenValidationContext(createOidcValidationContext("protected", new JwtToken(token)));
+        JaxrsTokenValidationContextHolder.getHolder().setTokenValidationContext(createOidcValidationContext("protected", new JwtToken(token)));
     }
 
     private static TokenValidationContext createOidcValidationContext(String issuerShortName, JwtToken jwtToken) {

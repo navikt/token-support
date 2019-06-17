@@ -1,6 +1,6 @@
 package no.nav.security.token.support.core.filter;
 
-import no.nav.security.token.support.core.context.TokenContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.http.HttpRequest;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
 import org.slf4j.Logger;
@@ -16,9 +16,9 @@ public class JwtTokenValidationFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenValidationFilter.class);
     private final JwtTokenValidationHandler jwtTokenValidationHandler;
-    private final TokenContextHolder contextHolder;
+    private final TokenValidationContextHolder contextHolder;
 
-    public JwtTokenValidationFilter(JwtTokenValidationHandler jwtTokenValidationHandler, TokenContextHolder contextHolder) {
+    public JwtTokenValidationFilter(JwtTokenValidationHandler jwtTokenValidationHandler, TokenValidationContextHolder contextHolder) {
         this.jwtTokenValidationHandler = jwtTokenValidationHandler;
         this.contextHolder = contextHolder;
     }

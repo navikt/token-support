@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
-import java.io.IOException;
 
 import static java.util.Collections.singletonList;
 
@@ -22,7 +21,7 @@ public class JwtTokenClientRequestFilter implements ClientRequestFilter {
     @Override
     public void filter(ClientRequestContext requestContext) {
 
-        TokenValidationContext context = JaxrsTokenContextHolder.getHolder().getTokenValidationContext();
+        TokenValidationContext context = JaxrsTokenValidationContextHolder.getHolder().getTokenValidationContext();
 
         if(context != null && context.hasValidToken()) {
             logger.debug("adding tokens to Authorization header");
