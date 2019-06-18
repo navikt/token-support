@@ -6,7 +6,7 @@ import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 
-import no.nav.security.token.support.core.filter.JwtTokenExpiryFilter;
+import no.nav.security.token.support.filter.JwtTokenExpiryFilter;
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
@@ -32,7 +32,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
-import no.nav.security.token.support.core.filter.JwtTokenValidationFilter;
+import no.nav.security.token.support.filter.JwtTokenValidationFilter;
 import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor;
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenHandlerInterceptor;
 
