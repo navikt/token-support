@@ -184,7 +184,7 @@ Add the modules that you need as Maven dependencies.
 ```xml
    <dependency>     
         <groupId>no.nav.security</groupId>
-        <artifactId>oidc-spring-support</artifactId>
+        <artifactId>token-validation-spring</artifactId>
         <version>${oidc-support.version}</version>
     </dependency>
 ```
@@ -200,7 +200,7 @@ Add the modules that you need as Maven dependencies.
 ```xml
    <dependency>     
         <groupId>no.nav.security</groupId>
-        <artifactId>oidc-support</artifactId>
+        <artifactId>token-validation-core</artifactId>
         <version>${oidc-support.version}</version>
     </dependency>
 ```

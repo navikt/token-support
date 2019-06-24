@@ -4,10 +4,10 @@
 	<parent>
 		<groupId>no.nav.security</groupId>
 		<artifactId>token-support</artifactId>
-		<version>0.2.19-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>oidc-support</artifactId>
-	<name>oidc-support</name>
+	<artifactId>token-validation-core</artifactId>
+	<name>token-validation-core</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.nimbusds</groupId>

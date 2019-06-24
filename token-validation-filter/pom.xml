@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>no.nav.security</groupId>
 		<artifactId>token-support</artifactId>
-		<version>0.2.19-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>oidc-support-filter</artifactId>
-	<name>oidc-support-filter</name>
+	<artifactId>token-validation-filter</artifactId>
+	<name>token-validation-filter</name>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>oidc-support</artifactId>
+			<artifactId>token-validation-core</artifactId>
 		</dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

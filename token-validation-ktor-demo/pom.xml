@@ -4,10 +4,10 @@
     <parent>
         <groupId>no.nav.security</groupId>
         <artifactId>token-support</artifactId>
-        <version>0.2.19-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>oidc-ktor-support-demo</artifactId>
-    <name>ktor-oidc-support-demo</name>
+    <artifactId>token-validation-ktor-demo</artifactId>
+    <name>token-validation-ktor-demo</name>
     <properties>
         <ktor_version>1.1.1</ktor_version>
         <kotlin.code.style>official</kotlin.code.style>
@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>no.nav.security</groupId>
-            <artifactId>oidc-ktor-support</artifactId>
+            <artifactId>token-validation-ktor</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -4,18 +4,18 @@
     <parent>
         <groupId>no.nav.security</groupId>
         <artifactId>token-support</artifactId>
-        <version>0.2.19-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>oidc-spring-support</artifactId>
-    <name>spring-oidc-support</name>
+    <artifactId>token-validation-spring</artifactId>
+    <name>token-validation-spring</name>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>oidc-support</artifactId>
+            <artifactId>token-validation-core</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>oidc-support-filter</artifactId>
+            <artifactId>token-validation-filter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -61,7 +61,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>oidc-test-support</artifactId>
+            <artifactId>token-validation-test-support</artifactId>
             <scope>test</scope>
         </dependency>
 

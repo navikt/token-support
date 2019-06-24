@@ -6,10 +6,10 @@
     <parent>
         <groupId>no.nav.security</groupId>
         <artifactId>token-support</artifactId>
-        <version>0.2.19-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>oidc-ktor-support</artifactId>
-    <name>ktor-oidc-support</name>
+    <artifactId>token-validation-ktor</artifactId>
+    <name>token-validation-ktor</name>
     <properties>
         <ktor.version>1.1.1</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
@@ -27,7 +27,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>oidc-support</artifactId>
+            <artifactId>token-validation-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
