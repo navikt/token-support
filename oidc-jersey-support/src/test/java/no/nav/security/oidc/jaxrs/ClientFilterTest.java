@@ -13,7 +13,6 @@ import javax.ws.rs.client.Invocation;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import no.nav.security.oidc.context.OIDCClaims;
@@ -22,7 +21,6 @@ import no.nav.security.oidc.context.TokenContext;
 import no.nav.security.oidc.test.support.JwtTokenGenerator;
 
 @ActiveProfiles("protected")
-@DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Config.class)
 public class ClientFilterTest {
 

@@ -41,9 +41,6 @@ import no.nav.security.oidc.exceptions.OIDCTokenValidatorException;
 
 public class OIDCTokenValidatorTest {
 
-    // @Rule
-    // public ExpectedException thrown = ExpectedException.none();
-
     private static final String ISSUER = "https://issuer";
     private static final String KEYID = "myKeyId";
     private RSAKey rsaJwk;

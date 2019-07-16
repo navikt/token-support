@@ -11,14 +11,12 @@ import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import no.nav.security.oidc.OIDCConstants;
 import no.nav.security.oidc.test.support.JwtTokenGenerator;
 
 @ActiveProfiles("invalid")
-@DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Config.class)
 public class ServerFilterProtectedClassUnknownIssuerTest {
 
@@ -35,26 +33,19 @@ public class ServerFilterProtectedClassUnknownIssuerTest {
 
     @Test
     public void that_unprotected_returns_ok_with_invalid_token() {
-
         Response response = requestWithInvalidClaimsToken("class/unprotected").get();
-
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
     public void that_protected_returns_200_with_any_token() {
-
         Response response = requestWithInvalidClaimsToken("class/protected").get();
-
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
     public void that_protected_with_claims_returns_401_with_invalid_token() {
-
         Response response = requestWithInvalidClaimsToken("class/protected/with/claims").get();
-
         assertThat(response.getStatus(), is(equalTo(401)));
     }
-
 }
