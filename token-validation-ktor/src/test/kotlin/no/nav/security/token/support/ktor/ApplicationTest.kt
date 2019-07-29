@@ -142,6 +142,25 @@ class ApplicationTest {
         }
     }
 
+    @Test
+    fun shouldWorkForJWTInHeaderWithhoutCookieConfig() {
+        val helloCounterBeforeRequest = helloCounter
+        withTestApplication({
+            stubOIDCProvider()
+            doConfig(hasCookieConfig = false)
+            module()
+        }) {
+            handleRequest(HttpMethod.Get, "/hello") {
+                val jwt = JwtTokenGenerator.createSignedJWT("testuser")
+                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+            }.apply {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals(helloCounterBeforeRequest + 1, helloCounter)
+            }
+        }
+    }
+
+
     //////////////////////////////////////////
     //////////////////////////////////////////
     //////////////////////////////////////////
@@ -157,13 +176,16 @@ class ApplicationTest {
     }
 
     fun Application.doConfig(acceptedIssuer:String = JwtTokenGenerator.ISS,
-                             acceptedAudience:String = JwtTokenGenerator.AUD) {
+                             acceptedAudience:String = JwtTokenGenerator.AUD,
+                             hasCookieConfig:Boolean = true) {
         (environment.config as MapApplicationConfig).apply {
             put("no.nav.security.jwt.issuers.size", "1")
             put("no.nav.security.jwt.issuers.0.issuer_name", acceptedIssuer)
             put("no.nav.security.jwt.issuers.0.discoveryurl", server.baseUrl() + "/.well-known/openid-configuration")
             put("no.nav.security.jwt.issuers.0.accepted_audience", acceptedAudience)
-            put("no.nav.security.jwt.issuers.0.cookie_name", idTokenCookieName)
+            if (hasCookieConfig) {
+                put("no.nav.security.jwt.issuers.0.cookie_name", idTokenCookieName)
+            }
         }
     }
 

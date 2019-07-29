@@ -29,7 +29,7 @@ class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfi
             issuerPropertiesMap[issuerConfig.property("issuer_name").getString()] = IssuerProperties(
                 URL(issuerConfig.property("discoveryurl").getString()),
                 listOf(issuerConfig.property("accepted_audience").getString()),
-                issuerConfig.property("cookie_name").getString()
+                issuerConfig.propertyOrNull("cookie_name")?.getString()
             )
         }
 
