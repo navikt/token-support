@@ -33,10 +33,9 @@ class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfi
             )
         }
 
-        multiIssuerConfiguration = MultiIssuerConfiguration(issuerPropertiesMap, ProxyAwareResourceRetriever().apply {
-            // TODO:
-            //proxyUrl = null
-        })
+        multiIssuerConfiguration = MultiIssuerConfiguration(
+            issuerPropertiesMap,
+            ProxyAwareResourceRetriever(System.getenv("HTTP_PROXY")?.let { URL(it) }))
         jwtTokenValidationHandler = JwtTokenValidationHandler(multiIssuerConfiguration)
     }
 
