@@ -9,7 +9,7 @@ import io.ktor.http.ContentType
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
-import no.nav.security.token.support.core.ktor.tokenValidationSupport
+import no.nav.security.token.support.ktor.tokenValidationSupport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 

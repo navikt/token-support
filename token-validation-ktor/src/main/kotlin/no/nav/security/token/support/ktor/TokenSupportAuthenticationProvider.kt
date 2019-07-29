@@ -1,4 +1,4 @@
-package no.nav.security.token.support.core.ktor
+package no.nav.security.token.support.ktor
 
 import io.ktor.application.call
 import io.ktor.auth.*
