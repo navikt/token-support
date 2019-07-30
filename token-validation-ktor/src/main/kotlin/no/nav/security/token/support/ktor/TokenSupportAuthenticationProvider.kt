@@ -3,6 +3,7 @@ package no.nav.security.token.support.ktor
 import io.ktor.application.call
 import io.ktor.auth.*
 import io.ktor.config.ApplicationConfig
+import io.ktor.config.MapApplicationConfig
 import io.ktor.http.CookieEncoding
 import io.ktor.http.Headers
 import io.ktor.http.decodeCookieValue
@@ -21,6 +22,7 @@ import java.net.URL
 
 data class OIDCValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
+@io.ktor.util.KtorExperimentalAPI
 private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::class.java.name)
 
 @io.ktor.util.KtorExperimentalAPI
@@ -33,7 +35,7 @@ class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfi
         for (issuerConfig in config.configList("no.nav.security.jwt.issuers")) {
             issuerPropertiesMap[issuerConfig.property("issuer_name").getString()] = IssuerProperties(
                 URL(issuerConfig.property("discoveryurl").getString()),
-                listOf(issuerConfig.property("accepted_audience").getString()),
+                issuerConfig.property("accepted_audience").getString().split(","),
                 issuerConfig.propertyOrNull("cookie_name")?.getString()
             )
         }
@@ -78,6 +80,23 @@ fun Authentication.Configuration.tokenValidationSupport(
 
 
 data class RequiredClaims(val issuer:String, val claimMap:Array<String>, val combineWithOr:Boolean = false)
+
+data class IssuerConfig(val name: String, val discoveryUrl : String, val acceptedAudience : List<String>, val cookieName: String? = null)
+
+@io.ktor.util.KtorExperimentalAPI
+class TokenSupportConfig(vararg issuers : IssuerConfig) : MapApplicationConfig(
+    *(issuers.mapIndexed { index, issuerConfig -> listOf(
+        "no.nav.security.jwt.issuers.$index.issuer_name" to issuerConfig.name,
+        "no.nav.security.jwt.issuers.$index.discoveryurl" to issuerConfig.discoveryUrl,
+        "no.nav.security.jwt.issuers.$index.accepted_audience" to issuerConfig.acceptedAudience.joinToString(",")//,
+        ).let {
+            if (issuerConfig.cookieName != null) {
+                it.plus("no.nav.security.jwt.issuers.$index.cookie_name" to issuerConfig.cookieName)
+            } else {
+                it
+            }
+        }
+    }.flatMap { it }.plus("no.nav.security.jwt.issuers.size" to issuers.size.toString()).toTypedArray()))
 
 private class InternalTokenValidationContextHolder(private var tokenValidationContext : TokenValidationContext) : TokenValidationContextHolder {
     override fun getTokenValidationContext() = tokenValidationContext
