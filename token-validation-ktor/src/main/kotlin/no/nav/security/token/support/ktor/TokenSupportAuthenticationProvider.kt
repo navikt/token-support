@@ -12,11 +12,16 @@ import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.core.context.TokenValidationContext
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.http.HttpRequest
+import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
+import org.slf4j.LoggerFactory
 import java.net.URL
 
 data class OIDCValidationContextPrincipal(val context: TokenValidationContext) : Principal
+
+private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::class.java.name)
 
 @io.ktor.util.KtorExperimentalAPI
 class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfig) : AuthenticationProvider(name) {
@@ -44,16 +49,24 @@ class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfi
 @io.ktor.util.KtorExperimentalAPI
 fun Authentication.Configuration.tokenValidationSupport(
     name: String? = null,
-    config: ApplicationConfig
+    config: ApplicationConfig,
+    requiredClaims: RequiredClaims? = null
 ) {
     val provider = TokenSupportAuthenticationProvider(name, config)
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
         val tokenValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(
             JwtTokenHttpRequest(call.request.cookies, call.request.headers)
         )
-        if (tokenValidationContext.hasValidToken()) {
-            context.principal(OIDCValidationContextPrincipal(tokenValidationContext))
-            return@intercept
+        try {
+            if (tokenValidationContext.hasValidToken()) {
+                if (requiredClaims != null) {
+                    RequiredClaimsHandler(InternalTokenValidationContextHolder(tokenValidationContext)).handleRequiredClaims(requiredClaims)
+                }
+                context.principal(OIDCValidationContextPrincipal(tokenValidationContext))
+                return@intercept
+            }
+        } catch (ce : RequiredClaimsException) {
+            log.debug("RequiredClaimsException: ${ce.message}")
         }
         context.challenge("JWTAuthKey", AuthenticationFailedCause.InvalidCredentials) {
             call.respond(UnauthorizedResponse())
@@ -63,12 +76,33 @@ fun Authentication.Configuration.tokenValidationSupport(
     register(provider)
 }
 
-data class NameValueCookie(@JvmField val name: String, @JvmField val value: String) : HttpRequest.NameValue {
+
+data class RequiredClaims(val issuer:String, val claimMap:Array<String>, val combineWithOr:Boolean = false)
+
+private class InternalTokenValidationContextHolder(private var tokenValidationContext : TokenValidationContext) : TokenValidationContextHolder {
+    override fun getTokenValidationContext() = tokenValidationContext
+    override fun setTokenValidationContext(tokenValidationContext: TokenValidationContext?) {
+        this.tokenValidationContext = tokenValidationContext!!
+    }
+}
+
+internal class RequiredClaimsException(message: String, cause: Exception) : RuntimeException(message, cause)
+internal class RequiredClaimsHandler(tokenValidationContextHolder: TokenValidationContextHolder) : JwtTokenAnnotationHandler(tokenValidationContextHolder) {
+    internal fun handleRequiredClaims(requiredClaims: RequiredClaims) {
+        try {
+            handleProtectedWithClaims(requiredClaims.issuer, requiredClaims.claimMap, requiredClaims.combineWithOr)
+        } catch (e : RuntimeException) {
+            throw RequiredClaimsException(e.message?:"", e)
+        }
+    }
+}
+
+internal data class NameValueCookie(@JvmField val name: String, @JvmField val value: String) : HttpRequest.NameValue {
     override fun getName(): String = name
     override fun getValue(): String = value
 }
 
-data class JwtTokenHttpRequest(private val cookies : RequestCookies, private val headers : Headers) : HttpRequest {
+internal data class JwtTokenHttpRequest(private val cookies : RequestCookies, private val headers : Headers) : HttpRequest {
     @io.ktor.util.KtorExperimentalAPI
     override fun getCookies() =
         cookies.rawCookies.map { NameValueCookie(it.key, decodeCookieValue(it.value, CookieEncoding.URI_ENCODING)) }.toTypedArray()

@@ -127,6 +127,43 @@ class ApplicationTest {
     }
 
     @Test
+    fun helloPerson_withMissingRequiredClaimShouldGive_401_andHelloCounterIsNotIncreased() {
+        val helloCounterBeforeRequest = helloPersonCounter
+        withTestApplication({
+            stubOIDCProvider()
+            doConfig()
+            module()
+        }) {
+            handleRequest(HttpMethod.Get, "/hello_person") {
+                val jwt = JwtTokenGenerator.createSignedJWT("testuser")
+                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+            }.apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertEquals(helloCounterBeforeRequest, helloPersonCounter)
+            }
+        }
+    }
+
+    @Test
+    fun helloPerson_withRequiredClaimShouldGive_200_OK_andHelloCounterIsIncreased() {
+        val helloCounterBeforeRequest = helloPersonCounter
+        withTestApplication({
+            stubOIDCProvider()
+            doConfig()
+            module()
+        }) {
+            handleRequest(HttpMethod.Get, "/hello_person") {
+                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", navIdent = "X112233"))
+                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+            }.apply {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals(helloCounterBeforeRequest + 1, helloPersonCounter)
+            }
+        }
+    }
+
+
+    @Test
     fun openhello_withMissingJWTShouldGive_200_andOpenHelloCounterIsIncreased() {
         val openHelloCounterBeforeRequest = openHelloCounter
         withTestApplication({
