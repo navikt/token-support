@@ -86,13 +86,15 @@ public class JwtTokenAnnotationHandler {
     }
 
     protected boolean handleProtectedWithClaimsAnnotation(ProtectedWithClaims annotation) {
-        String issuer = annotation.issuer();
-        String[] requiredClaims = annotation.claimMap();
+        return handleProtectedWithClaims(annotation.issuer(), annotation.claimMap(), annotation.combineWithOr());
+    }
+
+    protected boolean handleProtectedWithClaims(String issuer, String[] requiredClaims, boolean combineWithOr) {
         if (Objects.nonNull(issuer) && issuer.length() > 0) {
 
             JwtToken jwtToken = getJwtToken(issuer, tokenValidationContextHolder)
                 .orElseThrow(() -> new JwtTokenMissingException("no valid token found in validation context"));
-            if (!containsRequiredClaims(jwtToken, annotation.combineWithOr(), requiredClaims)) {
+            if (!containsRequiredClaims(jwtToken, combineWithOr, requiredClaims)) {
                 throw new JwtTokenInvalidClaimException("required claims not present in token." + Arrays.asList(requiredClaims));
             }
         }
