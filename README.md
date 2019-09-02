@@ -190,6 +190,9 @@ public class ProductResource {
 
 }
 ```
+### token-validation-ktor
+
+See demo application in **`token-validation-ktor-demo`**.
 
 ## Configuration
 
