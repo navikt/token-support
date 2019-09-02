@@ -2,21 +2,36 @@
 [![Published on Maven](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/no/nav/security/token-support/maven-metadata.xml.svg)](http://central.maven.org/maven2/no/nav/security/token-support/)
 
 # token-support
-This project consist of common modules to support security token handling in a java spring microservices architecture, with emphasis on OpenID Connect ID Tokens. The source code is based on the output from a Proof-of-concept with Azure AD B2C - found here https://github.com/navikt/AzureAdPoc - many thanks to the original author.
+This project consist of common modules to support security token handling in a java and kotlin microservices architecture, with emphasis on validation of OpenID Connect ID Tokens and OAuth 2.0 JWT access tokens.
 
-Applications can use these modules in order to verify security tokens on exposed HTTP endpoints, according to the configured OIDC providers they trust. Multiple providers are allowed, and can be applied to rest controllers through annotations. Tokens can be propagated through the service and attached to client requests as a "Bearer" token when calling another service/api. 
+
+Applications can use these modules in order to verify security tokens on exposed HTTP endpoints, according to the configured token providers/issuers they trust. Multiple issuers can be configured within one app and each API can require different issuers if you so choose. Tokens can be propagated through the service and attached to client requests as a "Bearer" token when calling another service/api if you are using a ID token propagation architecture. If you are using an OAuth 2.0 architecture with self-contained access_tokens (JWTs) you can extract the received access_token from the current request and request a new access_token from your configured provider/issuer before a downstream API call. More details of the modules functionality follows below.   
 
 ## Main components
 
-### oidc-support
+This project is mainly composed of modules wrapping other well known libraries to support validation of tokens from multiple token issuers. 
+Currently there is support for:
+* Spring Web MVC
+* JAX-RS
+* Plain Java
+* Kotlin with ktor
 
-Provides token validation support through servlet filters, using the [Nimbus OAuth 2.0 SDK with OpenID Connect extensions](https://connect2id.com/products/nimbus-oauth-openid-connect-sdk). Please see **`OIDCTokenValidationFilter.java`** for more details. Token signing keys are cached in a singleton instance of the **`OIDCTokenValidator`**, using the  **`com.nimbusds.openid.connect.sdk.validators.IDTokenValidator`**. Token signing keys will be fetched from the jwt_keys endpoint configured in the OIDC provider configuration metadata endpoint when required (e.g. new signing keys are detected). This module can be used standalone (if you do not use Spring). If you do use Spring you can use the module described below, providing Spring specific mechanisms for securing rest controllers.
+### token-validation-core
 
-### oidc-spring-support
+Provides the core token validation support, using the [Nimbus OAuth 2.0 SDK with OpenID Connect extensions](https://connect2id.com/products/nimbus-oauth-openid-connect-sdk). Token signing keys are retrieved from the external issuer and cached in the **`JwtTokenValidator`**, using the  **`com.nimbusds.openid.connect.sdk.validators.IDTokenValidator`** (this validator also works well for validating access_tokens). Token signing keys will be fetched from the jwt_keys endpoint configured in the provider configuration metadata endpoint (e.g. **`/.well-known/openid-configuration`**) when required (e.g. new signing keys are detected). 
 
-Spring Boot specific wrapper around oidc-support. To enable oidc token validation for a spring boot application, simply annotate your SpringApplication class with **`@EnableOIDCTokenValidation`**. Optionally list the packages or classses you dont want token validations for (e.g. error controllers). A good start is listing the **`org.springframework`** - e.g. **`@EnableOIDCTokenValidation(ignore="org.springframework")`**. Use the **`@Unprotected`** or **`@Protected`** annotations at rest controller method/class level to indicate if token validation is required or not. 
+This module can be used standalone (e.g. if you do not use Spring or JAX-RS). You will however need to code the part which enforces and triggers the token validation (e.g. as done in the token-validation-filter module). If you use Spring, JAX-RS or Ktor you should use the specific module for your framework. 
 
- 
+### token-validation-filter
+
+Simple servlet filter using the token-validation-core components for validating tokens on inbound HTTP requests. Can be used standalone but is more commonly used together with Spring or JAX-RS.  
+
+### token-validation-spring
+
+Spring Boot (Spring Web) specific wrapper around token-validation-core and token-validation-filter providing auto configuration of the relevant components. 
+To enable token validation for a spring boot application, simply annotate your SpringApplication class or any Spring Configuration class with **`@EnableJwtTokenValidation`**. Optionally list the packages or classses you dont want token validations for (e.g. error controllers). The package **`org.springframework`** - e.g. **`@EnableJwtTokenValidation(ignore="org.springframework")`** is listed as ignored by default if you dont specify a ignore list. Use the **`@Unprotected`** or **`@Protected`**/**`@ProtectedWithClaims`** annotations at rest controller method/class level to indicate if token validation is required or not. 
+
+There is a short sample below, however more detailed samples are available in the **`token-validation-spring-demo`** module. 
 
 #### SpringApplication sample
 
@@ -31,7 +46,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import io.ztpoc.spring.oidc.validation.api.EnableOIDCTokenValidation;
 
 @SpringBootApplication
-@EnableOIDCTokenValidation(ignore="org.springframework")
+@EnableOIDCTokenValidation
 public class ProductServiceApplication {
 
 	public static void main(String[] args) {
@@ -85,18 +100,19 @@ public class ProductController {
 }
 ```
 
+#### How to extract the validated tokens (and claims) from the current request
+TODO
 
-### oidc-jersey-support
+### token-validation-jaxrs
 
-JAX-RS wrapper around oidc-support. Two steps are necessary to enable token validation:
-* Register the servlet filter **`JaxrsOIDCTokenValidationFilter`** with your servlet container to pick up the token of incoming requests  
-* Register the **`OidcContainerRequestFilter`** with your **`Application`** (plain JAX-RS) or **`ResourceConfig`** (Jersey) 
+JAX-RS wrapper around token-validation-core and token-validation-filter. Two steps are necessary to enable token validation:
+* Register the servlet filter **`JaxrsJwtTokenValidationFilter`** with your servlet container to pick up the token of incoming requests  
+* Register the **`JwtTokenContainerRequestFilter`** with your **`Application`** (plain JAX-RS) or **`ResourceConfig`** (Jersey) 
   
 Use the **`@Unprotected`**, **`@Protected`** or **`@ProtectedWithClaims`** annotations on resource methods and/or classes indicate if token validation is required or not. Method annotations have precedence
 One additional step is required to pass the token do other services
 
-* Register **`OidcClientRequestFilter`** with your client
-
+* Register **`JwtTokenClientRequestFilter`** with your client
 
 #### Example
 
@@ -104,18 +120,18 @@ Register the servlet filter with your container, as done in spring boots **`@Spr
 
 ```java
     @Bean
-    public FilterRegistrationBean<OIDCTokenValidationFilter> oidcTokenValidationFilterBean(MultiIssuerConfiguraton config) {
-        return new FilterRegistrationBean<>(new JaxrsOIDCTokenValidationFilter(config));
+    public FilterRegistrationBean<JwtTokenValidationFilter> jwtTokenValidationFilterBean(MultiIssuerConfiguraton config) {
+        return new FilterRegistrationBean<>(new JaxrsJwtTokenValidationFilter(config));
     }
 
     @Bean
-    public MultiIssuerConfiguraton multiIssuerConfiguration(Map<String, IssuerProperties> issuerConfiguration, OIDCResourceRetriever resourceRetriever) {
+    public MultiIssuerConfiguraton multiIssuerConfiguration(Map<String, IssuerProperties> issuerConfiguration, ProxyAwareResourceRetriever resourceRetriever) {
         return new MultiIssuerConfiguraton(issuerConfiguration, resourceRetriever);
     }
 
     @Bean
-    public OIDCResourceRetriever oidcResourceRetriever() {
-        return new OIDCResourceRetriever();
+    public ProxyAwareResourceRetriever proxyAwareResourceRetriever() {
+        return new ProxyAwareResourceRetriever();
     }
 ```
 
@@ -126,14 +142,14 @@ How you configure the servlet filter is dependent on how you lauch your app, e.g
 There are two options, explicit registering of resources
 ```java
 new ResourceConfig()
-  .register(OidcContainerRequestFilter.class)
+  .register(JwtTokenContainerRequestFilter.class)
   // ...
   .register(Resource.class);
 ```
 or let jersey scan for Resources and/or **`@Provider`**-annotated classes
 ```java
 new ResourceConfig()
-  .packages("no.nav.security.token.support.core.jaxrs", "x.y.z.resourcepackage");
+  .packages("no.nav.security.token.support.jaxrs", "x.y.z.resourcepackage");
 ```
 
 #### Rest controller sample with method annotations
@@ -175,46 +191,54 @@ public class ProductResource {
 }
 ```
 
-
-
 ## Configuration
 
 Add the modules that you need as Maven dependencies.
-* oidc-spring-support:
+* token-validation-spring:
 ```xml
    <dependency>     
         <groupId>no.nav.security</groupId>
         <artifactId>token-validation-spring</artifactId>
-        <version>${oidc-support.version}</version>
+        <version>${token-support.version}</version>
     </dependency>
 ```
-* oidc-jersey-support:
+* token-validation-jaxrs:
 ```xml
    <dependency>     
         <groupId>no.nav.security</groupId>
-        <artifactId>oidc-jersey-support</artifactId>
-        <version>${oidc-support.version}</version>
+        <artifactId>token-validation-jaxrs</artifactId>
+        <version>${token-support.version}</version>
     </dependency>
 ```
-* oidc-support:
+* token-validation-ktor:
+```xml
+   <dependency>     
+        <groupId>no.nav.security</groupId>
+        <artifactId>token-validation-ktor</artifactId>
+        <version>${token-support.version}</version>
+    </dependency>
+```
+* token-validation-core (included as dependency in all of the above):
 ```xml
    <dependency>     
         <groupId>no.nav.security</groupId>
         <artifactId>token-validation-core</artifactId>
-        <version>${oidc-support.version}</version>
+        <version>${token-support.version}</version>
     </dependency>
 ```
 
 ### Required properties (yaml or properties)
 
-- **`no.nav.security.jwt.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a short name for that issuer (not the actual issuer value from the OIDC token, but a chosen name to represent config for the actual OIDC issuer) you trust, e.g. **`citizen`** or **`employee`** 
-- **`no.nav.security.jwt.issuer.[issuer shortname].discoveryurl`** - The OIDC provider configuration/discovery endpoint (metadata)
-- **`no.nav.security.jwt.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the ID token. For OIDC it is the client ID of the client responsible for acquiring the token.
-- **`no.nav.security.jwt.issuer.[issuer shortname].cookiename`** - The value of the cookie containing the ID token (not required, only neccessary if your api receives calls from a browser)
+- **`no.nav.security.jwt.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a short name for that issuer (not the actual issuer value from the token, but a chosen name to represent config for the actual issuer) you trust, e.g. **`citizen`** or **`employee`** 
+- **`no.nav.security.jwt.issuer.[issuer shortname].discoveryurl`** - The identity provider configuration/discovery endpoint (metadata)
+- **`no.nav.security.jwt.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the JWT token. For OIDC it is the client ID of the client responsible for acquiring the token, in OAuth 2.0 it should be the identifier for you api.
+- **`no.nav.security.jwt.issuer.[issuer shortname].cookiename`** - The value of the cookie containing a ID token (not required, only neccessary if your api receives calls directly from a browser)
 
 ## Global proxy support (i.e. for all issuers)
 
-Request to external endpoints (i.e. your OpenID Connect provider) can be configured to use a proxy server. By default, the module tries to read the property/environment value **`http.proxy`** or **`http_proxy`**. The value must be a valid URL, containing protocol, hostname and port - e.g. **`http://myproxy:8080`**. If specified, all requests to configured issuers will be sent through this proxy. If no proxy configuration is specified, all communication to external services (internet bound), will be achieved without proxy (direct communication). If the **`http.proxy`** parameter name does not fit your environment (e.g. you want a common name for proxy config for all servers other than **`http.proxy`**, you can specify your own parameter name by configuring the **`http.proxy.parametername`**, or **`http_proxy_parametername`**. Example: **`http_proxy_parametername=http_proxy_uri`**. 
+~~Request to external endpoints (i.e. your OpenID Connect provider) can be configured to use a proxy server. By default, the module tries to read the property/environment value **`http.proxy`** or **`http_proxy`**. The value must be a valid URL, containing protocol, hostname and port - e.g. **`http://myproxy:8080`**. If specified, all requests to configured issuers will be sent through this proxy. If no proxy configuration is specified, all communication to external services (internet bound), will be achieved without proxy (direct communication). If the **`http.proxy`** parameter name does not fit your environment (e.g. you want a common name for proxy config for all servers other than **`http.proxy`**, you can specify your own parameter name by configuring the **`http.proxy.parametername`**, or **`http_proxy_parametername`**. Example: **`http_proxy_parametername=http_proxy_uri`**.~~ 
+
+If you want to use a proxy for all issuers, supply the necessary JVM parameters. 
 
 ## Proxy support per issuer
 Each issuer can be configured to use or not use a proxy by specifying the following properties:
