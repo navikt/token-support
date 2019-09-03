@@ -2,17 +2,16 @@ package no.nav.security.token.support.core.configuration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.junit.jupiter.api.Test;
 
-public class ProxyAwareResourceRetrieverTest {
+class ProxyAwareResourceRetrieverTest {
 
     @Test
-    public void testUsePlainTextForHttps() throws MalformedURLException, URISyntaxException {
+    void testUsePlainTextForHttps() throws IOException {
         ProxyAwareResourceRetriever resourceRetriever = new ProxyAwareResourceRetriever(null, true);
         String scheme = "https://";
         String host = "host.domain.no";
