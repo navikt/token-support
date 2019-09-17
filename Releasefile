@@ -13,59 +13,37 @@ node {
 
     stage("Initialization") {
         cleanWs()
-        withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-           withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
-            sh(script: "git clone https://${token}:x-oauth-basic@github.com/${repo}/${app}.git .")
-           }
-         }
+
+        withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
+            sh(script: "git clone ssh://jenkins@github.com/${repo}/${app}.git .")
+        }
+
         commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
         commitHashShort = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         commitUrl = "https://github.com/${repo}/${app}/commit/${commitHash}"
 
-        notifyGithub(repo, app, 'continuous-integration/jenkins', commitHash, 'pending', "Build #${env.BUILD_NUMBER} has started")
+        //notifyGithub(repo, app, 'continuous-integration/jenkins', commitHash, 'pending', "Build #${env.BUILD_NUMBER} has started")
     }
 
     stage("Perform Maven release") {
-		def pom = readMavenPom file: 'pom.xml'
-		def ver = pom.version
-		releaseVersion = ver.replace('-SNAPSHOT','')
-		devVersion = incrementVersion(releaseVersion, "") + "-SNAPSHOT"
+        def pom = readMavenPom file: 'pom.xml'
+        def ver = pom.version
+        releaseVersion = ver.replace('-SNAPSHOT','')
+        devVersion = incrementVersion(releaseVersion, "") + "-SNAPSHOT"
 
-		println "current version is " + ver
-		println "release version is " + releaseVersion
-		println "new dev version is " + devVersion
+        println "current version is " + ver
+        println "release version is " + releaseVersion
+        println "new dev version is " + devVersion
 
         sh "${mvn} release:clean release:prepare release:perform -DnewVersion=${releaseVersion} -DdevelopmentVersion=${devVersion}"
     }
 }
 
-def notifyGithub(owner, app, context, sha, state, description) {
-    def postBody = [
-            state: "${state}",
-            context: "${context}",
-            description: "${description}",
-            target_url: "${env.BUILD_URL}"
-    ]
-    def postBodyString = groovy.json.JsonOutput.toJson(postBody)
-
-    withEnv(['HTTPS_PROXY=http://webproxy-internett.nav.no:8088']) {
-        withCredentials([string(credentialsId: 'OAUTH_TOKEN', variable: 'token')]) {
-            sh """
-                curl -H 'Authorization: token ${token}' \
-                    -H 'Content-Type: application/json' \
-                    -X POST \
-                    -d '${postBodyString}' \
-                    'https://api.github.com/repos/${owner}/${app}/statuses/${sha}'
-            """
-        }
-    }
-}
-
 def incrementVersion(version, postfixLabel){
-	def ver = version.replace(postfixLabel,"")
-	def parts = ver.tokenize(".")
-	def number = parts.pop() as int
-	parts.push(number + 1)
-	def newVersion = parts.join(".")
-	return newVersion
+    def ver = version.replace(postfixLabel,"")
+    def parts = ver.tokenize(".")
+    def number = parts.pop() as int
+    parts.push(number + 1)
+    def newVersion = parts.join(".")
+    return newVersion
 }

@@ -1,0 +1,8 @@
+spring.autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+no.nav.security.jwt:
+  issuers: invalid
+  issuer.invalid:
+     discoveryurl: http://metadata
+     accepted_audience: aud-localhost
+     cookie_name: localhost-idtoken
+debug: false

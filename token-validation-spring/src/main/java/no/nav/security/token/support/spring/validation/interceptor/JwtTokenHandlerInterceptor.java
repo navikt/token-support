@@ -1,0 +1,83 @@
+package no.nav.security.token.support.spring.validation.interceptor;
+
+import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class JwtTokenHandlerInterceptor implements HandlerInterceptor {
+
+    private final Logger logger = LoggerFactory.getLogger(JwtTokenHandlerInterceptor.class);
+    private final JwtTokenAnnotationHandler jwtTokenAnnotationHandler;
+    private String[] ignoreConfig;
+    private final Map<Object, Boolean> handlerFlags = new ConcurrentHashMap<>();
+
+    public JwtTokenHandlerInterceptor(AnnotationAttributes enableJwtTokenValidation,
+                                      JwtTokenAnnotationHandler jwtTokenAnnotationHandler) {
+        this.jwtTokenAnnotationHandler = jwtTokenAnnotationHandler;
+
+        if (enableJwtTokenValidation != null) {
+            ignoreConfig = enableJwtTokenValidation.getStringArray("ignore");
+            if (ignoreConfig == null) {
+                ignoreConfig = new String[0];
+            }
+        }
+        else {
+            // nothing explicitly configured to be ignored, intercept everything
+            ignoreConfig = new String[0];
+        }
+    }
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            if (shouldIgnore(handlerMethod.getBean())) {
+                return true;
+            }
+            try {
+                return jwtTokenAnnotationHandler.assertValidAnnotation(handlerMethod.getMethod());
+            } catch (Exception e) {
+                throw new JwtTokenUnauthorizedException(e);
+            }
+        }
+        logger.debug("Handler is of type {}, allowing unprotected access to the resources it accesses",
+            handler.getClass().getSimpleName());
+        return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object handler, Exception arg3) {
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object handler, ModelAndView arg3) {
+
+    }
+
+    private boolean shouldIgnore(Object object) {
+        Boolean flag = handlerFlags.get(object);
+        if (flag != null) {
+            return flag;
+        }
+        String fullName = object.getClass().getName();
+        for (String ignore : ignoreConfig) {
+            if (fullName.startsWith(ignore)) {
+                logger.info("Adding " + fullName + " to OIDC validation ignore list");
+                handlerFlags.put(object, true);
+                return true;
+            }
+        }
+        logger.info("Adding " + fullName + " to OIDC validation interceptor list");
+        handlerFlags.put(object, false);
+        return false;
+    }
+}
