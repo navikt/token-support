@@ -285,8 +285,8 @@ In order to release a new version (provided you have access), clone this reposit
 # make sure we're up to date!
 git checkout master && git pull
 
-# This is the release command itself
-mvn -Pdeploy-to-sonatype release:prepare
+# This will prepare version numbers and commit to github
+mvn release:prepare
 
 # This will clean up any local temporary files
 # that were used during the release.
