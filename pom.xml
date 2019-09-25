@@ -32,6 +32,7 @@
         <module>token-validation-spring-demo</module>
         <module>token-validation-ktor</module>
         <module>token-validation-ktor-demo</module>
+        <module>token-client-spring</module>
     </modules>
 
     <properties>
