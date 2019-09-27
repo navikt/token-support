@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {OAuth2ClientConfig.class})
 @ActiveProfiles("test")
-class OAuth2ClientPropertiesConfigTest {
+class OAuth2ClientConfigTest {
 
     @Autowired
     private OAuth2ClientConfig oAuth2ClientConfig;
@@ -17,7 +17,9 @@ class OAuth2ClientPropertiesConfigTest {
     @Test
     void testClientConfigIsValid() {
         assertThat(oAuth2ClientConfig).isNotNull();
-        assertThat(oAuth2ClientConfig.getClient()).isNotNull();
-        assertThat(oAuth2ClientConfig.getClient().values().stream().findFirst().orElse(null)).isNotNull();
+        assertThat(oAuth2ClientConfig.getClients()).isNotNull();
+        OAuth2ClientConfig.OAuth2Client oAuth2Client = oAuth2ClientConfig.getClients().values().stream().findFirst().orElse(null);
+        assertThat(oAuth2Client).isNotNull();
+        assertThat(oAuth2Client.getGrantType().getValue()).isNotNull();
     }
 }

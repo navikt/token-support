@@ -10,6 +10,6 @@ public interface OAuth2ParameterNames {
     String ACCESS_TOKEN = "access_token";
     String TOKEN_TYPE = "token_type";
     String EXPIRES_IN = "expires_in";
-    String EXPIRES_AT = "ext_expires_in";
+    String EXPIRES_AT = "expires_at";
     String EXT_EXPIRES_IN = "ext_expires_in";
 }

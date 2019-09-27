@@ -1,10 +1,10 @@
 no.nav.security.jwt:
-    client:
-        example-api-name-onbehalfof:
-            resource-base-url: http://example-api
-            token-endpoint-url: http://something
+    clients:
+        example1-onbehalfof:
+            resource-url: http://exampleapi.no
+            token-endpoint-url: http://tokens.no
             client-id: testclient
             client-secret: testsecret
             client-auth-method: client_secret_basic
-            grant-type: jwt_bearer
+            grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
             scope: scope1, scope2

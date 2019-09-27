@@ -1,6 +1,5 @@
 package no.nav.security.token.support.oauth2.client;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 import no.nav.security.token.support.oauth2.OAuth2GrantType;
@@ -12,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,19 +25,19 @@ public class OAuth2ClientConfig {
 
     @NotEmpty
     @Valid
-    private Map<String, OAuth2ClientProperties> client = new LinkedHashMap<>();
+    private Map<String, OAuth2Client> clients = new LinkedHashMap<>();
 
-    @Valid
-    public Map<String, OAuth2ClientProperties> getClient() {
-        return client;
+    public Map<String, OAuth2Client> getClients() {
+        return clients;
     }
 
     @Data
-    @Builder
     @Validated
-    static class OAuth2ClientProperties {
-        @NotEmpty
-        private String tokenEndpointUrl;
+    public static class OAuth2Client {
+        @NotNull
+        private URI resourceUrl;
+        @NotNull
+        private URI tokenEndpointUrl;
         @NotEmpty
         private String clientId;
         @NotEmpty

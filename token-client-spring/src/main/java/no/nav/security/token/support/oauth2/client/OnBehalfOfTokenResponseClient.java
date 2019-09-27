@@ -8,16 +8,14 @@ import org.springframework.web.client.RestTemplate;
 public class OnBehalfOfTokenResponseClient extends AbstractOAuth2TokenResponseClient<OnBehalfOfGrantRequest> {
 
     private static final String REQUESTED_TOKEN_USE_VALUE = "on_behalf_of";
-    private final RestTemplate restTemplate;
 
     public OnBehalfOfTokenResponseClient(RestTemplate restTemplate) {
         super(restTemplate);
-        this.restTemplate = restTemplate;
     }
 
     protected MultiValueMap<String, String> buildFormParameters(OnBehalfOfGrantRequest onBehalfOfGrantRequest) {
         MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
-        OAuth2ClientConfig.OAuth2ClientProperties clientProperties = onBehalfOfGrantRequest.getClientProperties();
+        OAuth2ClientConfig.OAuth2Client clientProperties = onBehalfOfGrantRequest.getClientProperties();
         if ("client_secret_post".equals(clientProperties.getClientAuthMethod())) {
             formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientProperties.getClientId());
             formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientProperties.getClientSecret());
