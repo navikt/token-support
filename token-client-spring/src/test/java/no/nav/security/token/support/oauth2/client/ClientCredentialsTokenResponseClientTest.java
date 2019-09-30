@@ -1,0 +1,80 @@
+package no.nav.security.token.support.oauth2.client;
+
+
+import no.nav.security.token.support.oauth2.OAuth2ClientConfig;
+import no.nav.security.token.support.oauth2.OAuth2GrantType;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+
+import static no.nav.security.token.support.oauth2.client.TestUtils.assertPostMethodAndJsonHeaders;
+import static no.nav.security.token.support.oauth2.client.TestUtils.jsonResponse;
+import static org.assertj.core.api.Assertions.assertThat;
+
+class ClientCredentialsTokenResponseClientTest {
+
+    private static final String TOKEN_RESPONSE = "{\n" +
+        "    \"token_type\": \"Bearer\",\n" +
+        "    \"scope\": \"scope1 scope2\",\n" +
+        "    \"expires_at\": 1568141495,\n" +
+        "    \"ext_expires_in\": 3599,\n" +
+        "    \"access_token\": \"<base64URL>\",\n" +
+        "    \"refresh_token\": \"<base64URL>\"\n" +
+        "}\n";
+
+    private static final String ERROR_RESPONSE = "{\"error\": \"some client error occurred\"}";
+
+    private String tokenEndpointUrl;
+    private MockWebServer server;
+
+    private ClientCredentialsTokenResponseClient client;
+
+    @BeforeEach
+    void setup() throws IOException {
+        this.server = new MockWebServer();
+        this.server.start();
+        this.tokenEndpointUrl = this.server.url("/oauth2/v2/token").toString();
+        this.client = new ClientCredentialsTokenResponseClient(new RestTemplate());
+    }
+
+    @AfterEach
+    void cleanup() throws Exception {
+        this.server.shutdown();
+    }
+
+    @Test
+    void getTokenResponseSuccess() throws InterruptedException {
+        this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
+        OAuth2AccessTokenResponse response = client.getTokenResponse(new ClientCredentialsGrantRequest(oAuth2Client()));
+        RecordedRequest recordedRequest = this.server.takeRequest();
+        assertPostMethodAndJsonHeaders(recordedRequest);
+
+        String formParameters = recordedRequest.getBody().readUtf8();
+        assertThat(formParameters).contains("grant_type=client_credentials");
+        assertThat(formParameters).contains("scope=scope1+scope2");
+
+        assertThat(response).isNotNull();
+        assertThat(response.getAccessToken()).isNotBlank();
+        assertThat(response.getExpiresAt()).isGreaterThan(0);
+        assertThat(response.getExpiresIn()).isGreaterThan(0);
+    }
+
+    private OAuth2ClientConfig.OAuth2Client oAuth2Client() {
+        OAuth2ClientConfig.OAuth2Client oAuth2Client = new OAuth2ClientConfig.OAuth2Client();
+        oAuth2Client.setClientAuthMethod("client_secret_basic");
+        oAuth2Client.setClientId("myid");
+        oAuth2Client.setClientSecret("mysecret");
+        oAuth2Client.setScope(Arrays.asList("scope1", "scope2"));
+        oAuth2Client.setGrantType(OAuth2GrantType.CLIENT_CREDENTIALS);
+        oAuth2Client.setTokenEndpointUrl(URI.create(tokenEndpointUrl));
+        return oAuth2Client;
+    }
+
+}

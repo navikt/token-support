@@ -1,11 +1,14 @@
 package no.nav.security.token.support.oauth2.client;
 
+import no.nav.security.token.support.oauth2.OAuth2ClientConfig;
 import no.nav.security.token.support.oauth2.OAuth2ClientException;
+import no.nav.security.token.support.oauth2.OAuth2ParameterNames;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.util.Assert;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
@@ -55,6 +58,17 @@ abstract class AbstractOAuth2TokenResponseClient<T extends AbstractOAuth2GrantRe
         return headers;
     }
 
-    protected abstract MultiValueMap<String, String> buildFormParameters(T grantRequest);
+    protected MultiValueMap<String, String> createDefaultFormParameters(T grantRequest) {
+        MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
+        OAuth2ClientConfig.OAuth2Client clientProperties = grantRequest.getClientProperties();
+        if ("client_secret_post".equals(clientProperties.getClientAuthMethod())) {
+            formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientProperties.getClientId());
+            formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientProperties.getClientSecret());
+        }
+        formParameters.add(OAuth2ParameterNames.GRANT_TYPE, grantRequest.getGrantType().getValue());
+        formParameters.add(OAuth2ParameterNames.SCOPE, String.join(" ", clientProperties.getScope()));
+        return formParameters;
+    }
 
+    protected abstract MultiValueMap<String, String> buildFormParameters(T grantRequest);
 }

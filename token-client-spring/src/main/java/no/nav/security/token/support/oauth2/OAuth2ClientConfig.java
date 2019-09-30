@@ -1,8 +1,7 @@
-package no.nav.security.token.support.oauth2.client;
+package no.nav.security.token.support.oauth2;
 
 import lombok.Data;
 import lombok.ToString;
-import no.nav.security.token.support.oauth2.OAuth2GrantType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

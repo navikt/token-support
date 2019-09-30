@@ -1,5 +1,6 @@
 package no.nav.security.token.support.oauth2.client;
 
+import no.nav.security.token.support.oauth2.OAuth2ClientConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

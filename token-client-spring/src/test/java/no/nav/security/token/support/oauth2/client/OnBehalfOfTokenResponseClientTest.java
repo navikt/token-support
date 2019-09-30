@@ -1,34 +1,31 @@
 package no.nav.security.token.support.oauth2.client;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
+import no.nav.security.token.support.oauth2.OAuth2ClientConfig;
 import no.nav.security.token.support.oauth2.OAuth2ClientException;
 import no.nav.security.token.support.oauth2.OAuth2GrantType;
+import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.Date;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static no.nav.security.token.support.oauth2.client.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class OAuth2OnBehalfOfTokenResponseClientTest {
+class OnBehalfOfTokenResponseClientTest {
 
     private static final String TOKEN_RESPONSE = "{\n" +
         "    \"token_type\": \"Bearer\",\n" +
-        "    \"scope\": \"api://a1fd9dc1-2590-4e10-86a1-bc611c96dc17/defaultaccess api://a1fd9dc1-2590-4e10-86a1-bc611c96dc17/.default\",\n" +
+        "    \"scope\": \"scope1 scope2\",\n" +
         "    \"expires_at\": 1568141495,\n" +
         "    \"ext_expires_in\": 3599,\n" +
         "    \"access_token\": \"<base64URL>\",\n" +
@@ -39,43 +36,39 @@ class OAuth2OnBehalfOfTokenResponseClientTest {
 
     private static final String TOKEN_ENDPOINT = "/oauth2/v2.0/token";
     private OnBehalfOfTokenResponseClient onBehalfOfTokenResponseClient;
-    private int port;
-    private WireMockServer wireMockServer;
+    private String tokenEndpointUrl;
+    private MockWebServer server;
 
     @BeforeEach
-    void setup() {
+    void setup() throws IOException {
         MockitoAnnotations.initMocks(this);
-        wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
-        wireMockServer.start();
-        port = wireMockServer.port();
-        setupStub();
+        this.server = new MockWebServer();
+        this.server.start();
+        this.tokenEndpointUrl = this.server.url(TOKEN_ENDPOINT).toString();
         onBehalfOfTokenResponseClient = new OnBehalfOfTokenResponseClient(new RestTemplate());
     }
 
     @AfterEach
-    void teardown() {
-        wireMockServer.stop();
+    void teardown() throws IOException {
+        server.shutdown();
     }
 
-    private void setupStub() {
-        wireMockServer.stubFor(post(urlEqualTo("/oauth2/v2.0/errortest"))
-            .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                .withStatus(400)
-                .withBody(ERROR_RESPONSE)));
-
-        wireMockServer.stubFor(post(urlEqualTo("/oauth2/v2.0/token"))
-            .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                .withStatus(200)
-                .withBody(TOKEN_RESPONSE)));
-
-
-    }
 
     @Test
-    void getTokenResponse() {
+    void getTokenResponse() throws InterruptedException, UnsupportedEncodingException {
+        this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
         String assertion = createJwt();
         OnBehalfOfGrantRequest oAuth2OnBehalfOfGrantRequest = new OnBehalfOfGrantRequest(oAuth2Client(), assertion);
         OAuth2AccessTokenResponse response = onBehalfOfTokenResponseClient.getTokenResponse(oAuth2OnBehalfOfGrantRequest);
+
+        RecordedRequest recordedRequest = server.takeRequest();
+        assertPostMethodAndJsonHeaders(recordedRequest);
+        String formParameters = recordedRequest.getBody().readUtf8();
+        assertThat(formParameters).contains("grant_type=" + URLEncoder.encode(OAuth2GrantType.JWT_BEARER.getValue(), "UTF-8"));
+        assertThat(formParameters).contains("scope=scope1+scope2");
+        assertThat(formParameters).contains("requested_token_use=on_behalf_of");
+        assertThat(formParameters).contains("assertion=" + assertion);
+
         assertThat(response).isNotNull();
         assertThat(response.getAccessToken()).isNotBlank();
         assertThat(response.getExpiresAt()).isGreaterThan(0);
@@ -84,13 +77,13 @@ class OAuth2OnBehalfOfTokenResponseClientTest {
 
     @Test
     void getTokenResponseWithError() {
+        this.server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400));
         String assertion = createJwt();
         OAuth2ClientConfig.OAuth2Client oAuth2Client = oAuth2Client();
-        oAuth2Client.setTokenEndpointUrl(URI.create("http://localhost:" + port + "/oauth2/v2.0/errortest"));
         OnBehalfOfGrantRequest oAuth2OnBehalfOfGrantRequest = new OnBehalfOfGrantRequest(oAuth2Client, assertion);
         assertThatExceptionOfType(OAuth2ClientException.class)
-            .isThrownBy( () -> onBehalfOfTokenResponseClient.getTokenResponse(oAuth2OnBehalfOfGrantRequest))
-        .withMessageContaining(ERROR_RESPONSE);
+            .isThrownBy(() -> onBehalfOfTokenResponseClient.getTokenResponse(oAuth2OnBehalfOfGrantRequest))
+            .withMessageContaining(ERROR_RESPONSE);
     }
 
     private OAuth2ClientConfig.OAuth2Client oAuth2Client() {
@@ -100,17 +93,7 @@ class OAuth2OnBehalfOfTokenResponseClientTest {
         oAuth2Client.setClientSecret("mysecret");
         oAuth2Client.setScope(Arrays.asList("scope1", "scope2"));
         oAuth2Client.setGrantType(OAuth2GrantType.JWT_BEARER);
-        oAuth2Client.setTokenEndpointUrl(URI.create("http://localhost:" + port + TOKEN_ENDPOINT));
+        oAuth2Client.setTokenEndpointUrl(URI.create(tokenEndpointUrl));
         return oAuth2Client;
-    }
-
-    private static String createJwt() {
-        Instant expiry = LocalDateTime.now().atZone(ZoneId.systemDefault()).plusSeconds(60).toInstant();
-        JWT jwt = new PlainJWT(new JWTClaimsSet.Builder()
-            .subject("someUser")
-            .audience("thisapi")
-            .expirationTime(Date.from(expiry))
-            .build());
-        return jwt.serialize();
     }
 }

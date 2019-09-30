@@ -1,5 +1,6 @@
 package no.nav.security.token.support.oauth2.client;
 
+import no.nav.security.token.support.oauth2.OAuth2ClientConfig;
 import no.nav.security.token.support.oauth2.OAuth2GrantType;
 
 abstract class AbstractOAuth2GrantRequest {

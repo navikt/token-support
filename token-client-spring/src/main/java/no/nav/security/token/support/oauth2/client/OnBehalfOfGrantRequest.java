@@ -1,5 +1,6 @@
 package no.nav.security.token.support.oauth2.client;
 
+import no.nav.security.token.support.oauth2.OAuth2ClientConfig;
 import no.nav.security.token.support.oauth2.OAuth2GrantType;
 
 public class OnBehalfOfGrantRequest extends AbstractOAuth2GrantRequest {
@@ -10,7 +11,7 @@ public class OnBehalfOfGrantRequest extends AbstractOAuth2GrantRequest {
         this.assertion = assertion;
     }
 
-    public String getAssertion(){
+    public String getAssertion() {
         return this.assertion;
     }
 }
