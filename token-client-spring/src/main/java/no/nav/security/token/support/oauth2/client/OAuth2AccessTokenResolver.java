@@ -13,19 +13,21 @@ public class OAuth2AccessTokenResolver {
 
     private final TokenValidationContextHolder contextHolder;
     private final OnBehalfOfTokenResponseClient onBehalfOfTokenResponseClient;
+    private final ClientCredentialsTokenResponseClient clientCredentialsTokenResponseClient;
 
     public OAuth2AccessTokenResolver(TokenValidationContextHolder contextHolder,
-                                     OnBehalfOfTokenResponseClient onBehalfOfTokenResponseClient) {
+                                     OnBehalfOfTokenResponseClient onBehalfOfTokenResponseClient,
+                                     ClientCredentialsTokenResponseClient clientCredentialsTokenResponseClient) {
         this.contextHolder = contextHolder;
         this.onBehalfOfTokenResponseClient = onBehalfOfTokenResponseClient;
+        this.clientCredentialsTokenResponseClient = clientCredentialsTokenResponseClient;
     }
 
     public OAuth2AccessTokenResponse getAccessToken(OAuth2ClientConfig.OAuth2Client oAuth2Client) {
         if (isGrantType(oAuth2Client, OAuth2GrantType.JWT_BEARER)) {
             return onBehalfOfTokenResponseClient.getTokenResponse(onBehalfOfGrantRequest(oAuth2Client));
         } else if (isGrantType(oAuth2Client, OAuth2GrantType.CLIENT_CREDENTIALS)) {
-            //TODO
-            throw new OAuth2ClientException("grant-type not implemented yet");
+            return clientCredentialsTokenResponseClient.getTokenResponse(new ClientCredentialsGrantRequest(oAuth2Client));
         } else {
             throw new OAuth2ClientException(String.format("invalid grant-type from OAuth2ClientConfig.OAuth2Client. grant-type not set or not in supported grant-types (%s)",
                 Arrays.asList(OAuth2GrantType.JWT_BEARER, OAuth2GrantType.CLIENT_CREDENTIALS)));

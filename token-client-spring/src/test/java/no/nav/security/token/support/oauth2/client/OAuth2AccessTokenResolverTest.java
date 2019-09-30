@@ -27,6 +27,8 @@ class OAuth2AccessTokenResolverTest {
     @Mock
     private OnBehalfOfTokenResponseClient onBehalfOfTokenResponseClient;
     @Mock
+    private ClientCredentialsTokenResponseClient clientCredentialsTokenResponseClient;
+    @Mock
     private TokenValidationContextHolder tokenValidationContextHolder;
 
     private OAuth2AccessTokenResolver oAuth2AccessTokenResolver;
@@ -34,7 +36,11 @@ class OAuth2AccessTokenResolverTest {
     @BeforeEach
     void setup(){
         MockitoAnnotations.initMocks(this);
-        oAuth2AccessTokenResolver = new OAuth2AccessTokenResolver(tokenValidationContextHolder, onBehalfOfTokenResponseClient);
+        oAuth2AccessTokenResolver = new OAuth2AccessTokenResolver(
+            tokenValidationContextHolder,
+            onBehalfOfTokenResponseClient,
+            clientCredentialsTokenResponseClient);
+
         when(onBehalfOfTokenResponseClient.getTokenResponse(any(OnBehalfOfGrantRequest.class)))
             .thenReturn(new OAuth2AccessTokenResponse(){
                 @Override
