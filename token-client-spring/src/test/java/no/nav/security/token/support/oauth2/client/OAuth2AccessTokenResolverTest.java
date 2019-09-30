@@ -34,15 +34,22 @@ class OAuth2AccessTokenResolverTest {
     private OAuth2AccessTokenResolver oAuth2AccessTokenResolver;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         MockitoAnnotations.initMocks(this);
         oAuth2AccessTokenResolver = new OAuth2AccessTokenResolver(
             tokenValidationContextHolder,
             onBehalfOfTokenResponseClient,
             clientCredentialsTokenResponseClient);
 
+
+    }
+
+    @Test
+    void getAccessTokenOnBehalfOf() {
+        setupTokenValidationContext();
+
         when(onBehalfOfTokenResponseClient.getTokenResponse(any(OnBehalfOfGrantRequest.class)))
-            .thenReturn(new OAuth2AccessTokenResponse(){
+            .thenReturn(new OAuth2AccessTokenResponse() {
                 @Override
                 public String getAccessToken() {
                     return "super.getAccessToken();";
@@ -58,33 +65,57 @@ class OAuth2AccessTokenResolverTest {
                     return 3600;
                 }
             });
-    }
 
-    @Test
-    void getAccessTokenOnBehalfOf(){
-        setupTokenValidationContext();
         OAuth2AccessTokenResponse oAuth2AccessTokenResponse = oAuth2AccessTokenResolver.getAccessToken(oAuth2Client());
         assertThat(oAuth2AccessTokenResponse).hasNoNullFieldsOrProperties();
     }
 
     @Test
-    void noAuthenticatedTokenFound(){
+    void getAccessTokenClientCredentials() {
+        OAuth2ClientConfig.OAuth2Client oAuth2Client = oAuth2Client();
+        oAuth2Client.setGrantType(OAuth2GrantType.CLIENT_CREDENTIALS);
+
+        when(clientCredentialsTokenResponseClient.getTokenResponse(any(ClientCredentialsGrantRequest.class)))
+            .thenReturn(new OAuth2AccessTokenResponse() {
+                @Override
+                public String getAccessToken() {
+                    return "client_credentials_token";
+                }
+
+                @Override
+                public int getExpiresAt() {
+                    return 1234567;
+                }
+
+                @Override
+                public int getExpiresIn() {
+                    return 3600;
+                }
+            });
+
+        OAuth2AccessTokenResponse oAuth2AccessTokenResponse = oAuth2AccessTokenResolver.getAccessToken(oAuth2Client);
+        assertThat(oAuth2AccessTokenResponse).hasNoNullFieldsOrProperties();
+        assertThat(oAuth2AccessTokenResponse.getAccessToken()).contains("client_credentials_token");
+    }
+
+    @Test
+    void noAuthenticatedTokenFound() {
         assertThatExceptionOfType(OAuth2ClientException.class)
-            .isThrownBy(() ->  oAuth2AccessTokenResolver.getAccessToken(oAuth2Client()))
+            .isThrownBy(() -> oAuth2AccessTokenResolver.getAccessToken(oAuth2Client()))
             .withMessageContaining("no authenticated jwt token found in validation context, cannot do on-behalf-of");
     }
 
     @Test
-    void unsupportedGrantType(){
+    void unsupportedGrantType() {
         setupTokenValidationContext();
         OAuth2ClientConfig.OAuth2Client oAuth2Client = oAuth2Client();
         oAuth2Client.setGrantType(new OAuth2GrantType("someGrantNotSupported"));
         assertThatExceptionOfType(OAuth2ClientException.class)
-            .isThrownBy(() ->  oAuth2AccessTokenResolver.getAccessToken(oAuth2Client))
+            .isThrownBy(() -> oAuth2AccessTokenResolver.getAccessToken(oAuth2Client))
             .withMessageContaining("invalid grant-type");
     }
 
-    private void setupTokenValidationContext(){
+    private void setupTokenValidationContext() {
         Map<String, JwtToken> map = new HashMap<>();
         map.put("issuer1", new JwtToken(createJwt()));
         when(tokenValidationContextHolder.getTokenValidationContext()).thenReturn(new TokenValidationContext(map));
