@@ -1,4 +1,4 @@
-package no.nav.security.token.support.oauth2;
+package no.nav.security.token.support.oauth2.client;
 
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.oauth2.client.ClientCredentialsTokenResponseClient;

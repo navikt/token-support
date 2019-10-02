@@ -4,11 +4,11 @@ import no.nav.security.token.support.oauth2.OAuth2ParameterNames;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-public class OnBehalfOfTokenResponseClient extends AbstractOAuth2TokenResponseClient<OnBehalfOfGrantRequest> {
+class OnBehalfOfTokenResponseClient extends AbstractOAuth2TokenResponseClient<OnBehalfOfGrantRequest> {
 
     private static final String REQUESTED_TOKEN_USE_VALUE = "on_behalf_of";
 
-    public OnBehalfOfTokenResponseClient(RestTemplate restTemplate) {
+    OnBehalfOfTokenResponseClient(RestTemplate restTemplate) {
         super(restTemplate);
     }
 

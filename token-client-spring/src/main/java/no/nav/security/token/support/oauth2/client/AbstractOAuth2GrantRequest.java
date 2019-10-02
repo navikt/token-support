@@ -13,11 +13,11 @@ abstract class AbstractOAuth2GrantRequest {
         this.clientProperties = clientProperties;
     }
 
-    public OAuth2GrantType getGrantType() {
+    OAuth2GrantType getGrantType() {
         return oAuth2GrantType;
     }
 
-    public ClientConfigurationProperties.ClientProperties getClientProperties() {
+    ClientConfigurationProperties.ClientProperties getClientProperties() {
         return clientProperties;
     }
 }

@@ -27,7 +27,7 @@ abstract class AbstractOAuth2TokenResponseClient<T extends AbstractOAuth2GrantRe
         this.restTemplate = restTemplate;
     }
 
-    public OAuth2AccessTokenResponse getTokenResponse(T grantRequest) {
+    OAuth2AccessTokenResponse getTokenResponse(T grantRequest) {
         Assert.notNull(grantRequest, "oAuth2OnBehalfOfGrantRequest cannot be null");
         RequestEntity<?> request = convert(grantRequest);
         try {
@@ -58,7 +58,7 @@ abstract class AbstractOAuth2TokenResponseClient<T extends AbstractOAuth2GrantRe
         return headers;
     }
 
-    protected MultiValueMap<String, String> createDefaultFormParameters(T grantRequest) {
+    MultiValueMap<String, String> createDefaultFormParameters(T grantRequest) {
         MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
         ClientConfigurationProperties.ClientProperties clientProperties = grantRequest.getClientProperties();
         if ("client_secret_post".equals(clientProperties.getClientAuthMethod())) {
