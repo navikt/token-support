@@ -7,9 +7,14 @@ import no.nav.security.token.support.oauth2.OAuth2ClientException;
 import no.nav.security.token.support.oauth2.OAuth2GrantType;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class OAuth2AccessTokenService {
+
+    public static final List<OAuth2GrantType> SUPPORTED_GRANT_TYPES = Arrays.asList(
+        OAuth2GrantType.JWT_BEARER,
+        OAuth2GrantType.CLIENT_CREDENTIALS);
 
     private final TokenValidationContextHolder contextHolder;
     private final OnBehalfOfTokenResponseClient onBehalfOfTokenResponseClient;
@@ -33,7 +38,7 @@ public class OAuth2AccessTokenService {
             return clientCredentialsTokenResponseClient.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
         } else {
             throw new OAuth2ClientException(String.format("invalid grant-type=%s from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types (%s)",
-                clientProperties.getGrantType().getValue(), Arrays.asList(OAuth2GrantType.JWT_BEARER, OAuth2GrantType.CLIENT_CREDENTIALS)));
+                clientProperties.getGrantType().getValue(), SUPPORTED_GRANT_TYPES));
         }
     }
 
