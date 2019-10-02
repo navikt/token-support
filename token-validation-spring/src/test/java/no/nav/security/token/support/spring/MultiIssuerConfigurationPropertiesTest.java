@@ -34,7 +34,6 @@ public class MultiIssuerConfigurationPropertiesTest {
 
         assertTrue(config.getIssuer().containsKey("number3"));
         assertEquals("http://metadata3", config.getIssuer().get("number3").getDiscoveryUrl().toString());
-        System.out.println("config: " + config.getIssuer().get("number3").getAcceptedAudience());
         assertTrue(config.getIssuer().get("number3").getAcceptedAudience().contains("aud3")
                 && config.getIssuer().get("number3").getAcceptedAudience().contains("aud4"));
     }
