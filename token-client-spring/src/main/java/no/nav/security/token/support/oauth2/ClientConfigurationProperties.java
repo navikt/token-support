@@ -20,19 +20,19 @@ import java.util.Map;
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties("no.nav.security.jwt")
-public class OAuth2ClientConfig {
+public class ClientConfigurationProperties {
 
     @NotEmpty
     @Valid
-    private Map<String, OAuth2Client> clients = new LinkedHashMap<>();
+    private Map<String, ClientProperties> clients = new LinkedHashMap<>();
 
-    public Map<String, OAuth2Client> getClients() {
+    public Map<String, ClientProperties> getClients() {
         return clients;
     }
 
     @Data
     @Validated
-    public static class OAuth2Client {
+    public static class ClientProperties {
         @NotNull
         private URI resourceUrl;
         @NotNull

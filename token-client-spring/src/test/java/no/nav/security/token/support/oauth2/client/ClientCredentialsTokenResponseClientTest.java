@@ -1,7 +1,7 @@
 package no.nav.security.token.support.oauth2.client;
 
 
-import no.nav.security.token.support.oauth2.OAuth2ClientConfig;
+import no.nav.security.token.support.oauth2.ClientConfigurationProperties;
 import no.nav.security.token.support.oauth2.OAuth2GrantType;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -66,15 +66,15 @@ class ClientCredentialsTokenResponseClientTest {
         assertThat(response.getExpiresIn()).isGreaterThan(0);
     }
 
-    private OAuth2ClientConfig.OAuth2Client oAuth2Client() {
-        OAuth2ClientConfig.OAuth2Client oAuth2Client = new OAuth2ClientConfig.OAuth2Client();
-        oAuth2Client.setClientAuthMethod("client_secret_basic");
-        oAuth2Client.setClientId("myid");
-        oAuth2Client.setClientSecret("mysecret");
-        oAuth2Client.setScope(Arrays.asList("scope1", "scope2"));
-        oAuth2Client.setGrantType(OAuth2GrantType.CLIENT_CREDENTIALS);
-        oAuth2Client.setTokenEndpointUrl(URI.create(tokenEndpointUrl));
-        return oAuth2Client;
+    private ClientConfigurationProperties.ClientProperties oAuth2Client() {
+        ClientConfigurationProperties.ClientProperties clientProperties = new ClientConfigurationProperties.ClientProperties();
+        clientProperties.setClientAuthMethod("client_secret_basic");
+        clientProperties.setClientId("myid");
+        clientProperties.setClientSecret("mysecret");
+        clientProperties.setScope(Arrays.asList("scope1", "scope2"));
+        clientProperties.setGrantType(OAuth2GrantType.CLIENT_CREDENTIALS);
+        clientProperties.setTokenEndpointUrl(URI.create(tokenEndpointUrl));
+        return clientProperties;
     }
 
 }

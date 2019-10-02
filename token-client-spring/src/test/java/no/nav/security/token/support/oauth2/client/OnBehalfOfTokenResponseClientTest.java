@@ -1,6 +1,6 @@
 package no.nav.security.token.support.oauth2.client;
 
-import no.nav.security.token.support.oauth2.OAuth2ClientConfig;
+import no.nav.security.token.support.oauth2.ClientConfigurationProperties;
 import no.nav.security.token.support.oauth2.OAuth2ClientException;
 import no.nav.security.token.support.oauth2.OAuth2GrantType;
 import okhttp3.mockwebserver.MockWebServer;
@@ -79,21 +79,21 @@ class OnBehalfOfTokenResponseClientTest {
     void getTokenResponseWithError() {
         this.server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400));
         String assertion = createJwt();
-        OAuth2ClientConfig.OAuth2Client oAuth2Client = oAuth2Client();
-        OnBehalfOfGrantRequest oAuth2OnBehalfOfGrantRequest = new OnBehalfOfGrantRequest(oAuth2Client, assertion);
+        ClientConfigurationProperties.ClientProperties clientProperties = oAuth2Client();
+        OnBehalfOfGrantRequest oAuth2OnBehalfOfGrantRequest = new OnBehalfOfGrantRequest(clientProperties, assertion);
         assertThatExceptionOfType(OAuth2ClientException.class)
             .isThrownBy(() -> onBehalfOfTokenResponseClient.getTokenResponse(oAuth2OnBehalfOfGrantRequest))
             .withMessageContaining(ERROR_RESPONSE);
     }
 
-    private OAuth2ClientConfig.OAuth2Client oAuth2Client() {
-        OAuth2ClientConfig.OAuth2Client oAuth2Client = new OAuth2ClientConfig.OAuth2Client();
-        oAuth2Client.setClientAuthMethod("client_secret_basic");
-        oAuth2Client.setClientId("myid");
-        oAuth2Client.setClientSecret("mysecret");
-        oAuth2Client.setScope(Arrays.asList("scope1", "scope2"));
-        oAuth2Client.setGrantType(OAuth2GrantType.JWT_BEARER);
-        oAuth2Client.setTokenEndpointUrl(URI.create(tokenEndpointUrl));
-        return oAuth2Client;
+    private ClientConfigurationProperties.ClientProperties oAuth2Client() {
+        ClientConfigurationProperties.ClientProperties clientProperties = new ClientConfigurationProperties.ClientProperties();
+        clientProperties.setClientAuthMethod("client_secret_basic");
+        clientProperties.setClientId("myid");
+        clientProperties.setClientSecret("mysecret");
+        clientProperties.setScope(Arrays.asList("scope1", "scope2"));
+        clientProperties.setGrantType(OAuth2GrantType.JWT_BEARER);
+        clientProperties.setTokenEndpointUrl(URI.create(tokenEndpointUrl));
+        return clientProperties;
     }
 }

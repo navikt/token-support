@@ -1,6 +1,6 @@
 package no.nav.security.token.support.oauth2.client;
 
-import no.nav.security.token.support.oauth2.OAuth2ClientConfig;
+import no.nav.security.token.support.oauth2.ClientConfigurationProperties;
 import no.nav.security.token.support.oauth2.OAuth2ClientException;
 import no.nav.security.token.support.oauth2.OAuth2ParameterNames;
 import org.springframework.http.HttpHeaders;
@@ -47,7 +47,7 @@ abstract class AbstractOAuth2TokenResponseClient<T extends AbstractOAuth2GrantRe
         return new RequestEntity<>(formParameters, headers, HttpMethod.POST, uri);
     }
 
-    private HttpHeaders tokenRequestHeaders(OAuth2ClientConfig.OAuth2Client clientProperties) {
+    private HttpHeaders tokenRequestHeaders(ClientConfigurationProperties.ClientProperties clientProperties) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON_UTF8));
         final MediaType contentType = MediaType.valueOf(APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");
@@ -60,7 +60,7 @@ abstract class AbstractOAuth2TokenResponseClient<T extends AbstractOAuth2GrantRe
 
     protected MultiValueMap<String, String> createDefaultFormParameters(T grantRequest) {
         MultiValueMap<String, String> formParameters = new LinkedMultiValueMap<>();
-        OAuth2ClientConfig.OAuth2Client clientProperties = grantRequest.getClientProperties();
+        ClientConfigurationProperties.ClientProperties clientProperties = grantRequest.getClientProperties();
         if ("client_secret_post".equals(clientProperties.getClientAuthMethod())) {
             formParameters.add(OAuth2ParameterNames.CLIENT_ID, clientProperties.getClientId());
             formParameters.add(OAuth2ParameterNames.CLIENT_SECRET, clientProperties.getClientSecret());
