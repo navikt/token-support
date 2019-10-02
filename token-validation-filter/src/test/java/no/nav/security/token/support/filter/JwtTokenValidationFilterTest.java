@@ -268,7 +268,6 @@ class JwtTokenValidationFilterTest {
         Resource retrieveJWKS(String issuer) {
             JWKSet set = new JWKSet(keys.get(issuer));
             String content = set.toString();
-            System.out.println(content);
             return new Resource(content, "application/json");
 
         }
