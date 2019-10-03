@@ -1,0 +1,29 @@
+
+no.nav.security.jwt:
+    issuer.someshortname:
+        discoveryurl: http://metadata
+        accepted_audience: aud-localhost
+        cookie_name: localhost-idtoken
+    clients:
+        exampleapi-onbehalfof:
+            resource-url: http://localhost:8181
+            token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
+            client-id: testclient
+            client-secret: testsecret
+            client-auth-method: client_secret_basic
+            grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+            scope: scope1, scope2
+        exampleapi-clientcredentials:
+            resource-url: http://localhost:8181
+            token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
+            client-id: testclient
+            client-secret: testsecret
+            client-auth-method: client_secret_basic
+            grant-type: client_credentials
+            scope: scope3, scope4
+
+mockwebserver:
+    port: 8181
+
+logging.level.org.springframework: INFO
+logging.level.no.nav: DEBUG
