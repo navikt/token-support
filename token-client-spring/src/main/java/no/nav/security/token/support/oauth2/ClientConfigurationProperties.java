@@ -1,6 +1,7 @@
 package no.nav.security.token.support.oauth2;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @ToString
+@EqualsAndHashCode
 @Validated
 @Configuration
 @EnableConfigurationProperties
@@ -31,6 +33,7 @@ public class ClientConfigurationProperties {
     }
 
     @Data
+    @EqualsAndHashCode
     @Validated
     public static class ClientProperties {
         @NotNull

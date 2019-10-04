@@ -75,7 +75,7 @@ public class MockWebServerConfiguration {
         String response = TOKEN_RESPONSE_TEMPLATE
             .replace("$scope", formParams.get("scope"))
             .replace("$expires_at", "" + Instant.now().plusSeconds(3600).getEpochSecond())
-            .replace("$ext_expires_in", "3600")
+            .replace("$ext_expires_in", "30")
             .replace("$access_token", "somerandomaccesstoken");
 
         log.info("returning tokenResponse={}", response);

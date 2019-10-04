@@ -1,8 +1,10 @@
 package no.nav.security.token.support.oauth2.client;
 
+import lombok.EqualsAndHashCode;
 import no.nav.security.token.support.oauth2.ClientConfigurationProperties;
 import no.nav.security.token.support.oauth2.OAuth2GrantType;
 
+@EqualsAndHashCode
 class OnBehalfOfGrantRequest extends AbstractOAuth2GrantRequest {
     private final String assertion;
 
