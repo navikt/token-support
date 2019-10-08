@@ -3,9 +3,9 @@ package no.nav.security.token.support.oauth2.client;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-class ClientCredentialsTokenResponseClient extends AbstractOAuth2TokenResponseClient<ClientCredentialsGrantRequest> {
+class ClientCredentialsTokenClient extends AbstractOAuth2TokenClient<ClientCredentialsGrantRequest> {
 
-    ClientCredentialsTokenResponseClient(RestTemplate restTemplate) {
+    ClientCredentialsTokenClient(RestTemplate restTemplate) {
         super(restTemplate);
     }
 

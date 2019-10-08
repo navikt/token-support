@@ -19,11 +19,11 @@ import java.util.Collections;
 
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
-abstract class AbstractOAuth2TokenResponseClient<T extends AbstractOAuth2GrantRequest> {
+abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
 
     private final RestTemplate restTemplate;
 
-    AbstractOAuth2TokenResponseClient(RestTemplate restTemplate) {
+    AbstractOAuth2TokenClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 

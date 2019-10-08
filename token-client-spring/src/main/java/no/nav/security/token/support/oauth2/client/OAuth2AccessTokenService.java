@@ -24,15 +24,15 @@ public class OAuth2AccessTokenService {
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;
 
     private final TokenValidationContextHolder contextHolder;
-    private final OnBehalfOfTokenResponseClient onBehalfOfTokenResponseClient;
-    private final ClientCredentialsTokenResponseClient clientCredentialsTokenResponseClient;
+    private final OnBehalfOfTokenClient onBehalfOfTokenClient;
+    private final ClientCredentialsTokenClient clientCredentialsTokenClient;
 
     public OAuth2AccessTokenService(TokenValidationContextHolder contextHolder,
-                                    OnBehalfOfTokenResponseClient onBehalfOfTokenResponseClient,
-                                    ClientCredentialsTokenResponseClient clientCredentialsTokenResponseClient) {
+                                    OnBehalfOfTokenClient onBehalfOfTokenClient,
+                                    ClientCredentialsTokenClient clientCredentialsTokenClient) {
         this.contextHolder = contextHolder;
-        this.onBehalfOfTokenResponseClient = onBehalfOfTokenResponseClient;
-        this.clientCredentialsTokenResponseClient = clientCredentialsTokenResponseClient;
+        this.onBehalfOfTokenClient = onBehalfOfTokenClient;
+        this.clientCredentialsTokenClient = clientCredentialsTokenClient;
     }
 
     public OAuth2AccessTokenResponse getAccessToken(ClientConfigurationProperties.ClientProperties clientProperties) {
@@ -59,24 +59,24 @@ public class OAuth2AccessTokenService {
     }
 
     private OAuth2AccessTokenResponse getAccessTokenOnBehalfOfAuthenticatedJwtToken(ClientConfigurationProperties.ClientProperties clientProperties) {
-        OnBehalfOfGrantRequest onBehalfOfGrantRequest = onBehalfOfGrantRequest(clientProperties);
-        return get(onBehalfOfGrantRequest, onBehalfOfGrantCache, onBehalfOfTokenResponseClient::getTokenResponse);
+        final var grantRequest = onBehalfOfGrantRequest(clientProperties);
+        return getFromCacheIfEnabled(grantRequest, onBehalfOfGrantCache, onBehalfOfTokenClient::getTokenResponse);
     }
 
     private OAuth2AccessTokenResponse getAccessTokenClientCredentials(ClientConfigurationProperties.ClientProperties clientProperties) {
-        ClientCredentialsGrantRequest clientCredentialsGrantRequest = new ClientCredentialsGrantRequest(clientProperties);
-        return get(clientCredentialsGrantRequest, clientCredentialsGrantCache, clientCredentialsTokenResponseClient::getTokenResponse);
+        final var grantRequest = new ClientCredentialsGrantRequest(clientProperties);
+        return getFromCacheIfEnabled(grantRequest, clientCredentialsGrantCache, clientCredentialsTokenClient::getTokenResponse);
     }
 
-    private static <T extends AbstractOAuth2GrantRequest> OAuth2AccessTokenResponse get(T grantRequest,
-                                                                                 Cache<T, OAuth2AccessTokenResponse> cache,
-                                                                                 Function<T, OAuth2AccessTokenResponse> function) {
+    private static <T extends AbstractOAuth2GrantRequest> OAuth2AccessTokenResponse getFromCacheIfEnabled(T grantRequest,
+                                                                                                          Cache<T, OAuth2AccessTokenResponse> cache,
+                                                                                                          Function<T, OAuth2AccessTokenResponse> accessTokenResponseClient) {
         if (cache != null) {
             log.debug("cache is enabled so attempt to get from cache or update cache if not present.");
-            return cache.get(grantRequest, function);
+            return cache.get(grantRequest, accessTokenResponseClient);
         } else {
             log.debug("cache is not set, invoke client directly");
-            return function.apply(grantRequest);
+            return accessTokenResponseClient.apply(grantRequest);
         }
     }
 

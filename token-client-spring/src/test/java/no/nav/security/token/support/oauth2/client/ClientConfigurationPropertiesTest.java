@@ -30,7 +30,7 @@ class ClientConfigurationPropertiesTest {
     void testDifferentClientPropsShouldNOTBeEqualAndShouldMakeSurroundingRequestsUnequalToo() {
         Map<String,ClientConfigurationProperties.ClientProperties> props = clientConfigurationProperties.getClients();
 
-        assertThat(props.size()).isEqualTo(2);
+        assertThat(props.size()).isGreaterThan(1);
         ClientConfigurationProperties.ClientProperties p1 = props.get("example1-onbehalfof");
         ClientConfigurationProperties.ClientProperties p2 = props.get("example1-onbehalfof2");
 

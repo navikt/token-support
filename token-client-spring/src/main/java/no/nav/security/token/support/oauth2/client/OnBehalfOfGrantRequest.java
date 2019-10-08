@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 import no.nav.security.token.support.oauth2.ClientConfigurationProperties;
 import no.nav.security.token.support.oauth2.OAuth2GrantType;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 class OnBehalfOfGrantRequest extends AbstractOAuth2GrantRequest {
     private final String assertion;
 

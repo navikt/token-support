@@ -13,6 +13,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,6 +25,7 @@ class TestUtils {
             .audience("thisapi")
             .issuer("someIssuer")
             .expirationTime(Date.from(expiry))
+            .claim("jti", UUID.randomUUID().toString())
             .build());
         return jwt.serialize();
     }
@@ -38,5 +40,24 @@ class TestUtils {
         assertThat(recordedRequest.getMethod()).isEqualTo(HttpMethod.POST.toString());
         assertThat(recordedRequest.getHeader(HttpHeaders.ACCEPT)).isEqualTo(MediaType.APPLICATION_JSON_UTF8_VALUE);
         assertThat(recordedRequest.getHeader(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8");
+    }
+
+    static OAuth2AccessTokenResponse accessTokenResponse(String assertion, int expiresIn){
+        return new OAuth2AccessTokenResponse() {
+            @Override
+            public String getAccessToken() {
+                return assertion;
+            }
+
+            @Override
+            public int getExpiresAt() {
+                return Math.toIntExact((Instant.now().plusSeconds(expiresIn).getEpochSecond()));
+            }
+
+            @Override
+            public int getExpiresIn() {
+                return expiresIn;
+            }
+        };
     }
 }

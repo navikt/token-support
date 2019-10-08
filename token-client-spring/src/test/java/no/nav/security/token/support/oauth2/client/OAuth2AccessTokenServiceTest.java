@@ -25,9 +25,9 @@ import static org.mockito.Mockito.when;
 class OAuth2AccessTokenServiceTest {
 
     @Mock
-    private OnBehalfOfTokenResponseClient onBehalfOfTokenResponseClient;
+    private OnBehalfOfTokenClient onBehalfOfTokenClient;
     @Mock
-    private ClientCredentialsTokenResponseClient clientCredentialsTokenResponseClient;
+    private ClientCredentialsTokenClient clientCredentialsTokenClient;
     @Mock
     private TokenValidationContextHolder tokenValidationContextHolder;
 
@@ -38,8 +38,8 @@ class OAuth2AccessTokenServiceTest {
         MockitoAnnotations.initMocks(this);
         oAuth2AccessTokenService = new OAuth2AccessTokenService(
             tokenValidationContextHolder,
-            onBehalfOfTokenResponseClient,
-            clientCredentialsTokenResponseClient);
+            onBehalfOfTokenClient,
+            clientCredentialsTokenClient);
 
 
     }
@@ -48,7 +48,7 @@ class OAuth2AccessTokenServiceTest {
     void getAccessTokenOnBehalfOf() {
         setupTokenValidationContext();
 
-        when(onBehalfOfTokenResponseClient.getTokenResponse(any(OnBehalfOfGrantRequest.class)))
+        when(onBehalfOfTokenClient.getTokenResponse(any(OnBehalfOfGrantRequest.class)))
             .thenReturn(new OAuth2AccessTokenResponse() {
                 @Override
                 public String getAccessToken() {
@@ -75,7 +75,7 @@ class OAuth2AccessTokenServiceTest {
         ClientConfigurationProperties.ClientProperties clientProperties = oAuth2Client();
         clientProperties.setGrantType(OAuth2GrantType.CLIENT_CREDENTIALS);
 
-        when(clientCredentialsTokenResponseClient.getTokenResponse(any(ClientCredentialsGrantRequest.class)))
+        when(clientCredentialsTokenClient.getTokenResponse(any(ClientCredentialsGrantRequest.class)))
             .thenReturn(new OAuth2AccessTokenResponse() {
                 @Override
                 public String getAccessToken() {
