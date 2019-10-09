@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static no.nav.security.token.support.oauth2.client.TestUtils.*;
@@ -64,7 +65,8 @@ class OnBehalfOfTokenClientTest {
         RecordedRequest recordedRequest = server.takeRequest();
         assertPostMethodAndJsonHeaders(recordedRequest);
         String formParameters = recordedRequest.getBody().readUtf8();
-        assertThat(formParameters).contains("grant_type=" + URLEncoder.encode(OAuth2GrantType.JWT_BEARER.getValue(), "UTF-8"));
+        assertThat(formParameters).contains("grant_type=" + URLEncoder.encode(OAuth2GrantType.JWT_BEARER.getValue(),
+            StandardCharsets.UTF_8));
         assertThat(formParameters).contains("scope=scope1+scope2");
         assertThat(formParameters).contains("requested_token_use=on_behalf_of");
         assertThat(formParameters).contains("assertion=" + assertion);

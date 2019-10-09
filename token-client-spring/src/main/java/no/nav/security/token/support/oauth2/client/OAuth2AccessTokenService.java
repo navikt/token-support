@@ -1,6 +1,8 @@
 package no.nav.security.token.support.oauth2.client;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.jwt.JwtToken;
@@ -20,7 +22,11 @@ public class OAuth2AccessTokenService {
         OAuth2GrantType.JWT_BEARER,
         OAuth2GrantType.CLIENT_CREDENTIALS);
 
+    @Getter
+    @Setter
     private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache;
+    @Getter
+    @Setter
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;
 
     private final TokenValidationContextHolder contextHolder;
@@ -48,14 +54,6 @@ public class OAuth2AccessTokenService {
             throw new OAuth2ClientException(String.format("invalid grant-type=%s from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types (%s)",
                 clientProperties.getGrantType().getValue(), SUPPORTED_GRANT_TYPES));
         }
-    }
-
-    public void setClientCredentialsGrantCache(Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache) {
-        this.clientCredentialsGrantCache = clientCredentialsGrantCache;
-    }
-
-    public void setOnBehalfOfGrantCache(Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache) {
-        this.onBehalfOfGrantCache = onBehalfOfGrantCache;
     }
 
     private OAuth2AccessTokenResponse getAccessTokenOnBehalfOfAuthenticatedJwtToken(ClientConfigurationProperties.ClientProperties clientProperties) {

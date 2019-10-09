@@ -1,8 +1,6 @@
 package no.nav.security.token.support.oauth2;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -16,24 +14,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@ToString
-@EqualsAndHashCode
+
+@Data
 @Validated
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties("no.nav.security.jwt")
+@ConfigurationProperties(ClientConfigurationProperties.PREFIX)
 public class ClientConfigurationProperties {
+
+    public static final String PREFIX = "no.nav.security.jwt.client";
 
     @NotEmpty
     @Valid
-    private Map<String, ClientProperties> clients = new LinkedHashMap<>();
-
-    public Map<String, ClientProperties> getClients() {
-        return clients;
-    }
+    private Map<String, ClientProperties> registration = new LinkedHashMap<>();
 
     @Data
-    @EqualsAndHashCode
     @Validated
     public static class ClientProperties {
         @NotNull
@@ -50,5 +45,4 @@ public class ClientConfigurationProperties {
         @NotEmpty
         private List<String> scope;
     }
-
 }

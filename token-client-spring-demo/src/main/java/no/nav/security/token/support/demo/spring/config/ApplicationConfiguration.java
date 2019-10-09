@@ -5,7 +5,7 @@ import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.springframework.context.annotation.Configuration;
 
 @EnableJwtTokenValidation
-@EnableOAuth2Client
+@EnableOAuth2Client(cacheEnabled = true)
 @Configuration
 public class ApplicationConfiguration {
 }

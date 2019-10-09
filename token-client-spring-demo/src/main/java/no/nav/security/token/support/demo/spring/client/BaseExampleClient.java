@@ -20,7 +20,7 @@ public class BaseExampleClient {
                                    OAuth2AccessTokenService oAuth2AccessTokenService) {
 
         this.clientProperties = Optional.ofNullable(
-            clientConfigurationProperties.getClients().get(clientConfigKey))
+            clientConfigurationProperties.getRegistration().get(clientConfigKey))
             .orElseThrow(() -> new RuntimeException("could not find oauth2 client config for key="+ clientConfigKey));
         this.restTemplate = restTemplateBuilder
             .rootUri(clientProperties.getResourceUrl().toString())

@@ -1,36 +1,37 @@
 no.nav.security.jwt:
-    clients:
-        example1-onbehalfof:
-            resource-url: http://exampleapi.no
-            token-endpoint-url: http://tokens.no
-            client-id: testclient
-            client-secret: testsecret
-            client-auth-method: client_secret_basic
-            grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
-            scope: scope1, scope2
-        example1-onbehalfof2:
-            resource-url: http://exampleapi2.no
-            token-endpoint-url: http://tokens.no
-            client-id: testclient
-            client-secret: testsecret
-            client-auth-method: client_secret_basic
-            grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
-            scope: scope3, scope4
-        example1-clientcredentials1:
-            resource-url: http://exampleapi1.no
-            token-endpoint-url: http://tokens.no
-            client-id: testclient
-            client-secret: testsecret
-            client-auth-method: client_secret_basic
-            grant-type: client_credentials
-            scope: scope1, scope2
-        example1-clientcredentials2:
-            resource-url: http://exampleapi2.no
-            token-endpoint-url: http://tokens.no
-            client-id: testclient
-            client-secret: testsecret
-            client-auth-method: client_secret_basic
-            grant-type: client_credentials
-            scope: scope3, scope4
+    client:
+        registration:
+            example1-onbehalfof:
+                resource-url: http://exampleapi.no
+                token-endpoint-url: http://tokens.no
+                client-id: testclient
+                client-secret: testsecret
+                client-auth-method: client_secret_basic
+                grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+                scope: scope1, scope2
+            example1-onbehalfof2:
+                resource-url: http://exampleapi2.no
+                token-endpoint-url: http://tokens.no
+                client-id: testclient
+                client-secret: testsecret
+                client-auth-method: client_secret_basic
+                grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+                scope: scope3, scope4
+            example1-clientcredentials1:
+                resource-url: http://exampleapi1.no
+                token-endpoint-url: http://tokens.no
+                client-id: testclient
+                client-secret: testsecret
+                client-auth-method: client_secret_basic
+                grant-type: client_credentials
+                scope: scope1, scope2
+            example1-clientcredentials2:
+                resource-url: http://exampleapi2.no
+                token-endpoint-url: http://tokens.no
+                client-id: testclient
+                client-secret: testsecret
+                client-auth-method: client_secret_basic
+                grant-type: client_credentials
+                scope: scope3, scope4
 
 

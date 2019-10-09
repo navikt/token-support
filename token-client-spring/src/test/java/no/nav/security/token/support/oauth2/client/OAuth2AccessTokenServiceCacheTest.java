@@ -14,12 +14,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
@@ -32,7 +26,6 @@ import java.util.UUID;
 
 import static no.nav.security.token.support.oauth2.client.TestUtils.accessTokenResponse;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = {ClientConfigurationProperties.class})
@@ -49,6 +42,7 @@ class OAuth2AccessTokenServiceCacheTest {
 
     private TokenValidationContextHolder tokenValidationContextHolder;
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> oboCache;
+    private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsCache;
     private OAuth2AccessTokenService oAuth2AccessTokenService;
 
     @BeforeEach
@@ -69,18 +63,20 @@ class OAuth2AccessTokenServiceCacheTest {
         };
 
         OAuth2ClientConfiguration oAuth2ClientConfiguration = new OAuth2ClientConfiguration();
-        oboCache = oAuth2ClientConfiguration.onBehalfOfCache();
+        oboCache = oAuth2ClientConfiguration.cache(10, 1);
+        clientCredentialsCache = oAuth2ClientConfiguration.cache(10, 1);
 
         oAuth2AccessTokenService = new OAuth2AccessTokenService(
             tokenValidationContextHolder,
             onBehalfOfTokenResponseClient,
             clientCredentialsTokenResponseClient);
         oAuth2AccessTokenService.setOnBehalfOfGrantCache(oboCache);
+        oAuth2AccessTokenService.setClientCredentialsGrantCache(clientCredentialsCache);
     }
 
     @Test
     void getAccessTokenOnBehalfOf_WithCache_MultipleTimes_SameClientConfig() {
-        ClientConfigurationProperties.ClientProperties clientProperties = clients.getClients().get("example1-onbehalfof");
+        ClientConfigurationProperties.ClientProperties clientProperties = clients.getRegistration().get("example1-onbehalfof");
 
         tokenValidationContextHolder.setTokenValidationContext(tokenValidationContext("sub1"));
 

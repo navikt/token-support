@@ -20,15 +20,19 @@ class ClientConfigurationPropertiesTest {
     @Test
     void testClientConfigIsValid() {
         assertThat(clientConfigurationProperties).isNotNull();
-        assertThat(clientConfigurationProperties.getClients()).isNotNull();
-        ClientConfigurationProperties.ClientProperties clientProperties = clientConfigurationProperties.getClients().values().stream().findFirst().orElse(null);
+        assertThat(clientConfigurationProperties.getRegistration()).isNotNull();
+        ClientConfigurationProperties.ClientProperties clientProperties = clientConfigurationProperties.getRegistration().values().stream().findFirst().orElse(null);
         assertThat(clientProperties).isNotNull();
+        assertThat(clientProperties.getClientId()).isNotNull();
+        assertThat(clientProperties.getClientSecret()).isNotNull();
+        assertThat(clientProperties.getScope()).isNotEmpty();
+        assertThat(clientProperties.getTokenEndpointUrl()).isNotNull();
         assertThat(clientProperties.getGrantType().getValue()).isNotNull();
     }
 
     @Test
     void testDifferentClientPropsShouldNOTBeEqualAndShouldMakeSurroundingRequestsUnequalToo() {
-        Map<String,ClientConfigurationProperties.ClientProperties> props = clientConfigurationProperties.getClients();
+        Map<String,ClientConfigurationProperties.ClientProperties> props = clientConfigurationProperties.getRegistration();
 
         assertThat(props.size()).isGreaterThan(1);
         ClientConfigurationProperties.ClientProperties p1 = props.get("example1-onbehalfof");
