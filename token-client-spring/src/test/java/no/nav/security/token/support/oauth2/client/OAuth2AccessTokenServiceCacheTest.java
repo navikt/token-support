@@ -76,7 +76,8 @@ class OAuth2AccessTokenServiceCacheTest {
 
     @Test
     void getAccessTokenOnBehalfOf_WithCache_MultipleTimes_SameClientConfig() {
-        ClientConfigurationProperties.ClientProperties clientProperties = clients.getRegistration().get("example1-onbehalfof");
+        ClientConfigurationProperties.ClientProperties clientProperties = clients.getRegistration().get("example1" +
+            "-onbehalfof");
 
         tokenValidationContextHolder.setTokenValidationContext(tokenValidationContext("sub1"));
 
@@ -110,6 +111,74 @@ class OAuth2AccessTokenServiceCacheTest {
         verify(onBehalfOfTokenResponseClient, times(1)).getTokenResponse(any(OnBehalfOfGrantRequest.class));
         assertThat(oAuth2AccessTokenResponse3.getAccessToken()).isEqualTo(secondAccessToken);
 
+    }
+
+    @Test
+    void getAccessTokenClientCredentials_WithCache_MultipleTimes() {
+        ClientConfigurationProperties.ClientProperties clientProperties = clients.getRegistration().get("example1" +
+            "-clientcredentials1");
+
+        //should invoke client and populate cache
+        String firstAccessToken = "first_access_token";
+        when(clientCredentialsTokenResponseClient.getTokenResponse(any(ClientCredentialsGrantRequest.class)))
+            .thenReturn(accessTokenResponse(firstAccessToken, 60));
+
+        OAuth2AccessTokenResponse oAuth2AccessTokenResponse1 =
+            oAuth2AccessTokenService.getAccessToken(clientProperties);
+        verify(clientCredentialsTokenResponseClient, times(1)).getTokenResponse(any(ClientCredentialsGrantRequest.class));
+        assertThat(oAuth2AccessTokenResponse1).hasNoNullFieldsOrProperties();
+        assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
+
+        //should get response from cache and NOT invoke client
+        reset(clientCredentialsTokenResponseClient);
+        OAuth2AccessTokenResponse oAuth2AccessTokenResponse2 =
+            oAuth2AccessTokenService.getAccessToken(clientProperties);
+        verify(clientCredentialsTokenResponseClient, never()).getTokenResponse(any(ClientCredentialsGrantRequest.class));
+        assertThat(oAuth2AccessTokenResponse2.getAccessToken()).isEqualTo("first_access_token");
+
+        //another clientconfig, should invoke client and populate cache
+
+        clientProperties = clients.getRegistration().get("example1-clientcredentials2");
+
+        reset(clientCredentialsTokenResponseClient);
+        String secondAccessToken = "second_access_token";
+        when(clientCredentialsTokenResponseClient.getTokenResponse(any(ClientCredentialsGrantRequest.class)))
+            .thenReturn(accessTokenResponse(secondAccessToken, 60));
+        OAuth2AccessTokenResponse oAuth2AccessTokenResponse3 =
+            oAuth2AccessTokenService.getAccessToken(clientProperties);
+        verify(clientCredentialsTokenResponseClient, times(1)).getTokenResponse(any(ClientCredentialsGrantRequest.class));
+        assertThat(oAuth2AccessTokenResponse3.getAccessToken()).isEqualTo(secondAccessToken);
+
+    }
+
+    @Test
+    void testCacheEntryIsEvictedOnExpiry() throws InterruptedException {
+        ClientConfigurationProperties.ClientProperties clientProperties = clients.getRegistration().get("example1" +
+            "-onbehalfof");
+        tokenValidationContextHolder.setTokenValidationContext(tokenValidationContext("sub1"));
+
+        //should invoke client and populate cache
+        String firstAccessToken = "first_access_token";
+        when(onBehalfOfTokenResponseClient.getTokenResponse(any(OnBehalfOfGrantRequest.class)))
+            .thenReturn(accessTokenResponse(firstAccessToken, 1));
+
+        OAuth2AccessTokenResponse oAuth2AccessTokenResponse1 =
+            oAuth2AccessTokenService.getAccessToken(clientProperties);
+        verify(onBehalfOfTokenResponseClient, times(1)).getTokenResponse(any(OnBehalfOfGrantRequest.class));
+        assertThat(oAuth2AccessTokenResponse1).hasNoNullFieldsOrProperties();
+        assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
+
+        Thread.sleep(1000);
+
+        //entry should be missing from cache due to expiry
+        reset(onBehalfOfTokenResponseClient);
+        String secondAccessToken = "second_access_token";
+        when(onBehalfOfTokenResponseClient.getTokenResponse(any(OnBehalfOfGrantRequest.class)))
+            .thenReturn(accessTokenResponse(secondAccessToken, 1));
+        OAuth2AccessTokenResponse oAuth2AccessTokenResponse2 =
+            oAuth2AccessTokenService.getAccessToken(clientProperties);
+        verify(onBehalfOfTokenResponseClient, times(1)).getTokenResponse(any(OnBehalfOfGrantRequest.class));
+        assertThat(oAuth2AccessTokenResponse2.getAccessToken()).isEqualTo(secondAccessToken);
     }
 
     private static TokenValidationContext tokenValidationContext(String sub) {

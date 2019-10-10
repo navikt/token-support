@@ -44,7 +44,7 @@ class OAuth2ClientConfigurationWithCacheTest {
 }
 
 @Configuration
-@EnableOAuth2Client(cacheEnabled = true)
+@EnableOAuth2Client(cacheEnabled = true, cacheEvictSkew = 5, cacheMaximumSize = 100)
 class ConfigurationWithCacheEnabledTrue {
 
 }
