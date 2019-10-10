@@ -60,7 +60,7 @@ public class JwtTokenRetriever {
 
     private static boolean containsCookieName(MultiIssuerConfiguration configuration, String cookieName) {
         return configuration.getIssuers().values().stream()
-            .anyMatch(issuerConfiguration -> issuerConfiguration.getCookieName().equals(cookieName));
+            .anyMatch(issuerConfiguration -> cookieName.equalsIgnoreCase(issuerConfiguration.getCookieName()));
     }
 
     private static List<String> extractBearerTokens(String... headerValues) {

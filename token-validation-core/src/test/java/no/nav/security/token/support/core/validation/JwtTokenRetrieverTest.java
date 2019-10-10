@@ -64,6 +64,16 @@ class JwtTokenRetrieverTest {
     }
 
     @Test
+    void testRetrieveTokensWhenCookieNameNotConfigured() throws URISyntaxException, MalformedURLException {
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", null),
+            new NoopResourceRetriever());
+        String issuer1Token = createJWT("issuer1");
+        when(request.getCookies()).thenReturn(new Cookie[] { new Cookie("cookie1", "somerandomcookie") });
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + issuer1Token);
+        assertEquals("issuer1", JwtTokenRetriever.retrieveUnvalidatedTokens(config, request).get(0).getIssuer());
+    }
+
+    @Test
     void testRetrieveTokensMultipleIssuersWithSameCookieName() throws URISyntaxException, MalformedURLException {
         Map<String, IssuerProperties> issuerPropertiesMap = createIssuerPropertiesMap("issuer1", "cookie1");
         issuerPropertiesMap.putAll(createIssuerPropertiesMap("issuer2", "cookie1"));
