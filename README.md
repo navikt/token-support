@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/navikt/token-support.svg?branch=master)](https://travis-ci.com/navikt/token-support)
+[![Known Vulnerabilities](https://snyk.io/test/github/navikt/token-support/badge.svg)](https://snyk.io/test/github/navikt/token-support)
 [![Published on Maven](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/no/nav/security/token-support/maven-metadata.xml.svg)](http://central.maven.org/maven2/no/nav/security/token-support/)
 
 # token-support
