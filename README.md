@@ -38,15 +38,9 @@ There is a short sample below, however more detailed samples are available in th
 This annotation will enable token validation and token transportation/propagation through the service
 
 ```java
-package io.ztpoc.product.service;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import io.ztpoc.spring.oidc.validation.api.EnableOIDCTokenValidation;
 
 @SpringBootApplication
-@EnableOIDCTokenValidation
+@EnableJwtTokenValidation
 public class ProductServiceApplication {
 
 	public static void main(String[] args) {
