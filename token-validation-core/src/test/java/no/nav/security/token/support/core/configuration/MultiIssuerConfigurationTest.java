@@ -1,5 +1,6 @@
 package no.nav.security.token.support.core.configuration;
 
+import com.nimbusds.jose.util.DefaultResourceRetriever;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.security.token.support.core.IssuerMockWebServer;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +35,6 @@ class MultiIssuerConfigurationTest {
 
     @Test
     void getIssuerConfiguration() {
-
         IssuerProperties issuerProperties = new IssuerProperties(discoveryUrl, List.of("audience1"));
         String issuerName = "issuer1";
         MultiIssuerConfiguration multiIssuerConfiguration =
@@ -44,7 +44,6 @@ class MultiIssuerConfigurationTest {
 
     @Test
     void getIssuerConfigurationWithProxy() {
-
         IssuerProperties issuerProperties = new IssuerProperties(discoveryUrl, List.of("audience1"));
         issuerProperties.setProxyUrl(proxyUrl);
         String issuerName = "issuer1";
@@ -53,9 +52,9 @@ class MultiIssuerConfigurationTest {
 
         assertThatMultiIssuerConfigurationIsPopulatedFromMetadata(issuerName, multiIssuerConfiguration);
         IssuerConfiguration config = multiIssuerConfiguration.getIssuer(issuerName).orElse(null);
-
-
-        System.out.println("proxy: " + ((ProxyAwareResourceRetriever) config.getResourceRetriever()).getProxy());
+        assertThat(config).isNotNull();
+        assertThat(config.getResourceRetriever()).isInstanceOf(DefaultResourceRetriever.class);
+        assertThat(((DefaultResourceRetriever) config.getResourceRetriever()).getProxy()).isNotNull();
     }
 
     private void assertThatMultiIssuerConfigurationIsPopulatedFromMetadata(String issuerName,
