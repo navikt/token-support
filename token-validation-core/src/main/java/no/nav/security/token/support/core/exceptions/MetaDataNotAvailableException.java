@@ -17,7 +17,7 @@ public class MetaDataNotAvailableException extends RuntimeException {
     }
 
     public MetaDataNotAvailableException(URL url, Exception e) {
-        this("Kunne ikke hente metadata fra " + url, e);
+        this(String.format("could not retrieve metadata from url: %s. received exception %s", url, e), e);
     }
 
 }
