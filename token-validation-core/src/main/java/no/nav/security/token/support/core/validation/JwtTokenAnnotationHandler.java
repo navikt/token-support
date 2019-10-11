@@ -31,7 +31,7 @@ public class JwtTokenAnnotationHandler {
         this.tokenValidationContextHolder = tokenValidationContextHolder;
     }
 
-    public boolean assertValidAnnotation(Method method){
+    public boolean assertValidAnnotation(Method method) throws AnnotationRequiredException {
         Annotation annotation = getAnnotation(method, Arrays.asList(ProtectedWithClaims.class, Protected.class, Unprotected.class));
         if (annotation == null) {
             throw new AnnotationRequiredException("Server misconfigured - controller/method ["

@@ -1,10 +1,13 @@
 package no.nav.security.token.support.spring.validation.interceptor;
 
+import no.nav.security.token.support.core.exceptions.AnnotationRequiredException;
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -29,8 +32,7 @@ public class JwtTokenHandlerInterceptor implements HandlerInterceptor {
             if (ignoreConfig == null) {
                 ignoreConfig = new String[0];
             }
-        }
-        else {
+        } else {
             // nothing explicitly configured to be ignored, intercept everything
             ignoreConfig = new String[0];
         }
@@ -45,6 +47,10 @@ public class JwtTokenHandlerInterceptor implements HandlerInterceptor {
             }
             try {
                 return jwtTokenAnnotationHandler.assertValidAnnotation(handlerMethod.getMethod());
+            } catch (AnnotationRequiredException e) {
+                logger.error("received AnnotationRequiredException from JwtTokenAnnotationHandler. return " +
+                    "status={}", HttpStatus.NOT_IMPLEMENTED, e);
+                throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "endpoint not accessible");
             } catch (Exception e) {
                 throw new JwtTokenUnauthorizedException(e);
             }

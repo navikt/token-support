@@ -14,15 +14,19 @@ import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -56,8 +60,9 @@ class JwtTokenHandlerInterceptorTest {
     @Test
     void notAnnotatedShouldThrowException() {
         HandlerMethod handlerMethod = handlerMethod(new NotAnnotatedClass(), "test");
-        assertThrows(JwtTokenUnauthorizedException.class,
-            () -> interceptor.preHandle(request, response, handlerMethod));
+        assertThatExceptionOfType(ResponseStatusException.class).isThrownBy(
+            () -> interceptor.preHandle(request, response, handlerMethod))
+            .withMessageContaining(HttpStatus.NOT_IMPLEMENTED.toString());
     }
 
     @Test
