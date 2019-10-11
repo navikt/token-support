@@ -9,11 +9,11 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import okio.BufferedSink;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
@@ -24,19 +24,31 @@ public class IssuerMockWebServer {
     private MockWebServer proxyServer;
     private URL discoveryUrl;
     private URL proxyUrl;
+    private final boolean startProxyServer;
+
+    public IssuerMockWebServer(){
+        this(true);
+    }
+
+    public IssuerMockWebServer(boolean startProxyServer){
+        this.startProxyServer = startProxyServer;
+    }
 
     public void start() throws IOException {
         this.server = new MockWebServer();
         this.server.start();
         this.discoveryUrl = this.server.url(DISCOVERY_PATH).url();
         this.server.setDispatcher(new Dispatcher() {
+            @NotNull
             @Override
-            public MockResponse dispatch(RecordedRequest request) {
-                log.info("received request on url={} with headers={}", request.getRequestUrl(), request.getHeaders());
-                log.debug("path():{} compared to {}", request.getRequestUrl().encodedPath(), DISCOVERY_PATH);
+            public MockResponse dispatch(@NotNull RecordedRequest request) {
+                log.debug("received request on url={} with headers={}", request.getRequestUrl(), request.getHeaders());
+                log.debug("comparing path in request '{}' with '{}'", request.getRequestUrl().encodedPath(), DISCOVERY_PATH);
                 if (request.getRequestUrl().encodedPath().endsWith(DISCOVERY_PATH)) {
+                    log.debug("returning well-known json data");
                     return wellKnownJson();
                 } else {
+                    log.error("path not found, returning 404");
                     return new MockResponse().setResponseCode(404);
                 }
             }
@@ -44,8 +56,10 @@ public class IssuerMockWebServer {
 
         this.proxyServer = new MockWebServer();
         this.proxyServer.setDispatcher(new ProxyDispatcher(HttpUrl.parse(discoveryUrl.toString())));
-        this.proxyServer.start();
-        this.proxyUrl = URI.create("http://localhost:" + this.proxyServer.getPort()).toURL();
+        if(startProxyServer){
+            this.proxyServer.start();
+            this.proxyUrl = URI.create("http://localhost:" + this.proxyServer.getPort()).toURL();
+        }
     }
 
     public void shutdown() throws IOException {
@@ -79,6 +93,7 @@ public class IssuerMockWebServer {
             client = new OkHttpClient.Builder().build();
         }
 
+        @NotNull
         @Override
         public MockResponse dispatch(final RecordedRequest recordedRequest) {
             Request.Builder requestBuilder = new Request.Builder()
@@ -94,7 +109,7 @@ public class IssuerMockWebServer {
                     }
 
                     @Override
-                    public void writeTo(BufferedSink sink) throws IOException {
+                    public void writeTo(@NotNull BufferedSink sink) throws IOException {
                         recordedRequest.getBody().clone().readAll(sink);
                     }
 
@@ -105,24 +120,27 @@ public class IssuerMockWebServer {
                 });
             }
             Request request = requestBuilder.build();
-            log.info("created request to destination: {}", request);
+            log.debug("created request to destination: {}", request);
             try (Response response = client.newCall(request).execute()) {
                 ResponseBody body = response.body();
                 if (body != null) {
-                    return new MockResponse()
-                        .setHeaders(response.headers())
-                        .setBody(body.string())
-                        .setResponseCode(response.code());
+                    MockResponse mockResponse = new MockResponse();
+                    mockResponse.headers(response.headers());
+                    mockResponse.setBody(body.string());
+                    mockResponse.setResponseCode(response.code());
+                    return mockResponse;
                 } else {
-                    return new MockResponse()
-                        .setStatus("proxy error, response body from destination was null")
-                        .setResponseCode(500);
+                    MockResponse mockResponse = new MockResponse();
+                    mockResponse.status("proxy error, response body from destination was null");
+                    mockResponse.setResponseCode(500);
+                    return mockResponse;
                 }
             } catch (IOException e) {
                 log.error("got exception when proxying request.", e);
-                return new MockResponse()
-                    .setStatus("proxy error: " + e.getMessage())
-                    .setResponseCode(500);
+                MockResponse mockResponse = new MockResponse();
+                mockResponse.status("proxy error: " + e.getMessage());
+                mockResponse.setResponseCode(500);
+                return mockResponse;
             }
         }
     }
