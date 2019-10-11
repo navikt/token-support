@@ -1,11 +1,13 @@
 package no.nav.security.token.support.core.jwt;
 
-import com.nimbusds.jwt.JWTClaimsSet;
-import net.minidev.json.JSONArray;
-
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import com.nimbusds.jwt.JWTClaimsSet;
+
+import net.minidev.json.JSONArray;
 
 public class JwtTokenClaims {
 
@@ -29,6 +31,10 @@ public class JwtTokenClaims {
 
     public String getIssuer() {
         return getClaimSet().getIssuer();
+    }
+
+    public Date getExpirationTime() {
+        return getClaimSet().getExpirationTime();
     }
 
     public String getSubject() {
