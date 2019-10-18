@@ -10,7 +10,7 @@ import io.ktor.http.ContentType
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
-import no.nav.security.token.support.ktor.OIDCValidationContextPrincipal
+import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
 import no.nav.security.token.support.ktor.RequiredClaims
 import no.nav.security.token.support.ktor.tokenValidationSupport
 
@@ -58,7 +58,7 @@ fun Application.module() {
 
         authenticate("validGroup") {
             get("/hello_group") {
-                val principal: OIDCValidationContextPrincipal? = call.authentication.principal()
+                val principal: TokenValidationContextPrincipal? = call.authentication.principal()
                 val ident = principal?.context?.getClaims(acceptedIssuer)?.getStringClaim("NAVident")
                 println("NAVident = $ident is accessing hello_group")
                 helloGroupCounter++

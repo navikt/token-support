@@ -20,7 +20,7 @@ import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import org.slf4j.LoggerFactory
 import java.net.URL
 
-data class OIDCValidationContextPrincipal(val context: TokenValidationContext) : Principal
+data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
 @io.ktor.util.KtorExperimentalAPI
 private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::class.java.name)
@@ -70,7 +70,7 @@ fun Authentication.Configuration.tokenValidationSupport(
                         throw AdditionalValidationReturnedFalse()
                     }
                 }
-                context.principal(OIDCValidationContextPrincipal(tokenValidationContext))
+                context.principal(TokenValidationContextPrincipal(tokenValidationContext))
                 return@intercept
             }
         } catch (e : Throwable) {
