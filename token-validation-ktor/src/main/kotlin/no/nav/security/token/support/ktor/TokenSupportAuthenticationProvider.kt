@@ -52,7 +52,8 @@ class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfi
 fun Authentication.Configuration.tokenValidationSupport(
     name: String? = null,
     config: ApplicationConfig,
-    requiredClaims: RequiredClaims? = null
+    requiredClaims: RequiredClaims? = null,
+    additionalValidation: ((TokenValidationContext) -> Boolean)? = null
 ) {
     val provider = TokenSupportAuthenticationProvider(name, config)
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
@@ -64,11 +65,17 @@ fun Authentication.Configuration.tokenValidationSupport(
                 if (requiredClaims != null) {
                     RequiredClaimsHandler(InternalTokenValidationContextHolder(tokenValidationContext)).handleRequiredClaims(requiredClaims)
                 }
+                if (additionalValidation != null) {
+                    if (!additionalValidation(tokenValidationContext)) {
+                        throw AdditionalValidationReturnedFalse()
+                    }
+                }
                 context.principal(OIDCValidationContextPrincipal(tokenValidationContext))
                 return@intercept
             }
-        } catch (ce : RequiredClaimsException) {
-            log.debug("RequiredClaimsException: ${ce.message}")
+        } catch (e : Throwable) {
+            val message = e.message ?: e.javaClass.simpleName
+            log.trace("Token verification failed: {}", message)
         }
         context.challenge("JWTAuthKey", AuthenticationFailedCause.InvalidCredentials) {
             call.respond(UnauthorizedResponse())
@@ -104,6 +111,8 @@ private class InternalTokenValidationContextHolder(private var tokenValidationCo
         this.tokenValidationContext = tokenValidationContext!!
     }
 }
+
+internal class AdditionalValidationReturnedFalse : RuntimeException()
 
 internal class RequiredClaimsException(message: String, cause: Exception) : RuntimeException(message, cause)
 internal class RequiredClaimsHandler(tokenValidationContextHolder: TokenValidationContextHolder) : JwtTokenAnnotationHandler(tokenValidationContextHolder) {

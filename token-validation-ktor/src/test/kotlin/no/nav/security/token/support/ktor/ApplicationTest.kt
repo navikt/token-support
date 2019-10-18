@@ -197,6 +197,88 @@ class ApplicationTest {
         }
     }
 
+    @Test
+    fun helloGroup_withoutRequiredGroup_ShouldGive_401_OK_andHelloGroupCounterIsNOTIncreased() {
+        val helloGroupCounterBeforeRequest = helloGroupCounter
+        withTestApplication({
+            stubOIDCProvider()
+            doConfig(hasCookieConfig = false)
+            module()
+        }) {
+            handleRequest(HttpMethod.Get, "/hello_group") {
+                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(
+                    subject = "testuser",
+                    navIdent = "X112233",
+                    groups = arrayOf("group1","group2")))
+                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+            }.apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertEquals(helloGroupCounterBeforeRequest, helloGroupCounter)
+            }
+        }
+    }
+
+    @Test
+    fun helloGroup_withNoGroupClaim_ShouldGive_401_andHelloGroupCounterIsNOTIncreased() {
+        val helloGroupCounterBeforeRequest = helloGroupCounter
+        withTestApplication({
+            stubOIDCProvider()
+            doConfig(hasCookieConfig = false)
+            module()
+        }) {
+            handleRequest(HttpMethod.Get, "/hello_group") {
+                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(
+                    subject = "testuser",
+                    navIdent = "X112233"))
+                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+            }.apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertEquals(helloGroupCounterBeforeRequest, helloGroupCounter)
+            }
+        }
+    }
+
+    @Test
+    fun helloGroup_withRequiredGroup_ShouldGive_200_OK_andHelloGroupCounterIsIncreased() {
+        val helloGroupCounterBeforeRequest = helloGroupCounter
+        withTestApplication({
+            stubOIDCProvider()
+            doConfig(hasCookieConfig = false)
+            module()
+        }) {
+            handleRequest(HttpMethod.Get, "/hello_group") {
+                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(
+                    subject = "testuser",
+                    navIdent = "X112233",
+                    groups = arrayOf("group1","group2","THEGROUP")))
+                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+            }.apply {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals(helloGroupCounterBeforeRequest + 1, helloGroupCounter)
+            }
+        }
+    }
+
+    @Test
+    fun helloGroup_withMissingNAVIdentRequiredForAuditLog_ShouldGive_401_andHelloGroupCounterIsNOTIncreased() {
+        val helloGroupCounterBeforeRequest = helloGroupCounter
+        withTestApplication({
+            stubOIDCProvider()
+            doConfig(hasCookieConfig = false)
+            module()
+        }) {
+            handleRequest(HttpMethod.Get, "/hello_group") {
+                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(
+                    subject = "testuser"))
+                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+            }.apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertEquals(helloGroupCounterBeforeRequest, helloGroupCounter)
+            }
+        }
+    }
+
+
 
     //////////////////////////////////////////
     //////////////////////////////////////////
@@ -232,7 +314,8 @@ class ApplicationTest {
                       authLevel: String = JwtTokenGenerator.ACR,
                       expiry: Long = JwtTokenGenerator.EXPIRY,
                       issuedAt: Date = Date(),
-                      navIdent: String? = null): JWTClaimsSet {
+                      navIdent: String? = null,
+                      groups: Array<String>? = null): JWTClaimsSet {
         val builder = JWTClaimsSet.Builder()
             .subject(subject)
             .issuer(issuer)
@@ -247,6 +330,9 @@ class ApplicationTest {
             .expirationTime(Date(issuedAt.time + expiry))
         if (navIdent != null) {
             builder.claim("NAVident", navIdent)
+        }
+        if (groups != null) {
+            builder.claim("groups", groups)
         }
         return builder.build()
     }
