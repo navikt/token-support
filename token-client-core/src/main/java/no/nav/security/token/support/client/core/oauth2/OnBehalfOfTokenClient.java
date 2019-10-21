@@ -5,11 +5,11 @@ import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 
 import java.util.Map;
 
-class OnBehalfOfTokenClient extends AbstractOAuth2TokenClient<OnBehalfOfGrantRequest> {
+public class OnBehalfOfTokenClient extends AbstractOAuth2TokenClient<OnBehalfOfGrantRequest> {
 
     private static final String REQUESTED_TOKEN_USE_VALUE = "on_behalf_of";
 
-    OnBehalfOfTokenClient(OAuth2HttpClient oAuth2HttpClient) {
+    public OnBehalfOfTokenClient(OAuth2HttpClient oAuth2HttpClient) {
         super(oAuth2HttpClient);
     }
 

@@ -4,9 +4,9 @@ import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 
 import java.util.Map;
 
-class ClientCredentialsTokenClient extends AbstractOAuth2TokenClient<ClientCredentialsGrantRequest> {
+public class ClientCredentialsTokenClient extends AbstractOAuth2TokenClient<ClientCredentialsGrantRequest> {
 
-    ClientCredentialsTokenClient(OAuth2HttpClient oAuth2HttpClient) {
+    public ClientCredentialsTokenClient(OAuth2HttpClient oAuth2HttpClient) {
         super(oAuth2HttpClient);
     }
 
