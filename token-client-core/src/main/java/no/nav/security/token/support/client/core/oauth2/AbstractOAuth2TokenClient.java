@@ -39,8 +39,11 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
                 .build();
             return oAuth2HttpClient.post(oAuth2HttpRequest);
         } catch (Exception e) {
-            throw new OAuth2ClientException(String.format("received exception %s when invoking tokenendpoint=%s",
-                e, grantRequest.getClientProperties().getTokenEndpointUrl()), e);
+            if(!(e instanceof OAuth2ClientException)) {
+                throw new OAuth2ClientException(String.format("received exception %s when invoking tokenendpoint=%s",
+                    e, grantRequest.getClientProperties().getTokenEndpointUrl()), e);
+            }
+            throw e;
         }
     }
 
