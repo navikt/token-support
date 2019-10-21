@@ -1,6 +1,8 @@
-package no.nav.security.token.support.oauth2.client;
+package no.nav.security.token.support.client.spring.oauth2;
 
-import no.nav.security.token.support.oauth2.ClientConfigurationProperties;
+import no.nav.security.token.support.client.core.ClientProperties;
+import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest;
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +23,7 @@ class ClientConfigurationPropertiesTest {
     void testClientConfigIsValid() {
         assertThat(clientConfigurationProperties).isNotNull();
         assertThat(clientConfigurationProperties.getRegistration()).isNotNull();
-        ClientConfigurationProperties.ClientProperties clientProperties = clientConfigurationProperties.getRegistration().values().stream().findFirst().orElse(null);
+        ClientProperties clientProperties = clientConfigurationProperties.getRegistration().values().stream().findFirst().orElse(null);
         assertThat(clientProperties).isNotNull();
         assertThat(clientProperties.getClientId()).isNotNull();
         assertThat(clientProperties.getClientSecret()).isNotNull();
@@ -32,11 +34,11 @@ class ClientConfigurationPropertiesTest {
 
     @Test
     void testDifferentClientPropsShouldNOTBeEqualAndShouldMakeSurroundingRequestsUnequalToo() {
-        Map<String,ClientConfigurationProperties.ClientProperties> props = clientConfigurationProperties.getRegistration();
+        Map<String,ClientProperties> props = clientConfigurationProperties.getRegistration();
 
         assertThat(props.size()).isGreaterThan(1);
-        ClientConfigurationProperties.ClientProperties p1 = props.get("example1-onbehalfof");
-        ClientConfigurationProperties.ClientProperties p2 = props.get("example1-onbehalfof2");
+        ClientProperties p1 = props.get("example1-onbehalfof");
+        ClientProperties p2 = props.get("example1-onbehalfof2");
 
         assertThat(p1.equals(p2)).isFalse();
         assertThat(p1.equals(p1)).isTrue();

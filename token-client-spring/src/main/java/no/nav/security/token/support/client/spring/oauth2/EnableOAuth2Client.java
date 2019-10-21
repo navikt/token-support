@@ -1,6 +1,8 @@
-package no.nav.security.token.support.oauth2;
+package no.nav.security.token.support.client.spring.oauth2;
 
-import no.nav.security.token.support.oauth2.client.OAuth2ClientConfiguration;
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -20,7 +22,7 @@ import java.lang.annotation.*;
 public @interface EnableOAuth2Client {
     /**
      * Enable caching for OAuth 2.0 access_token response in the
-     * {@link no.nav.security.token.support.oauth2.client.OAuth2AccessTokenService}
+     * {@link OAuth2AccessTokenService}
      * @return default value false, true if enabled
      */
     boolean cacheEnabled() default false;
@@ -34,7 +36,7 @@ public @interface EnableOAuth2Client {
 
     /**
      * Set skew time in seconds for cache eviction, i.e. the amount of time a cache entry
-     * should be evicted before the actual "expires_in" in {@link no.nav.security.token.support.oauth2.client.OAuth2AccessTokenResponse}
+     * should be evicted before the actual "expires_in" in {@link OAuth2AccessTokenResponse}
      *
      * @return the skew in seconds
      */
