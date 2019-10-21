@@ -17,7 +17,7 @@ public class ClientProperties {
     private String clientId;
     @NotEmpty
     private String clientSecret;
-    private String clientAuthMethod;
+    private String clientAuthMethod = "client_secret_basic";
     @NotNull
     private OAuth2GrantType grantType;
     @NotEmpty
