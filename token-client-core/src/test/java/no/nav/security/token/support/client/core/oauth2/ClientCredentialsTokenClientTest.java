@@ -13,8 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import static no.nav.security.token.support.client.core.TestUtils.decodeBasicAuth;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -53,36 +56,91 @@ class ClientCredentialsTokenClientTest {
         this.server.shutdown();
     }
 
-
     @Test
-    void getTokenResponseSuccess() throws InterruptedException {
+    void getTokenResponseWithDefaultClientAuthMethod() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        OAuth2AccessTokenResponse response = client.getTokenResponse(new ClientCredentialsGrantRequest(oAuth2Client()));
+        ClientProperties clientProperties = oAuth2Client();
+        OAuth2AccessTokenResponse response =
+            client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
         RecordedRequest recordedRequest = this.server.takeRequest();
         assertPostMethodAndJsonHeaders(recordedRequest);
+        assertThatClientAuthMethodIsClientSecretBasic(recordedRequest, clientProperties);
+        String body = recordedRequest.getBody().readUtf8();
+        assertThatRequestBodyContainsFormParameters(body);
+        assertThatResponseContainsAccessToken(response);
 
-        String formParameters = recordedRequest.getBody().readUtf8();
+    }
 
-        assertThat(formParameters).contains("grant_type=client_credentials");
-        assertThat(formParameters).contains("scope=scope1+scope2");
+    @Test
+    void getTokenResponseWithClientSecretBasic() throws InterruptedException {
+        this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
+        ClientProperties clientProperties = oAuth2Client();
+        clientProperties.setClientAuthMethod("client_secret_basic");
+        OAuth2AccessTokenResponse response =
+            client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
+        RecordedRequest recordedRequest = this.server.takeRequest();
+        assertPostMethodAndJsonHeaders(recordedRequest);
+        assertThatClientAuthMethodIsClientSecretBasic(recordedRequest, clientProperties);
+        String body = recordedRequest.getBody().readUtf8();
+        assertThatRequestBodyContainsFormParameters(body);
+        assertThatResponseContainsAccessToken(response);
 
+    }
+
+    @Test
+    void getTokenResponseWithClientSecretPost() throws InterruptedException {
+        this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
+        ClientProperties clientProperties = oAuth2Client();
+        clientProperties.setClientAuthMethod("client_secret_post");
+        OAuth2AccessTokenResponse response =
+            client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
+        RecordedRequest recordedRequest = this.server.takeRequest();
+        assertPostMethodAndJsonHeaders(recordedRequest);
+        String body = recordedRequest.getBody().readUtf8();
+        assertThatClientAuthMethodIsClientSecretPost(body, clientProperties);
+        assertThatRequestBodyContainsFormParameters(body);
+        assertThatResponseContainsAccessToken(response);
+
+    }
+
+    @Test
+    void getTokenResponseError() {
+        this.server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400));
+        assertThatExceptionOfType(OAuth2ClientException.class)
+            .isThrownBy(() -> client.getTokenResponse(new ClientCredentialsGrantRequest(oAuth2Client())));
+    }
+
+    private static void assertThatResponseContainsAccessToken(OAuth2AccessTokenResponse response) {
         assertThat(response).isNotNull();
         assertThat(response.getAccessToken()).isNotBlank();
         assertThat(response.getExpiresAt()).isGreaterThan(0);
         assertThat(response.getExpiresIn()).isGreaterThan(0);
     }
 
-    @Test
-    void getTokenResponseError() {
-        this.server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400));
+    private static void assertThatClientAuthMethodIsClientSecretPost(String body,
+                                                                      ClientProperties clientProperties) {
+        assertThat(clientProperties.getClientAuthMethod()).isEqualTo("client_secret_post");
+        assertThat(body).contains("client_id=" + URLEncoder.encode(clientProperties.getClientId(),
+            StandardCharsets.UTF_8));
+        assertThat(body).contains("client_secret=" + URLEncoder.encode(clientProperties.getClientSecret(),
+            StandardCharsets.UTF_8));
+    }
 
-        assertThatExceptionOfType(OAuth2ClientException.class)
-            .isThrownBy(() -> client.getTokenResponse(new ClientCredentialsGrantRequest(oAuth2Client())));
+    private static void assertThatClientAuthMethodIsClientSecretBasic(RecordedRequest recordedRequest,
+                                                                      ClientProperties clientProperties) {
+        assertThat(clientProperties.getClientAuthMethod()).isEqualTo("client_secret_basic");
+        assertThat(recordedRequest.getHeaders().get("Authorization")).isNotBlank();
+        String usernamePwd = decodeBasicAuth(recordedRequest);
+        assertThat(usernamePwd).isEqualTo(clientProperties.getClientId() + ":" + clientProperties.getClientSecret());
+    }
+
+    private static void assertThatRequestBodyContainsFormParameters(String formParameters) {
+        assertThat(formParameters).contains("grant_type=client_credentials");
+        assertThat(formParameters).contains("scope=scope1+scope2");
     }
 
     private ClientProperties oAuth2Client() {
         ClientProperties clientProperties = new ClientProperties();
-        clientProperties.setClientAuthMethod("client_secret_basic");
         clientProperties.setClientId("myid");
         clientProperties.setClientSecret("mysecret");
         clientProperties.setScope(Arrays.asList("scope1", "scope2"));

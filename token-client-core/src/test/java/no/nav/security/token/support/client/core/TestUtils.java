@@ -3,17 +3,15 @@ package no.nav.security.token.support.client.core;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.RecordedRequest;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,23 +44,13 @@ public class TestUtils {
         assertThat(recordedRequest.getHeader("Content-Type")).isEqualTo(CONTENT_TYPE_FORM_URL_ENCODED);
     }
 
-    public static OAuth2AccessTokenResponse accessTokenResponse(String assertion, int expiresIn) {
-        return new OAuth2AccessTokenResponse() {
-            @Override
-            public String getAccessToken() {
-                return assertion;
-            }
-
-            @Override
-            public int getExpiresAt() {
-                return Math.toIntExact((Instant.now().plusSeconds(expiresIn).getEpochSecond()));
-            }
-
-            @Override
-            public int getExpiresIn() {
-                return expiresIn;
-            }
-        };
+    public static String decodeBasicAuth(RecordedRequest recordedRequest) {
+        return Optional.ofNullable(recordedRequest.getHeaders().get("Authorization"))
+            .map(s -> s.split("Basic "))
+            .filter(pair -> pair.length == 2)
+            .map(pair -> Base64.getDecoder().decode(pair[1]))
+            .map(bytes -> new String(bytes, StandardCharsets.UTF_8))
+            .orElse("");
     }
 
     public static JWT jwt(String sub) {
