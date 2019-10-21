@@ -197,6 +197,8 @@ class ApplicationTest {
         }
     }
 
+    //// hello_group ////
+
     @Test
     fun helloGroup_withoutRequiredGroup_ShouldGive_401_OK_andHelloGroupCounterIsNOTIncreased() {
         val helloGroupCounterBeforeRequest = helloGroupCounter
@@ -269,7 +271,8 @@ class ApplicationTest {
         }) {
             handleRequest(HttpMethod.Get, "/hello_group") {
                 val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(
-                    subject = "testuser"))
+                    subject = "testuser",
+                    groups = arrayOf("group1","group2","THEGROUP")))
                 addHeader("Authorization", "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
