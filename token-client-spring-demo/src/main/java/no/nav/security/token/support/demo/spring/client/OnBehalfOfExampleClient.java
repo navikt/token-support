@@ -1,7 +1,7 @@
 package no.nav.security.token.support.demo.spring.client;
 
-import no.nav.security.token.support.oauth2.ClientConfigurationProperties;
-import no.nav.security.token.support.oauth2.client.OAuth2AccessTokenService;
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 
