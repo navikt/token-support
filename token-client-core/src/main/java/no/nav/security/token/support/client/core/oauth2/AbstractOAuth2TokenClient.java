@@ -1,5 +1,6 @@
 package no.nav.security.token.support.client.core.oauth2;
 
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import no.nav.security.token.support.client.core.OAuth2ClientException;
 import no.nav.security.token.support.client.core.OAuth2ParameterNames;
 import no.nav.security.token.support.client.core.ClientProperties;
@@ -51,7 +52,7 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
         Map<String, List<String>> headers = new HashMap<>();
         headers.put("Accept", Collections.singletonList(CONTENT_TYPE_JSON));
         headers.put("Content-Type", Collections.singletonList(CONTENT_TYPE_FORM_URL_ENCODED));
-        if ("client_secret_basic".equals(clientProperties.getClientAuthMethod())) {
+        if (ClientAuthenticationMethod.CLIENT_SECRET_BASIC.equals(clientProperties.getClientAuthMethod())) {
             headers.put("Authorization",
                 Collections.singletonList("Basic "
                     + basicAuth(clientProperties.getClientId(), clientProperties.getClientSecret())));
@@ -62,7 +63,7 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
     Map<String, String> createDefaultFormParameters(T grantRequest) {
         Map<String, String> formParameters = new LinkedHashMap<>();
         ClientProperties clientProperties = grantRequest.getClientProperties();
-        if ("client_secret_post".equals(clientProperties.getClientAuthMethod())) {
+        if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(clientProperties.getClientAuthMethod())) {
             formParameters.put(OAuth2ParameterNames.CLIENT_ID, clientProperties.getClientId());
             formParameters.put(OAuth2ParameterNames.CLIENT_SECRET, clientProperties.getClientSecret());
         }

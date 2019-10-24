@@ -119,7 +119,7 @@ class ClientCredentialsTokenClientTest {
 
     private static void assertThatClientAuthMethodIsClientSecretPost(String body,
                                                                       ClientProperties clientProperties) {
-        assertThat(clientProperties.getClientAuthMethod()).isEqualTo("client_secret_post");
+        assertThat(clientProperties.getClientAuthMethod().getValue()).isEqualTo("client_secret_post");
         assertThat(body).contains("client_id=" + URLEncoder.encode(clientProperties.getClientId(),
             StandardCharsets.UTF_8));
         assertThat(body).contains("client_secret=" + URLEncoder.encode(clientProperties.getClientSecret(),
@@ -128,7 +128,7 @@ class ClientCredentialsTokenClientTest {
 
     private static void assertThatClientAuthMethodIsClientSecretBasic(RecordedRequest recordedRequest,
                                                                       ClientProperties clientProperties) {
-        assertThat(clientProperties.getClientAuthMethod()).isEqualTo("client_secret_basic");
+        assertThat(clientProperties.getClientAuthMethod().getValue()).isEqualTo("client_secret_basic");
         assertThat(recordedRequest.getHeaders().get("Authorization")).isNotBlank();
         String usernamePwd = decodeBasicAuth(recordedRequest);
         assertThat(usernamePwd).isEqualTo(clientProperties.getClientId() + ":" + clientProperties.getClientSecret());

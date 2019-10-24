@@ -1,5 +1,6 @@
 package no.nav.security.token.support.client.spring.oauth2;
 
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
@@ -23,8 +24,25 @@ class ClientConfigurationPropertiesTest {
     void testClientConfigIsValid() {
         assertThat(clientConfigurationProperties).isNotNull();
         assertThat(clientConfigurationProperties.getRegistration()).isNotNull();
-        ClientProperties clientProperties = clientConfigurationProperties.getRegistration().values().stream().findFirst().orElse(null);
+        ClientProperties clientProperties =
+            clientConfigurationProperties.getRegistration().values().stream().findFirst().orElse(null);
         assertThat(clientProperties).isNotNull();
+        assertThat(clientProperties.getClientAuthMethod()).isNotNull();
+        assertThat(clientProperties.getClientId()).isNotNull();
+        assertThat(clientProperties.getClientSecret()).isNotNull();
+        assertThat(clientProperties.getScope()).isNotEmpty();
+        assertThat(clientProperties.getTokenEndpointUrl()).isNotNull();
+        assertThat(clientProperties.getGrantType().getValue()).isNotNull();
+    }
+
+    @Test
+    void testClientConfigWithClientAuthMethodAsPrivateKeyJwt() {
+        assertThat(clientConfigurationProperties).isNotNull();
+        assertThat(clientConfigurationProperties.getRegistration()).isNotNull();
+        ClientProperties clientProperties =
+            clientConfigurationProperties.getRegistration().get("example1-clientcredentials3");
+        assertThat(clientProperties).isNotNull();
+        assertThat(clientProperties.getClientAuthMethod()).isEqualTo(ClientAuthenticationMethod.PRIVATE_KEY_JWT);
         assertThat(clientProperties.getClientId()).isNotNull();
         assertThat(clientProperties.getClientSecret()).isNotNull();
         assertThat(clientProperties.getScope()).isNotEmpty();
@@ -34,7 +52,7 @@ class ClientConfigurationPropertiesTest {
 
     @Test
     void testDifferentClientPropsShouldNOTBeEqualAndShouldMakeSurroundingRequestsUnequalToo() {
-        Map<String,ClientProperties> props = clientConfigurationProperties.getRegistration();
+        Map<String, ClientProperties> props = clientConfigurationProperties.getRegistration();
 
         assertThat(props.size()).isGreaterThan(1);
         ClientProperties p1 = props.get("example1-onbehalfof");

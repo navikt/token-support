@@ -30,7 +30,14 @@ no.nav.security.jwt:
                 token-endpoint-url: http://tokens.no
                 client-id: testclient
                 client-secret: testsecret
-                client-auth-method: client_secret_basic
+                grant-type: client_credentials
+                scope: scope3, scope4
+            example1-clientcredentials3:
+                resource-url: http://exampleapi2.no
+                token-endpoint-url: http://tokens.no
+                client-id: testclient
+                client-secret: testsecret
+                client-auth-method: private_key_jwt
                 grant-type: client_credentials
                 scope: scope3, scope4
 
