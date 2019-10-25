@@ -9,7 +9,6 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import okio.BufferedSink;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,11 +25,11 @@ public class IssuerMockWebServer {
     private URL proxyUrl;
     private final boolean startProxyServer;
 
-    public IssuerMockWebServer(){
+    public IssuerMockWebServer() {
         this(true);
     }
 
-    public IssuerMockWebServer(boolean startProxyServer){
+    public IssuerMockWebServer(boolean startProxyServer) {
         this.startProxyServer = startProxyServer;
     }
 
@@ -39,11 +38,11 @@ public class IssuerMockWebServer {
         this.server.start();
         this.discoveryUrl = this.server.url(DISCOVERY_PATH).url();
         this.server.setDispatcher(new Dispatcher() {
-            @NotNull
             @Override
-            public MockResponse dispatch(@NotNull RecordedRequest request) {
+            public MockResponse dispatch(RecordedRequest request) {
                 log.debug("received request on url={} with headers={}", request.getRequestUrl(), request.getHeaders());
-                log.debug("comparing path in request '{}' with '{}'", request.getRequestUrl().encodedPath(), DISCOVERY_PATH);
+                log.debug("comparing path in request '{}' with '{}'", request.getRequestUrl().encodedPath(),
+                    DISCOVERY_PATH);
                 if (request.getRequestUrl().encodedPath().endsWith(DISCOVERY_PATH)) {
                     log.debug("returning well-known json data");
                     return wellKnownJson();
@@ -56,7 +55,7 @@ public class IssuerMockWebServer {
 
         this.proxyServer = new MockWebServer();
         this.proxyServer.setDispatcher(new ProxyDispatcher(HttpUrl.parse(discoveryUrl.toString())));
-        if(startProxyServer){
+        if (startProxyServer) {
             this.proxyServer.start();
             this.proxyUrl = URI.create("http://localhost:" + this.proxyServer.getPort()).toURL();
         }
@@ -93,7 +92,6 @@ public class IssuerMockWebServer {
             client = new OkHttpClient.Builder().build();
         }
 
-        @NotNull
         @Override
         public MockResponse dispatch(final RecordedRequest recordedRequest) {
             Request.Builder requestBuilder = new Request.Builder()
@@ -109,7 +107,7 @@ public class IssuerMockWebServer {
                     }
 
                     @Override
-                    public void writeTo(@NotNull BufferedSink sink) throws IOException {
+                    public void writeTo(BufferedSink sink) throws IOException {
                         recordedRequest.getBody().clone().readAll(sink);
                     }
 
