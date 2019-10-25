@@ -61,14 +61,24 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
     }
 
     Map<String, String> createDefaultFormParameters(T grantRequest) {
-        Map<String, String> formParameters = new LinkedHashMap<>();
         ClientProperties clientProperties = grantRequest.getClientProperties();
+        Map<String, String> formParameters = new LinkedHashMap<>(clientAuthenticationFormParameters(grantRequest));
+        formParameters.put(OAuth2ParameterNames.GRANT_TYPE, grantRequest.getGrantType().getValue());
+        formParameters.put(OAuth2ParameterNames.SCOPE, String.join(" ", clientProperties.getScope()));
+        return formParameters;
+    }
+
+    private Map<String, String> clientAuthenticationFormParameters(T grantRequest){
+        ClientProperties clientProperties = grantRequest.getClientProperties();
+        Map<String, String> formParameters = new LinkedHashMap<>();
         if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(clientProperties.getClientAuthMethod())) {
             formParameters.put(OAuth2ParameterNames.CLIENT_ID, clientProperties.getClientId());
             formParameters.put(OAuth2ParameterNames.CLIENT_SECRET, clientProperties.getClientSecret());
+        } else if(ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(clientProperties.getClientAuthMethod())){
+            //TODO implement in a separate PR
+            throw new OAuth2ClientException(String.format("clientAuthMethod %s is not supported (yet).",
+                clientProperties.getClientAuthMethod()));
         }
-        formParameters.put(OAuth2ParameterNames.GRANT_TYPE, grantRequest.getGrantType().getValue());
-        formParameters.put(OAuth2ParameterNames.SCOPE, String.join(" ", clientProperties.getScope()));
         return formParameters;
     }
 
