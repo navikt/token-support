@@ -27,7 +27,7 @@ public class TestUtils {
         clientProperties.setClientId("myid");
         clientProperties.setClientSecret("mysecret");
         clientProperties.setScope(Arrays.asList("scope1", "scope2"));
-        clientProperties.setGrantType(oAuth2GrantType);
+        clientProperties.setGrantType(oAuth2GrantType.getValue());
         clientProperties.setTokenEndpointUrl(URI.create(tokenEndpointUrl));
         return clientProperties;
     }

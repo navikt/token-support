@@ -7,7 +7,6 @@ import com.nimbusds.jwt.PlainJWT;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2CacheFactory;
 import no.nav.security.token.support.client.core.OAuth2ClientException;
-import no.nav.security.token.support.client.core.OAuth2GrantType;
 import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -92,16 +91,6 @@ class OAuth2AccessTokenServiceTest {
         assertThatExceptionOfType(OAuth2ClientException.class)
             .isThrownBy(() -> oAuth2AccessTokenService.getAccessToken(onBehalfOfProperties()))
             .withMessageContaining("no authenticated jwt token found in validation context, cannot do on-behalf-of");
-    }
-
-    @Test
-    void getAccessTokenUnsupportedGrantType() {
-
-        ClientProperties clientProperties = clientCredentialsProperties();
-        clientProperties.setGrantType(new OAuth2GrantType("someGrantNotSupported"));
-        assertThatExceptionOfType(OAuth2ClientException.class)
-            .isThrownBy(() -> oAuth2AccessTokenService.getAccessToken(clientProperties))
-            .withMessageContaining("invalid grant-type");
     }
 
     @Test
@@ -229,7 +218,7 @@ class OAuth2AccessTokenServiceTest {
         clientProperties.setClientId("myid");
         clientProperties.setClientSecret("mysecret");
         clientProperties.setScope(Arrays.asList(scope));
-        clientProperties.setGrantType(new OAuth2GrantType("client_credentials"));
+        clientProperties.setGrantType("client_credentials");
         clientProperties.setTokenEndpointUrl(URI.create("http://someurl"));
         return clientProperties;
     }
@@ -240,7 +229,7 @@ class OAuth2AccessTokenServiceTest {
         clientProperties.setClientId("onbehalfof");
         clientProperties.setClientSecret("mysecret");
         clientProperties.setScope(Arrays.asList("scope1", "scope2"));
-        clientProperties.setGrantType(new OAuth2GrantType("urn:ietf:params:oauth:grant-type:jwt-bearer"));
+        clientProperties.setGrantType("urn:ietf:params:oauth:grant-type:jwt-bearer");
         clientProperties.setTokenEndpointUrl(URI.create("http://someurl"));
         return clientProperties;
     }
