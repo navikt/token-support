@@ -28,6 +28,7 @@ public class MockWebServerConfiguration {
         "    \"scope\": \"$scope\",\n" +
         "    \"expires_at\": $expires_at,\n" +
         "    \"ext_expires_in\": $ext_expires_in,\n" +
+        "    \"expires_in\": $expires_in,\n" +
         "    \"access_token\": \"$access_token\"\n" +
         "}\n";
 
@@ -76,6 +77,7 @@ public class MockWebServerConfiguration {
             .replace("$scope", formParams.get("scope"))
             .replace("$expires_at", "" + Instant.now().plusSeconds(3600).getEpochSecond())
             .replace("$ext_expires_in", "30")
+            .replace("$expires_in", "30")
             .replace("$access_token", "somerandomaccesstoken");
 
         log.info("returning tokenResponse={}", response);

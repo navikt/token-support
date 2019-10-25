@@ -1,8 +1,9 @@
 package no.nav.security.token.support.demo.spring.client;
 
-import no.nav.security.token.support.oauth2.ClientConfigurationProperties;
-import no.nav.security.token.support.oauth2.client.OAuth2AccessTokenResponse;
-import no.nav.security.token.support.oauth2.client.OAuth2AccessTokenService;
+import no.nav.security.token.support.client.core.ClientProperties;
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
@@ -12,7 +13,7 @@ import java.util.Optional;
 public class BaseExampleClient {
 
     protected final RestTemplate restTemplate;
-    private final ClientConfigurationProperties.ClientProperties clientProperties;
+    private final ClientProperties clientProperties;
     private final OAuth2AccessTokenService oAuth2AccessTokenService;
 
     public BaseExampleClient(String clientConfigKey, RestTemplateBuilder restTemplateBuilder,

@@ -34,6 +34,7 @@
         <module>token-validation-ktor-demo</module>
         <module>token-client-spring</module>
         <module>token-client-spring-demo</module>
+        <module>token-client-core</module>
     </modules>
 
     <properties>
@@ -236,6 +237,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>token-client-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>token-client-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
