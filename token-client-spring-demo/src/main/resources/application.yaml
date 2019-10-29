@@ -10,19 +10,22 @@ no.nav.security.jwt:
             exampleapi-onbehalfof:
                 resource-url: http://localhost:8181
                 token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
-                client-id: testclient
-                client-secret: testsecret
-                client-auth-method: client_secret_basic
                 grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
                 scope: scope1, scope2
+                authentication:
+                    client-id: testclient
+                    client-secret: testsecret
+                    client-auth-method: client_secret_basic
+
             exampleapi-clientcredentials:
                 resource-url: http://localhost:8181
                 token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
-                client-id: testclient
-                client-secret: testsecret
-                client-auth-method: client_secret_basic
                 grant-type: client_credentials
                 scope: scope3, scope4
+                authentication:
+                    client-id: testclient
+                    client-secret: testsecret
+                    client-auth-method: client_secret_basic
 
 mockwebserver:
     port: 8181

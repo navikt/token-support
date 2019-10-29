@@ -1,9 +1,11 @@
 package no.nav.security.token.support.client.core.oauth2;
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
+import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
+import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2ClientException;
 import no.nav.security.token.support.client.core.OAuth2ParameterNames;
-import no.nav.security.token.support.client.core.ClientProperties;
+import no.nav.security.token.support.client.core.auth.ClientAssertion;
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders;
 import no.nav.security.token.support.client.core.http.OAuth2HttpRequest;
@@ -31,7 +33,7 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
 
         try {
             Map<String, String> formParameters = createDefaultFormParameters(grantRequest);
-            formParameters.putAll(this.buildFormParameters(grantRequest));
+            formParameters.putAll(this.formParameters(grantRequest));
 
             OAuth2HttpRequest oAuth2HttpRequest = OAuth2HttpRequest.builder()
                 .tokenEndpointUrl(clientProperties.getTokenEndpointUrl())
@@ -40,7 +42,7 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
                 .build();
             return oAuth2HttpClient.post(oAuth2HttpRequest);
         } catch (Exception e) {
-            if(!(e instanceof OAuth2ClientException)) {
+            if (!(e instanceof OAuth2ClientException)) {
                 throw new OAuth2ClientException(String.format("received exception %s when invoking tokenendpoint=%s",
                     e, grantRequest.getClientProperties().getTokenEndpointUrl()), e);
             }
@@ -52,10 +54,11 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
         Map<String, List<String>> headers = new HashMap<>();
         headers.put("Accept", Collections.singletonList(CONTENT_TYPE_JSON));
         headers.put("Content-Type", Collections.singletonList(CONTENT_TYPE_FORM_URL_ENCODED));
-        if (ClientAuthenticationMethod.CLIENT_SECRET_BASIC.equals(clientProperties.getClientAuthMethod())) {
+        ClientAuthenticationProperties auth = clientProperties.getAuthentication();
+        if (ClientAuthenticationMethod.CLIENT_SECRET_BASIC.equals(auth.getClientAuthMethod())) {
             headers.put("Authorization",
                 Collections.singletonList("Basic "
-                    + basicAuth(clientProperties.getClientId(), clientProperties.getClientSecret())));
+                    + basicAuth(auth.getClientId(), auth.getClientSecret())));
         }
         return headers;
     }
@@ -68,16 +71,21 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
         return formParameters;
     }
 
-    private Map<String, String> clientAuthenticationFormParameters(T grantRequest){
+    private Map<String, String> clientAuthenticationFormParameters(T grantRequest) {
         ClientProperties clientProperties = grantRequest.getClientProperties();
         Map<String, String> formParameters = new LinkedHashMap<>();
-        if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(clientProperties.getClientAuthMethod())) {
-            formParameters.put(OAuth2ParameterNames.CLIENT_ID, clientProperties.getClientId());
-            formParameters.put(OAuth2ParameterNames.CLIENT_SECRET, clientProperties.getClientSecret());
-        } else if(ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(clientProperties.getClientAuthMethod())){
-            //TODO implement in a separate PR
-            throw new OAuth2ClientException(String.format("clientAuthMethod %s is not supported (yet).",
-                clientProperties.getClientAuthMethod()));
+        ClientAuthenticationProperties auth = clientProperties.getAuthentication();
+        if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(auth.getClientAuthMethod())) {
+
+            formParameters.put(OAuth2ParameterNames.CLIENT_ID, auth.getClientId());
+            formParameters.put(OAuth2ParameterNames.CLIENT_SECRET, auth.getClientSecret());
+
+        } else if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(auth.getClientAuthMethod())) {
+
+            ClientAssertion clientAssertion = new ClientAssertion(clientProperties.getTokenEndpointUrl(), auth);
+            formParameters.put(OAuth2ParameterNames.CLIENT_ID, auth.getClientId());
+            formParameters.put(OAuth2ParameterNames.CLIENT_ASSERTION_TYPE, clientAssertion.assertionType());
+            formParameters.put(OAuth2ParameterNames.CLIENT_ASSERTION, clientAssertion.assertion());
         }
         return formParameters;
     }
@@ -94,5 +102,5 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
         }
     }
 
-    protected abstract Map<String, String> buildFormParameters(T grantRequest);
+    protected abstract Map<String, String> formParameters(T grantRequest);
 }

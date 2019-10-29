@@ -1,7 +1,6 @@
 package no.nav.security.token.support.client.core;
 
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -10,7 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@Data
+@Getter
+@ToString
+@EqualsAndHashCode
+@Builder(toBuilder = true)
 public class ClientProperties {
 
     private static final List<OAuth2GrantType> GRANT_TYPES = List.of(
@@ -18,53 +20,38 @@ public class ClientProperties {
         OAuth2GrantType.CLIENT_CREDENTIALS
     );
 
-    private static final List<ClientAuthenticationMethod> CLIENT_AUTH_METHODS = List.of(
-        ClientAuthenticationMethod.CLIENT_SECRET_BASIC,
-        ClientAuthenticationMethod.CLIENT_SECRET_POST,
-        ClientAuthenticationMethod.PRIVATE_KEY_JWT);
-
     @NotNull
-    private URI resourceUrl;
+    private final URI resourceUrl;
     @NotNull
-    private URI tokenEndpointUrl;
-    @NotEmpty
-    private String clientId;
-    @NotEmpty
-    private String clientSecret;
-    private ClientAuthenticationMethod clientAuthMethod = ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
+    private final URI tokenEndpointUrl;
     @NotNull
-    private OAuth2GrantType grantType;
+    private final OAuth2GrantType grantType;
     @NotEmpty
-    private List<String> scope;
+    private final List<String> scope;
+    @NotNull
+    private final ClientAuthenticationProperties authentication;
 
-    public void setGrantType(OAuth2GrantType oAuth2GrantType) {
-        setGrantType(Optional.ofNullable(oAuth2GrantType.getValue()).orElse(null));
+    public ClientProperties(@NotNull URI resourceUrl,
+                            @NotNull URI tokenEndpointUrl,
+                            @NotNull OAuth2GrantType grantType,
+                            @NotEmpty List<String> scope,
+                            @NotNull ClientAuthenticationProperties authentication) {
+        this.resourceUrl = resourceUrl;
+        this.tokenEndpointUrl = tokenEndpointUrl;
+        this.grantType = getSupported(grantType);
+        this.scope = scope;
+        this.authentication = authentication;
     }
 
-    public void setGrantType(String value) {
-        this.grantType = GRANT_TYPES
-            .stream()
-            .filter(grant -> grant.getValue().equals(value))
-            .findFirst()
-            .orElseThrow(unsupported(OAuth2GrantType.class, value));
+    private static OAuth2GrantType getSupported(OAuth2GrantType oAuth2GrantType){
+        return Optional.ofNullable(oAuth2GrantType)
+                .filter(GRANT_TYPES::contains)
+                .orElseThrow(unsupported(oAuth2GrantType));
     }
 
-    public void setClientAuthMethod(ClientAuthenticationMethod clientAuthMethod) {
-        setClientAuthMethod(Optional.ofNullable(clientAuthMethod.getValue()).orElse(null));
-    }
-
-    @SuppressWarnings("unused")
-    public void setClientAuthMethod(String value) {
-        this.clientAuthMethod = CLIENT_AUTH_METHODS
-            .stream()
-            .filter(c -> c.getValue().equals(value))
-            .findFirst()
-            .orElseThrow(unsupported(ClientAuthenticationMethod.class, value));
-    }
-
-    private Supplier<OAuth2ClientException> unsupported(Class<?> clazz, String value) {
-        return () -> new OAuth2ClientException(
+    private static Supplier<IllegalArgumentException> unsupported(OAuth2GrantType oAuth2GrantType) {
+        return () -> new IllegalArgumentException(
             String.format("unsupported %s with value %s, must be one of %s",
-                clazz.getSimpleName(), value, CLIENT_AUTH_METHODS));
+                OAuth2GrantType.class.getSimpleName(), oAuth2GrantType, GRANT_TYPES));
     }
 }

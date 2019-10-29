@@ -2,7 +2,6 @@ package no.nav.security.token.support.client.spring.oauth2;
 
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -16,8 +15,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Import({
-    OAuth2ClientConfiguration.class,
-    ClientConfigurationProperties.class
+    OAuth2ClientConfiguration.class
 })
 public @interface EnableOAuth2Client {
     /**

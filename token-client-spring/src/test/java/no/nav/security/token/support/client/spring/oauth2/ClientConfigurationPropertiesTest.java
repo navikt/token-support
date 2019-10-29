@@ -2,6 +2,7 @@ package no.nav.security.token.support.client.spring.oauth2;
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import no.nav.security.token.support.client.core.ClientProperties;
+import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {ClientConfigurationProperties.class})
+@SpringBootTest(classes = {OAuth2ClientConfiguration.class})
 @ActiveProfiles("test")
 class ClientConfigurationPropertiesTest {
 
@@ -27,9 +28,11 @@ class ClientConfigurationPropertiesTest {
         ClientProperties clientProperties =
             clientConfigurationProperties.getRegistration().values().stream().findFirst().orElse(null);
         assertThat(clientProperties).isNotNull();
-        assertThat(clientProperties.getClientAuthMethod()).isNotNull();
-        assertThat(clientProperties.getClientId()).isNotNull();
-        assertThat(clientProperties.getClientSecret()).isNotNull();
+        ClientAuthenticationProperties auth = clientProperties.getAuthentication();
+        assertThat(auth).isNotNull();
+        assertThat(auth.getClientAuthMethod()).isNotNull();
+        assertThat(auth.getClientId()).isNotNull();
+        assertThat(auth.getClientSecret()).isNotNull();
         assertThat(clientProperties.getScope()).isNotEmpty();
         assertThat(clientProperties.getTokenEndpointUrl()).isNotNull();
         assertThat(clientProperties.getGrantType().getValue()).isNotNull();
@@ -42,9 +45,11 @@ class ClientConfigurationPropertiesTest {
         ClientProperties clientProperties =
             clientConfigurationProperties.getRegistration().get("example1-clientcredentials3");
         assertThat(clientProperties).isNotNull();
-        assertThat(clientProperties.getClientAuthMethod()).isEqualTo(ClientAuthenticationMethod.PRIVATE_KEY_JWT);
-        assertThat(clientProperties.getClientId()).isNotNull();
-        assertThat(clientProperties.getClientSecret()).isNotNull();
+        ClientAuthenticationProperties auth = clientProperties.getAuthentication();
+        assertThat(auth).isNotNull();
+        assertThat(auth.getClientAuthMethod()).isEqualTo(ClientAuthenticationMethod.PRIVATE_KEY_JWT);
+        assertThat(auth.getClientId()).isNotNull();
+        assertThat(auth.getClientRsaKey()).isNotNull();
         assertThat(clientProperties.getScope()).isNotEmpty();
         assertThat(clientProperties.getTokenEndpointUrl()).isNotNull();
         assertThat(clientProperties.getGrantType().getValue()).isNotNull();

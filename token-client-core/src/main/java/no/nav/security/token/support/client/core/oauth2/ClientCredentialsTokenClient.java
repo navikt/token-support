@@ -12,7 +12,7 @@ public class ClientCredentialsTokenClient extends AbstractOAuth2TokenClient<Clie
 
     //TODO check if invoking default params twice is a problem
     @Override
-    protected Map<String, String> buildFormParameters(ClientCredentialsGrantRequest grantRequest) {
+    protected Map<String, String> formParameters(ClientCredentialsGrantRequest grantRequest) {
         return createDefaultFormParameters(grantRequest);
     }
 }

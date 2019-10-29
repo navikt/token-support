@@ -13,7 +13,7 @@ public class OnBehalfOfTokenClient extends AbstractOAuth2TokenClient<OnBehalfOfG
         super(oAuth2HttpClient);
     }
 
-    protected Map<String, String> buildFormParameters(OnBehalfOfGrantRequest grantRequest) {
+    protected Map<String, String> formParameters(OnBehalfOfGrantRequest grantRequest) {
         Map<String, String> formParameters = createDefaultFormParameters(grantRequest);
         formParameters.put(OAuth2ParameterNames.ASSERTION, grantRequest.getAssertion());
         formParameters.put(OAuth2ParameterNames.REQUESTED_TOKEN_USE, REQUESTED_TOKEN_USE_VALUE);
