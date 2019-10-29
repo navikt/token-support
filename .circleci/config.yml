@@ -11,16 +11,13 @@ jobs:
                   keys:
                       - maven3-{{ checksum "pom.xml" }}
             - run:
-                  name: Resolve/Update Dependencies
-                  command: mvn dependency:resolve-plugins dependency:go-offline
+                  name: Build (and run tests)
+                  command: "mvn clean install -X"
             - save_cache:
                   name: Cache Maven dependencies
                   key: maven3-{{ checksum "pom.xml" }}
                   paths:
                       - ~/.m2
-            - run:
-                  name: Build (and run tests)
-                  command: "mvn clean install -X"
 
 
 workflows:
