@@ -32,6 +32,9 @@ jobs:
           name: Import gpg key
           command: echo $GPG_KEY_BASE64 | base64 --decode | gpg --yes --batch --import
       - run:
+          name: DEbug
+          command: chmod 644 .circleci/debug.sh && .circleci/debug.sh
+      - run:
           name: Deploy to Maven Central
           command: "export GPG_TTY=$(tty) && mvn --settings .circleci/settings.xml deploy -Prelease,deploy-to-sonatype -DskipTests=true -X -e"
 
