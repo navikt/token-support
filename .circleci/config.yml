@@ -32,6 +32,9 @@ jobs:
           name: Import gpg key
           command: echo $GPG_KEY_BASE64 | base64 --decode | gpg --yes --batch --import
       - run:
+          name: DEbug
+          command: .circleci/debug.sh
+      - run:
           name: Deploy to Maven Central
           command: "mvn --settings .circleci/settings.xml deploy -Prelease,deploy-to-sonatype -DskipTests=true -X -e"
 
@@ -40,11 +43,11 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - build
+      #- build
       - deploy:
           context: Maven Central Release
-          requires:
-            - build
+          #requires:
+           # - build
           filters:
             branches:
               only: master
