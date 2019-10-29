@@ -1,11 +1,11 @@
 language: java
-script: mvn package
+#script: mvn package
 deploy:
   provider: script
   skip_cleanup: true
   script: "./travis/deploy.sh"
   on:
-    branch: master
+    branch: travis
 env:
   global:
   - OSSRH_JIRA_USERNAME=navikt
