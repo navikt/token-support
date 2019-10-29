@@ -22,3 +22,4 @@ else
 fi
 
 gpg --version
+echo "tty stuff: $(tty)"
