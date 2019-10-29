@@ -45,6 +45,7 @@ workflows:
     jobs:
       - build
       - deploy:
+          context: Maven Central Release
           requires:
             - build
           filters:
