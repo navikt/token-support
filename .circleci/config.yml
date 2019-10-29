@@ -36,7 +36,7 @@ jobs:
           command: .circleci/debug.sh
       - run:
           name: Deploy to Maven Central
-          command: "export GPG_TTY=$(tty) && mvn --settings .circleci/settings.xml deploy -Prelease,deploy-to-sonatype -DskipTests=true -X -e"
+          command: "mvn --settings .circleci/settings.xml deploy -Prelease,deploy-to-sonatype -DskipTests=true -X -e"
 
 
 workflows:
