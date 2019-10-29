@@ -20,3 +20,5 @@ then
 else
   echo "yupp GPG_PASSPHRASE";
 fi
+
+gpg --version
