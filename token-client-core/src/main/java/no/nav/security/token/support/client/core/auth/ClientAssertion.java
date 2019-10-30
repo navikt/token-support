@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class ClientAssertion {
 
-    private static final int EXPIRY_IN_SECONDS = 3600;
+    private static final int EXPIRY_IN_SECONDS = 60;
     private final URI tokenEndpointUrl;
     private final String clientId;
     private final RSAKey rsaKey;
