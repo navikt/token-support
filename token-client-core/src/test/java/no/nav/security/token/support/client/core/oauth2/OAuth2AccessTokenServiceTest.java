@@ -7,13 +7,13 @@ import com.nimbusds.jwt.PlainJWT;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2CacheFactory;
 import no.nav.security.token.support.client.core.OAuth2ClientException;
+import no.nav.security.token.support.client.core.OAuth2GrantType;
 import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
+import static no.nav.security.token.support.client.core.TestUtils.clientProperties;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
@@ -213,25 +214,14 @@ class OAuth2AccessTokenServiceTest {
     }
 
     private static ClientProperties clientCredentialsProperties(String... scope) {
-        ClientProperties clientProperties = new ClientProperties();
-        clientProperties.setClientAuthMethod("client_secret_basic");
-        clientProperties.setClientId("myid");
-        clientProperties.setClientSecret("mysecret");
-        clientProperties.setScope(Arrays.asList(scope));
-        clientProperties.setGrantType("client_credentials");
-        clientProperties.setTokenEndpointUrl(URI.create("http://someurl"));
-        return clientProperties;
+        return clientProperties("http://token", OAuth2GrantType.CLIENT_CREDENTIALS)
+            .toBuilder()
+            .scope(Arrays.asList(scope))
+            .build();
     }
 
     private static ClientProperties onBehalfOfProperties() {
-        ClientProperties clientProperties = new ClientProperties();
-        clientProperties.setClientAuthMethod("client_secret_basic");
-        clientProperties.setClientId("onbehalfof");
-        clientProperties.setClientSecret("mysecret");
-        clientProperties.setScope(Arrays.asList("scope1", "scope2"));
-        clientProperties.setGrantType("urn:ietf:params:oauth:grant-type:jwt-bearer");
-        clientProperties.setTokenEndpointUrl(URI.create("http://someurl"));
-        return clientProperties;
+        return clientProperties("http://token", OAuth2GrantType.JWT_BEARER);
     }
 
     private static OAuth2AccessTokenResponse accessTokenResponse(String assertion, int expiresIn) {

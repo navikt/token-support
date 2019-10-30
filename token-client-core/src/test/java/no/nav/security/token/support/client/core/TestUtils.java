@@ -3,6 +3,7 @@ package no.nav.security.token.support.client.core;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.RecordedRequest;
 
@@ -22,14 +23,17 @@ public class TestUtils {
     public static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
 
     public static ClientProperties clientProperties(String tokenEndpointUrl, OAuth2GrantType oAuth2GrantType) {
-        ClientProperties clientProperties = new ClientProperties();
-        clientProperties.setClientAuthMethod("client_secret_basic");
-        clientProperties.setClientId("myid");
-        clientProperties.setClientSecret("mysecret");
-        clientProperties.setScope(Arrays.asList("scope1", "scope2"));
-        clientProperties.setGrantType(oAuth2GrantType.getValue());
-        clientProperties.setTokenEndpointUrl(URI.create(tokenEndpointUrl));
-        return clientProperties;
+        return ClientProperties.builder()
+            .grantType(oAuth2GrantType)
+            .resourceUrl(URI.create("http://resourceurl"))
+            .scope(List.of("scope1", "scope2"))
+            .tokenEndpointUrl(URI.create(tokenEndpointUrl))
+            .authentication(ClientAuthenticationProperties.builder()
+                .clientAuthMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .clientId("client1")
+                .clientSecret("clientSecret1")
+                .build())
+            .build();
     }
 
     public static MockResponse jsonResponse(String json) {

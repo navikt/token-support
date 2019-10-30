@@ -7,4 +7,6 @@ public interface OAuth2ParameterNames {
     String ASSERTION = "assertion";
     String REQUESTED_TOKEN_USE = "requested_token_use";
     String SCOPE = "scope";
+    String CLIENT_ASSERTION_TYPE = "client_assertion_type";
+    String CLIENT_ASSERTION = "client_assertion";
 }

@@ -6,8 +6,12 @@ import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient;
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.jwt.JwtToken;
+import no.nav.security.token.support.spring.SpringTokenValidationContextHolder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +21,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Optional;
 
+@EnableConfigurationProperties(ClientConfigurationProperties.class)
 @Configuration
 public class OAuth2ClientConfiguration implements ImportAware {
 
@@ -44,21 +49,34 @@ public class OAuth2ClientConfiguration implements ImportAware {
             long maximumSize = enableOAuth2ClientAttributes.getNumber("cacheMaximumSize");
             long skewInSeconds = enableOAuth2ClientAttributes.getNumber("cacheEvictSkew");
             oAuth2AccessTokenService.setClientCredentialsGrantCache(OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
-            oAuth2AccessTokenService.setOnBehalfOfGrantCache(OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
+            oAuth2AccessTokenService.setOnBehalfOfGrantCache(OAuth2CacheFactory.accessTokenResponseCache(maximumSize,
+                skewInSeconds));
         }
         return oAuth2AccessTokenService;
     }
 
     @Bean
-    OAuth2HttpClient oAuth2HttpClient(RestTemplateBuilder restTemplateBuilder){
+    OAuth2HttpClient oAuth2HttpClient(RestTemplateBuilder restTemplateBuilder) {
         return new DefaultOAuth2HttpClient(restTemplateBuilder);
     }
 
     @Bean
-    OnBehalfOfAssertionResolver onBehalfOfAssertionResolver(TokenValidationContextHolder contextHolder){
+    OnBehalfOfAssertionResolver onBehalfOfAssertionResolver(TokenValidationContextHolder contextHolder) {
         return () ->
             contextHolder.getTokenValidationContext() != null ?
-            contextHolder.getTokenValidationContext().getFirstValidToken()
-                .map(JwtToken::getTokenAsString) : Optional.empty();
+                contextHolder.getTokenValidationContext().getFirstValidToken()
+                    .map(JwtToken::getTokenAsString) : Optional.empty();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(RestTemplateBuilder.class)
+    RestTemplateBuilder restTemplateBuilder() {
+        return new RestTemplateBuilder();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(TokenValidationContextHolder.class)
+    TokenValidationContextHolder tokenValidationContextHolder() {
+        return new SpringTokenValidationContextHolder();
     }
 }
