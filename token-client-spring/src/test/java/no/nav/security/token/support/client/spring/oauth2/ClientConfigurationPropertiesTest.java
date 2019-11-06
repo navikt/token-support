@@ -5,21 +5,35 @@ import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {OAuth2ClientConfiguration.class})
+@SpringBootTest(classes = {OAuth2ClientConfiguration.class, RestTemplateAutoConfiguration.class})
 @ActiveProfiles("test")
 class ClientConfigurationPropertiesTest {
 
+    @MockBean
+    private TokenValidationContextHolder tokenValidationContextHolder;
+
     @Autowired
     private ClientConfigurationProperties clientConfigurationProperties;
+
+    @BeforeEach
+    void before(){
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     void testClientConfigIsValid() {

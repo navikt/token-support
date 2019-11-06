@@ -57,13 +57,11 @@ public class OAuth2ClientConfiguration implements ImportAware {
     }
 
     @Bean
-    @ConditionalOnMissingBean(OAuth2HttpClient.class)
     OAuth2HttpClient oAuth2HttpClient(RestTemplateBuilder restTemplateBuilder) {
         return new DefaultOAuth2HttpClient(restTemplateBuilder);
     }
 
     @Bean
-    @ConditionalOnMissingBean(OnBehalfOfAssertionResolver.class)
     @ConditionalOnClass(TokenValidationContextHolder.class)
     OnBehalfOfAssertionResolver onBehalfOfAssertionResolver(TokenValidationContextHolder contextHolder) {
         return () ->
@@ -75,7 +73,7 @@ public class OAuth2ClientConfiguration implements ImportAware {
     @Bean
     @ConditionalOnMissingBean(OnBehalfOfAssertionResolver.class)
     @ConditionalOnMissingClass("no.nav.security.token.support.core.context.TokenValidationContextHolder")
-    OnBehalfOfAssertionResolver onBehalfOfAssertionResolver() {
+    OnBehalfOfAssertionResolver noOpOnBehalfOfAssertionResolver() {
         return () -> {
             throw new UnsupportedOperationException(
                 String.format("a no-op implementation of %s is registered, cannot get assertion required for OnBehalfOf grant",

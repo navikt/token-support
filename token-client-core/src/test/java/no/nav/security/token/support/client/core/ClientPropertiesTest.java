@@ -30,7 +30,6 @@ class ClientPropertiesTest {
     private static void createInstanceWith(OAuth2GrantType grantType) {
         new ClientProperties(
             URI.create("http://token"),
-            URI.create("http://resource"),
             grantType,
             List.of("scope1", "scope2"),
             new ClientAuthenticationProperties(
