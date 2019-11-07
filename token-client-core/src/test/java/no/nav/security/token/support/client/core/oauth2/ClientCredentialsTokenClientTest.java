@@ -112,7 +112,7 @@ class ClientCredentialsTokenClientTest {
             .authentication(ClientAuthenticationProperties.builder()
                 .clientId("client")
                 .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
-                .clientPrivateKey("src/test/resources/jwk.json")
+                .clientJwk("src/test/resources/jwk.json")
                 .build())
             .build();
 

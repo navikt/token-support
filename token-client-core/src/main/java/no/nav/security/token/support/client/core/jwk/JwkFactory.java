@@ -4,6 +4,7 @@ package no.nav.security.token.support.client.core.jwk;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,13 +22,14 @@ import java.text.ParseException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@Slf4j
 public class JwkFactory {
 
     private static final boolean USE_CERTIFICATE_SHA1_THUMBPRINT = true;
 
     public static RSAKey fromJsonFile(String filePath){
         try {
-
+            log.debug("attempting to read jwk from path: {}", Path.of(filePath).toAbsolutePath());
             String jsonJwk = Files.readString(Path.of(filePath), StandardCharsets.UTF_8);
             return fromJson(jsonJwk);
         } catch (IOException e) {

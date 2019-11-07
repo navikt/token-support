@@ -41,5 +41,5 @@ no.nav.security.jwt.client:
       scope: scope3, scope4
       authentication:
         client-id: testclient
-        client-private-key: src/test/resources/jwk.json
+        client-jwk: src/test/resources/jwk.json
         client-auth-method: private_key_jwt
