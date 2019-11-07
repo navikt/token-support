@@ -27,19 +27,19 @@ public class ClientAuthenticationProperties {
     private final ClientAuthenticationMethod clientAuthMethod;
     private final String clientSecret;
     @Getter(AccessLevel.NONE)
-    private final String clientPrivateKey;
+    private final String clientJwk;
     private final RSAKey clientRsaKey;
 
     @Builder(toBuilder = true)
     public ClientAuthenticationProperties(@NotNull String clientId,
                                           ClientAuthenticationMethod clientAuthMethod,
                                           String clientSecret,
-                                          String clientPrivateKey) {
+                                          String clientJwk) {
         this.clientId = clientId;
         this.clientAuthMethod = getSupported(clientAuthMethod);
         this.clientSecret = clientSecret;
-        this.clientPrivateKey = clientPrivateKey;
-        this.clientRsaKey = loadKey(clientPrivateKey);
+        this.clientJwk = clientJwk;
+        this.clientRsaKey = loadKey(clientJwk);
         validateAfterPropertiesSet();
     }
 
@@ -64,7 +64,7 @@ public class ClientAuthenticationProperties {
         } else if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(this.clientAuthMethod)){
             Objects.requireNonNull(clientSecret, "clientSecret cannot be null");
         } else if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(this.clientAuthMethod)){
-            Objects.requireNonNull(clientPrivateKey, "clientPrivateKey must be set");
+            Objects.requireNonNull(clientJwk, "clientPrivateKey must be set");
         }
     }
 

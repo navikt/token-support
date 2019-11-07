@@ -25,7 +25,7 @@ class ClientAssertionTest {
     @Test
     void testCreateAssertion() throws ParseException, JOSEException {
         ClientAuthenticationProperties clientAuth = ClientAuthenticationProperties.builder()
-            .clientPrivateKey("src/test/resources/jwk.json")
+            .clientJwk("src/test/resources/jwk.json")
             .clientId("client1")
             .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
             .build();

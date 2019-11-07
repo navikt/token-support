@@ -9,8 +9,9 @@ import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.jwt.JwtToken;
-import no.nav.security.token.support.spring.SpringTokenValidationContextHolder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -61,6 +62,7 @@ public class OAuth2ClientConfiguration implements ImportAware {
     }
 
     @Bean
+    @ConditionalOnClass(TokenValidationContextHolder.class)
     OnBehalfOfAssertionResolver onBehalfOfAssertionResolver(TokenValidationContextHolder contextHolder) {
         return () ->
             contextHolder.getTokenValidationContext() != null ?
@@ -69,14 +71,13 @@ public class OAuth2ClientConfiguration implements ImportAware {
     }
 
     @Bean
-    @ConditionalOnMissingBean(RestTemplateBuilder.class)
-    RestTemplateBuilder restTemplateBuilder() {
-        return new RestTemplateBuilder();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(TokenValidationContextHolder.class)
-    TokenValidationContextHolder tokenValidationContextHolder() {
-        return new SpringTokenValidationContextHolder();
+    @ConditionalOnMissingBean(OnBehalfOfAssertionResolver.class)
+    @ConditionalOnMissingClass("no.nav.security.token.support.core.context.TokenValidationContextHolder")
+    OnBehalfOfAssertionResolver noOpOnBehalfOfAssertionResolver() {
+        return () -> {
+            throw new UnsupportedOperationException(
+                String.format("a no-op implementation of %s is registered, cannot get assertion required for OnBehalfOf grant",
+                    OnBehalfOfAssertionResolver.class));
+        };
     }
 }

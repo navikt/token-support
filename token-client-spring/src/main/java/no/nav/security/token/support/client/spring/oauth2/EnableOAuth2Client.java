@@ -14,9 +14,7 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Import({
-    OAuth2ClientConfiguration.class
-})
+@Import(OAuth2ClientConfiguration.class)
 public @interface EnableOAuth2Client {
     /**
      * Enable caching for OAuth 2.0 access_token response in the

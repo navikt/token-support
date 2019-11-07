@@ -21,8 +21,6 @@ public class ClientProperties {
     );
 
     @NotNull
-    private final URI resourceUrl;
-    @NotNull
     private final URI tokenEndpointUrl;
     @NotNull
     private final OAuth2GrantType grantType;
@@ -31,12 +29,10 @@ public class ClientProperties {
     @NotNull
     private final ClientAuthenticationProperties authentication;
 
-    public ClientProperties(@NotNull URI resourceUrl,
-                            @NotNull URI tokenEndpointUrl,
+    public ClientProperties(@NotNull URI tokenEndpointUrl,
                             @NotNull OAuth2GrantType grantType,
                             @NotEmpty List<String> scope,
                             @NotNull ClientAuthenticationProperties authentication) {
-        this.resourceUrl = resourceUrl;
         this.tokenEndpointUrl = tokenEndpointUrl;
         this.grantType = getSupported(grantType);
         this.scope = scope;

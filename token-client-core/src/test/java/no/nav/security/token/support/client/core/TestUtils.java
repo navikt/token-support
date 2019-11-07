@@ -25,7 +25,6 @@ public class TestUtils {
     public static ClientProperties clientProperties(String tokenEndpointUrl, OAuth2GrantType oAuth2GrantType) {
         return ClientProperties.builder()
             .grantType(oAuth2GrantType)
-            .resourceUrl(URI.create("http://resourceurl"))
             .scope(List.of("scope1", "scope2"))
             .tokenEndpointUrl(URI.create(tokenEndpointUrl))
             .authentication(ClientAuthenticationProperties.builder()

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile("dev")
+@Profile("mock")
 @Import(TokenGeneratorConfiguration.class)
-public class ApplicationConfigurationDev {
+public class MockProfileConfiguration {
 }
