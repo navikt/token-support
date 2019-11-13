@@ -34,6 +34,7 @@
         <module>token-validation-ktor-demo</module>
         <module>token-client-spring</module>
         <module>token-client-spring-demo</module>
+        <module>token-validation-spring-boot-webflux-security</module>
         <module>token-client-core</module>
     </modules>
 
@@ -235,6 +236,11 @@
                 <groupId>${project.groupId}</groupId>
                 <artifactId>token-validation-spring</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}}</groupId>
+                <artifactId>token-validation-spring-boot-webflux-security</artifactId>
+                <version>${project.version}}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
