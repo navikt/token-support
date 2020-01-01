@@ -50,7 +50,7 @@
         <hibernate-validator.version>6.1.0.Final</hibernate-validator.version>
         <mockwebserver.version>4.2.2</mockwebserver.version>
         <caffeine.version>2.8.0</caffeine.version>
-        <okhttp3.version>4.2.2</okhttp3.version>
+        <okhttp3.version>4.3.0</okhttp3.version>
     </properties>
 
     <scm>
