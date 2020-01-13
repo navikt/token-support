@@ -9,6 +9,7 @@ import io.ktor.http.Headers
 import io.ktor.http.decodeCookieValue
 import io.ktor.request.RequestCookies
 import io.ktor.response.respond
+import io.ktor.util.KtorExperimentalAPI
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
@@ -22,41 +23,43 @@ import java.net.URL
 
 data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
-@io.ktor.util.KtorExperimentalAPI
+@KtorExperimentalAPI
 private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::class.java.name)
 
-@io.ktor.util.KtorExperimentalAPI
-class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfig) : AuthenticationProvider(name) {
+@KtorExperimentalAPI
+class TokenSupportAuthenticationProvider(
+    name: String?,
+    config: ApplicationConfig,
+    resourceRetriever: ProxyAwareResourceRetriever
+) : AuthenticationProvider(name) {
     private val multiIssuerConfiguration: MultiIssuerConfiguration
     internal val jwtTokenValidationHandler: JwtTokenValidationHandler
 
     init {
-        val issuerPropertiesMap: MutableMap<String, IssuerProperties> = hashMapOf()
-        for (issuerConfig in config.configList("no.nav.security.jwt.issuers")) {
-            issuerPropertiesMap[issuerConfig.property("issuer_name").getString()] = IssuerProperties(
-                URL(issuerConfig.property("discoveryurl").getString()),
-                issuerConfig.property("accepted_audience").getString().split(","),
-                issuerConfig.propertyOrNull("cookie_name")?.getString()
-            )
-        }
-
-        multiIssuerConfiguration = MultiIssuerConfiguration(
-            issuerPropertiesMap,
-            ProxyAwareResourceRetriever(System.getenv("HTTP_PROXY")?.let { URL(it) })
-        )
+        val issuerPropertiesMap: Map<String, IssuerProperties> = config.configList("no.nav.security.jwt.issuers")
+            .associate { issuerConfig ->
+                issuerConfig.property("issuer_name").getString() to IssuerProperties(
+                    URL(issuerConfig.property("discoveryurl").getString()),
+                    issuerConfig.property("accepted_audience").getString().split(","),
+                    issuerConfig.propertyOrNull("cookie_name")?.getString()
+                )
+            }
+        multiIssuerConfiguration = MultiIssuerConfiguration(issuerPropertiesMap, resourceRetriever)
         jwtTokenValidationHandler = JwtTokenValidationHandler(multiIssuerConfiguration)
     }
-
 }
 
-@io.ktor.util.KtorExperimentalAPI
+@KtorExperimentalAPI
 fun Authentication.Configuration.tokenValidationSupport(
     name: String? = null,
     config: ApplicationConfig,
     requiredClaims: RequiredClaims? = null,
-    additionalValidation: ((TokenValidationContext) -> Boolean)? = null
+    additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
+    resourceRetriever: ProxyAwareResourceRetriever = ProxyAwareResourceRetriever(
+        System.getenv("HTTP_PROXY")?.let { URL(it) }
+    )
 ) {
-    val provider = TokenSupportAuthenticationProvider(name, config)
+    val provider = TokenSupportAuthenticationProvider(name, config, resourceRetriever)
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
         val tokenValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(
             JwtTokenHttpRequest(call.request.cookies, call.request.headers)
@@ -98,7 +101,7 @@ data class IssuerConfig(
     val cookieName: String? = null
 )
 
-@io.ktor.util.KtorExperimentalAPI
+@KtorExperimentalAPI
 class TokenSupportConfig(vararg issuers: IssuerConfig) : MapApplicationConfig(
     *(issuers.mapIndexed { index, issuerConfig ->
         listOf(
@@ -144,7 +147,7 @@ internal data class NameValueCookie(@JvmField val name: String, @JvmField val va
 
 internal data class JwtTokenHttpRequest(private val cookies: RequestCookies, private val headers: Headers) :
     HttpRequest {
-    @io.ktor.util.KtorExperimentalAPI
+    @KtorExperimentalAPI
     override fun getCookies() =
         cookies.rawCookies.map {
             NameValueCookie(
