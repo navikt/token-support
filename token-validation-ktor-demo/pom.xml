@@ -47,6 +47,10 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-validation-test-support</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit</artifactId>
             <version>${kotlin_version}</version>
@@ -69,11 +73,6 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-test-support</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
