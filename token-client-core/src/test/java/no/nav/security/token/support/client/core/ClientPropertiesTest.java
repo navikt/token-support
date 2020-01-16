@@ -36,7 +36,8 @@ class ClientPropertiesTest {
                 "client",
                 ClientAuthenticationMethod.CLIENT_SECRET_BASIC,
                 "secret",
-                null));
+                null),
+            null);
     }
 
 }
