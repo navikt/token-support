@@ -2,8 +2,6 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/navikt/token-support/badge.svg)](https://snyk.io/test/github/navikt/token-support)
 [![Published on Maven](https://img.shields.io/maven-metadata/v/http/central.maven.org/maven2/no/nav/security/token-support/maven-metadata.xml.svg)](http://central.maven.org/maven2/no/nav/security/token-support/)
 
-> For Spring Boot based applications the currently supported version is 2.2.0.RELEASE, we will not upgrade to 2.2.1 but wait for later releases until issue [#79](https://github.com/navikt/token-support/issues/79) is fixed 
-
 # token-support
 This project consist of common modules to support security token handling in a java and kotlin microservices architecture, with emphasis on validation of OpenID Connect ID Tokens and OAuth 2.0 JWT access tokens.
 
