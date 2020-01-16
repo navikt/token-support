@@ -1,9 +1,7 @@
 package no.nav.security.token.support.client.spring.oauth2;
 
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 import no.nav.security.token.support.client.core.ClientProperties;
-import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +12,6 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,7 +26,7 @@ class ClientConfigurationPropertiesTestWithResourceUrl {
     private ClientConfigurationProperties clientConfigurationProperties;
 
     @BeforeEach
-    void before(){
+    void before() {
         MockitoAnnotations.initMocks(this);
     }
 
