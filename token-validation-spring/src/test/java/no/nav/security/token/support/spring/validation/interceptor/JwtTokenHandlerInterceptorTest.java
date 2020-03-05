@@ -126,11 +126,15 @@ class JwtTokenHandlerInterceptorTest {
     }
 
     private static JwtToken createJwtToken(String claimName, String claimValue) {
+        final JSONArray groupsValues = new JSONArray();
+        groupsValues.add("123");
+        groupsValues.add("456");
+
         JWT jwt = new PlainJWT(new JWTClaimsSet.Builder()
             .subject("subject")
             .issuer("http//issuer1")
             .claim("acr", "Level4")
-            .claim("groups", new JSONArray().appendElement("123").appendElement("456"))
+            .claim("groups", groupsValues)
             .claim(claimName, claimValue).build());
         return new JwtToken(jwt.serialize());
     }
