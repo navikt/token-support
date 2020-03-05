@@ -112,7 +112,7 @@ public class JwtTokenAnnotationHandler {
             return Arrays.stream(claims)
                 .map(claimUnparsed -> claimUnparsed.split("="))
                 .filter(pair -> pair.length == 2)
-                .allMatch(pair -> jwtToken.containsClaim(pair[0], pair[1]));
+                .allMatch(pair -> jwtToken.containsClaim(pair[0].trim(), pair[1].trim()));
         }
         return true;
     }
@@ -122,7 +122,7 @@ public class JwtTokenAnnotationHandler {
             return Arrays.stream(claims)
                 .map(claimUnparsed -> claimUnparsed.split("="))
                 .filter(pair -> pair.length == 2)
-                .anyMatch(pair -> jwtToken.containsClaim(pair[0], pair[1]));
+                .anyMatch(pair -> jwtToken.containsClaim(pair[0].trim(), pair[1].trim()));
         }
         log.debug("no claims listed, so claim checking is ok.");
         return true;
