@@ -107,36 +107,25 @@ public class JwtTokenAnnotationHandler {
             : containsAllClaims(jwtBearerToken, claims);
     }
 
-    private boolean containsAllClaims(JwtToken jwtBearerToken, String... claims) {
-        Map<String, String> claimMap = convertToMap(claims);
-        for (Map.Entry<String, String> entry : claimMap.entrySet()) {
-            if (!jwtBearerToken.containsClaim(entry.getKey(), entry.getValue())) {
-                log.debug("token does not contain {} = {}", entry.getKey(), entry.getValue());
-                return false;
-            }
+    private boolean containsAllClaims(JwtToken jwtToken, String... claims) {
+        if (claims != null && claims.length > 0) {
+            return Arrays.stream(claims)
+                .map(claimUnparsed -> claimUnparsed.split("="))
+                .filter(pair -> pair.length == 2)
+                .allMatch(pair -> jwtToken.containsClaim(pair[0].trim(), pair[1].trim()));
         }
         return true;
     }
 
     private boolean containsAnyClaim(JwtToken jwtToken, String... claims) {
         if (claims != null && claims.length > 0) {
-            Map<String, String> claimMap = convertToMap(claims);
-            for (Map.Entry<String, String> entry : claimMap.entrySet()) {
-                if (jwtToken.containsClaim(entry.getKey(), entry.getValue())) {
-                    return true;
-                }
-            }
-            log.debug("token does not contain any of the listed claims");
-            return false;
+            return Arrays.stream(claims)
+                .map(claimUnparsed -> claimUnparsed.split("="))
+                .filter(pair -> pair.length == 2)
+                .anyMatch(pair -> jwtToken.containsClaim(pair[0].trim(), pair[1].trim()));
         }
         log.debug("no claims listed, so claim checking is ok.");
         return true;
     }
 
-    private Map<String, String> convertToMap(String... claims) {
-        return Arrays.stream(claims)
-            .map(s -> s.split("="))
-            .filter(pair -> pair.length == 2)
-            .collect(Collectors.toMap(pair -> pair[0].trim(), pair -> pair[1].trim()));
-    }
 }
