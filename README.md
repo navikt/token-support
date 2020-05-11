@@ -300,4 +300,4 @@ before eventually (a couple of minutes later) it is synced to [Maven Central](ht
 ## Contact
 
 If you have any questions, please open an issue on the Github issue tracker.
-For NAV employees, you can ask questions at the Slack channel #loginservice.
+For NAV employees, you can ask questions at the Slack channel #token-support.
