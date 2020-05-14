@@ -9,6 +9,9 @@ categories:
       - 'fix'
       - 'bugfix'
       - 'bug'
+  - title: '⬆️ Dependency upgrades'
+    labels:
+      - 'bump'
 exclude-labels:
   - 'skip-changelog'
 template: |
