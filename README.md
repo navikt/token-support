@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/navikt/token-support.svg?style=svg)](https://circleci.com/gh/navikt/token-support)
+[![Build](https://github.com/navikt/token-support/workflows/Build%20master/badge.svg)](https://github.com/navikt/token-support/actions)
 [![Known Vulnerabilities](https://snyk.io/test/github/navikt/token-support/badge.svg)](https://snyk.io/test/github/navikt/token-support)
 [![Maven Central](https://img.shields.io/maven-central/v/no.nav.security/token-support?color=green&logo=Apache%20Maven)](https://search.maven.org/artifact/no.nav.security/token-support)
 
