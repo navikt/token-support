@@ -12,6 +12,7 @@ categories:
   - title: '⬆️ Dependency upgrades'
     labels:
       - 'bump'
+      - 'dependencies'
 exclude-labels:
   - 'skip-changelog'
 template: |
