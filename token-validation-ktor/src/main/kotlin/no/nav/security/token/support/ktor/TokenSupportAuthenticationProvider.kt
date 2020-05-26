@@ -28,15 +28,22 @@ private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::cl
 
 @KtorExperimentalAPI
 class TokenSupportAuthenticationProvider(
-    name: String?,
-    config: ApplicationConfig,
+    providerConfig: ProviderConfiguration,
+    applicationConfig: ApplicationConfig,
     resourceRetriever: ProxyAwareResourceRetriever
-) : AuthenticationProvider(name) {
-    private val multiIssuerConfiguration: MultiIssuerConfiguration
+) : AuthenticationProvider(providerConfig) {
+
+    @Deprecated("Provider should be built using configuration that need to be passed via constructor instead.")
+    constructor(
+        name: String?,
+        config: ApplicationConfig,
+        resourceRetriever: ProxyAwareResourceRetriever
+    ): this(ProviderConfiguration(name),config, resourceRetriever)
+
     internal val jwtTokenValidationHandler: JwtTokenValidationHandler
 
     init {
-        val issuerPropertiesMap: Map<String, IssuerProperties> = config.configList("no.nav.security.jwt.issuers")
+        val issuerPropertiesMap: Map<String, IssuerProperties> = applicationConfig.configList("no.nav.security.jwt.issuers")
             .associate { issuerConfig ->
                 issuerConfig.property("issuer_name").getString() to IssuerProperties(
                     URL(issuerConfig.property("discoveryurl").getString()),
@@ -44,9 +51,12 @@ class TokenSupportAuthenticationProvider(
                     issuerConfig.propertyOrNull("cookie_name")?.getString()
                 )
             }
-        multiIssuerConfiguration = MultiIssuerConfiguration(issuerPropertiesMap, resourceRetriever)
-        jwtTokenValidationHandler = JwtTokenValidationHandler(multiIssuerConfiguration)
+        jwtTokenValidationHandler = JwtTokenValidationHandler(
+            MultiIssuerConfiguration(issuerPropertiesMap, resourceRetriever)
+        )
     }
+
+    class ProviderConfiguration internal constructor(name: String?): AuthenticationProvider.Configuration(name)
 }
 
 @KtorExperimentalAPI
@@ -59,7 +69,11 @@ fun Authentication.Configuration.tokenValidationSupport(
         System.getenv("HTTP_PROXY")?.let { URL(it) }
     )
 ) {
-    val provider = TokenSupportAuthenticationProvider(name, config, resourceRetriever)
+    val provider = TokenSupportAuthenticationProvider(
+        TokenSupportAuthenticationProvider.ProviderConfiguration(name),
+        config,
+        resourceRetriever
+    )
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
         val tokenValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(
             JwtTokenHttpRequest(call.request.cookies, call.request.headers)
