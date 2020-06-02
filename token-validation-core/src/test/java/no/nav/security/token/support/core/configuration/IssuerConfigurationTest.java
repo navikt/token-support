@@ -36,9 +36,9 @@ class IssuerConfigurationTest {
             "issuer1", issuerMockWebServer.getDiscoveryUrl(), List.of("audience1"), new ProxyAwareResourceRetriever());
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        OIDCProviderMetadata metadata = config.getMetaData();
+        ProviderConfiguration metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
-        assertThat(metadata.getJWKSetURI()).isNotNull();
+        assertThat(metadata.getJwkSetUri()).isNotNull();
     }
 
     @Test

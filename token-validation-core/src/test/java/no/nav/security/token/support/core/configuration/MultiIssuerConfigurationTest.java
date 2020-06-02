@@ -66,7 +66,7 @@ class MultiIssuerConfigurationTest {
         assertThat(config.getTokenValidator()).isNotNull();
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getMetaData().getIssuer()).isNotNull();
-        assertThat(config.getMetaData().getIssuer().getValue()).isEqualTo("$ISSUER");
+        assertThat(config.getMetaData().getIssuer()).isEqualTo("$ISSUER");
         assertThat(config.getResourceRetriever()).isNotNull();
     }
 }
