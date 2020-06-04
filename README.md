@@ -244,7 +244,7 @@ Each issuer can be configured to use or not use a proxy by specifying the follow
 
 ## Running your app locally while using these modules
 
-There is a separate module **token-validation-test-support** which you can use to generate tokens for local use. Please see separate [README](https://github.com/navikt/token-support/tree/master/oidc-spring-test) for more information. *Please make sure to never use the local mode properties in any other environment than your local development environment as the private keys to sign the token provided by oidc-spring-test is fully available here on github for all to see and use.*
+There is a separate module **token-validation-test-support** which you can use to generate tokens for local use. Please see separate [README](token-validation-test-support) for more information. *Please make sure to never use the local mode properties in any other environment than your local development environment as the private keys to sign the token provided by oidc-spring-test is fully available here on github for all to see and use.*
 
 ## Build & Release
 
