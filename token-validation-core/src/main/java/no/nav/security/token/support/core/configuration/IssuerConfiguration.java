@@ -16,7 +16,7 @@ import java.util.List;
 public class IssuerConfiguration {
 
     private String name;
-    private ProviderConfiguration metaData;
+    private IssuerMetadata metaData;
     private final List<String> acceptedAudience;
     private String cookieName;
     private JwtTokenValidator tokenValidator;
@@ -33,10 +33,10 @@ public class IssuerConfiguration {
 
     public IssuerConfiguration(String name, URL discoveryUrl, List<String> acceptedAudience,
                                ResourceRetriever resourceRetriever) {
-        this(name, new ProviderConfiguration(resourceRetriever, discoveryUrl), acceptedAudience, resourceRetriever);
+        this(name, new IssuerMetadata(resourceRetriever, discoveryUrl), acceptedAudience, resourceRetriever);
     }
 
-    public IssuerConfiguration(String name, ProviderConfiguration metaData, List<String> acceptedAudience,
+    public IssuerConfiguration(String name, IssuerMetadata metaData, List<String> acceptedAudience,
                                ResourceRetriever resourceRetriever) {
         this.name = name;
         this.metaData = metaData;
@@ -72,12 +72,12 @@ public class IssuerConfiguration {
         this.cookieName = cookieName;
     }
 
-    public ProviderConfiguration getMetaData() {
+    public IssuerMetadata getMetaData() {
         return metaData;
     }
 
     // TODO needed?
-    public void setMetaData(ProviderConfiguration metaData) {
+    public void setMetaData(IssuerMetadata metaData) {
         this.metaData = metaData;
     }
 

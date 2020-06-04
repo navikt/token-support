@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 
-public class ProviderConfiguration {
+public class IssuerMetadata {
 
-    private static final Logger log = LoggerFactory.getLogger(ProviderConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(IssuerMetadata.class);
     private String issuer;
     private URL jwkSetUri;
 
-    ProviderConfiguration(ResourceRetriever resourceRetriever, URL url) {
+    IssuerMetadata(ResourceRetriever resourceRetriever, URL url) {
         providerMetadata(resourceRetriever, url);
     }
 
