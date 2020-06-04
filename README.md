@@ -250,35 +250,12 @@ There is a separate module **token-validation-test-support** which you can use t
 
 ### Sonatype OSS & Maven Central 
 
-#### Snapshot versions
-
-Every commit to the `master` branch (or merged pull request) will trigger a
-release to the [Sonatype OSS snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/no/nav/security/).
-
 #### Releases
 
-In order to release a new version (provided you have access), clone this repository, and
-
-```bash
-# make sure we're up to date!
-git checkout master && git pull
-
-# This will prepare version numbers and commit to github
-mvn release:prepare
-
-# This will clean up any local temporary files
-# that were used during the release.
-mvn release:clean
-```
-
-The `mvn release:prepare` command will ask for a version number to release,
-as well as which version number to bump to. This command will also do
-a `git push` on your behalf, which will update the remote git repository.
-Then, the CI tool will trigger a build, and deploy the artifact.
+In order to release a new version go to https://github.com/navikt/token-support/releases and click edit on the draft release. Edit or approve the changelog and click publish. Github Action will trigger a new release.
 
 First, it will appear in [Sonatype OSS releases](https://oss.sonatype.org/content/repositories/releases/no/nav/security/),
 before eventually (a couple of minutes later) it is synced to [Maven Central](http://central.maven.org/maven2/no/nav/security/).
-
 
 ## Contact
 
