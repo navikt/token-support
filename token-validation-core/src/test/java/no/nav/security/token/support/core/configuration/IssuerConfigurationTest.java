@@ -1,5 +1,6 @@
 package no.nav.security.token.support.core.configuration;
 
+import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.IssuerMockWebServer;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
 import org.junit.jupiter.api.AfterEach;
@@ -34,9 +35,9 @@ class IssuerConfigurationTest {
             "issuer1", issuerMockWebServer.getDiscoveryUrl(), List.of("audience1"), new ProxyAwareResourceRetriever());
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        IssuerMetadata metadata = config.getMetaData();
+        AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
-        assertThat(metadata.getJwkSetUri()).isNotNull();
+        assertThat(metadata.getJWKSetURI().toString()).isNotNull();
     }
 
     @Test

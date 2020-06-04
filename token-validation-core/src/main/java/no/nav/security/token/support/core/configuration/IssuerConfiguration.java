@@ -1,8 +1,13 @@
 package no.nav.security.token.support.core.configuration;
 
 import com.nimbusds.jose.util.ResourceRetriever;
+import com.nimbusds.oauth2.sdk.ParseException;
+import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
+import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
 import no.nav.security.token.support.core.validation.JwtTokenValidator;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -16,7 +21,7 @@ import java.util.List;
 public class IssuerConfiguration {
 
     private String name;
-    private IssuerMetadata metaData;
+    private AuthorizationServerMetadata metaData;
     private final List<String> acceptedAudience;
     private String cookieName;
     private JwtTokenValidator tokenValidator;
@@ -33,17 +38,16 @@ public class IssuerConfiguration {
 
     public IssuerConfiguration(String name, URL discoveryUrl, List<String> acceptedAudience,
                                ResourceRetriever resourceRetriever) {
-        this(name, new IssuerMetadata(resourceRetriever, discoveryUrl), acceptedAudience, resourceRetriever);
+        this(name, getProviderMetadata(resourceRetriever, discoveryUrl), acceptedAudience, resourceRetriever);
     }
 
-    public IssuerConfiguration(String name, IssuerMetadata metaData, List<String> acceptedAudience,
+    public IssuerConfiguration(String name, AuthorizationServerMetadata metaData, List<String> acceptedAudience,
                                ResourceRetriever resourceRetriever) {
         this.name = name;
         this.metaData = metaData;
         this.acceptedAudience = acceptedAudience;
         this.resourceRetriever = resourceRetriever;
-        this.tokenValidator = new JwtTokenValidator(metaData.getIssuer(), acceptedAudience,
-            metaData.getJwkSetUri(), resourceRetriever);
+        this.tokenValidator = new JwtTokenValidator(metaData.getIssuer().getValue(), acceptedAudience, getJwksUrl(metaData), resourceRetriever);
     }
 
     public String getName() {
@@ -72,12 +76,12 @@ public class IssuerConfiguration {
         this.cookieName = cookieName;
     }
 
-    public IssuerMetadata getMetaData() {
+    public AuthorizationServerMetadata getMetaData() {
         return metaData;
     }
 
     // TODO needed?
-    public void setMetaData(IssuerMetadata metaData) {
+    public void setMetaData(AuthorizationServerMetadata metaData) {
         this.metaData = metaData;
     }
 
@@ -96,6 +100,25 @@ public class IssuerConfiguration {
     // TODO needed?
     public void setResourceRetriever(ResourceRetriever resourceRetriever) {
         this.resourceRetriever = resourceRetriever;
+    }
+
+    protected static URL getJwksUrl(AuthorizationServerMetadata metaData) {
+        try {
+            return metaData.getJWKSetURI().toURL();
+        } catch (MalformedURLException e) {
+            throw new MetaDataNotAvailableException(e);
+        }
+    }
+
+    protected static AuthorizationServerMetadata getProviderMetadata(ResourceRetriever resourceRetriever, URL url) {
+        if (url == null) {
+            throw new MetaDataNotAvailableException("discoveryUrl cannot be null, check your configuration.");
+        }
+        try {
+            return AuthorizationServerMetadata.parse(resourceRetriever.retrieveResource(url).getContent());
+        } catch (ParseException | IOException e) {
+            throw new MetaDataNotAvailableException(url, e);
+        }
     }
 
     @Override
