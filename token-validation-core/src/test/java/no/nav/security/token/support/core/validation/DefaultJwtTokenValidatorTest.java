@@ -39,7 +39,7 @@ import com.nimbusds.jwt.SignedJWT;
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 
-public class JwtTokenValidatorTest {
+public class DefaultJwtTokenValidatorTest {
 
     // @Rule
     // public ExpectedException thrown = ExpectedException.none();
@@ -60,14 +60,14 @@ public class JwtTokenValidatorTest {
 
     @Test
     public void testAssertValidToken() throws IOException, JwtTokenValidatorException {
-        JwtTokenValidator validator = createOIDCTokenValidator(ISSUER, Collections.singletonList("aud1"));
+        DefaultJwtTokenValidator validator = createOIDCTokenValidator(ISSUER, Collections.singletonList("aud1"));
         JWT token = createSignedJWT("aud1");
         validator.assertValidToken(token.serialize());
     }
 
     @Test
     public void testAssertUnexpectedIssuer() throws IOException, JwtTokenValidatorException {
-        JwtTokenValidator validator = createOIDCTokenValidator("https://differentfromtoken",
+        DefaultJwtTokenValidator validator = createOIDCTokenValidator("https://differentfromtoken",
                 Collections.singletonList("aud1"));
         JWT token = createSignedJWT("aud1");
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
@@ -75,7 +75,7 @@ public class JwtTokenValidatorTest {
 
     @Test
     public void testAssertUnknownAudience() throws IOException, JwtTokenValidatorException {
-        JwtTokenValidator validator = createOIDCTokenValidator(ISSUER, Collections.singletonList("aud1"));
+        DefaultJwtTokenValidator validator = createOIDCTokenValidator(ISSUER, Collections.singletonList("aud1"));
         JWT token = createSignedJWT("unknown");
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
     }
@@ -85,7 +85,7 @@ public class JwtTokenValidatorTest {
         List<String> aud = new ArrayList<>();
         aud.add("aud1");
         aud.add("aud2");
-        JwtTokenValidator validator = createOIDCTokenValidator(ISSUER, aud);
+        DefaultJwtTokenValidator validator = createOIDCTokenValidator(ISSUER, aud);
 
         JWT tokenAud1 = createSignedJWT("aud1");
         assertEquals("aud1", validator.get(tokenAud1).getClientID().getValue());
@@ -98,9 +98,9 @@ public class JwtTokenValidatorTest {
         assertThrows(JwtTokenValidatorException.class, () -> validator.get(tokenUnknownAud));
     }
 
-    private JwtTokenValidator createOIDCTokenValidator(String issuer, List<String> expectedAudience) {
+    private DefaultJwtTokenValidator createOIDCTokenValidator(String issuer, List<String> expectedAudience) {
         try {
-            return new JwtTokenValidator(issuer, expectedAudience, URI.create("https://someurl").toURL(),
+            return new DefaultJwtTokenValidator(issuer, expectedAudience, URI.create("https://someurl").toURL(),
                     new MockResourceRetriever());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);

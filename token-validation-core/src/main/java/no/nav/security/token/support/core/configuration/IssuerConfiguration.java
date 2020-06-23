@@ -4,7 +4,7 @@ import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
-import no.nav.security.token.support.core.validation.JwtTokenValidator;
+import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,7 +24,7 @@ public class IssuerConfiguration {
     private AuthorizationServerMetadata metaData;
     private final List<String> acceptedAudience;
     private String cookieName;
-    private JwtTokenValidator tokenValidator;
+    private DefaultJwtTokenValidator tokenValidator;
     private ResourceRetriever resourceRetriever;
 
     public IssuerConfiguration(String shortName, IssuerProperties issuerProperties,
@@ -47,7 +47,7 @@ public class IssuerConfiguration {
         this.metaData = metaData;
         this.acceptedAudience = acceptedAudience;
         this.resourceRetriever = resourceRetriever;
-        this.tokenValidator = new JwtTokenValidator(metaData.getIssuer().getValue(), acceptedAudience, getJwksUrl(metaData), resourceRetriever);
+        this.tokenValidator = new DefaultJwtTokenValidator(metaData.getIssuer().getValue(), acceptedAudience, getJwksUrl(metaData), resourceRetriever);
     }
 
     public String getName() {
@@ -59,11 +59,11 @@ public class IssuerConfiguration {
     }
 
     // TODO needed?
-    public void setTokenValidator(JwtTokenValidator tokenValidator) {
+    public void setTokenValidator(DefaultJwtTokenValidator tokenValidator) {
         this.tokenValidator = tokenValidator;
     }
 
-    public JwtTokenValidator getTokenValidator() {
+    public DefaultJwtTokenValidator getTokenValidator() {
         return tokenValidator;
     }
 
