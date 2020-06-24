@@ -20,6 +20,10 @@ public class IssuerProperties {
     private boolean usePlaintextForHttps = false;
     private boolean casualClaimValidator = false;
 
+    // TODO needed?
+    public IssuerProperties() {
+    }
+
     public IssuerProperties(URL discoveryUrl) {
         this.discoveryUrl = discoveryUrl;
     }

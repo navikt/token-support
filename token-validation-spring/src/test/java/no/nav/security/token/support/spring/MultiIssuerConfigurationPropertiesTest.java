@@ -36,6 +36,10 @@ public class MultiIssuerConfigurationPropertiesTest {
         assertEquals("http://metadata3", config.getIssuer().get("number3").getDiscoveryUrl().toString());
         assertTrue(config.getIssuer().get("number3").getAcceptedAudience().contains("aud3")
                 && config.getIssuer().get("number3").getAcceptedAudience().contains("aud4"));
+
+        assertTrue(config.getIssuer().containsKey("number4"));
+        assertEquals("http://metadata4", config.getIssuer().get("number4").getDiscoveryUrl().toString());
+        assertTrue(config.getIssuer().get("number4").isCasualClaimValidator());
     }
 
 }
