@@ -67,7 +67,7 @@ public class JwtTokenValidationHandler {
         }
     }
 
-    private DefaultJwtTokenValidator tokenValidator(JwtToken jwtToken) {
+    private JwtTokenValidator tokenValidator(JwtToken jwtToken) {
         return issuerConfiguration(jwtToken.getIssuer()).getTokenValidator();
     }
 
