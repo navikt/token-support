@@ -60,7 +60,7 @@ public class CasualJwtTokenValidator implements JwtTokenValidator {
             JWT token = parse(tokenString);
             jwtProcessor.process(token, null);
         } catch (Throwable t) {
-            throw new JwtTokenValidatorException("Token validation failed: " + t.getMessage());
+            throw new JwtTokenValidatorException("Token validation failed: " + t.getMessage(), t);
         }
     }
 
@@ -68,7 +68,7 @@ public class CasualJwtTokenValidator implements JwtTokenValidator {
         try {
             return JWTParser.parse(tokenString);
         } catch (Throwable t) {
-            throw new JwtTokenValidatorException("Token verification failed: " + t.getMessage());
+            throw new JwtTokenValidatorException("Token verification failed: " + t.getMessage(), t);
         }
     }
 }
