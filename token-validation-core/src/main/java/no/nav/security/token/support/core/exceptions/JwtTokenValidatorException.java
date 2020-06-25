@@ -10,8 +10,8 @@ public class JwtTokenValidatorException extends RuntimeException {
         this(msg, null, null);
     }
 
-    public JwtTokenValidatorException(String msg, Date expiryDate) {
-        this(msg, expiryDate, null);
+    public JwtTokenValidatorException(String msg, Throwable cause) {
+        this(msg, null, cause);
     }
 
     public JwtTokenValidatorException(String msg, Date expiryDate, Throwable cause) {
