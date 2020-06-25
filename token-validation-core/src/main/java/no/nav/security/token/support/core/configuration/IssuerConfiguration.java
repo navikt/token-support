@@ -4,9 +4,9 @@ import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
+import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
 import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import no.nav.security.token.support.core.validation.JwtTokenValidator;
-import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,6 +28,7 @@ public class IssuerConfiguration {
     private String cookieName;
     private final JwtTokenValidator tokenValidator;
     private ResourceRetriever resourceRetriever;
+    private final List<String> requiredClaims;
 
     public IssuerConfiguration(String name, IssuerProperties issuerProperties, ResourceRetriever resourceRetriever) {
         this.name = name;
@@ -35,8 +36,9 @@ public class IssuerConfiguration {
         this.metaData = getProviderMetadata(resourceRetriever, issuerProperties.getDiscoveryUrl());
         this.acceptedAudience = issuerProperties.getAcceptedAudience();
         this.cookieName = issuerProperties.getCookieName();
+        this.requiredClaims = issuerProperties.getRequiredClaims();
 
-        this.tokenValidator = issuerProperties.isConfigurableClaimValidator() ? new ConfigurableJwtTokenValidator(metaData.getIssuer().getValue(), getJwksUrl(metaData), resourceRetriever)
+        this.tokenValidator = issuerProperties.isConfigurableClaimValidator() ? new ConfigurableJwtTokenValidator(metaData.getIssuer().getValue(), getJwksUrl(metaData), requiredClaims, resourceRetriever)
             : new DefaultJwtTokenValidator(metaData.getIssuer().getValue(), acceptedAudience, getJwksUrl(metaData), resourceRetriever);
     }
 
@@ -54,6 +56,10 @@ public class IssuerConfiguration {
 
     public String getCookieName() {
         return cookieName;
+    }
+
+    public List<String> getRequiredClaims() {
+        return requiredClaims;
     }
 
     // TODO needed?

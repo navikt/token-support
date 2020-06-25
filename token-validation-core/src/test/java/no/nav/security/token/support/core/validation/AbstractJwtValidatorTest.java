@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 abstract class AbstractJwtValidatorTest {
@@ -37,9 +38,9 @@ abstract class AbstractJwtValidatorTest {
         }
     }
 
-    protected SignedJWT createSignedJWT(String issuer, String audience, String sub) {
+    protected SignedJWT createSignedJWT(String issuer, List<String> claims, String audience, String sub) {
         try {
-            JWTClaimsSet claimsSet = setClaims(issuer, audience, sub);
+            JWTClaimsSet claimsSet = setClaims(issuer, claims, audience, sub);
             JWSHeader.Builder header = new JWSHeader.Builder(JWSAlgorithm.RS256)
                 .keyID(rsaJwk.getKeyID())
                 .type(JOSEObjectType.JWT);
@@ -53,7 +54,7 @@ abstract class AbstractJwtValidatorTest {
         }
     }
 
-    private JWTClaimsSet setClaims(String issuer, String audience, String sub) {
+    private JWTClaimsSet setClaims(String issuer, List<String> claims, String audience, String sub) {
         Date now = new Date();
         return sub != null ? new JWTClaimsSet.Builder()
             .subject(sub)
@@ -63,6 +64,7 @@ abstract class AbstractJwtValidatorTest {
             .expirationTime(new Date(now.getTime() + 3600)).build()
             : new JWTClaimsSet.Builder()
             .issuer(issuer)
+            .claim(claims.get(0), "somevalue")
             .audience(audience)
             .jwtID(UUID.randomUUID().toString()).notBeforeTime(now).issueTime(now)
             .expirationTime(new Date(now.getTime() + 3600)).build();

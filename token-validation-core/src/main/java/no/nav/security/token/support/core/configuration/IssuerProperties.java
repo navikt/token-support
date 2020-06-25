@@ -19,6 +19,7 @@ public class IssuerProperties {
     private URL proxyUrl;
     private boolean usePlaintextForHttps = false;
     private boolean configurableClaimValidator = false;
+    private List<String> requiredClaims;
 
     // TODO needed?
     public IssuerProperties() {
@@ -38,8 +39,9 @@ public class IssuerProperties {
         this.cookieName = cookieName;
     }
 
-    public IssuerProperties(URL discoveryUrl, Boolean configurableClaimValidator) {
+    public IssuerProperties(URL discoveryUrl, Boolean configurableClaimValidator, List<String> requiredClaims) {
         this(discoveryUrl);
         this.configurableClaimValidator = configurableClaimValidator;
+        this.requiredClaims = requiredClaims;
     }
 }

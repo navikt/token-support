@@ -62,13 +62,15 @@ class IssuerConfigurationTest {
 
     @Test
     void issuerConfigurationWithCasualJwtTokenValidator() {
+        String scope = "scope";
         IssuerConfiguration config = new IssuerConfiguration(
-            "issuer1", new IssuerProperties(issuerMockWebServer.getDiscoveryUrl(), true), new ProxyAwareResourceRetriever());
+            "issuer1", new IssuerProperties(issuerMockWebServer.getDiscoveryUrl(), true, List.of(scope)), new ProxyAwareResourceRetriever());
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
         assertThat(config.getTokenValidator() instanceof ConfigurableJwtTokenValidator);
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
+        assertThat(config.getRequiredClaims().contains(scope));
     }
 }

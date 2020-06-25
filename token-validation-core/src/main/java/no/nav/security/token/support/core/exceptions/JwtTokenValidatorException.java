@@ -19,7 +19,12 @@ public class JwtTokenValidatorException extends RuntimeException {
         this.expiryDate = expiryDate;
     }
 
+    public JwtTokenValidatorException(String msg, Throwable cause) {
+        this(msg, null, cause);
+    }
+
     public Date getExpiryDate() {
         return expiryDate;
     }
+
 }

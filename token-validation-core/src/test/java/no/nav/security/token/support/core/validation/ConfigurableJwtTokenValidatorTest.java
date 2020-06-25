@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -15,22 +16,29 @@ public class ConfigurableJwtTokenValidatorTest extends AbstractJwtValidatorTest 
 
     @Test
     public void assertValidToken() throws JwtTokenValidatorException {
-        JwtTokenValidator validator = createLaxTokenValidator(ISSUER);
-        JWT token = createSignedJWT(ISSUER, null, null);
+        JwtTokenValidator validator = createConfigurableTokenValidator(ISSUER, List.of("scope"));
+        JWT token = createSignedJWT(ISSUER, List.of("scope"), null, null);
         validator.assertValidToken(token.serialize());
     }
 
     @Test
     public void testAssertUnexpectedIssuer() throws JwtTokenValidatorException {
         String otherIssuer = "https://differentfromtoken";
-        JwtTokenValidator validator = createLaxTokenValidator(otherIssuer);
-        JWT token = createSignedJWT(ISSUER, null, null);
+        JwtTokenValidator validator = createConfigurableTokenValidator(otherIssuer, List.of("scope"));
+        JWT token = createSignedJWT(ISSUER, List.of("scope"), null, null);
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
     }
 
-    private ConfigurableJwtTokenValidator createLaxTokenValidator(String issuer) {
+    @Test
+    public void testAssertNoneExistingRequiredClaim() throws JwtTokenValidatorException {
+        JwtTokenValidator validator = createConfigurableTokenValidator(ISSUER, List.of("scope"));
+        JWT token = createSignedJWT(ISSUER, List.of("someotherclaim"), null, null);
+        assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
+    }
+
+    private ConfigurableJwtTokenValidator createConfigurableTokenValidator(String issuer, List<String> requiredClaims) {
         try {
-            return new ConfigurableJwtTokenValidator(issuer, URI.create("https://someurl").toURL(), new MockResourceRetriever());
+            return new ConfigurableJwtTokenValidator(issuer, URI.create("https://someurl").toURL(), requiredClaims, new MockResourceRetriever());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
