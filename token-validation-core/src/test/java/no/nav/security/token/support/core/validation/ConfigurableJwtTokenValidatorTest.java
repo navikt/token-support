@@ -9,7 +9,7 @@ import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CasualJwtTokenValidatorTest extends AbstractJwtValidatorTest {
+public class ConfigurableJwtTokenValidatorTest extends AbstractJwtValidatorTest {
 
     private static final String ISSUER = "https://issuer";
 
@@ -28,9 +28,9 @@ public class CasualJwtTokenValidatorTest extends AbstractJwtValidatorTest {
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
     }
 
-    private CasualJwtTokenValidator createLaxTokenValidator(String issuer) {
+    private ConfigurableJwtTokenValidator createLaxTokenValidator(String issuer) {
         try {
-            return new CasualJwtTokenValidator(issuer, URI.create("https://someurl").toURL(), new MockResourceRetriever());
+            return new ConfigurableJwtTokenValidator(issuer, URI.create("https://someurl").toURL(), new MockResourceRetriever());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

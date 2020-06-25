@@ -6,7 +6,7 @@ import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
 import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import no.nav.security.token.support.core.validation.JwtTokenValidator;
-import no.nav.security.token.support.core.validation.CasualJwtTokenValidator;
+import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -36,7 +36,7 @@ public class IssuerConfiguration {
         this.acceptedAudience = issuerProperties.getAcceptedAudience();
         this.cookieName = issuerProperties.getCookieName();
 
-        this.tokenValidator = issuerProperties.isCasualClaimValidator() ? new CasualJwtTokenValidator(metaData.getIssuer().getValue(), getJwksUrl(metaData), resourceRetriever)
+        this.tokenValidator = issuerProperties.isConfigurableClaimValidator() ? new ConfigurableJwtTokenValidator(metaData.getIssuer().getValue(), getJwksUrl(metaData), resourceRetriever)
             : new DefaultJwtTokenValidator(metaData.getIssuer().getValue(), acceptedAudience, getJwksUrl(metaData), resourceRetriever);
     }
 

@@ -3,7 +3,7 @@ package no.nav.security.token.support.core.configuration;
 import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.IssuerMockWebServer;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
-import no.nav.security.token.support.core.validation.CasualJwtTokenValidator;
+import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
 import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,7 +66,7 @@ class IssuerConfigurationTest {
             "issuer1", new IssuerProperties(issuerMockWebServer.getDiscoveryUrl(), true), new ProxyAwareResourceRetriever());
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator() instanceof CasualJwtTokenValidator);
+        assertThat(config.getTokenValidator() instanceof ConfigurableJwtTokenValidator);
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();

@@ -18,13 +18,13 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 
-public class CasualJwtTokenValidator implements JwtTokenValidator {
+public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
     private final String issuer;
     private final RemoteJWKSet<SecurityContext> remoteJWKSet;
     private final List<String> requiredClaims = List.of("iss", "iat", "exp", "nbf");
 
-    public CasualJwtTokenValidator(String issuer, URL jwkSetUrl, ResourceRetriever resourceRetriever) {
+    public ConfigurableJwtTokenValidator(String issuer, URL jwkSetUrl, ResourceRetriever resourceRetriever) {
         this.issuer = issuer;
         remoteJWKSet = new RemoteJWKSet<>(jwkSetUrl, resourceRetriever);
     }
