@@ -1,5 +1,6 @@
 package no.nav.security.token.support.spring;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -7,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -36,6 +38,14 @@ public class MultiIssuerConfigurationPropertiesTest {
         assertEquals("http://metadata3", config.getIssuer().get("number3").getDiscoveryUrl().toString());
         assertTrue(config.getIssuer().get("number3").getAcceptedAudience().contains("aud3")
                 && config.getIssuer().get("number3").getAcceptedAudience().contains("aud4"));
+
+        assertTrue(config.getIssuer().containsKey("number4"));
+        assertEquals("http://metadata4", config.getIssuer().get("number4").getDiscoveryUrl().toString());
+
+        assertThat(config.getIssuer().get("number4").getValidation().getOptionalClaims()).containsExactly(
+            "sub",
+            "aud"
+        );
     }
 
 }
