@@ -6,16 +6,19 @@ import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CasualJwtTokenValidatorTest extends AbstractJwtValidatorTest {
+public class ConfigurableJwtTokenValidatorTest extends AbstractJwtValidatorTest {
 
     private static final String ISSUER = "https://issuer";
 
     @Test
     public void assertValidToken() throws JwtTokenValidatorException {
-        JwtTokenValidator validator = createLaxTokenValidator(ISSUER);
+        JwtTokenValidator validator = tokenValidator(ISSUER, List.of("aud", "sub"));
         JWT token = createSignedJWT(ISSUER, null, null);
         validator.assertValidToken(token.serialize());
     }
@@ -23,14 +26,19 @@ public class CasualJwtTokenValidatorTest extends AbstractJwtValidatorTest {
     @Test
     public void testAssertUnexpectedIssuer() throws JwtTokenValidatorException {
         String otherIssuer = "https://differentfromtoken";
-        JwtTokenValidator validator = createLaxTokenValidator(otherIssuer);
+        JwtTokenValidator validator = tokenValidator(otherIssuer, Collections.emptyList());
         JWT token = createSignedJWT(ISSUER, null, null);
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
     }
 
-    private CasualJwtTokenValidator createLaxTokenValidator(String issuer) {
+    private ConfigurableJwtTokenValidator tokenValidator(String issuer, List<String> optionalClaims){
         try {
-            return new CasualJwtTokenValidator(issuer, URI.create("https://someurl").toURL(), new MockResourceRetriever());
+            return new ConfigurableJwtTokenValidator(
+                issuer,
+                new URL("https://someurl"),
+                new MockResourceRetriever(),
+                optionalClaims
+            );
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

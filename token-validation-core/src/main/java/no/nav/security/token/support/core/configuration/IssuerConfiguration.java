@@ -4,9 +4,9 @@ import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
+import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
 import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import no.nav.security.token.support.core.validation.JwtTokenValidator;
-import no.nav.security.token.support.core.validation.CasualJwtTokenValidator;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,9 +35,7 @@ public class IssuerConfiguration {
         this.metaData = getProviderMetadata(resourceRetriever, issuerProperties.getDiscoveryUrl());
         this.acceptedAudience = issuerProperties.getAcceptedAudience();
         this.cookieName = issuerProperties.getCookieName();
-
-        this.tokenValidator = issuerProperties.isCasualClaimValidator() ? new CasualJwtTokenValidator(metaData.getIssuer().getValue(), getJwksUrl(metaData), resourceRetriever)
-            : new DefaultJwtTokenValidator(metaData.getIssuer().getValue(), acceptedAudience, getJwksUrl(metaData), resourceRetriever);
+        this.tokenValidator = createTokenValidator(issuerProperties);
     }
 
     public String getName() {
@@ -104,6 +102,18 @@ public class IssuerConfiguration {
         } catch (ParseException | IOException e) {
             throw new MetaDataNotAvailableException(url, e);
         }
+    }
+
+    private JwtTokenValidator createTokenValidator(IssuerProperties issuerProperties) {
+        return issuerProperties.getValidation().getOptionalClaims().isEmpty() ?
+            new DefaultJwtTokenValidator(metaData.getIssuer().getValue(), acceptedAudience, getJwksUrl(metaData),
+                resourceRetriever)
+            : new ConfigurableJwtTokenValidator(
+                metaData.getIssuer().getValue(),
+                getJwksUrl(metaData),
+                resourceRetriever,
+                issuerProperties.getValidation().getOptionalClaims()
+            );
     }
 
     @Override

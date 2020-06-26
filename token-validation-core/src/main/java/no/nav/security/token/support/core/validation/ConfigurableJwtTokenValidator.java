@@ -15,18 +15,31 @@ import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class CasualJwtTokenValidator implements JwtTokenValidator {
+public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
     private final String issuer;
     private final RemoteJWKSet<SecurityContext> remoteJWKSet;
-    private final List<String> requiredClaims = List.of("iss", "iat", "exp", "nbf");
+    private final List<String> defaultRequiredClaims = List.of("sub", "aud", "iss", "iat", "exp", "nbf");
+    private final List<String> requiredClaims;
 
-    public CasualJwtTokenValidator(String issuer, URL jwkSetUrl, ResourceRetriever resourceRetriever) {
+    public ConfigurableJwtTokenValidator(
+        String issuer,
+        URL jwkSetUrl,
+        ResourceRetriever resourceRetriever,
+        List<String> optionalClaims
+    ) {
         this.issuer = issuer;
-        remoteJWKSet = new RemoteJWKSet<>(jwkSetUrl, resourceRetriever);
+        this.remoteJWKSet = new RemoteJWKSet<>(jwkSetUrl, resourceRetriever);
+        this.requiredClaims = filterList(
+            defaultRequiredClaims,
+            Optional.ofNullable(optionalClaims).orElse(Collections.emptyList())
+        );
     }
 
     @Override
@@ -62,6 +75,12 @@ public class CasualJwtTokenValidator implements JwtTokenValidator {
         } catch (Throwable t) {
             throw new JwtTokenValidatorException("Token validation failed: " + t.getMessage(), t);
         }
+    }
+
+    private static <T> List<T> filterList(List<T> first, List<T> second){
+        return first.stream()
+            .filter(c -> !second.contains(c))
+            .collect(Collectors.toList());
     }
 
     private JWT parse(String tokenString) {
