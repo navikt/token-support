@@ -22,7 +22,7 @@ public class DefaultJwtTokenValidatorTest extends AbstractJwtValidatorTest {
     @Test
     public void testAssertValidToken() throws JwtTokenValidatorException {
         JwtTokenValidator validator = createOIDCTokenValidator(ISSUER, Collections.singletonList("aud1"));
-        JWT token = createSignedJWT(ISSUER, null, "aud1", SUB);
+        JWT token = createSignedJWT(ISSUER, "aud1", SUB);
         validator.assertValidToken(token.serialize());
     }
 
@@ -30,14 +30,14 @@ public class DefaultJwtTokenValidatorTest extends AbstractJwtValidatorTest {
     public void testAssertUnexpectedIssuer() throws JwtTokenValidatorException {
         JwtTokenValidator validator = createOIDCTokenValidator("https://differentfromtoken",
             Collections.singletonList("aud1"));
-        JWT token = createSignedJWT(ISSUER, null, "aud1", SUB);
+        JWT token = createSignedJWT(ISSUER, "aud1", SUB);
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
     }
 
     @Test
     public void testAssertUnknownAudience() throws JwtTokenValidatorException {
         JwtTokenValidator validator = createOIDCTokenValidator(ISSUER, Collections.singletonList("aud1"));
-        JWT token = createSignedJWT(ISSUER, null, "unknown", SUB);
+        JWT token = createSignedJWT(ISSUER, "unknown", SUB);
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
     }
 
@@ -48,13 +48,13 @@ public class DefaultJwtTokenValidatorTest extends AbstractJwtValidatorTest {
         aud.add("aud2");
         DefaultJwtTokenValidator validator = createOIDCTokenValidator(ISSUER, aud);
 
-        JWT tokenAud1 = createSignedJWT(ISSUER, null, "aud1", SUB);
+        JWT tokenAud1 = createSignedJWT(ISSUER, "aud1", SUB);
         assertEquals("aud1", validator.get(tokenAud1).getClientID().getValue());
 
-        JWT tokenAud2 = createSignedJWT(ISSUER, null, "aud2", SUB);
+        JWT tokenAud2 = createSignedJWT(ISSUER, "aud2", SUB);
         assertEquals("aud2", validator.get(tokenAud2).getClientID().getValue());
 
-        JWT tokenUnknownAud = createSignedJWT(ISSUER, null, "unknown", SUB);
+        JWT tokenUnknownAud = createSignedJWT(ISSUER, "unknown", SUB);
 
         assertThrows(JwtTokenValidatorException.class, () -> validator.get(tokenUnknownAud));
     }

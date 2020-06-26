@@ -237,8 +237,7 @@ Add the modules that you need as Maven dependencies.
 - **`no.nav.security.jwt.issuer.[issuer shortname].discoveryurl`** - The identity provider configuration/discovery endpoint (metadata)
 - **`no.nav.security.jwt.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the JWT token. For OIDC it is the client ID of the client responsible for acquiring the token, in OAuth 2.0 it should be the identifier for you api.
 - **`no.nav.security.jwt.issuer.[issuer shortname].cookiename`** - The value of the cookie containing a ID token (not required, only necessary if your api receives calls directly from a browser)
-- **`no.nav.security.jwt.issuer.[issuer shortname].configurable_claim_validator`** - A more relaxed Jwt Validator, as the name indicates, more configurable, sub and aud is not validated by default.
-- **`no.nav.security.jwt.issuer.[issuer shortname].required_claims`** - If using a more configurable Jwt Validator, other claims required can be added.
+- **`no.nav.security.jwt.issuer.[issuer shortname].validation.optional_claims`** - A comma separated list of optional claims that will be excluded from default claims.
 
 ## "Corporate" proxy support per issuer
 Each issuer can be configured to use or not use a proxy by specifying the following properties:
