@@ -4,6 +4,7 @@ import no.nav.security.token.support.client.core.OAuth2CacheFactory;
 import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient;
+import no.nav.security.token.support.client.core.oauth2.ExchangeTokenClient;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
@@ -39,19 +40,25 @@ public class OAuth2ClientConfiguration implements ImportAware {
     }
 
     @Bean
-    OAuth2AccessTokenService oAuth2AccessTokenService(OnBehalfOfAssertionResolver onBehalfOfAssertionResolver,
-                                                      OAuth2HttpClient oAuth2HttpClient) {
+    OAuth2AccessTokenService oAuth2AccessTokenService(
+        OnBehalfOfAssertionResolver onBehalfOfAssertionResolver,
+        OAuth2HttpClient oAuth2HttpClient
+    ) {
         OAuth2AccessTokenService oAuth2AccessTokenService = new OAuth2AccessTokenService(
             onBehalfOfAssertionResolver,
             new OnBehalfOfTokenClient(oAuth2HttpClient),
-            new ClientCredentialsTokenClient(oAuth2HttpClient));
+            new ClientCredentialsTokenClient(oAuth2HttpClient),
+            new ExchangeTokenClient(oAuth2HttpClient));
 
         if (enableOAuth2ClientAttributes != null && enableOAuth2ClientAttributes.getBoolean("cacheEnabled")) {
             long maximumSize = enableOAuth2ClientAttributes.getNumber("cacheMaximumSize");
             long skewInSeconds = enableOAuth2ClientAttributes.getNumber("cacheEvictSkew");
-            oAuth2AccessTokenService.setClientCredentialsGrantCache(OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
-            oAuth2AccessTokenService.setOnBehalfOfGrantCache(OAuth2CacheFactory.accessTokenResponseCache(maximumSize,
-                skewInSeconds));
+            oAuth2AccessTokenService.setClientCredentialsGrantCache(
+                OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
+            oAuth2AccessTokenService.setOnBehalfOfGrantCache(
+                OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
+            oAuth2AccessTokenService.setExchangeGrantCache(
+                OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
         }
         return oAuth2AccessTokenService;
     }

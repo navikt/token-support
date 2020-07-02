@@ -5,6 +5,7 @@ import java.util.Optional;
 public class OAuth2GrantType {
     public static final OAuth2GrantType JWT_BEARER = new OAuth2GrantType("urn:ietf:params:oauth:grant-type:jwt-bearer");
     public static final OAuth2GrantType CLIENT_CREDENTIALS = new OAuth2GrantType("client_credentials");
+    public static final OAuth2GrantType TOKEN_EXCHANGE = new OAuth2GrantType("urn:ietf:params:oauth:grant-type:token-exchange");
     private final String value;
 
     public OAuth2GrantType(String value) {

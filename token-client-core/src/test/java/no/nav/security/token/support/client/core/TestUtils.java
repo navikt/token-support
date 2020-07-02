@@ -7,7 +7,9 @@ import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.RecordedRequest;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -31,6 +33,27 @@ public class TestUtils {
                 .clientAuthMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .clientId("client1")
                 .clientSecret("clientSecret1")
+                .build())
+            .build();
+    }
+
+    public static ClientProperties tokenExchangeClientProperties(
+        String tokenEndpointUrl,
+        OAuth2GrantType oAuth2GrantType,
+        String clientPrivateKey,
+        String subjectToken
+    ) {
+        return ClientProperties.builder()
+            .grantType(oAuth2GrantType)
+            .tokenEndpointUrl(URI.create(tokenEndpointUrl))
+            .authentication(ClientAuthenticationProperties.builder()
+                .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+                .clientId("client1")
+                .clientJwk(clientPrivateKey)
+                .build())
+            .tokenExchange(ExchangeProperties.builder()
+                .audience("audience1")
+                .subjectToken(subjectToken)
                 .build())
             .build();
     }
@@ -65,5 +88,15 @@ public class TestUtils {
             .expirationTime(Date.from(expiry))
             .claim("jti", UUID.randomUUID().toString())
             .build());
+    }
+
+    public static String encodeValue(String value) {
+        String encodedUrl = null;
+        try {
+            encodedUrl = URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return encodedUrl;
     }
 }

@@ -1,10 +1,10 @@
 package no.nav.security.token.support.client.core.oauth2;
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
+import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2ClientException;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
-import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 import no.nav.security.token.support.client.core.http.SimpleOAuth2HttpClient;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
@@ -13,11 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 import static no.nav.security.token.support.client.core.TestUtils.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class ClientCredentialsTokenClientTest {
 
@@ -54,7 +53,7 @@ class ClientCredentialsTokenClientTest {
     @Test
     void getTokenResponseWithDefaultClientAuthMethod() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        ClientProperties clientProperties = clientProperties(tokenEndpointUrl,OAuth2GrantType.CLIENT_CREDENTIALS);
+        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS);
         OAuth2AccessTokenResponse response =
             client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
         RecordedRequest recordedRequest = this.server.takeRequest();
@@ -69,7 +68,7 @@ class ClientCredentialsTokenClientTest {
     @Test
     void getTokenResponseWithClientSecretBasic() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        ClientProperties clientProperties = clientProperties(tokenEndpointUrl,OAuth2GrantType.CLIENT_CREDENTIALS);
+        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS);
         OAuth2AccessTokenResponse response =
             client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
         RecordedRequest recordedRequest = this.server.takeRequest();
@@ -84,8 +83,8 @@ class ClientCredentialsTokenClientTest {
     @Test
     void getTokenResponseWithClientSecretPost() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        ClientProperties clientProperties = clientProperties(tokenEndpointUrl,OAuth2GrantType.CLIENT_CREDENTIALS)
-        .toBuilder()
+        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS)
+            .toBuilder()
             .authentication(ClientAuthenticationProperties.builder()
                 .clientId("client")
                 .clientSecret("secret")
@@ -107,7 +106,7 @@ class ClientCredentialsTokenClientTest {
     @Test
     void getTokenResponseWithPrivateKeyJwt() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        ClientProperties clientProperties = clientProperties(tokenEndpointUrl,OAuth2GrantType.CLIENT_CREDENTIALS)
+        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS)
             .toBuilder()
             .authentication(ClientAuthenticationProperties.builder()
                 .clientId("client")
@@ -124,7 +123,6 @@ class ClientCredentialsTokenClientTest {
         assertThatClientAuthMethodIsPrivateKeyJwt(body, clientProperties);
         assertThatRequestBodyContainsFormParameters(body);
         assertThatResponseContainsAccessToken(response);
-
     }
 
     @Test
@@ -144,28 +142,24 @@ class ClientCredentialsTokenClientTest {
         assertThat(response.getExpiresIn()).isGreaterThan(0);
     }
 
-    private static void assertThatClientAuthMethodIsPrivateKeyJwt(String body,
-                                                                  ClientProperties clientProperties) {
+    private static void assertThatClientAuthMethodIsPrivateKeyJwt(
+        String body,
+        ClientProperties clientProperties) {
         ClientAuthenticationProperties auth = clientProperties.getAuthentication();
-        assertThat(auth.getClientAuthMethod().getValue())
-            .isEqualTo("private_key_jwt");
-        assertThat(body).contains("client_id=" + URLEncoder.encode(auth.getClientId(),
-            StandardCharsets.UTF_8));
-        assertThat(body).contains("client_assertion_type=" + URLEncoder.encode(
-            "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-            StandardCharsets.UTF_8));
+        assertThat(auth.getClientAuthMethod().getValue()).isEqualTo("private_key_jwt");
+        assertThat(body).contains("client_id=" + encodeValue(auth.getClientId()));
+        assertThat(body).contains("client_assertion_type=" + encodeValue(
+            "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"));
         assertThat(body).contains("client_assertion=" + "ey");
     }
 
-    private static void assertThatClientAuthMethodIsClientSecretPost(String body,
-                                                                     ClientProperties clientProperties) {
+    private static void assertThatClientAuthMethodIsClientSecretPost(
+        String body,
+        ClientProperties clientProperties) {
         ClientAuthenticationProperties auth = clientProperties.getAuthentication();
-        assertThat(auth.getClientAuthMethod().getValue())
-            .isEqualTo("client_secret_post");
-        assertThat(body).contains("client_id=" + URLEncoder.encode(auth.getClientId(),
-            StandardCharsets.UTF_8));
-        assertThat(body).contains("client_secret=" + URLEncoder.encode(auth.getClientSecret(),
-            StandardCharsets.UTF_8));
+        assertThat(auth.getClientAuthMethod().getValue()).isEqualTo("client_secret_post");
+        assertThat(body).contains("client_id=" + encodeValue(auth.getClientId()));
+        assertThat(body).contains("client_secret=" + encodeValue(auth.getClientSecret()));
     }
 
     private static void assertThatClientAuthMethodIsClientSecretBasic(RecordedRequest recordedRequest,

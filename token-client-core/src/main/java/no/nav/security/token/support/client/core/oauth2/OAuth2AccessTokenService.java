@@ -1,12 +1,14 @@
 package no.nav.security.token.support.client.core.oauth2;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import com.nimbusds.jwt.JWTParser;
 import lombok.extern.slf4j.Slf4j;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2ClientException;
-import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
+import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -18,28 +20,61 @@ public class OAuth2AccessTokenService {
 
     public static final List<OAuth2GrantType> SUPPORTED_GRANT_TYPES = Arrays.asList(
         OAuth2GrantType.JWT_BEARER,
-        OAuth2GrantType.CLIENT_CREDENTIALS);
+        OAuth2GrantType.CLIENT_CREDENTIALS,
+        OAuth2GrantType.TOKEN_EXCHANGE
+    );
 
     private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache;
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;
+    private Cache<ExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache;
     private final OnBehalfOfAssertionResolver assertionResolver;
     private final OnBehalfOfTokenClient onBehalfOfTokenClient;
     private final ClientCredentialsTokenClient clientCredentialsTokenClient;
+    private final ExchangeTokenClient exchangeTokenClient;
 
     public OAuth2AccessTokenService(OnBehalfOfAssertionResolver assertionResolver,
                                     OnBehalfOfTokenClient onBehalfOfTokenClient,
-                                    ClientCredentialsTokenClient clientCredentialsTokenClient) {
+                                    ClientCredentialsTokenClient clientCredentialsTokenClient,
+                                    ExchangeTokenClient exchangeTokenClient) {
         this.assertionResolver = assertionResolver;
         this.onBehalfOfTokenClient = onBehalfOfTokenClient;
         this.clientCredentialsTokenClient = clientCredentialsTokenClient;
+        this.exchangeTokenClient = exchangeTokenClient;
+    }
+
+    public OAuth2AccessTokenResponse getAccessToken(ClientProperties clientProperties, String subjectToken) {
+        verify(clientProperties, subjectToken);
+        if (isGrantType(clientProperties, OAuth2GrantType.TOKEN_EXCHANGE)) {
+            clientProperties.getTokenExchange().setSubjectToken(subjectToken);
+            return getAccessTokenExchange(clientProperties);
+        } else {
+            throw new OAuth2ClientException(String.format("invalid grant-type=%s from OAuth2ClientConfig.OAuth2Client" +
+                    ". grant-type not in supported grant-types (%s)",
+                clientProperties.getGrantType().getValue(), SUPPORTED_GRANT_TYPES));
+        }
+    }
+
+    private void verify(ClientProperties clientProperties, String subjectToken) {
+        if (clientProperties == null) {
+            throw new OAuth2ClientException("ClientProperties cannot be null");
+        } else {
+            verify(subjectToken);
+        }
+    }
+
+    private void verify(String subjectToken) {
+        try {
+            JWTParser.parse(subjectToken);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public OAuth2AccessTokenResponse getAccessToken(ClientProperties clientProperties) {
         if (clientProperties == null) {
             throw new OAuth2ClientException("ClientProperties cannot be null");
         }
-        log.debug("getting access_token with scopes={} for grant={}", clientProperties.getScope(),
-            clientProperties.getGrantType());
+        log.debug("getting access_token for grant={}", clientProperties.getGrantType());
         if (isGrantType(clientProperties, OAuth2GrantType.JWT_BEARER)) {
             return getAccessTokenOnBehalfOfAuthenticatedJwtToken(clientProperties);
         } else if (isGrantType(clientProperties, OAuth2GrantType.CLIENT_CREDENTIALS)) {
@@ -72,6 +107,16 @@ public class OAuth2AccessTokenService {
     private OAuth2AccessTokenResponse getAccessTokenOnBehalfOfAuthenticatedJwtToken(ClientProperties clientProperties) {
         final var grantRequest = onBehalfOfGrantRequest(clientProperties);
         return getFromCacheIfEnabled(grantRequest, onBehalfOfGrantCache, onBehalfOfTokenClient::getTokenResponse);
+    }
+
+    public void setExchangeGrantCache(Cache<ExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache) {
+        this.exchangeGrantCache = exchangeGrantCache;
+    }
+
+    private OAuth2AccessTokenResponse getAccessTokenExchange(ClientProperties clientProperties) {
+        final var grantRequest = new ExchangeGrantRequest(clientProperties);
+        return getFromCacheIfEnabled(grantRequest, exchangeGrantCache,
+            exchangeTokenClient::getTokenResponse);
     }
 
     private OAuth2AccessTokenResponse getAccessTokenClientCredentials(ClientProperties clientProperties) {

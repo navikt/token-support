@@ -4,10 +4,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import no.nav.security.token.support.client.core.ClientProperties;
-import no.nav.security.token.support.client.core.OAuth2CacheFactory;
-import no.nav.security.token.support.client.core.OAuth2ClientException;
-import no.nav.security.token.support.client.core.OAuth2GrantType;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
+import no.nav.security.token.support.client.core.*;
 import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +32,8 @@ class OAuth2AccessTokenServiceTest {
     private OnBehalfOfTokenClient onBehalfOfTokenResponseClient;
     @Mock
     private ClientCredentialsTokenClient clientCredentialsTokenResponseClient;
+    @Mock
+    private ExchangeTokenClient exchangeTokeResponseClient;
 
     @Mock
     private OnBehalfOfAssertionResolver assertionResolver;
@@ -48,13 +48,17 @@ class OAuth2AccessTokenServiceTest {
             OAuth2CacheFactory.accessTokenResponseCache(10, 1);
         Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsCache =
             OAuth2CacheFactory.accessTokenResponseCache(10, 1);
+        Cache<ExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeTokenCache =
+            OAuth2CacheFactory.accessTokenResponseCache(10, 1);
 
         oAuth2AccessTokenService = new OAuth2AccessTokenService(
             assertionResolver,
             onBehalfOfTokenResponseClient,
-            clientCredentialsTokenResponseClient);
+            clientCredentialsTokenResponseClient,
+            exchangeTokeResponseClient);
         oAuth2AccessTokenService.setOnBehalfOfGrantCache(oboCache);
         oAuth2AccessTokenService.setClientCredentialsGrantCache(clientCredentialsCache);
+        oAuth2AccessTokenService.setExchangeGrantCache(exchangeTokenCache);
     }
 
     @Test
@@ -83,6 +87,22 @@ class OAuth2AccessTokenServiceTest {
         OAuth2AccessTokenResponse oAuth2AccessTokenResponse1 =
             oAuth2AccessTokenService.getAccessToken(clientProperties);
         verify(clientCredentialsTokenResponseClient, times(1)).getTokenResponse(any(ClientCredentialsGrantRequest.class));
+        assertThat(oAuth2AccessTokenResponse1).hasNoNullFieldsOrProperties();
+        assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
+    }
+
+    @Test
+    void getAccessTokenExchange() {
+        ClientProperties clientProperties = ExchangeProperties();
+        String subjectToken = jwt("somesub").serialize();
+
+        String firstAccessToken = "first_access_token";
+        when(exchangeTokeResponseClient.getTokenResponse(any(ExchangeGrantRequest.class)))
+            .thenReturn(accessTokenResponse(firstAccessToken, 60));
+
+        OAuth2AccessTokenResponse oAuth2AccessTokenResponse1 =
+            oAuth2AccessTokenService.getAccessToken(clientProperties, subjectToken);
+        verify(exchangeTokeResponseClient, times(1)).getTokenResponse(any(ExchangeGrantRequest.class));
         assertThat(oAuth2AccessTokenResponse1).hasNoNullFieldsOrProperties();
         assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
     }
@@ -217,6 +237,21 @@ class OAuth2AccessTokenServiceTest {
         return clientProperties("http://token", OAuth2GrantType.CLIENT_CREDENTIALS)
             .toBuilder()
             .scope(Arrays.asList(scope))
+            .build();
+    }
+
+    private static ClientProperties ExchangeProperties() {
+        return ExchangeProperties("audience1");
+    }
+
+    private static ClientProperties ExchangeProperties(String audience) {
+        return clientProperties("http://token", OAuth2GrantType.TOKEN_EXCHANGE)
+            .toBuilder()
+            .tokenExchange(
+                ExchangeProperties.builder()
+                    .audience(audience)
+                    .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+                    .build())
             .build();
     }
 
