@@ -10,9 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 import static no.nav.security.token.support.client.core.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -109,7 +106,7 @@ class ExchangeTokenClientTest {
 
     private void assertThatRequestBodyContainsTokenExchangeFormParameters(String formParameters) {
         assertThat(formParameters).contains(OAuth2ParameterNames.GRANT_TYPE + "=" + encodeValue(OAuth2GrantType.TOKEN_EXCHANGE.getValue()));
-        assertThat(formParameters).contains(OAuth2ParameterNames.AUDIENCE + "=audience1");
+        assertThat(formParameters).contains(OAuth2ParameterNames.AUDIENCE + "=" + "audience1");
         assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN_TYPE + "=" + encodeValue("urn:ietf:params:oauth:token-type:jwt"));
         assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN + "=" + subjectToken);
     }
