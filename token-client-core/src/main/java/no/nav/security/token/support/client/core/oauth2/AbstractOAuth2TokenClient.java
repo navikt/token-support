@@ -64,7 +64,7 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
         ClientProperties clientProperties = grantRequest.getClientProperties();
         Map<String, String> formParameters = new LinkedHashMap<>(clientAuthenticationFormParameters(grantRequest));
         formParameters.put(OAuth2ParameterNames.GRANT_TYPE, grantRequest.getGrantType().getValue());
-        if (clientProperties.getScope() != null && !clientProperties.getScope().isEmpty()) {
+        if (!clientProperties.getGrantType().equals(OAuth2GrantType.TOKEN_EXCHANGE)) {
             formParameters.put(OAuth2ParameterNames.SCOPE, String.join(" ", clientProperties.getScope()));
         }
         return formParameters;

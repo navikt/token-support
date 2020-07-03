@@ -28,6 +28,7 @@ public class ClientProperties {
     private final URI tokenEndpointUrl;
     @NotNull
     private final OAuth2GrantType grantType;
+    @NotEmpty
     private final List<String> scope;
     @NotNull
     private final ClientAuthenticationProperties authentication;
@@ -36,7 +37,7 @@ public class ClientProperties {
 
     public ClientProperties(@NotNull URI tokenEndpointUrl,
                             @NotNull OAuth2GrantType grantType,
-                            List<String> scope,
+                            @NotEmpty List<String> scope,
                             @NotNull ClientAuthenticationProperties authentication,
                             URI resourceUrl,
                             ExchangeProperties exchangeProperties
