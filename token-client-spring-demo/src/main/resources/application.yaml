@@ -28,7 +28,7 @@ no.nav.security.jwt:
 
       democlient3:
         token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
-        grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
+        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
         authentication:
           client-id: cluster:namespace:app1
           client-jwk: token-client-spring-demo/src/main/resources/jwk.json
