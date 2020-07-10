@@ -6,6 +6,7 @@ import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 
+import no.nav.security.token.support.core.JwtTokenConstants;
 import no.nav.security.token.support.filter.JwtTokenExpiryFilter;
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
@@ -123,9 +124,9 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 
 	@Bean
     @Qualifier("oidcTokenExpiryFilterRegistrationBean")
-	@ConditionalOnProperty(name="no.nav.security.jwt.expirythreshold", matchIfMissing = false)
+	@ConditionalOnProperty(name= JwtTokenConstants.EXPIRY_THRESHOLD_ENV_PROPERTY, matchIfMissing = false)
 	public FilterRegistrationBean<JwtTokenExpiryFilter> oidcTokenExpiryFilterRegistrationBean(TokenValidationContextHolder tokenValidationContextHolder,
-                                                                                              @Value("${no.nav.security.jwt.expirythreshold}") long expiryThreshold) {
+                                                                                              @Value("${" + JwtTokenConstants.EXPIRY_THRESHOLD_ENV_PROPERTY + "}") long expiryThreshold) {
 		logger.info("Registering expiry filter");
 		final FilterRegistrationBean<JwtTokenExpiryFilter> filterRegistration = new FilterRegistrationBean<>();
 		filterRegistration.setFilter(new JwtTokenExpiryFilter(tokenValidationContextHolder, expiryThreshold));

@@ -41,6 +41,7 @@ class TokenSupportAuthenticationProvider(
     ): this(ProviderConfiguration(name),config, resourceRetriever)
 
     internal val jwtTokenValidationHandler: JwtTokenValidationHandler
+    internal val jwtTokenExpiryThresholdHandler: JwtTokenExpiryThresholdHandler
 
     init {
         val issuerPropertiesMap: Map<String, IssuerProperties> = applicationConfig.configList("no.nav.security.jwt.issuers")
@@ -54,6 +55,9 @@ class TokenSupportAuthenticationProvider(
         jwtTokenValidationHandler = JwtTokenValidationHandler(
             MultiIssuerConfiguration(issuerPropertiesMap, resourceRetriever)
         )
+
+        val expiryThreshold: Int = applicationConfig.propertyOrNull("no.nav.security.jwt.expirythreshold")?.getString()?.toInt() ?: -1
+        jwtTokenExpiryThresholdHandler = JwtTokenExpiryThresholdHandler(expiryThreshold)
     }
 
     class ProviderConfiguration internal constructor(name: String?): AuthenticationProvider.Configuration(name)
@@ -90,6 +94,7 @@ fun Authentication.Configuration.tokenValidationSupport(
                         throw AdditionalValidationReturnedFalse()
                     }
                 }
+                provider.jwtTokenExpiryThresholdHandler.addHeaderOnTokenExpiryThreshold(call, tokenValidationContext)
                 context.principal(TokenValidationContextPrincipal(tokenValidationContext))
                 return@intercept
             }
