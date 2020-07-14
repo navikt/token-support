@@ -8,6 +8,7 @@ import lombok.ToString;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -28,7 +29,6 @@ public class ClientProperties {
     private final URI tokenEndpointUrl;
     @NotNull
     private final OAuth2GrantType grantType;
-    @NotEmpty
     private final List<String> scope;
     @NotNull
     private final ClientAuthenticationProperties authentication;
@@ -37,14 +37,14 @@ public class ClientProperties {
 
     public ClientProperties(@NotNull URI tokenEndpointUrl,
                             @NotNull OAuth2GrantType grantType,
-                            @NotEmpty List<String> scope,
+                            List<String> scope,
                             @NotNull ClientAuthenticationProperties authentication,
                             URI resourceUrl,
                             ExchangeProperties exchangeProperties
     ) {
         this.tokenEndpointUrl = tokenEndpointUrl;
         this.grantType = getSupported(grantType);
-        this.scope = scope;
+        this.scope = Optional.ofNullable(scope).orElse(Collections.emptyList());
         this.authentication = authentication;
         this.resourceUrl = resourceUrl;
         this.tokenExchange = exchangeProperties;
