@@ -35,6 +35,7 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.filter.JwtTokenValidationFilter;
 import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor;
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenHandlerInterceptor;
+import no.nav.security.token.support.spring.validation.interceptor.SpringJwtTokenAnnotationHandler;
 
 @Configuration
 @EnableConfigurationProperties(MultiIssuerProperties.class)
@@ -89,7 +90,7 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 
 	@Bean
 	public JwtTokenValidationFilter tokenValidationFilter(MultiIssuerConfiguration config, TokenValidationContextHolder tokenValidationContextHolder) {
-		return new JwtTokenValidationFilter(new JwtTokenValidationHandler(config), tokenValidationContextHolder);
+        return new JwtTokenValidationFilter(new JwtTokenValidationHandler(config), tokenValidationContextHolder);
 
 	}
 
@@ -103,7 +104,7 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 	public JwtTokenHandlerInterceptor getControllerInterceptor() {
 		logger.debug("registering OIDC token controller handler interceptor");
         return new JwtTokenHandlerInterceptor(enableOIDCTokenValidation,
-                new JwtTokenAnnotationHandler(new SpringTokenValidationContextHolder()));
+                new SpringJwtTokenAnnotationHandler(new SpringTokenValidationContextHolder()));
 	}
 
 
