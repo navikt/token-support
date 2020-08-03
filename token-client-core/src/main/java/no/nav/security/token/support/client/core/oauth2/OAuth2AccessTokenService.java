@@ -25,16 +25,16 @@ public class OAuth2AccessTokenService {
     private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache;
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;
     private Cache<ExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache;
-    private final JwtBearerTokenResolver assertionResolver;
+    private final JwtBearerTokenResolver tokenResolver;
     private final OnBehalfOfTokenClient onBehalfOfTokenClient;
     private final ClientCredentialsTokenClient clientCredentialsTokenClient;
     private final ExchangeTokenClient exchangeTokenClient;
 
-    public OAuth2AccessTokenService(JwtBearerTokenResolver assertionResolver,
+    public OAuth2AccessTokenService(JwtBearerTokenResolver tokenResolver,
                                     OnBehalfOfTokenClient onBehalfOfTokenClient,
                                     ClientCredentialsTokenClient clientCredentialsTokenClient,
                                     ExchangeTokenClient exchangeTokenClient) {
-        this.assertionResolver = assertionResolver;
+        this.tokenResolver = tokenResolver;
         this.onBehalfOfTokenClient = onBehalfOfTokenClient;
         this.clientCredentialsTokenClient = clientCredentialsTokenClient;
         this.exchangeTokenClient = exchangeTokenClient;
@@ -120,13 +120,13 @@ public class OAuth2AccessTokenService {
     }
 
     private ExchangeGrantRequest exchangeGrantRequest(ClientProperties clientProperties) {
-        return new ExchangeGrantRequest(clientProperties, assertionResolver.token()
+        return new ExchangeGrantRequest(clientProperties, tokenResolver.token()
             .orElseThrow(() -> new OAuth2ClientException("no authenticated jwt token found in validation context, " +
                 "cannot do token exchange")));
     }
 
     private OnBehalfOfGrantRequest onBehalfOfGrantRequest(ClientProperties clientProperties) {
-        return new OnBehalfOfGrantRequest(clientProperties, assertionResolver.token()
+        return new OnBehalfOfGrantRequest(clientProperties, tokenResolver.token()
             .orElseThrow(() -> new OAuth2ClientException("no authenticated jwt token found in validation context, " +
                 "cannot do on-behalf-of")));
     }
