@@ -5,11 +5,11 @@ import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
 
 @EqualsAndHashCode(callSuper = true)
-public class ExchangeGrantRequest extends AbstractOAuth2GrantRequest {
+public class TokenExchangeGrantRequest extends AbstractOAuth2GrantRequest {
 
     private final String subjectToken;
     @SuppressWarnings("WeakerAccess")
-    public ExchangeGrantRequest(ClientProperties clientProperties, String subjectToken) {
+    public TokenExchangeGrantRequest(ClientProperties clientProperties, String subjectToken) {
         super(OAuth2GrantType.TOKEN_EXCHANGE, clientProperties);
         this.subjectToken = subjectToken;
     }

@@ -4,7 +4,7 @@ import no.nav.security.token.support.client.core.OAuth2CacheFactory;
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient;
-import no.nav.security.token.support.client.core.oauth2.ExchangeTokenClient;
+import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
@@ -48,7 +48,7 @@ public class OAuth2ClientConfiguration implements ImportAware {
             jwtBearerTokenResolver,
             new OnBehalfOfTokenClient(oAuth2HttpClient),
             new ClientCredentialsTokenClient(oAuth2HttpClient),
-            new ExchangeTokenClient(oAuth2HttpClient));
+            new TokenExchangeClient(oAuth2HttpClient));
 
         if (enableOAuth2ClientAttributes != null && enableOAuth2ClientAttributes.getBoolean("cacheEnabled")) {
             long maximumSize = enableOAuth2ClientAttributes.getNumber("cacheMaximumSize");

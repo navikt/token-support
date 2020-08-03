@@ -15,7 +15,7 @@ import static no.nav.security.token.support.client.core.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class ExchangeTokenClientTest {
+class TokenExchangeClientTest {
 
     private static final String TOKEN_RESPONSE = "{\n" +
         "    \"token_type\": \"Bearer\",\n" +
@@ -31,7 +31,7 @@ class ExchangeTokenClientTest {
     private String tokenEndpointUrl;
     private MockWebServer server;
 
-    private ExchangeTokenClient exchangeTokenClient;
+    private TokenExchangeClient tokenExchangeClient;
 
     private String subjectToken;
 
@@ -40,7 +40,7 @@ class ExchangeTokenClientTest {
         this.server = new MockWebServer();
         this.server.start();
         this.tokenEndpointUrl = this.server.url("/oauth2/v2/token").toString();
-        this.exchangeTokenClient = new ExchangeTokenClient(new SimpleOAuth2HttpClient());
+        this.tokenExchangeClient = new TokenExchangeClient(new SimpleOAuth2HttpClient());
         this.subjectToken = jwt("somesub").serialize();
     }
 
@@ -66,7 +66,7 @@ class ExchangeTokenClientTest {
             .build();
 
         OAuth2AccessTokenResponse response =
-            exchangeTokenClient.getTokenResponse(new ExchangeGrantRequest(clientProperties, subjectToken));
+            tokenExchangeClient.getTokenResponse(new TokenExchangeGrantRequest(clientProperties, subjectToken));
         RecordedRequest recordedRequest = this.server.takeRequest();
         assertPostMethodAndJsonHeaders(recordedRequest);
         String body = recordedRequest.getBody().readUtf8();
@@ -79,7 +79,7 @@ class ExchangeTokenClientTest {
     void getTokenResponseError() {
         this.server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400));
         assertThatExceptionOfType(OAuth2ClientException.class)
-            .isThrownBy(() -> exchangeTokenClient.getTokenResponse(new ExchangeGrantRequest(clientProperties(
+            .isThrownBy(() -> tokenExchangeClient.getTokenResponse(new TokenExchangeGrantRequest(clientProperties(
                 tokenEndpointUrl,
                 OAuth2GrantType.TOKEN_EXCHANGE
             ), subjectToken)));

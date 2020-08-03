@@ -32,7 +32,7 @@ class OAuth2AccessTokenServiceTest {
     @Mock
     private ClientCredentialsTokenClient clientCredentialsTokenResponseClient;
     @Mock
-    private ExchangeTokenClient exchangeTokeResponseClient;
+    private TokenExchangeClient exchangeTokeResponseClient;
 
     @Mock
     private JwtBearerTokenResolver assertionResolver;
@@ -47,7 +47,7 @@ class OAuth2AccessTokenServiceTest {
             OAuth2CacheFactory.accessTokenResponseCache(10, 1);
         Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsCache =
             OAuth2CacheFactory.accessTokenResponseCache(10, 1);
-        Cache<ExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeTokenCache =
+        Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeTokenCache =
             OAuth2CacheFactory.accessTokenResponseCache(10, 1);
 
         oAuth2AccessTokenService = new OAuth2AccessTokenService(
@@ -242,12 +242,12 @@ class OAuth2AccessTokenServiceTest {
         ClientProperties clientProperties = exchangeProperties();
         when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()));
         String firstAccessToken = "first_access_token";
-        when(exchangeTokeResponseClient.getTokenResponse(any(ExchangeGrantRequest.class)))
+        when(exchangeTokeResponseClient.getTokenResponse(any(TokenExchangeGrantRequest.class)))
             .thenReturn(accessTokenResponse(firstAccessToken, 60));
 
         OAuth2AccessTokenResponse oAuth2AccessTokenResponse1 =
             oAuth2AccessTokenService.getAccessToken(clientProperties);
-        verify(exchangeTokeResponseClient, times(1)).getTokenResponse(any(ExchangeGrantRequest.class));
+        verify(exchangeTokeResponseClient, times(1)).getTokenResponse(any(TokenExchangeGrantRequest.class));
         assertThat(oAuth2AccessTokenResponse1).hasNoNullFieldsOrProperties();
         assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
     }

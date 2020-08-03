@@ -7,14 +7,14 @@ import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ExchangeTokenClient extends AbstractOAuth2TokenClient<ExchangeGrantRequest> {
+public class TokenExchangeClient extends AbstractOAuth2TokenClient<TokenExchangeGrantRequest> {
 
-    public ExchangeTokenClient(OAuth2HttpClient oAuth2HttpClient) {
+    public TokenExchangeClient(OAuth2HttpClient oAuth2HttpClient) {
         super(oAuth2HttpClient);
     }
 
     @Override
-    protected Map<String, String> formParameters(ExchangeGrantRequest grantRequest) {
+    protected Map<String, String> formParameters(TokenExchangeGrantRequest grantRequest) {
         Map<String, String> formParameters = new LinkedHashMap<>();
         ClientProperties.TokenExchangeProperties tokenExchangeProperties = grantRequest.getClientProperties().getTokenExchange();
         formParameters.put(OAuth2ParameterNames.SUBJECT_TOKEN_TYPE, tokenExchangeProperties.subjectTokenType());

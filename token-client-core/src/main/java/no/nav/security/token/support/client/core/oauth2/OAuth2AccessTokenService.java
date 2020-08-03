@@ -24,20 +24,20 @@ public class OAuth2AccessTokenService {
 
     private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache;
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;
-    private Cache<ExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache;
+    private final TokenExchangeClient tokenExchangeClient;
     private final JwtBearerTokenResolver tokenResolver;
     private final OnBehalfOfTokenClient onBehalfOfTokenClient;
     private final ClientCredentialsTokenClient clientCredentialsTokenClient;
-    private final ExchangeTokenClient exchangeTokenClient;
+    private Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache;
 
     public OAuth2AccessTokenService(JwtBearerTokenResolver tokenResolver,
                                     OnBehalfOfTokenClient onBehalfOfTokenClient,
                                     ClientCredentialsTokenClient clientCredentialsTokenClient,
-                                    ExchangeTokenClient exchangeTokenClient) {
+                                    TokenExchangeClient tokenExchangeClient) {
         this.tokenResolver = tokenResolver;
         this.onBehalfOfTokenClient = onBehalfOfTokenClient;
         this.clientCredentialsTokenClient = clientCredentialsTokenClient;
-        this.exchangeTokenClient = exchangeTokenClient;
+        this.tokenExchangeClient = tokenExchangeClient;
     }
 
     private static <T extends AbstractOAuth2GrantRequest> OAuth2AccessTokenResponse getFromCacheIfEnabled(
@@ -92,7 +92,7 @@ public class OAuth2AccessTokenService {
         this.clientCredentialsGrantCache = clientCredentialsGrantCache;
     }
 
-    public void setExchangeGrantCache(Cache<ExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache) {
+    public void setExchangeGrantCache(Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache) {
         this.exchangeGrantCache = exchangeGrantCache;
     }
 
@@ -102,8 +102,8 @@ public class OAuth2AccessTokenService {
     }
 
     private OAuth2AccessTokenResponse executeTokenExchange(ClientProperties clientProperties) {
-        final var grantRequest = exchangeGrantRequest(clientProperties);
-        return getFromCacheIfEnabled(grantRequest, exchangeGrantCache, exchangeTokenClient::getTokenResponse);
+        final var grantRequest = tokenExchangeGrantRequest(clientProperties);
+        return getFromCacheIfEnabled(grantRequest, exchangeGrantCache, tokenExchangeClient::getTokenResponse);
     }
 
     private OAuth2AccessTokenResponse executeClientCredentials(ClientProperties clientProperties) {
@@ -119,8 +119,8 @@ public class OAuth2AccessTokenService {
             .isPresent();
     }
 
-    private ExchangeGrantRequest exchangeGrantRequest(ClientProperties clientProperties) {
-        return new ExchangeGrantRequest(clientProperties, tokenResolver.token()
+    private TokenExchangeGrantRequest tokenExchangeGrantRequest(ClientProperties clientProperties) {
+        return new TokenExchangeGrantRequest(clientProperties, tokenResolver.token()
             .orElseThrow(() -> new OAuth2ClientException("no authenticated jwt token found in validation context, " +
                 "cannot do token exchange")));
     }
