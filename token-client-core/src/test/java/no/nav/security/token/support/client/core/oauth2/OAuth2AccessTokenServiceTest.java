@@ -6,7 +6,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import no.nav.security.token.support.client.core.*;
-import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
+import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -36,7 +36,7 @@ class OAuth2AccessTokenServiceTest {
     private ExchangeTokenClient exchangeTokeResponseClient;
 
     @Mock
-    private OnBehalfOfAssertionResolver assertionResolver;
+    private JwtBearerTokenResolver assertionResolver;
 
     private OAuth2AccessTokenService oAuth2AccessTokenService;
 
@@ -64,7 +64,7 @@ class OAuth2AccessTokenServiceTest {
     @Test
     void getAccessTokenOnBehalfOf() {
         ClientProperties clientProperties = onBehalfOfProperties();
-        when(assertionResolver.assertion()).thenReturn(Optional.of(jwt("sub1").serialize()));
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()));
         String firstAccessToken = "first_access_token";
         when(onBehalfOfTokenResponseClient.getTokenResponse(any(OnBehalfOfGrantRequest.class)))
             .thenReturn(accessTokenResponse(firstAccessToken, 60));
@@ -118,7 +118,7 @@ class OAuth2AccessTokenServiceTest {
     void getAccessTokenOnBehalfOf_WithCache_MultipleTimes_SameClientConfig() {
         ClientProperties clientProperties = onBehalfOfProperties();
 
-        when(assertionResolver.assertion()).thenReturn(Optional.of(jwt("sub1").serialize()));
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()));
 
         //should invoke client and populate cache
         String firstAccessToken = "first_access_token";
@@ -140,7 +140,7 @@ class OAuth2AccessTokenServiceTest {
 
         //another user/token but same clientconfig, should invoke client and populate cache
         reset(assertionResolver);
-        when(assertionResolver.assertion()).thenReturn(Optional.of(jwt("sub2").serialize()));
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub2").serialize()));
 
         reset(onBehalfOfTokenResponseClient);
         String secondAccessToken = "second_access_token";
@@ -192,7 +192,7 @@ class OAuth2AccessTokenServiceTest {
     @Test
     void testCacheEntryIsEvictedOnExpiry() throws InterruptedException {
         ClientProperties clientProperties = onBehalfOfProperties();
-        when(assertionResolver.assertion()).thenReturn(Optional.of(jwt("sub1").serialize()));
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()));
 
         //should invoke client and populate cache
         String firstAccessToken = "first_access_token";

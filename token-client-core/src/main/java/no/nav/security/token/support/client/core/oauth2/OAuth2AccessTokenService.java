@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2ClientException;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
-import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
+import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -27,12 +27,12 @@ public class OAuth2AccessTokenService {
     private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache;
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;
     private Cache<ExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache;
-    private final OnBehalfOfAssertionResolver assertionResolver;
+    private final JwtBearerTokenResolver assertionResolver;
     private final OnBehalfOfTokenClient onBehalfOfTokenClient;
     private final ClientCredentialsTokenClient clientCredentialsTokenClient;
     private final ExchangeTokenClient exchangeTokenClient;
 
-    public OAuth2AccessTokenService(OnBehalfOfAssertionResolver assertionResolver,
+    public OAuth2AccessTokenService(JwtBearerTokenResolver assertionResolver,
                                     OnBehalfOfTokenClient onBehalfOfTokenClient,
                                     ClientCredentialsTokenClient clientCredentialsTokenClient,
                                     ExchangeTokenClient exchangeTokenClient) {
@@ -147,7 +147,7 @@ public class OAuth2AccessTokenService {
     }
 
     private OnBehalfOfGrantRequest onBehalfOfGrantRequest(ClientProperties clientProperties) {
-        return new OnBehalfOfGrantRequest(clientProperties, assertionResolver.assertion()
+        return new OnBehalfOfGrantRequest(clientProperties, assertionResolver.token()
             .orElseThrow(() -> new OAuth2ClientException("no authenticated jwt token found in validation context, " +
                 "cannot do on-behalf-of")));
     }

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
-import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
+import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
@@ -59,7 +59,7 @@ class OAuth2AccessTokenServiceIntegrationTest {
     @Autowired
     private ClientConfigurationProperties clientConfigurationProperties;
     @Autowired
-    private OnBehalfOfAssertionResolver assertionResolver;
+    private JwtBearerTokenResolver assertionResolver;
 
     private MockWebServer server;
     private URI tokenEndpointUrl;
@@ -109,7 +109,7 @@ class OAuth2AccessTokenServiceIntegrationTest {
         assertThat(body).contains("scope=" + URLEncoder.encode(String.join(" ", clientProperties.getScope()),
             StandardCharsets.UTF_8));
         assertThat(body).contains("requested_token_use=on_behalf_of");
-        assertThat(body).contains("assertion=" + assertionResolver.assertion().orElse(null));
+        assertThat(body).contains("assertion=" + assertionResolver.token().orElse(null));
 
         assertThat(response).isNotNull();
         assertThat(response.getAccessToken()).isNotBlank();
