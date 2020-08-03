@@ -234,7 +234,6 @@ class OAuth2AccessTokenServiceTest {
             .tokenExchange(
                 ExchangeProperties.builder()
                     .audience(audience)
-                    .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
                     .build())
             .build();
     }

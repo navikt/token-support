@@ -40,8 +40,7 @@ public class TestUtils {
     public static ClientProperties tokenExchangeClientProperties(
         String tokenEndpointUrl,
         OAuth2GrantType oAuth2GrantType,
-        String clientPrivateKey,
-        String subjectToken
+        String clientPrivateKey
     ) {
         return ClientProperties.builder()
             .grantType(oAuth2GrantType)
@@ -53,7 +52,6 @@ public class TestUtils {
                 .build())
             .tokenExchange(ExchangeProperties.builder()
                 .audience("audience1")
-                .subjectToken(subjectToken)
                 .build())
             .build();
     }

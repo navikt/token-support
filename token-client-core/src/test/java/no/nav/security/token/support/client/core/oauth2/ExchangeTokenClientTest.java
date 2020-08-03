@@ -55,8 +55,7 @@ class ExchangeTokenClientTest {
         ClientProperties clientProperties = tokenExchangeClientProperties(
             tokenEndpointUrl,
             OAuth2GrantType.TOKEN_EXCHANGE,
-            "src/test/resources/jwk.json",
-            subjectToken
+            "src/test/resources/jwk.json"
         )
             .toBuilder()
             .authentication(ClientAuthenticationProperties.builder()

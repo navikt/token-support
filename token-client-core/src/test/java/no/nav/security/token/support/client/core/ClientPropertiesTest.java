@@ -38,10 +38,9 @@ class ClientPropertiesTest {
                 "secret",
                 null),
             null,
-            new ExchangeProperties(ClientAuthenticationMethod.PRIVATE_KEY_JWT,
+            new ExchangeProperties(
                 "",
-                "",
-                TestUtils.jwt("somesub").serialize()
+                ""
             )
         );
     }
