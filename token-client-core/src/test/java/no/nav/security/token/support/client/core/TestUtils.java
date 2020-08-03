@@ -50,7 +50,7 @@ public class TestUtils {
                 .clientId("client1")
                 .clientJwk(clientPrivateKey)
                 .build())
-            .tokenExchange(ExchangeProperties.builder()
+            .tokenExchange(ClientProperties.TokenExchangeProperties.builder()
                 .audience("audience1")
                 .build())
             .build();

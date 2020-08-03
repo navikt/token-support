@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import no.nav.security.token.support.client.core.*;
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
 import org.junit.jupiter.api.BeforeEach;
@@ -232,7 +231,7 @@ class OAuth2AccessTokenServiceTest {
         return clientProperties("http://token", OAuth2GrantType.TOKEN_EXCHANGE)
             .toBuilder()
             .tokenExchange(
-                ExchangeProperties.builder()
+                ClientProperties.TokenExchangeProperties.builder()
                     .audience(audience)
                     .build())
             .build();

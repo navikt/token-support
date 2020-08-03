@@ -38,7 +38,7 @@ class ClientPropertiesTest {
                 "secret",
                 null),
             null,
-            new ExchangeProperties(
+            new ClientProperties.TokenExchangeProperties(
                 "",
                 ""
             )

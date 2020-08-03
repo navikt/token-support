@@ -1,6 +1,6 @@
 package no.nav.security.token.support.client.core.oauth2;
 
-import no.nav.security.token.support.client.core.ExchangeProperties;
+import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2ParameterNames;
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 
@@ -16,12 +16,12 @@ public class ExchangeTokenClient extends AbstractOAuth2TokenClient<ExchangeGrant
     @Override
     protected Map<String, String> formParameters(ExchangeGrantRequest grantRequest) {
         Map<String, String> formParameters = new LinkedHashMap<>();
-        ExchangeProperties exchangeProperties = grantRequest.getClientProperties().getTokenExchange();
-        formParameters.put(OAuth2ParameterNames.SUBJECT_TOKEN_TYPE, exchangeProperties.subjectTokenType());
+        ClientProperties.TokenExchangeProperties tokenExchangeProperties = grantRequest.getClientProperties().getTokenExchange();
+        formParameters.put(OAuth2ParameterNames.SUBJECT_TOKEN_TYPE, tokenExchangeProperties.subjectTokenType());
         formParameters.put(OAuth2ParameterNames.SUBJECT_TOKEN, grantRequest.getSubjectToken());
-        formParameters.put(OAuth2ParameterNames.AUDIENCE, exchangeProperties.getAudience());
-        if (exchangeProperties.getResource() != null && !exchangeProperties.getResource().isEmpty()) {
-            formParameters.put(OAuth2ParameterNames.RESOURCE, exchangeProperties.getResource());
+        formParameters.put(OAuth2ParameterNames.AUDIENCE, tokenExchangeProperties.getAudience());
+        if (tokenExchangeProperties.getResource() != null && !tokenExchangeProperties.getResource().isEmpty()) {
+            formParameters.put(OAuth2ParameterNames.RESOURCE, tokenExchangeProperties.getResource());
         }
         return formParameters;
     }
