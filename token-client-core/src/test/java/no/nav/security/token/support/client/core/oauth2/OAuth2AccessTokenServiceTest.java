@@ -91,20 +91,8 @@ class OAuth2AccessTokenServiceTest {
         assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
     }
 
-    @Test
-    void getAccessTokenExchange() {
-        ClientProperties clientProperties = ExchangeProperties();
-        String subjectToken = jwt("somesub").serialize();
-
-        String firstAccessToken = "first_access_token";
-        when(exchangeTokeResponseClient.getTokenResponse(any(ExchangeGrantRequest.class)))
-            .thenReturn(accessTokenResponse(firstAccessToken, 60));
-
-        OAuth2AccessTokenResponse oAuth2AccessTokenResponse1 =
-            oAuth2AccessTokenService.getAccessToken(clientProperties, subjectToken);
-        verify(exchangeTokeResponseClient, times(1)).getTokenResponse(any(ExchangeGrantRequest.class));
-        assertThat(oAuth2AccessTokenResponse1).hasNoNullFieldsOrProperties();
-        assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
+    private static ClientProperties exchangeProperties() {
+        return exchangeProperties("audience1");
     }
 
     @Test
@@ -240,11 +228,7 @@ class OAuth2AccessTokenServiceTest {
             .build();
     }
 
-    private static ClientProperties ExchangeProperties() {
-        return ExchangeProperties("audience1");
-    }
-
-    private static ClientProperties ExchangeProperties(String audience) {
+    private static ClientProperties exchangeProperties(String audience) {
         return clientProperties("http://token", OAuth2GrantType.TOKEN_EXCHANGE)
             .toBuilder()
             .tokenExchange(
@@ -253,6 +237,21 @@ class OAuth2AccessTokenServiceTest {
                     .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
                     .build())
             .build();
+    }
+
+    @Test
+    void getAccessTokenExchange() {
+        ClientProperties clientProperties = exchangeProperties();
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()));
+        String firstAccessToken = "first_access_token";
+        when(exchangeTokeResponseClient.getTokenResponse(any(ExchangeGrantRequest.class)))
+            .thenReturn(accessTokenResponse(firstAccessToken, 60));
+
+        OAuth2AccessTokenResponse oAuth2AccessTokenResponse1 =
+            oAuth2AccessTokenService.getAccessToken(clientProperties);
+        verify(exchangeTokeResponseClient, times(1)).getTokenResponse(any(ExchangeGrantRequest.class));
+        assertThat(oAuth2AccessTokenResponse1).hasNoNullFieldsOrProperties();
+        assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
     }
 
     private static ClientProperties onBehalfOfProperties() {

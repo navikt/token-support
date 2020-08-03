@@ -67,7 +67,7 @@ class ExchangeTokenClientTest {
             .build();
 
         OAuth2AccessTokenResponse response =
-            exchangeTokenClient.getTokenResponse(new ExchangeGrantRequest(clientProperties));
+            exchangeTokenClient.getTokenResponse(new ExchangeGrantRequest(clientProperties, subjectToken));
         RecordedRequest recordedRequest = this.server.takeRequest();
         assertPostMethodAndJsonHeaders(recordedRequest);
         String body = recordedRequest.getBody().readUtf8();
@@ -83,7 +83,7 @@ class ExchangeTokenClientTest {
             .isThrownBy(() -> exchangeTokenClient.getTokenResponse(new ExchangeGrantRequest(clientProperties(
                 tokenEndpointUrl,
                 OAuth2GrantType.TOKEN_EXCHANGE
-            ))));
+            ), subjectToken)));
     }
 
     private static void assertThatResponseContainsAccessToken(OAuth2AccessTokenResponse response) {

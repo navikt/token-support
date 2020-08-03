@@ -84,16 +84,6 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
             formParameters.put(OAuth2ParameterNames.CLIENT_ID, auth.getClientId());
             formParameters.put(OAuth2ParameterNames.CLIENT_ASSERTION_TYPE, clientAssertion.assertionType());
             formParameters.put(OAuth2ParameterNames.CLIENT_ASSERTION, clientAssertion.assertion());
-
-            if (clientProperties.getGrantType().equals(OAuth2GrantType.TOKEN_EXCHANGE)) {
-                ExchangeProperties exchangeProperties = clientProperties.getTokenExchange();
-                formParameters.put(OAuth2ParameterNames.SUBJECT_TOKEN_TYPE, exchangeProperties.subjectTokenType());
-                formParameters.put(OAuth2ParameterNames.SUBJECT_TOKEN, exchangeProperties.getSubjectToken());
-                formParameters.put(OAuth2ParameterNames.AUDIENCE, exchangeProperties.getAudience());
-                if (exchangeProperties.getResource() != null && !exchangeProperties.getResource().isEmpty()) {
-                    formParameters.put(OAuth2ParameterNames.RESOURCE, exchangeProperties.getResource());
-                }
-            }
         }
         return formParameters;
     }

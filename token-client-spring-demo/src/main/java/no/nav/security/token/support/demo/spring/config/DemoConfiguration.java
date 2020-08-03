@@ -79,28 +79,13 @@ public class DemoConfiguration {
     ) {
 
         ClientProperties clientProperties =
-            Optional.ofNullable(clientConfigurationProperties.getRegistration().get("democlient2"))
-                .orElseThrow(() -> new RuntimeException("could not find oauth2 client config for democlient2"));
+            Optional.ofNullable(clientConfigurationProperties.getRegistration().get("democlient3"))
+                .orElseThrow(() -> new RuntimeException("could not find oauth2 client config for democlient3"));
 
         return restTemplateBuilder
-            .additionalInterceptors(bearerTokenInterceptor(
-                clientProperties, oAuth2AccessTokenService, Jwt.token("somesub").serialize()))
+            .additionalInterceptors(bearerTokenInterceptor(clientProperties, oAuth2AccessTokenService))
             .build();
     }
-
-    private ClientHttpRequestInterceptor bearerTokenInterceptor(
-        ClientProperties clientProperties,
-        OAuth2AccessTokenService oAuth2AccessTokenService,
-        String subjectToken
-    ) {
-        return (request, body, execution) -> {
-            OAuth2AccessTokenResponse response =
-                oAuth2AccessTokenService.getAccessToken(clientProperties, subjectToken);
-            request.getHeaders().setBearerAuth(response.getAccessToken());
-            return execution.execute(request, body);
-        };
-    }
-
 
     private ClientHttpRequestInterceptor bearerTokenInterceptor(
         ClientProperties clientProperties,
