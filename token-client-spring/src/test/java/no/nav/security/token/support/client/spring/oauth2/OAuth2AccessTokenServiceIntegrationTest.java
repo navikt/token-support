@@ -4,9 +4,9 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
-import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
@@ -83,7 +83,7 @@ class OAuth2AccessTokenServiceIntegrationTest {
         assertThat(clientProperties).isNotNull();
         clientProperties = clientProperties.toBuilder()
             .tokenEndpointUrl(tokenEndpointUrl)
-        .build();
+            .build();
 
         server.enqueue(jsonResponse(TOKEN_RESPONSE));
 
@@ -111,6 +111,33 @@ class OAuth2AccessTokenServiceIntegrationTest {
         assertThat(body).contains("requested_token_use=on_behalf_of");
         assertThat(body).contains("assertion=" + assertionResolver.token().orElse(null));
 
+        assertThat(response).isNotNull();
+        assertThat(response.getAccessToken()).isNotBlank();
+        assertThat(response.getExpiresAt()).isGreaterThan(0);
+        assertThat(response.getExpiresIn()).isGreaterThan(0);
+    }
+
+    @Test
+    void getAccessTokenUsingTokenExhange() throws InterruptedException {
+        ClientProperties clientProperties = clientConfigurationProperties.getRegistration().get("example1-token" +
+            "-exchange1");
+        assertThat(clientProperties).isNotNull();
+        clientProperties = clientProperties.toBuilder()
+            .tokenEndpointUrl(tokenEndpointUrl)
+            .build();
+
+        server.enqueue(jsonResponse(TOKEN_RESPONSE));
+
+        when(tokenValidationContextHolder.getTokenValidationContext()).thenReturn(tokenValidationContext("sub1"));
+        OAuth2AccessTokenResponse response = oAuth2AccessTokenService.getAccessToken(clientProperties);
+        var request = server.takeRequest();
+        var headers = request.getHeaders();
+        var body = request.getBody().readUtf8();
+        assertThat(headers.get("Content-Type")).contains("application/x-www-form-urlencoded");
+
+        assertThat(body).contains("grant_type=" + URLEncoder.encode(OAuth2GrantType.TOKEN_EXCHANGE.getValue(),
+            StandardCharsets.UTF_8));
+        assertThat(body).contains("subject_token=" + assertionResolver.token().orElse(null));
         assertThat(response).isNotNull();
         assertThat(response.getAccessToken()).isNotBlank();
         assertThat(response.getExpiresAt()).isGreaterThan(0);
