@@ -6,6 +6,9 @@ categories:
     labels:
       - 'feature'
       - 'enhancement'
+  - title: '⚠️ Breaking Changes'
+    labels:
+      - 'breaking'
   - title: '🐛 Bug Fixes'
     labels:
       - 'fix'
