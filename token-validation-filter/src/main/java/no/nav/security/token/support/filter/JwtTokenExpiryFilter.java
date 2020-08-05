@@ -15,6 +15,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import no.nav.security.token.support.core.JwtTokenConstants;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,6 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder;
  * Can be used to check if the token is about to expire and inform the caller
  */
 public class JwtTokenExpiryFilter implements Filter {
-
-    public static final String TOKEN_EXPIRES_SOON_HEADER = "x-token-expires-soon";
 
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenExpiryFilter.class);
     private final TokenValidationContextHolder contextHolder;
@@ -69,8 +68,8 @@ public class JwtTokenExpiryFilter implements Filter {
             for (String issuer : tokenValidationContext.getIssuers()) {
                 JwtTokenClaims jwtTokenClaims = tokenValidationContext.getClaims(issuer);
                 if (tokenExpiresBeforeThreshold(jwtTokenClaims)) {
-                    LOG.debug("Setting response header {}", TOKEN_EXPIRES_SOON_HEADER);
-                    response.setHeader(TOKEN_EXPIRES_SOON_HEADER, "true");
+                    LOG.debug("Setting response header {}", JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER);
+                    response.setHeader(JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER, "true");
                 }
                 else {
                     LOG.debug("Token is still within expiry threshold.");
