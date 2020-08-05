@@ -49,7 +49,7 @@
         <rest-assured.version>4.2.0</rest-assured.version>
         <hibernate-validator.version>6.1.5.Final</hibernate-validator.version>
         <mockwebserver.version>4.7.2</mockwebserver.version>
-        <caffeine.version>2.8.4</caffeine.version>
+        <caffeine.version>2.8.5</caffeine.version>
         <okhttp3.version>4.7.2</okhttp3.version>
         <ktor.version>1.3.2</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
