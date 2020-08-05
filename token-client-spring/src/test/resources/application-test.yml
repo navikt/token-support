@@ -43,3 +43,13 @@ no.nav.security.jwt.client:
         client-id: testclient
         client-jwk: src/test/resources/jwk.json
         client-auth-method: private_key_jwt
+
+    example1-token-exchange1:
+      token-endpoint-url: http://tokens.no
+      grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+      authentication:
+        client-id: cluster:namespace:app1
+        client-jwk: src/test/resources/jwk.json
+        client-auth-method: private_key_jwt
+      token-exchange:
+        audience: cluster:namespace:app2

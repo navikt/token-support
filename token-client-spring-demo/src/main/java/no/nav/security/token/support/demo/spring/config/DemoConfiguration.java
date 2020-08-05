@@ -38,9 +38,11 @@ public class DemoConfiguration {
 
     @Bean
     @DemoClient1
-    RestTemplate demoClient1RestTemplate(RestTemplateBuilder restTemplateBuilder,
-                                         ClientConfigurationProperties clientConfigurationProperties,
-                                         OAuth2AccessTokenService oAuth2AccessTokenService) {
+    RestTemplate demoClient1RestTemplate(
+        RestTemplateBuilder restTemplateBuilder,
+        ClientConfigurationProperties clientConfigurationProperties,
+        OAuth2AccessTokenService oAuth2AccessTokenService
+    ) {
 
         ClientProperties clientProperties =
             Optional.ofNullable(clientConfigurationProperties.getRegistration().get("democlient1"))
@@ -53,9 +55,11 @@ public class DemoConfiguration {
 
     @Bean
     @DemoClient2
-    RestTemplate demoClient2RestTemplate(RestTemplateBuilder restTemplateBuilder,
-                                         ClientConfigurationProperties clientConfigurationProperties,
-                                         OAuth2AccessTokenService oAuth2AccessTokenService) {
+    RestTemplate demoClient2RestTemplate(
+        RestTemplateBuilder restTemplateBuilder,
+        ClientConfigurationProperties clientConfigurationProperties,
+        OAuth2AccessTokenService oAuth2AccessTokenService
+    ) {
 
         ClientProperties clientProperties =
             Optional.ofNullable(clientConfigurationProperties.getRegistration().get("democlient2"))
@@ -66,9 +70,27 @@ public class DemoConfiguration {
             .build();
     }
 
+    @Bean
+    @DemoClient3
+    RestTemplate demoClient3RestTemplate(
+        RestTemplateBuilder restTemplateBuilder,
+        ClientConfigurationProperties clientConfigurationProperties,
+        OAuth2AccessTokenService oAuth2AccessTokenService
+    ) {
 
-    private ClientHttpRequestInterceptor bearerTokenInterceptor(ClientProperties clientProperties,
-                                                                OAuth2AccessTokenService oAuth2AccessTokenService) {
+        ClientProperties clientProperties =
+            Optional.ofNullable(clientConfigurationProperties.getRegistration().get("democlient3"))
+                .orElseThrow(() -> new RuntimeException("could not find oauth2 client config for democlient3"));
+
+        return restTemplateBuilder
+            .additionalInterceptors(bearerTokenInterceptor(clientProperties, oAuth2AccessTokenService))
+            .build();
+    }
+
+    private ClientHttpRequestInterceptor bearerTokenInterceptor(
+        ClientProperties clientProperties,
+        OAuth2AccessTokenService oAuth2AccessTokenService
+    ) {
         return (request, body, execution) -> {
             OAuth2AccessTokenResponse response =
                 oAuth2AccessTokenService.getAccessToken(clientProperties);
@@ -90,6 +112,14 @@ public class DemoConfiguration {
     @Retention(RetentionPolicy.RUNTIME)
     @Qualifier
     public @interface DemoClient2 {
+
+    }
+
+    @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Qualifier
+    public @interface DemoClient3 {
 
     }
 }

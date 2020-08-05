@@ -37,7 +37,11 @@ class ClientPropertiesTest {
                 ClientAuthenticationMethod.CLIENT_SECRET_BASIC,
                 "secret",
                 null),
-            null);
+            null,
+            new ClientProperties.TokenExchangeProperties(
+                "",
+                ""
+            )
+        );
     }
-
 }

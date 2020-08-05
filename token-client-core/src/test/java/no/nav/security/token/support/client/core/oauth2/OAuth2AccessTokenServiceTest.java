@@ -4,11 +4,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import no.nav.security.token.support.client.core.ClientProperties;
-import no.nav.security.token.support.client.core.OAuth2CacheFactory;
-import no.nav.security.token.support.client.core.OAuth2ClientException;
-import no.nav.security.token.support.client.core.OAuth2GrantType;
-import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
+import no.nav.security.token.support.client.core.*;
+import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,9 +31,11 @@ class OAuth2AccessTokenServiceTest {
     private OnBehalfOfTokenClient onBehalfOfTokenResponseClient;
     @Mock
     private ClientCredentialsTokenClient clientCredentialsTokenResponseClient;
+    @Mock
+    private TokenExchangeClient exchangeTokeResponseClient;
 
     @Mock
-    private OnBehalfOfAssertionResolver assertionResolver;
+    private JwtBearerTokenResolver assertionResolver;
 
     private OAuth2AccessTokenService oAuth2AccessTokenService;
 
@@ -48,19 +47,23 @@ class OAuth2AccessTokenServiceTest {
             OAuth2CacheFactory.accessTokenResponseCache(10, 1);
         Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsCache =
             OAuth2CacheFactory.accessTokenResponseCache(10, 1);
+        Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeTokenCache =
+            OAuth2CacheFactory.accessTokenResponseCache(10, 1);
 
         oAuth2AccessTokenService = new OAuth2AccessTokenService(
             assertionResolver,
             onBehalfOfTokenResponseClient,
-            clientCredentialsTokenResponseClient);
+            clientCredentialsTokenResponseClient,
+            exchangeTokeResponseClient);
         oAuth2AccessTokenService.setOnBehalfOfGrantCache(oboCache);
         oAuth2AccessTokenService.setClientCredentialsGrantCache(clientCredentialsCache);
+        oAuth2AccessTokenService.setExchangeGrantCache(exchangeTokenCache);
     }
 
     @Test
     void getAccessTokenOnBehalfOf() {
         ClientProperties clientProperties = onBehalfOfProperties();
-        when(assertionResolver.assertion()).thenReturn(Optional.of(jwt("sub1").serialize()));
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()));
         String firstAccessToken = "first_access_token";
         when(onBehalfOfTokenResponseClient.getTokenResponse(any(OnBehalfOfGrantRequest.class)))
             .thenReturn(accessTokenResponse(firstAccessToken, 60));
@@ -87,6 +90,10 @@ class OAuth2AccessTokenServiceTest {
         assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
     }
 
+    private static ClientProperties exchangeProperties() {
+        return exchangeProperties("audience1");
+    }
+
     @Test
     void getAccessTokenOnBehalfOfNoAuthenticatedTokenFound() {
         assertThatExceptionOfType(OAuth2ClientException.class)
@@ -98,7 +105,7 @@ class OAuth2AccessTokenServiceTest {
     void getAccessTokenOnBehalfOf_WithCache_MultipleTimes_SameClientConfig() {
         ClientProperties clientProperties = onBehalfOfProperties();
 
-        when(assertionResolver.assertion()).thenReturn(Optional.of(jwt("sub1").serialize()));
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()));
 
         //should invoke client and populate cache
         String firstAccessToken = "first_access_token";
@@ -120,7 +127,7 @@ class OAuth2AccessTokenServiceTest {
 
         //another user/token but same clientconfig, should invoke client and populate cache
         reset(assertionResolver);
-        when(assertionResolver.assertion()).thenReturn(Optional.of(jwt("sub2").serialize()));
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub2").serialize()));
 
         reset(onBehalfOfTokenResponseClient);
         String secondAccessToken = "second_access_token";
@@ -172,7 +179,7 @@ class OAuth2AccessTokenServiceTest {
     @Test
     void testCacheEntryIsEvictedOnExpiry() throws InterruptedException {
         ClientProperties clientProperties = onBehalfOfProperties();
-        when(assertionResolver.assertion()).thenReturn(Optional.of(jwt("sub1").serialize()));
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()));
 
         //should invoke client and populate cache
         String firstAccessToken = "first_access_token";
@@ -218,6 +225,31 @@ class OAuth2AccessTokenServiceTest {
             .toBuilder()
             .scope(Arrays.asList(scope))
             .build();
+    }
+
+    private static ClientProperties exchangeProperties(String audience) {
+        return clientProperties("http://token", OAuth2GrantType.TOKEN_EXCHANGE)
+            .toBuilder()
+            .tokenExchange(
+                ClientProperties.TokenExchangeProperties.builder()
+                    .audience(audience)
+                    .build())
+            .build();
+    }
+
+    @Test
+    void getAccessTokenExchange() {
+        ClientProperties clientProperties = exchangeProperties();
+        when(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()));
+        String firstAccessToken = "first_access_token";
+        when(exchangeTokeResponseClient.getTokenResponse(any(TokenExchangeGrantRequest.class)))
+            .thenReturn(accessTokenResponse(firstAccessToken, 60));
+
+        OAuth2AccessTokenResponse oAuth2AccessTokenResponse1 =
+            oAuth2AccessTokenService.getAccessToken(clientProperties);
+        verify(exchangeTokeResponseClient, times(1)).getTokenResponse(any(TokenExchangeGrantRequest.class));
+        assertThat(oAuth2AccessTokenResponse1).hasNoNullFieldsOrProperties();
+        assertThat(oAuth2AccessTokenResponse1.getAccessToken()).isEqualTo("first_access_token");
     }
 
     private static ClientProperties onBehalfOfProperties() {
