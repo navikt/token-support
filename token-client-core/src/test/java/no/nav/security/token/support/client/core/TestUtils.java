@@ -5,8 +5,10 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -15,6 +17,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,6 +57,13 @@ public class TestUtils {
                 .audience("audience1")
                 .build())
             .build();
+    }
+
+    public static void withMockServer(Consumer<MockWebServer> test) throws IOException {
+        MockWebServer server = new MockWebServer();
+        server.start();
+        test.accept(server);
+        server.shutdown();
     }
 
     public static MockResponse jsonResponse(String json) {
