@@ -1,0 +1,13 @@
+no.nav.security.jwt.client:
+  registration:
+    example1-token-exchange1:
+      well-known-url: http://localhost:${mockwebserver.port}/well-known
+      grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+      authentication:
+        client-id: cluster:namespace:app1
+        client-jwk: src/test/resources/jwk.json
+        client-auth-method: private_key_jwt
+      token-exchange:
+        audience: cluster:namespace:app2
+
+logging.level.okhttp3: DEBUG
