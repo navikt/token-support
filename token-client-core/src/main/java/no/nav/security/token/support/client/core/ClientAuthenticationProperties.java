@@ -43,27 +43,32 @@ public class ClientAuthenticationProperties {
         validateAfterPropertiesSet();
     }
 
-    private static RSAKey loadKey(String clientPrivateKey){
-        return Optional.ofNullable(clientPrivateKey)
-            .map(JwkFactory::fromJsonFile)
-            .orElse(null);
+    private static RSAKey loadKey(String clientPrivateKey) {
+        if (clientPrivateKey != null) {
+            if (clientPrivateKey.startsWith("{")) {
+                return JwkFactory.fromJson(clientPrivateKey);
+            } else {
+                return JwkFactory.fromJsonFile(clientPrivateKey);
+            }
+        }
+        return null;
     }
 
-    private static ClientAuthenticationMethod getSupported(ClientAuthenticationMethod clientAuthMethod){
+    private static ClientAuthenticationMethod getSupported(ClientAuthenticationMethod clientAuthMethod) {
         return clientAuthMethod == null ?
             ClientAuthenticationMethod.CLIENT_SECRET_BASIC :
             Optional.of(clientAuthMethod)
-            .filter(CLIENT_AUTH_METHODS::contains)
-            .orElseThrow(unsupported(clientAuthMethod));
+                .filter(CLIENT_AUTH_METHODS::contains)
+                .orElseThrow(unsupported(clientAuthMethod));
     }
 
-    private void validateAfterPropertiesSet(){
+    private void validateAfterPropertiesSet() {
         Objects.requireNonNull(clientId, "clientId cannot be null");
-        if (ClientAuthenticationMethod.CLIENT_SECRET_BASIC.equals(this.clientAuthMethod)){
+        if (ClientAuthenticationMethod.CLIENT_SECRET_BASIC.equals(this.clientAuthMethod)) {
             Objects.requireNonNull(clientSecret, "clientSecret cannot be null");
-        } else if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(this.clientAuthMethod)){
+        } else if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(this.clientAuthMethod)) {
             Objects.requireNonNull(clientSecret, "clientSecret cannot be null");
-        } else if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(this.clientAuthMethod)){
+        } else if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(this.clientAuthMethod)) {
             Objects.requireNonNull(clientJwk, "clientPrivateKey must be set");
         }
     }
