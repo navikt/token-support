@@ -10,6 +10,11 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
+import no.nav.security.token.support.ktor.testapp.helloCounter
+import no.nav.security.token.support.ktor.testapp.helloGroupCounter
+import no.nav.security.token.support.ktor.testapp.helloPersonCounter
+import no.nav.security.token.support.ktor.testapp.module
+import no.nav.security.token.support.ktor.testapp.openHelloCounter
 import no.nav.security.token.support.ktor.testapp.*
 import no.nav.security.token.support.test.JwkGenerator
 import no.nav.security.token.support.test.JwtTokenGenerator
