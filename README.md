@@ -239,6 +239,27 @@ Add the modules that you need as Maven dependencies.
 - **`no.nav.security.jwt.issuer.[issuer shortname].cookiename`** - The value of the cookie containing a ID token (not required, only necessary if your api receives calls directly from a browser)
 - **`no.nav.security.jwt.issuer.[issuer shortname].validation.optional_claims`** - A comma separated list of optional claims that will be excluded from default claims.
 
+### token-client-core
+Module provides a core token client support with supported grants: `jwt_bearer`, `client_credentials`, `token_exchange`, through which applications can gain an access token. 
+The module generates a client_assertion based on application configuration properties in: `ClientProperties`. ClientAssertion is signed with configured `client_jwk`
+Use the interface `JwtBearerTokenResolver` to override JWT used in specified grant request.
+
+### token-client-spring
+Spring Boot wrapper for module **token-client-core** for providing auto configuration for spring components. Making client application ready to use grant types / flows to gain access tokens. 
+Simply annotate your SpringApplication class or any Spring Configuration class with `EnableOAuth2Client`.
+Enable caching for OAuth 2.0 `access_token` response, set `cacheEnabled = true` with configurable `cacheEvictSkew` and `cacheMaximumSize`.
+
+```java
+@EnableOAuth2Client(cacheEnabled = true)
+@Configuration
+public class Configuration {
+    // ...
+}
+```
+
+Detailed samples are available in the token-client-spring-demo module.
+### token-client-kotlin
+Not implemented. See demo application in **`token-client-ktor-demo`**.
 
 ## Client-Configuration
 
