@@ -1,5 +1,6 @@
-package no.nav.security.token.support.ktor.oauth
+package no.nav.security.token.support.ktor.http
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -14,12 +15,14 @@ import no.nav.security.token.support.client.core.OAuth2ParameterNames
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
+import no.nav.security.token.support.ktor.oauth.OAuth2AccessTokenResponseExtended
 
 class DefaultOAuth2HttpClient : OAuth2HttpClient {
 
     private val objectMapper: ObjectMapper = ObjectMapper()
         .registerKotlinModule()
         .configure(SerializationFeature.INDENT_OUTPUT, true)
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
     private val defaultHttpClient =
         HttpClient(CIO) {
@@ -28,26 +31,26 @@ class DefaultOAuth2HttpClient : OAuth2HttpClient {
             }
         }
 
+    // Override default POST with form parameters specified for request
     override fun post(oAuth2HttpRequest: OAuth2HttpRequest): OAuth2AccessTokenResponse {
         return runBlocking {
-            defaultHttpClient.submitForm<OAuth2AccessTokenResponse>(
+            defaultHttpClient.submitForm<OAuth2AccessTokenResponseExtended>(
                 url = oAuth2HttpRequest.tokenEndpointUrl.toString(),
                 formParameters = Parameters.build {
-                    formParams(oAuth2HttpRequest).forEach {
+                    filterFormParams(oAuth2HttpRequest).forEach {
                         append(it.key, it.value)
                     }
-                    append(
-                        OAuth2ParameterNames.ASSERTION,
-                        oAuth2HttpRequest.formParameters[OAuth2ParameterNames.ASSERTION]
-                            ?: throw RuntimeException("Client Assertion could not be retrieved")
-                    )
                 }
             )
         }
     }
 
-    private fun formParams(oAuth2HttpRequest: OAuth2HttpRequest) = oAuth2HttpRequest.formParameters
-        .filterNot { param ->
-            param.key == OAuth2ParameterNames.REQUESTED_TOKEN_USE
+    private fun filterFormParams(oAuth2HttpRequest: OAuth2HttpRequest) = oAuth2HttpRequest.formParameters
+        .filterNot {
+            it.key == OAuth2ParameterNames.REQUESTED_TOKEN_USE
+        }.filterNot {
+            it.key == OAuth2ParameterNames.CLIENT_ID
+        }.filterNot {
+            it.key == OAuth2ParameterNames.CLIENT_ASSERTION_TYPE
         }
 }

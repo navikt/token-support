@@ -6,6 +6,8 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2GrantType
+import no.nav.security.token.support.ktor.common.propertyToString
+import no.nav.security.token.support.ktor.common.propertyToStringOrNull
 import java.net.URI
 
 @KtorExperimentalAPI
@@ -13,49 +15,51 @@ class OAuth2ClientProperties(
     applicationConfig: ApplicationConfig
 ) {
 
-    val clients: Map<String, ClientProperties> =
+    private val clients: Map<String, ClientProperties> =
         applicationConfig.configList(REGISTRATION_PATH)
             .associate { clientConfig ->
-                val wellKnownUrl = clientConfig.propertyToStringOrNull(WELL_KNOWN_URL)
-                val resourceUrl = clientConfig.propertyToStringOrNull(RESOURCE_URL)
+                val wellKnownUrl = clientConfig.propertyToStringOrNull("well_known_url")
+                val resourceUrl = clientConfig.propertyToStringOrNull("resource_url")
                 clientConfig.propertyToString(CLIENT_NAME) to ClientProperties(
-                    URI(clientConfig.propertyToString(TOKEN_ENDPOINT_URL)),
+                    URI(clientConfig.propertyToString("token_endpoint_url")),
                     wellKnownUrl?.let { URI(it) },
-                    OAuth2GrantType(clientConfig.propertyToString(GRANT_TYPE)),
-                    clientConfig.propertyToStringOrNull(SCOPE)?.split(","),
+                    OAuth2GrantType(clientConfig.propertyToString("grant_type")),
+                    clientConfig.propertyToStringOrNull("scope")?.split(","),
                     ClientAuthenticationProperties(
-                        clientConfig.propertyToString(AUTHENTICATION_CLIENT_ID),
+                        clientConfig.propertyToString("authentication.client_id"),
                         ClientAuthenticationMethod(
-                            clientConfig.propertyToString(AUTHENTICATION_CLIENT_AUTH_METHOD)
+                            clientConfig.propertyToString("authentication.client_auth_method")
                         ),
-                        clientConfig.propertyToStringOrNull(CLIENT_SECRET),
-                        clientConfig.propertyToStringOrNull(AUTHENTICATION_CLIENT_JWK)
+                        clientConfig.propertyToStringOrNull("client_secret"),
+                        clientConfig.propertyToStringOrNull("authentication.client_jwk")
                     ),
                     resourceUrl?.let { URI(it) },
                     ClientProperties.TokenExchangeProperties(
-                        clientConfig.propertyToStringOrNull(TOKEN_EXCHANGE_AUDIENCE) ?: "",
-                        clientConfig.propertyToStringOrNull(TOKEN_EXCHANGE_RESOURCE)
+                        clientConfig.propertyToStringOrNull("token-exchange.audience") ?: "",
+                        clientConfig.propertyToStringOrNull("token-exchange.resource")
                     )
                 )
             }
 
-    private fun ApplicationConfig.propertyToString(prop: String) = this.property(prop).getString()
+    private val cache: Map<String, OAuth2Cache> =
+        applicationConfig.configList(REGISTRATION_PATH)
+            .associate { clientConfig ->
+                clientConfig.propertyToString(CLIENT_NAME) to OAuth2Cache(
+                    enabled = clientConfig.propertyToStringOrNull("cache.enabled")?.toBoolean() ?: false,
+                    maximumSize = clientConfig.propertyToStringOrNull("cache.maximumSize")?.toLong() ?: 0,
+                    evictSkew = clientConfig.propertyToStringOrNull("cache.evictSkew")?.toLong() ?: 0
+                )
+            }
 
-    private fun ApplicationConfig.propertyToStringOrNull(prop: String) = this.propertyOrNull(prop)?.getString()
+    fun getConfig(client: String) = this.clients[client]
+        ?: throw RuntimeException("$client do not exist in configuration")
 
-    companion object ConfigurationAttributes {
+    fun getCache(client: String) = this.cache[client]
+        ?: throw RuntimeException("$client do not exist in configuration")
+
+
+    companion object CommonConfigurationAttributes {
         const val REGISTRATION_PATH = "no.nav.security.jwt.client.registration.clients"
-        const val WELL_KNOWN_URL = "well_known_url"
-        const val RESOURCE_URL = "resource_url"
-        const val TOKEN_ENDPOINT_URL = "token_endpoint_url"
-        const val GRANT_TYPE = "grant_type"
-        const val SCOPE = "scope"
-        const val CLIENT_SECRET = "client_secret"
         const val CLIENT_NAME = "client_name"
-        const val AUTHENTICATION_CLIENT_JWK = "authentication.client_jwk"
-        const val AUTHENTICATION_CLIENT_ID = "authentication.client_id"
-        const val AUTHENTICATION_CLIENT_AUTH_METHOD = "authentication.client_auth_method"
-        const val TOKEN_EXCHANGE_AUDIENCE = "token.exchange.audience"
-        const val TOKEN_EXCHANGE_RESOURCE = "token.exchange.resource"
     }
 }

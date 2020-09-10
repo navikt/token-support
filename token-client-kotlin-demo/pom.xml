@@ -15,6 +15,8 @@
         <kotlin_version>1.3.71</kotlin_version>
         <logback.version>1.2.3</logback.version>
         <ktor.cio.version>1.3.2</ktor.cio.version>
+        <mock.oauth.version>0.1.34</mock.oauth.version>
+        <kotlin.logging.version>1.7.8</kotlin.logging.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.class>io.ktor.server.netty.EngineMain</main.class>
     </properties>
@@ -76,6 +78,16 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>mock-oauth2-server</artifactId>
+            <version>${mock.oauth.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.microutils</groupId>
+            <artifactId>kotlin-logging</artifactId>
+            <version>${kotlin.logging.version}</version>
         </dependency>
         <!-- Test dependencies: -->
         <dependency>

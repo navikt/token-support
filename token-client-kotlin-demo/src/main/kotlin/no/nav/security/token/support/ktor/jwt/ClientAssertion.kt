@@ -19,6 +19,7 @@ class ClientAssertion(
         const val SCOPE = "scope"
     }
 
+    // Generate a client assertion
     fun assertion(): String {
         val now = Date.from(Instant.now())
         return JWTClaimsSet.Builder()
