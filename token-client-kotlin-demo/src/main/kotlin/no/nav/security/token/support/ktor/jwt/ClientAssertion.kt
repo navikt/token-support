@@ -9,7 +9,8 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import no.nav.security.token.support.client.core.ClientProperties
 import java.time.Instant
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 class ClientAssertion(
     private val config: ClientProperties

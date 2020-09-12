@@ -1,4 +1,4 @@
-package no.nav.security.token.support.ktor.common
+package no.nav.security.token.support.ktor.utils
 
 import io.ktor.config.ApplicationConfig
 import io.ktor.util.KtorExperimentalAPI

@@ -1,29 +1,37 @@
 package no.nav.security.token.support.ktor
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.application.Application
 import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.features.ContentNegotiation
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.jackson.JacksonConverter
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
-import io.ktor.util.error
-import mu.KotlinLogging
 import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.token.support.ktor.common.cacheFor
-import no.nav.security.token.support.ktor.common.configFor
+import no.nav.security.token.support.ktor.utils.cacheFor
+import no.nav.security.token.support.ktor.utils.configFor
 import no.nav.security.token.support.ktor.http.DefaultOAuth2HttpClient
 import no.nav.security.token.support.ktor.jwt.ClientAssertion
+import no.nav.security.token.support.ktor.model.TokenResponse
 import no.nav.security.token.support.ktor.oauth.OAuth2AccessTokenClient
 import no.nav.security.token.support.ktor.oauth.OAuth2ClientProperties
-
-private val log = KotlinLogging.logger { }
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @KtorExperimentalAPI
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
+
+    install(ContentNegotiation) {
+        register(ContentType.Application.Json, JacksonConverter(Jackson.defaultMapper))
+    }
 
     // Setup properties
     val client = "demo-client"
@@ -45,13 +53,21 @@ fun Application.module() {
 
     routing {
         get("/token") {
-            try {
-                val oAuth2Response = oAuth2Client.getAccessToken()
-                call.respond(HttpStatusCode.OK, oAuth2Response.accessToken)
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.InternalServerError, "Error: ${e.message}")
-                log.error(e)
-            }
+            val oAuth2Response = oAuth2Client.getAccessToken()
+            call.respond(
+                HttpStatusCode.OK,
+                TokenResponse(
+                    oAuth2Response.accessToken
+                )
+            )
         }
+    }
+}
+
+object Jackson {
+    val defaultMapper: ObjectMapper = jacksonObjectMapper()
+
+    init {
+        defaultMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
     }
 }

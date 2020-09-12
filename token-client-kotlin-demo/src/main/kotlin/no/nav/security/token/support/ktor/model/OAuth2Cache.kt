@@ -1,4 +1,4 @@
-package no.nav.security.token.support.ktor.oauth
+package no.nav.security.token.support.ktor.model
 
 data class OAuth2Cache(
     val enabled: Boolean,

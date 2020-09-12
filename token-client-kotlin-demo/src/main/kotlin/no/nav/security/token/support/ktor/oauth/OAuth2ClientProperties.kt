@@ -6,8 +6,9 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2GrantType
-import no.nav.security.token.support.ktor.common.propertyToString
-import no.nav.security.token.support.ktor.common.propertyToStringOrNull
+import no.nav.security.token.support.ktor.utils.propertyToString
+import no.nav.security.token.support.ktor.utils.propertyToStringOrNull
+import no.nav.security.token.support.ktor.model.OAuth2Cache
 import java.net.URI
 
 @KtorExperimentalAPI

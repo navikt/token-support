@@ -12,7 +12,8 @@ import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
 import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
 import no.nav.security.token.support.ktor.http.DefaultOAuth2HttpClient
 import no.nav.security.token.support.ktor.jwt.ClientAssertion
-import java.util.*
+import no.nav.security.token.support.ktor.model.OAuth2Cache
+import java.util.Optional
 
 @KtorExperimentalAPI
 class OAuth2AccessTokenClient(
