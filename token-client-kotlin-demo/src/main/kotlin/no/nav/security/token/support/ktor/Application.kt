@@ -23,6 +23,7 @@ import no.nav.security.token.support.ktor.model.TokenResponse
 import no.nav.security.token.support.ktor.oauth.OAuth2AccessTokenClient
 import no.nav.security.token.support.ktor.oauth.OAuth2ClientProperties
 import no.nav.security.token.support.ktor.oauth.TokenResolver
+import no.nav.security.token.support.ktor.utils.Jackson
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -62,13 +63,5 @@ fun Application.module() {
                 )
             )
         }
-    }
-}
-
-object Jackson {
-    val defaultMapper: ObjectMapper = jacksonObjectMapper()
-
-    init {
-        defaultMapper.configure(SerializationFeature.INDENT_OUTPUT, true)
     }
 }
