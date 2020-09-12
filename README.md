@@ -241,8 +241,50 @@ Add the modules that you need as Maven dependencies.
 
 ### token-client-core
 Module provides a core token client support with supported grants: `jwt_bearer`, `client_credentials`, `token_exchange`, through which applications can gain an access token. 
-The module generates a client_assertion based on application configuration properties in: `ClientProperties`. ClientAssertion is signed with configured `client_jwk`
-Use the interface `JwtBearerTokenResolver` to override JWT used in specified grant request.
+The module generates a client_assertion based on application configuration properties in: `ClientProperties`. A ClientAssertion is signed with configured `client_jwk` can be used or a `client_secret`.
+Use the interface `JwtBearerTokenResolver` to override JWT used in specified grant request. By extending the `OAuth2HttpClient`, you can override the form-post to a provider, specifying headers and or form-parameters.
+
+```kotlin
+class TokenResolver(
+   private val client: ClientAssertion
+) : JwtBearerTokenResolver {
+    
+    override fun token(): Optional<String> {
+        return Optional.of(client.assertion())
+    }
+}
+```
+
+```kotlin
+class ClientAssertion(
+    private val config: ClientProperties
+) {
+
+    // Generate a client assertion
+    fun assertion(): String {
+        val now = Date.from(Instant.now())
+        return JWTClaimsSet.Builder()
+            .issuer(config.authentication.clientId)
+            .audience(config.tokenEndpointUrl.toString())
+            .issueTime(now)
+            .expirationTime(Date.from(Instant.now().plusSeconds(120)))
+            .jwtID(UUID.randomUUID().toString())
+            .build()
+            .sign(config.authentication.clientRsaKey)
+            .serialize()
+    }
+
+    private fun JWTClaimsSet.sign(rsaKey: RSAKey): SignedJWT =
+        SignedJWT(
+            JWSHeader.Builder(JWSAlgorithm.RS256)
+                .keyID(rsaKey.keyID)
+                .type(JOSEObjectType.JWT).build(),
+            this
+        ).apply {
+            sign(RSASSASigner(rsaKey.toPrivateKey()))
+        }
+}
+```
 
 ### token-client-spring
 Spring Boot wrapper for module **token-client-core** for providing auto configuration for spring components. Making client application ready to use grant types / flows to gain access tokens. 
@@ -282,23 +324,28 @@ Add the modules that you need as Maven dependencies.
 ```
 
 ### Required properties (yaml or properties)
-
 - **`no.nav.security.jwt.client.registration[client shortname]`** - All properties relevant for a particular client must be listed under a `short name` for that client
 - **`no.nav.security.jwt.client.registration[client shortname].token-endpoint-url`** - The identity provider /token endpoint, to retrieve a token
-- **`no.nav.security.jwt.client.registration[client shortname].grant-type`** - The grant_type URL parameter is required by OAuth2 RFC for the /token endpoint, which exchanges a grant for real tokens. So the OAuth2 server knows what you are sending to it.
+- **`no.nav.security.jwt.client.registration[client shortname].grant-type`** - The grant_type URL parameter is required by OAuth2 RFC for the /token endpoint, which exchanges a grant for real tokens. So the OAuth2 server knows what you are sending to it. Accepted grant types: `urn:ietf:params:oauth:grant-type:jwt-bearer`, `client_credentials`, `urn:ietf:params:oauth:grant-type:token-exchange`
 
-#### On-behalf-of & Client-credentials
-
+#### Not required
 - **`no.nav.security.jwt.client.registration[client shortname].scope`** - OAuth 2.0 scopes provide a way to limit the amount of access that is granted to an access token
+
+#### Required Authentication properties (yaml or properties)
 - **`no.nav.security.jwt.client.registration[client shortname].authentication`** - All properties relevant for client authentication must be listed under `authentication`.
 - **`no.nav.security.jwt.client.registration[client shortname].authentication.client-id`** - The client ID is public information, and is used to build login URLs and is a part of authentication for a client.
-- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-secret`** - The client secret must be kept confidential. `client-secret` or `client-jwk` can be used for authentication.
 - **`no.nav.security.jwt.client.registration[client shortname].authentication.client-auth-method`** - Standard methods for client authentication. Supported methods is `client_secret_basic`, `client_secret_post`, `private_key_jwt`
 
+##### Any of
+- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-secret`** - The client secret must be kept confidential.
+- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-jwk`** - `client-jwk` - Used to sign the client JWT, instead of `client-secret` for authentication against a provider.
+
 #### Token-exchange
-- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-jwk`** - Used to sign a JWT generated by the client/application, to identifying itself to an Idp. Can be a path to a file or an environment variable. 
 - **`no.nav.security.jwt.client.registration[client shortname].token-exchange`** - All properties relevant for client token-exchange must be listed under `token-exchange`.
-- **`no.nav.security.jwt.client.registration[client shortname].token-exchange.audience`** - The logical name of the target service where the client intends to use the requested security token.  An Example scheme `cluster:namespace:app-name`.
+- **`no.nav.security.jwt.client.registration[client shortname].token-exchange.audience`** - The logical name of the target service where the client intends to use the requested security token.
+
+##### Not required
+- **`no.nav.security.jwt.client.registration[client shortname].token-exchange.resouce`** - A URI that indicates the target service or resource where the client intends to use the requested security token.
 
 ## "Corporate" proxy support per issuer
 Each issuer can be configured to use or not use a proxy by specifying the following properties:

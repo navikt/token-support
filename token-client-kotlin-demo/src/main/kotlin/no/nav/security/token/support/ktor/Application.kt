@@ -25,14 +25,17 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
+    // Setup properties
     val client = "demo-client"
     val properties = OAuth2ClientProperties(this.environment.config)
     val config = properties.configFor(client)
     val cache = properties.cacheFor(client)
 
+    // mock oAuth2 server for demo app
     val mockOAuth2Server = MockOAuth2Server()
     mockOAuth2Server.start(1111)
 
+    // Setup OAuth Client, with configurable client assertion and post request
     val oAuth2Client = OAuth2AccessTokenClient(
         clientConfig = config,
         cache = cache,

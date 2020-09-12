@@ -12,7 +12,7 @@ import java.time.Instant
 import java.util.*
 
 class ClientAssertion(
-    private val clientConfig: ClientProperties
+    private val config: ClientProperties
 ) {
 
     companion object {
@@ -23,15 +23,15 @@ class ClientAssertion(
     fun assertion(): String {
         val now = Date.from(Instant.now())
         return JWTClaimsSet.Builder()
-            .issuer(clientConfig.authentication.clientId)
-            .audience(clientConfig.tokenEndpointUrl.toString())
+            .issuer(config.authentication.clientId)
+            .audience(config.tokenEndpointUrl.toString())
             .issueTime(now)
             .expirationTime(Date.from(Instant.now().plusSeconds(120)))
             .jwtID(UUID.randomUUID().toString())
             // Scope(s) required as a single string - space separated
-            .claim(SCOPE, clientConfig.scope.joinToString(" "))
+            .claim(SCOPE, config.scope.joinToString(" "))
             .build()
-            .sign(clientConfig.authentication.clientRsaKey)
+            .sign(config.authentication.clientRsaKey)
             .serialize()
     }
 
