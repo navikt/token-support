@@ -15,7 +15,7 @@ class OAuth2ClientProperties(
     applicationConfig: ApplicationConfig
 ) {
 
-    private val clients: Map<String, ClientProperties> =
+    internal val clients: Map<String, ClientProperties> =
         applicationConfig.configList(REGISTRATION_PATH)
             .associate { clientConfig ->
                 val wellKnownUrl = clientConfig.propertyToStringOrNull("well_known_url")
@@ -41,7 +41,7 @@ class OAuth2ClientProperties(
                 )
             }
 
-    private val cache: Map<String, OAuth2Cache> =
+    internal val cache: Map<String, OAuth2Cache> =
         applicationConfig.configList(REGISTRATION_PATH)
             .associate { clientConfig ->
                 clientConfig.propertyToString(CLIENT_NAME) to OAuth2Cache(
@@ -50,13 +50,6 @@ class OAuth2ClientProperties(
                     evictSkew = clientConfig.propertyToStringOrNull("cache.evictSkew")?.toLong() ?: 0
                 )
             }
-
-    fun getConfig(client: String) = this.clients[client]
-        ?: throw RuntimeException("$client do not exist in configuration")
-
-    fun getCache(client: String) = this.cache[client]
-        ?: throw RuntimeException("$client do not exist in configuration")
-
 
     companion object CommonConfigurationAttributes {
         const val REGISTRATION_PATH = "no.nav.security.jwt.client.registration.clients"

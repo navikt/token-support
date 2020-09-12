@@ -31,14 +31,14 @@ class OAuth2AccessTokenClient(
         )
 
     init {
-        // Set cache if enabled
+        // Set cache if enabled in configuration
         if (cache.enabled) {
             oauth2AccessTokenService.onBehalfOfGrantCache =
                 OAuth2CacheFactory.accessTokenResponseCache<OnBehalfOfGrantRequest>(cache.maximumSize, cache.evictSkew)
         }
     }
 
-    // Override default client_assertion jwt, with new jwt
+    // Override default client_assertion jwt, with specified Idp jwt
     override fun token(): Optional<String> {
         return Optional.of(client.assertion())
     }

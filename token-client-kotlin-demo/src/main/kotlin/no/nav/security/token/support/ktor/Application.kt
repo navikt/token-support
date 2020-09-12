@@ -10,6 +10,8 @@ import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.error
 import mu.KotlinLogging
 import no.nav.security.mock.oauth2.MockOAuth2Server
+import no.nav.security.token.support.ktor.common.cacheFor
+import no.nav.security.token.support.ktor.common.configFor
 import no.nav.security.token.support.ktor.http.DefaultOAuth2HttpClient
 import no.nav.security.token.support.ktor.jwt.ClientAssertion
 import no.nav.security.token.support.ktor.oauth.OAuth2AccessTokenClient
@@ -23,10 +25,10 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
-    val clientName = "demo-client"
+    val client = "demo-client"
     val properties = OAuth2ClientProperties(this.environment.config)
-    val config = properties.getConfig(clientName)
-    val cache = properties.getCache(clientName)
+    val config = properties.configFor(client)
+    val cache = properties.cacheFor(client)
 
     val mockOAuth2Server = MockOAuth2Server()
     mockOAuth2Server.start(1111)
