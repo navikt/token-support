@@ -11,21 +11,19 @@ import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
 import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
 import no.nav.security.token.support.ktor.http.DefaultOAuth2HttpClient
-import no.nav.security.token.support.ktor.jwt.ClientAssertion
 import no.nav.security.token.support.ktor.model.OAuth2Cache
-import java.util.Optional
 
 @KtorExperimentalAPI
 class OAuth2AccessTokenClient(
-    private val clientConfig: ClientProperties,
+    private val config: ClientProperties,
     val cache: OAuth2Cache,
-    private val client: ClientAssertion,
+    tokenResolver: JwtBearerTokenResolver,
     val httpClient: DefaultOAuth2HttpClient
-) : JwtBearerTokenResolver {
+) {
 
     private val oauth2AccessTokenService: OAuth2AccessTokenService =
         OAuth2AccessTokenService(
-            this,
+            tokenResolver,
             OnBehalfOfTokenClient(httpClient),
             ClientCredentialsTokenClient(httpClient),
             TokenExchangeClient(httpClient)
@@ -39,11 +37,6 @@ class OAuth2AccessTokenClient(
         }
     }
 
-    // Override default client_assertion jwt, with specified Idp jwt
-    override fun token(): Optional<String> {
-        return Optional.of(client.assertion())
-    }
-
     fun getAccessToken(): OAuth2AccessTokenResponse =
-        oauth2AccessTokenService.getAccessToken(clientConfig)
+        oauth2AccessTokenService.getAccessToken(config)
 }

@@ -22,6 +22,7 @@ import no.nav.security.token.support.ktor.jwt.ClientAssertion
 import no.nav.security.token.support.ktor.model.TokenResponse
 import no.nav.security.token.support.ktor.oauth.OAuth2AccessTokenClient
 import no.nav.security.token.support.ktor.oauth.OAuth2ClientProperties
+import no.nav.security.token.support.ktor.oauth.TokenResolver
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -45,9 +46,9 @@ fun Application.module() {
 
     // Setup OAuth Client, with configurable client assertion and post request
     val oAuth2Client = OAuth2AccessTokenClient(
-        clientConfig = config,
+        config = config,
         cache = cache,
-        client = ClientAssertion(config),
+        tokenResolver = TokenResolver(ClientAssertion(config)),
         httpClient = DefaultOAuth2HttpClient()
     )
 
