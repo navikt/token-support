@@ -6,18 +6,18 @@ import io.ktor.util.KtorExperimentalAPI
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2GrantType
+import no.nav.security.token.support.ktor.model.OAuth2Cache
 import no.nav.security.token.support.ktor.utils.propertyToString
 import no.nav.security.token.support.ktor.utils.propertyToStringOrNull
-import no.nav.security.token.support.ktor.model.OAuth2Cache
 import java.net.URI
 
 @KtorExperimentalAPI
-class OAuth2ClientProperties(
+class ClientPropertiesConfig(
     applicationConfig: ApplicationConfig
 ) {
 
-    internal val clients: Map<String, ClientProperties> =
-        applicationConfig.configList(REGISTRATION_PATH)
+    internal val clientConfig: Map<String, ClientProperties> =
+        applicationConfig.configList(CLIENTS_PATH)
             .associate { clientConfig ->
                 val wellKnownUrl = clientConfig.propertyToStringOrNull("well_known_url")
                 val resourceUrl = clientConfig.propertyToStringOrNull("resource_url")
@@ -42,18 +42,19 @@ class OAuth2ClientProperties(
                 )
             }
 
-    internal val cache: Map<String, OAuth2Cache> =
-        applicationConfig.configList(REGISTRATION_PATH)
-            .associate { clientConfig ->
-                clientConfig.propertyToString(CLIENT_NAME) to OAuth2Cache(
-                    enabled = clientConfig.propertyToStringOrNull("cache.enabled")?.toBoolean() ?: false,
-                    maximumSize = clientConfig.propertyToStringOrNull("cache.maximumSize")?.toLong() ?: 0,
-                    evictSkew = clientConfig.propertyToStringOrNull("cache.evictSkew")?.toLong() ?: 0
-                )
-            }
+    internal val cacheConfig: OAuth2Cache =
+        with(applicationConfig.config(CACHE_PATH)) {
+            OAuth2Cache(
+                enabled = propertyToStringOrNull("cache.enabled")?.toBoolean() ?: false,
+                maximumSize = propertyToStringOrNull("cache.maximumSize")?.toLong() ?: 0,
+                evictSkew = propertyToStringOrNull("cache.evictSkew")?.toLong() ?: 0
+            )
+        }
 
     companion object CommonConfigurationAttributes {
-        const val REGISTRATION_PATH = "no.nav.security.jwt.client.registration.clients"
+        const val COMMON_PREFIX = "no.nav.security.jwt.client.registration"
+        const val CLIENTS_PATH = "${COMMON_PREFIX}.clients"
+        const val CACHE_PATH = "${COMMON_PREFIX}.cache"
         const val CLIENT_NAME = "client_name"
     }
 }

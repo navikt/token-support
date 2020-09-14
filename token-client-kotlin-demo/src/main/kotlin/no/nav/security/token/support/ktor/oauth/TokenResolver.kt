@@ -1,15 +1,13 @@
 package no.nav.security.token.support.ktor.oauth
 
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
-import no.nav.security.token.support.ktor.jwt.ClientAssertion
+import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
 import java.util.Optional
 
-class TokenResolver(
-    private val client: ClientAssertion
-) : JwtBearerTokenResolver {
+class TokenResolver: JwtBearerTokenResolver {
+    var tokenPrincipal: TokenValidationContextPrincipal? = null
 
-    // Override default client_assertion jwt, with specified Idp jwt
     override fun token(): Optional<String> {
-        return Optional.of(client.assertion())
+        return tokenPrincipal?.context?.firstValidToken?.map { it.tokenAsString } ?: Optional.empty()
     }
 }
