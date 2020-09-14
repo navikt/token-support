@@ -249,7 +249,7 @@ Either a `client_jwk` or a `client_secret` must be configured for the applicatio
 
 for authenticating the client to the authorization server.
 
-Use the interface `JwtBearerTokenResolver` to override JWT used in specified grant request. By extending the `OAuth2HttpClient`, you can override the form-post to a provider, specifying headers and or form-parameters.
+Use the interface `JwtBearerTokenResolver` to override JWT used in specified grant request. By extending the `OAuth2HttpClient` you can override the form-post to a provider, specifying headers and or form-parameters.
 
 ```kotlin
 class TokenResolver(
