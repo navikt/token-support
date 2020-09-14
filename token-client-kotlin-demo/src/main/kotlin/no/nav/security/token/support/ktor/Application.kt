@@ -4,6 +4,8 @@ import com.github.benmanes.caffeine.cache.Cache
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
 import io.ktor.auth.principal
 import io.ktor.features.ContentNegotiation
 import io.ktor.http.ContentType
@@ -34,12 +36,19 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
+    // mock oAuth2 server for demo app
+    MockOAuth2Server().start(1111)
+
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(Jackson.defaultMapper))
     }
 
-    // mock oAuth2 server for demo app
-    MockOAuth2Server().start(1111)
+    val config = this.environment.config
+
+    install(Authentication) {
+        tokenValidationSupport(config = config)
+    }
+
 
     val clientPropertiesConfig = ClientPropertiesConfig(this.environment.config)
     val tokenResolver = TokenResolver()
@@ -51,18 +60,6 @@ fun Application.module() {
     )
 
     routing {
-        get("/onbehalfof") {
-            tokenResolver.tokenPrincipal = call.principal()
-            val oAuth2Response = accessTokenService.getAccessToken(
-                clientPropertiesConfig.configFor("onbehalfof-client")
-            )
-            call.respond(
-                HttpStatusCode.OK,
-                DemoTokenResponse(
-                    oAuth2Response
-                )
-            )
-        }
         get("/client_credentials") {
             val oAuth2Response = accessTokenService.getAccessToken(
                 clientPropertiesConfig.configFor("client_credentials-client")
@@ -74,16 +71,30 @@ fun Application.module() {
                 )
             )
         }
-        get("/tokenx") {
-            val oAuth2Response = accessTokenService.getAccessToken(
-                clientPropertiesConfig.configFor("tokenx-client")
-            )
-            call.respond(
-                HttpStatusCode.OK,
-                DemoTokenResponse(
-                    oAuth2Response
+        authenticate {
+            get("/onbehalfof") {
+                tokenResolver.tokenPrincipal = call.principal()
+                val oAuth2Response = accessTokenService.getAccessToken(
+                    clientPropertiesConfig.configFor("onbehalfof-client")
                 )
-            )
+                call.respond(
+                    HttpStatusCode.OK,
+                    DemoTokenResponse(
+                        oAuth2Response
+                    )
+                )
+            }
+            get("/tokenx") {
+                val oAuth2Response = accessTokenService.getAccessToken(
+                    clientPropertiesConfig.configFor("tokenx-client")
+                )
+                call.respond(
+                    HttpStatusCode.OK,
+                    DemoTokenResponse(
+                        oAuth2Response
+                    )
+                )
+            }
         }
     }
 }
