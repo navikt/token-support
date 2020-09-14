@@ -240,8 +240,15 @@ Add the modules that you need as Maven dependencies.
 - **`no.nav.security.jwt.issuer.[issuer shortname].validation.optional_claims`** - A comma separated list of optional claims that will be excluded from default claims.
 
 ### token-client-core
-Module provides a core token client support with supported grants: `jwt_bearer`, `client_credentials`, `token_exchange`, through which applications can gain an access token. 
-The module generates a client_assertion based on application configuration properties in: `ClientProperties`. A ClientAssertion is signed with configured `client_jwk` can be used or a `client_secret`.
+Module provides a core token client support with supported grants: `jwt_bearer`, `client_credentials`, `token_exchange` through which applications can gain an access token.
+
+Either a `client_jwk` or a `client_secret` must be configured for the application configuration in `ClientProperties`. Based on this configuration, the module will either:
+
+- generate a `client_assertion` which is signed using the configured `client_jwk`, or
+- use a `client_secret`
+
+for authenticating the client to the authorization server.
+
 Use the interface `JwtBearerTokenResolver` to override JWT used in specified grant request. By extending the `OAuth2HttpClient`, you can override the form-post to a provider, specifying headers and or form-parameters.
 
 ```kotlin
