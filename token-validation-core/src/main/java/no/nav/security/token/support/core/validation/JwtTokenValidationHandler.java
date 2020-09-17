@@ -34,7 +34,6 @@ public class JwtTokenValidationHandler {
             .map(this::validate)
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .distinct()
             .collect(Collectors.toConcurrentMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue,
