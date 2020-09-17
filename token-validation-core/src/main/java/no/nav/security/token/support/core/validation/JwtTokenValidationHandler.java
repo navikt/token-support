@@ -62,7 +62,7 @@ public class JwtTokenValidationHandler {
             return Optional.empty();
 
         } catch (JwtTokenValidatorException e) {
-            LOG.info("found invalid token for issuer [{}, expires at {}]", jwtToken.getIssuer(), e.getExpiryDate(), e);
+            LOG.info("found invalid token for issuer [{}, expires at {}]", jwtToken.getIssuer(), e.getExpiryDate());
             return Optional.empty();
         }
     }
