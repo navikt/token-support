@@ -147,6 +147,27 @@ class JwtTokenValidationFilterTest {
         assertEquals("Bearer eyAAA", req.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER));
     }
 
+    @Test
+    void testTwoValidIdTokenInCookieWithSameKey() throws IOException, URISyntaxException, ServletException, JOSEException {
+        final String issuername = "myissuer";
+        Map<String, IssuerProperties> issuerProps = createIssuerPropertiesMap(issuername, IDTOKENCOOKIENAME);
+        MockResourceRetriever mockResources = new MockResourceRetriever(issuername);
+        final TokenValidationContextHolder ctxHolder = new TestTokenValidationContextHolder();
+
+        JwtTokenValidationFilter filter = createFilterToTest(issuerProps, mockResources, ctxHolder);
+        final String jwt = createJWT(issuername, mockResources.keysForIssuer(issuername).toRSAPrivateKey());
+        final String jwt2 = createJWT(issuername, mockResources.keysForIssuer(issuername).toRSAPrivateKey());
+
+        final int[] filterCallCounter = new int[]{0};
+
+        when(servletRequest.getCookies()).thenReturn(new Cookie[]{new Cookie(IDTOKENCOOKIENAME, jwt2), new Cookie(IDTOKENCOOKIENAME, jwt)});
+        filter.doFilter(servletRequest, servletResponse,
+            mockFilterchainAsserting(issuername, "foobar", ctxHolder, filterCallCounter));
+
+        assertEquals(1, filterCallCounter[0], "doFilter should have been called once");
+
+    }
+
 
     private FilterChain mockFilterchainAsserting(String issuer, String subject, TokenValidationContextHolder ctxHolder, int[] filterCallCounter) {
         return mockFilterchainAsserting(new String[]{issuer}, new String[]{subject}, ctxHolder, filterCallCounter);

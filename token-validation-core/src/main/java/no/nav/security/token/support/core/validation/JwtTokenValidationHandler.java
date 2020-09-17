@@ -3,10 +3,10 @@ package no.nav.security.token.support.core.validation;
 import no.nav.security.token.support.core.configuration.IssuerConfiguration;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.context.TokenValidationContext;
-import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.exceptions.IssuerConfigurationException;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 import no.nav.security.token.support.core.http.HttpRequest;
+import no.nav.security.token.support.core.jwt.JwtToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +34,14 @@ public class JwtTokenValidationHandler {
             .map(this::validate)
             .filter(Optional::isPresent)
             .map(Optional::get)
+            .distinct()
             .collect(Collectors.toConcurrentMap(
                 Map.Entry::getKey,
-                Map.Entry::getValue
+                Map.Entry::getValue,
+                (key1, key2) -> {
+                    LOG.debug("Duplicate key found, returning first ");
+                    return key1;
+                }
             ));
 
         LOG.debug("found {} tokens on request, number of validated tokens is {}", tokensOnRequest.size(), validatedTokens.size());
