@@ -1,6 +1,7 @@
 package no.nav.security.token.support.core.validation;
 
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.source.DefaultJWKSetCache;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
@@ -12,6 +13,7 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
+import no.nav.security.token.support.core.configuration.IssuerProperties;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 
 import java.net.URL;
@@ -19,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
@@ -32,10 +35,11 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
         String issuer,
         URL jwkSetUrl,
         ResourceRetriever resourceRetriever,
-        List<String> optionalClaims
+        List<String> optionalClaims,
+        IssuerProperties.JwkSetCache jwkSetCache
     ) {
         this.issuer = issuer;
-        this.remoteJWKSet = new RemoteJWKSet<>(jwkSetUrl, resourceRetriever);
+        this.remoteJWKSet = configureJWKSetCache(jwkSetUrl, resourceRetriever, jwkSetCache);
         this.requiredClaims = filterList(
             defaultRequiredClaims,
             Optional.ofNullable(optionalClaims).orElse(Collections.emptyList())
@@ -77,10 +81,26 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
         }
     }
 
-    private static <T> List<T> filterList(List<T> first, List<T> second){
+    private static <T> List<T> filterList(List<T> first, List<T> second) {
         return first.stream()
             .filter(c -> !second.contains(c))
             .collect(Collectors.toList());
+    }
+
+    private RemoteJWKSet<SecurityContext> configureJWKSetCache(
+        URL jwkSetUrl,
+        ResourceRetriever resourceRetriever,
+        IssuerProperties.JwkSetCache jwkSetCache
+    ) {
+        return jwkSetCache.isConfigured() ? new RemoteJWKSet<>(
+            jwkSetUrl,
+            resourceRetriever,
+            new DefaultJWKSetCache(
+                jwkSetCache.getLifespan(),
+                jwkSetCache.getRefreshTime(),
+                TimeUnit.MINUTES
+            )
+        ) : new RemoteJWKSet<>(jwkSetUrl, resourceRetriever);
     }
 
     private JWT parse(String tokenString) {

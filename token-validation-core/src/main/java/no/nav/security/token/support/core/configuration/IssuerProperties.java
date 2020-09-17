@@ -23,6 +23,7 @@ public class IssuerProperties {
     private URL proxyUrl;
     private boolean usePlaintextForHttps = false;
     private Validation validation = new Validation(Collections.emptyList());
+    private JwkSetCache jwkSetCache = new JwkSetCache(null, null);
 
     public IssuerProperties(URL discoveryUrl) {
         this.discoveryUrl = discoveryUrl;
@@ -43,6 +44,16 @@ public class IssuerProperties {
         this.validation = validation;
     }
 
+    public IssuerProperties(URL discoveryUrl, JwkSetCache jwkSetCache) {
+        this(discoveryUrl);
+        this.jwkSetCache = jwkSetCache;
+    }
+
+    public IssuerProperties(URL discoveryUrl, Validation validation, JwkSetCache jwkSetCache) {
+        this(discoveryUrl, validation);
+        this.jwkSetCache = jwkSetCache;
+    }
+
     @Getter
     @Setter
     @ToString
@@ -51,6 +62,29 @@ public class IssuerProperties {
 
         public Validation(List<String> optionalClaims) {
             this.optionalClaims = Optional.ofNullable(optionalClaims).orElse(Collections.emptyList());
+        }
+
+        public Boolean isConfigured() {
+            return !optionalClaims.isEmpty();
+        }
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class JwkSetCache {
+        private Long lifespan;
+        private Long refreshTime;
+
+        public JwkSetCache(Long lifespan, Long refreshTime) {
+            this.lifespan = Optional.ofNullable(lifespan).orElse(null);
+            this.refreshTime = Optional.ofNullable(refreshTime).orElse(null);
+        }
+
+        public Boolean isConfigured() {
+            if (lifespan == null && refreshTime == null) {
+                return false;
+            } else return lifespan != null && refreshTime != null;
         }
     }
 }

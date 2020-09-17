@@ -24,8 +24,10 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
     private static final JWSAlgorithm JWSALG = JWSAlgorithm.RS256;
     private final Map<String, IDTokenValidator> audienceValidatorMap;
 
-    public DefaultJwtTokenValidator(String issuer, List<String> acceptedAudience, URL jwkSetUrl,
-                                    ResourceRetriever jwksResourceRetriever) {
+    public DefaultJwtTokenValidator(
+        String issuer, List<String> acceptedAudience,
+        URL jwkSetUrl,
+        ResourceRetriever jwksResourceRetriever) {
         this.audienceValidatorMap = initializeMap(issuer, acceptedAudience, jwkSetUrl, jwksResourceRetriever);
     }
 

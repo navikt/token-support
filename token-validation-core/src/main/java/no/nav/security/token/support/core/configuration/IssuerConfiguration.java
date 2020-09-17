@@ -105,15 +105,23 @@ public class IssuerConfiguration {
     }
 
     private JwtTokenValidator createTokenValidator(IssuerProperties issuerProperties) {
-        return issuerProperties.getValidation().getOptionalClaims().isEmpty() ?
-            new DefaultJwtTokenValidator(metaData.getIssuer().getValue(), acceptedAudience, getJwksUrl(metaData),
-                resourceRetriever)
-            : new ConfigurableJwtTokenValidator(
+        if (issuerProperties.getValidation().isConfigured() ||
+            issuerProperties.getJwkSetCache().isConfigured()) {
+            return new ConfigurableJwtTokenValidator(
                 metaData.getIssuer().getValue(),
                 getJwksUrl(metaData),
                 resourceRetriever,
-                issuerProperties.getValidation().getOptionalClaims()
+                issuerProperties.getValidation().getOptionalClaims(),
+                issuerProperties.getJwkSetCache()
             );
+        } else {
+            return new DefaultJwtTokenValidator(
+                metaData.getIssuer().getValue(),
+                acceptedAudience,
+                getJwksUrl(metaData),
+                resourceRetriever
+            );
+        }
     }
 
     @Override
