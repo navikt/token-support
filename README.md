@@ -195,7 +195,7 @@ public class ProductResource {
 
 See demo application in **`token-validation-ktor-demo`**.
 
-## Validation-Configuration
+### token-validation-* configuration
 
 Add the modules that you need as Maven dependencies.
 * token-validation-spring:
@@ -231,7 +231,7 @@ Add the modules that you need as Maven dependencies.
     </dependency>
 ```
 
-### Required properties (yaml or properties)
+#### Required properties (yaml or properties)
 
 - **`no.nav.security.jwt.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a short name for that issuer (not the actual issuer value from the token, but a chosen name to represent config for the actual issuer) you trust, e.g. **`citizen`** or **`employee`** 
 - **`no.nav.security.jwt.issuer.[issuer shortname].discoveryurl`** - The identity provider configuration/discovery endpoint (metadata)
@@ -239,64 +239,33 @@ Add the modules that you need as Maven dependencies.
 - **`no.nav.security.jwt.issuer.[issuer shortname].cookiename`** - The value of the cookie containing a ID token (not required, only necessary if your api receives calls directly from a browser)
 - **`no.nav.security.jwt.issuer.[issuer shortname].validation.optional_claims`** - A comma separated list of optional claims that will be excluded from default claims.
 
+#### "Corporate" proxy support per issuer
+Each issuer can be configured to use or not use a proxy by specifying the following properties:
+- **`no.nav.security.jwt.issuer.[issuer shortname].proxyurl`** - The full url of the proxy, e.g. http://proxyhost:8088
+
 ### token-client-core
-Module provides a core token client support with supported grants: `jwt_bearer`, `client_credentials`, `token_exchange` through which applications can gain an access token.
+Provides core OAuth 2.0 client support, supporting the following OAuth 2.0 grants:
+* `jwt_bearer`
+* `client_credentials`
+* `token_exchange` 
 
-Either a `client_jwk` or a `client_secret` must be configured for the application configuration in `ClientProperties`. Based on this configuration, the module will either:
+This module can be used standalone (e.g. if you do not use Spring or Ktor). 
+You will however need to code the part to "hook in" the client and trigger the token retrieval. If you use Spring you should use the specific wrapper module.
 
-- generate a `client_assertion` which is signed using the configured `client_jwk`, or
-- use a `client_secret`
+When requesting a token from an OAuth 2.0 Authorization Server the client must authenticate itself with one of the following client authentication methods:
+* `private_key_jwt`
+* `client_secret_post`
+* `client_secret_basic`
 
-for authenticating the client to the authorization server.
+The module will choose the client authentication method based on provided configuration in the class `ClientProperties`.
 
-Use the interface `JwtBearerTokenResolver` to override JWT used in specified grant request. By extending the `OAuth2HttpClient` you can override the form-post to a provider, specifying headers and or form-parameters.
-
-```kotlin
-class TokenResolver(
-   private val client: ClientAssertion
-) : JwtBearerTokenResolver {
-    
-    override fun token(): Optional<String> {
-        return Optional.of(client.assertion())
-    }
-}
-```
-
-```kotlin
-class ClientAssertion(
-    private val config: ClientProperties
-) {
-
-    // Generate a client assertion
-    fun assertion(): String {
-        val now = Date.from(Instant.now())
-        return JWTClaimsSet.Builder()
-            .issuer(config.authentication.clientId)
-            .audience(config.tokenEndpointUrl.toString())
-            .issueTime(now)
-            .expirationTime(Date.from(Instant.now().plusSeconds(120)))
-            .jwtID(UUID.randomUUID().toString())
-            .build()
-            .sign(config.authentication.clientRsaKey)
-            .serialize()
-    }
-
-    private fun JWTClaimsSet.sign(rsaKey: RSAKey): SignedJWT =
-        SignedJWT(
-            JWSHeader.Builder(JWSAlgorithm.RS256)
-                .keyID(rsaKey.keyID)
-                .type(JOSEObjectType.JWT).build(),
-            this
-        ).apply {
-            sign(RSASSASigner(rsaKey.toPrivateKey()))
-        }
-}
-```
+Use the interface `JwtBearerTokenResolver` to supply a JWT that should be exchanged for another, i.e. in `jwt_bearer` or `token_exchange` grants. 
+The `OAuth2HttpClient` interface lets you provide a HTTP client of your choosing to perform the actual POST request to the OAuth 2.0 server.
 
 ### token-client-spring
-Spring Boot wrapper for module **token-client-core** for providing auto configuration for spring components. Making client application ready to use grant types / flows to gain access tokens. 
+Spring Boot wrapper for the module **token-client-core**, providing auto configuration for Spring.  
 Simply annotate your SpringApplication class or any Spring Configuration class with `EnableOAuth2Client`.
-Enable caching for OAuth 2.0 `access_token` response, set `cacheEnabled = true` with configurable `cacheEvictSkew` and `cacheMaximumSize`.
+Enable caching for the OAuth 2.0 `access_token` response with `cacheEnabled = true` and configurable `cacheEvictSkew` and `cacheMaximumSize` properties.
 
 ```java
 @EnableOAuth2Client(cacheEnabled = true)
@@ -307,12 +276,12 @@ public class Configuration {
 ```
 
 Detailed samples are available in the token-client-spring-demo module.
-### token-client-kotlin
-Not implemented. See demo application in **`token-client-ktor-demo`**.
+### token-client-ktor
+Not implemented as of now. See demo application in **`token-client-ktor-demo`**.
 
-## Client-Configuration
+### token-client-* configuration
 
-Add the modules that you need as Maven dependencies.
+Add the module that you need as dependencies.
 * token-client-spring:
 ```xml
    <dependency>     
@@ -330,33 +299,32 @@ Add the modules that you need as Maven dependencies.
     </dependency>
 ```
 
-### Required properties (yaml or properties)
+#### Required properties (yaml or properties)
 - **`no.nav.security.jwt.client.registration[client shortname]`** - All properties relevant for a particular client must be listed under a `short name` for that client
 - **`no.nav.security.jwt.client.registration[client shortname].token-endpoint-url`** - The identity provider /token endpoint, to retrieve a token
-- **`no.nav.security.jwt.client.registration[client shortname].grant-type`** - The grant_type URL parameter is required by OAuth2 RFC for the /token endpoint, which exchanges a grant for real tokens. So the OAuth2 server knows what you are sending to it. Accepted grant types: `urn:ietf:params:oauth:grant-type:jwt-bearer`, `client_credentials`, `urn:ietf:params:oauth:grant-type:token-exchange`
+- **`no.nav.security.jwt.client.registration[client shortname].grant-type`** - The OAuth 2.0 grant_type to use. Accepted grant types:
+    - `urn:ietf:params:oauth:grant-type:jwt-bearer`
+    - `client_credentials`
+    - `urn:ietf:params:oauth:grant-type:token-exchange`
 
 #### Not required
-- **`no.nav.security.jwt.client.registration[client shortname].scope`** - OAuth 2.0 scopes provide a way to limit the amount of access that is granted to an access token
+- **`no.nav.security.jwt.client.registration[client shortname].scope`** - OAuth 2.0 scopes provide a way to limit the amount of access for access tokens
 
 #### Required Authentication properties (yaml or properties)
 - **`no.nav.security.jwt.client.registration[client shortname].authentication`** - All properties relevant for client authentication must be listed under `authentication`.
-- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-id`** - The client ID is public information, and is used to build login URLs and is a part of authentication for a client.
-- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-auth-method`** - Standard methods for client authentication. Supported methods is `client_secret_basic`, `client_secret_post`, `private_key_jwt`
+- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-id`** - The client ID for your application (usually preregistered at your OAuth 2.0 authorization server.
+- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-auth-method`** - Standard methods for client authentication. Supported methods are:
+    - `client_secret_basic`
+    - `client_secret_post`
+    - `private_key_jwt`
 
 ##### Any of
 - **`no.nav.security.jwt.client.registration[client shortname].authentication.client-secret`** - The client secret must be kept confidential.
 - **`no.nav.security.jwt.client.registration[client shortname].authentication.client-jwk`** - `client-jwk` - Used to sign the client JWT, instead of `client-secret` for authentication against a provider.
 
 #### Token-exchange
-- **`no.nav.security.jwt.client.registration[client shortname].token-exchange`** - All properties relevant for client token-exchange must be listed under `token-exchange`.
+- **`no.nav.security.jwt.client.registration[client shortname].token-exchange`** - All properties relevant for the grant token-exchange must be listed under `token-exchange`.
 - **`no.nav.security.jwt.client.registration[client shortname].token-exchange.audience`** - The logical name of the target service where the client intends to use the requested security token.
-
-##### Not required
-- **`no.nav.security.jwt.client.registration[client shortname].token-exchange.resouce`** - A URI that indicates the target service or resource where the client intends to use the requested security token.
-
-## "Corporate" proxy support per issuer
-Each issuer can be configured to use or not use a proxy by specifying the following properties:
-- **`no.nav.security.jwt.issuer.[issuer shortname].proxyurl`** - The full url of the proxy, e.g. http://proxyhost:8088
 
 ## Running your app locally while using these modules
 
