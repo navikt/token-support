@@ -85,14 +85,9 @@ fun Application.module() {
                 )
             }
             get("/tokenx") {
-                val oAuth2Response = accessTokenService.getAccessToken(
-                    clientPropertiesConfig.configFor("tokenx-client")
-                )
                 call.respond(
                     HttpStatusCode.OK,
-                    DemoTokenResponse(
-                        oAuth2Response
-                    )
+                    "Token X not supported in mock-oauth2-server yet"
                 )
             }
         }
