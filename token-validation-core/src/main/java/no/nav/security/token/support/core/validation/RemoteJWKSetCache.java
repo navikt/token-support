@@ -11,13 +11,11 @@ import java.util.concurrent.TimeUnit;
 
 public class RemoteJWKSetCache {
     private final IssuerProperties.JwkSetCache jwkSetCache;
-    private final IssuerProperties issuerProperties;
     private final ResourceRetriever resourceRetriever;
     private final URL jwKsUrl;
 
     public RemoteJWKSetCache(IssuerProperties issuerProperties, ResourceRetriever resourceRetriever, URL jwKsUrl) {
         this.jwkSetCache = issuerProperties.getJwkSetCache();
-        this.issuerProperties = issuerProperties;
         this.resourceRetriever = resourceRetriever;
         this.jwKsUrl = jwKsUrl;
     }
