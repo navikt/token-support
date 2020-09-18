@@ -9,10 +9,14 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Import({
-    MockOAuth2ServerConfiguration.class,
-    MockOAuth2ServerAutoConfiguration.class
+    MockOAuth2ServerAutoConfiguration.class,
+    MockLoginController.class
 })
 @PropertyMapping(MockOAuth2ServerProperties.PREFIX)
 public @interface EnableMockOAuth2Server {
+    /**
+     * Specify port for server to run on (only works in test scope), provide via
+     * env property mock-ouath2-server.port outside of test scope
+     */
     int port() default 0;
 }

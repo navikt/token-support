@@ -13,10 +13,8 @@ import org.springframework.util.SocketUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * Register random port for MockOAuth2Server in Spring environment.
- */
 @Order
 public class MockOAuth2ServerApplicationListener implements ApplicationListener<ApplicationPreparedEvent> {
 
@@ -30,32 +28,28 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
     @Override
     public void onApplicationEvent(ApplicationPreparedEvent event) {
         log.debug("received ApplicationPreparedEvent, register random port with environment if not set.");
-        registerPort(event.getApplicationContext().getEnvironment());
+        registerPort(event);
     }
 
-    private void registerPort(ConfigurableEnvironment environment) {
+    private void registerPort(ApplicationPreparedEvent event) {
+        ConfigurableEnvironment environment = event.getApplicationContext().getEnvironment();
         Integer httpPortProperty = environment.getProperty(PORT_PROPERTY, Integer.class);
-        if (httpPortProperty == null) {
-            log.debug("could not find property "
-                + PORT_PROPERTY
-                + ". make sure @EnableMockOAuth2Server is applied");
-            return;
-        }
         if (isRandomPort(httpPortProperty)) {
+            int port = SocketUtils.findAvailableTcpPort(MIN_PORT, MAX_PORT);
             MutablePropertySources propertySources = environment.getPropertySources();
             addPropertySource(propertySources);
-            Map<String, Object> source = ((MapPropertySource) propertySources.get(PROPERTY_PREFIX)).getSource();
-            int port = SocketUtils.findAvailableTcpPort(MIN_PORT, MAX_PORT);
+            Map<String, Object> source =
+                ((MapPropertySource) Objects.requireNonNull(propertySources.get(PROPERTY_PREFIX))).getSource();
             source.put(PORT_PROPERTY, port);
             source.put(RANDOM_PORT_PROPERTY, true);
             log.debug("Registered property source for dynamic http port=" + port);
         } else {
-            log.debug("port provided explicitly, nothing to register.");
+            log.debug("port provided explicitly from annotation ({}), nothing to register.", httpPortProperty);
         }
     }
 
     private boolean isRandomPort(Integer httpPortProperty) {
-        return httpPortProperty <= 0;
+        return httpPortProperty == null || httpPortProperty <= 0;
     }
 
     private void addPropertySource(MutablePropertySources propertySources) {
@@ -64,8 +58,8 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
                 new MapPropertySource(PROPERTY_PREFIX, new HashMap<>()));
         } else {
             PropertySource<?> source = propertySources.remove(PROPERTY_PREFIX);
+            assert source != null;
             propertySources.addFirst(source);
         }
     }
-
 }

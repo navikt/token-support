@@ -13,8 +13,6 @@
 		<version>1.1-SNAPSHOT</version>
 	</parent>
 
-
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -36,11 +34,20 @@
 		</dependency>
 		<dependency>
 			<groupId>no.nav.security</groupId>
+			<artifactId>token-validation-spring-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>no.nav.security</groupId>
 			<artifactId>token-validation-test-support</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>spring-mock-mvc</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -62,6 +69,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 </project>
