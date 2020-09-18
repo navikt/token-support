@@ -4,12 +4,9 @@ import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
-import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
-import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import no.nav.security.token.support.core.validation.JwtTokenValidator;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -35,7 +32,11 @@ public class IssuerConfiguration {
         this.metaData = getProviderMetadata(resourceRetriever, issuerProperties.getDiscoveryUrl());
         this.acceptedAudience = issuerProperties.getAcceptedAudience();
         this.cookieName = issuerProperties.getCookieName();
-        this.tokenValidator = createTokenValidator(issuerProperties);
+        this.tokenValidator = new ValidationConfiguration(
+            metaData,
+            resourceRetriever,
+            issuerProperties
+        ).createTokenValidator();
     }
 
     public String getName() {
@@ -85,14 +86,6 @@ public class IssuerConfiguration {
         this.resourceRetriever = resourceRetriever;
     }
 
-    protected static URL getJwksUrl(AuthorizationServerMetadata metaData) {
-        try {
-            return metaData.getJWKSetURI().toURL();
-        } catch (MalformedURLException e) {
-            throw new MetaDataNotAvailableException(e);
-        }
-    }
-
     protected static AuthorizationServerMetadata getProviderMetadata(ResourceRetriever resourceRetriever, URL url) {
         if (url == null) {
             throw new MetaDataNotAvailableException("discoveryUrl cannot be null, check your configuration.");
@@ -101,26 +94,6 @@ public class IssuerConfiguration {
             return AuthorizationServerMetadata.parse(resourceRetriever.retrieveResource(url).getContent());
         } catch (ParseException | IOException e) {
             throw new MetaDataNotAvailableException(url, e);
-        }
-    }
-
-    private JwtTokenValidator createTokenValidator(IssuerProperties issuerProperties) {
-        if (issuerProperties.getValidation().isConfigured() ||
-            issuerProperties.getJwkSetCache().isConfigured()) {
-            return new ConfigurableJwtTokenValidator(
-                metaData.getIssuer().getValue(),
-                getJwksUrl(metaData),
-                resourceRetriever,
-                issuerProperties.getValidation().getOptionalClaims(),
-                issuerProperties.getJwkSetCache()
-            );
-        } else {
-            return new DefaultJwtTokenValidator(
-                metaData.getIssuer().getValue(),
-                acceptedAudience,
-                getJwksUrl(metaData),
-                resourceRetriever
-            );
         }
     }
 

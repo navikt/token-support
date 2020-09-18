@@ -35,12 +35,13 @@ public class ConfigurableJwtTokenValidatorTest extends AbstractJwtValidatorTest 
         try {
             return new ConfigurableJwtTokenValidator(
                 issuer,
-                new URL("https://someurl"),
-                new MockResourceRetriever(),
                 optionalClaims,
-                new IssuerProperties.JwkSetCache(
-                    15L,
-                    5L
+                new RemoteJWKSetCache(
+                    new IssuerProperties(
+                        new URL("https://someurl")
+                    ),
+                    new MockResourceRetriever(),
+                    new URL("https://someurl")
                 )
             );
         } catch (MalformedURLException e) {

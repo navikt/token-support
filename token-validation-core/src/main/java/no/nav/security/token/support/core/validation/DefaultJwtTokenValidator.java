@@ -1,7 +1,8 @@
 package no.nav.security.token.support.core.validation;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.ResourceRetriever;
+import com.nimbusds.jose.proc.JWSVerificationKeySelector;
+import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.oauth2.sdk.id.ClientID;
@@ -12,7 +13,6 @@ import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,16 +21,20 @@ import java.util.Map;
 
 public class DefaultJwtTokenValidator implements JwtTokenValidator {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJwtTokenValidator.class);
-    private static final JWSAlgorithm JWSALG = JWSAlgorithm.RS256;
+    private static final JWSAlgorithm JWS_ALG = JWSAlgorithm.RS256;
     private final Map<String, IDTokenValidator> audienceValidatorMap;
+    private final RemoteJWKSetCache remoteJWKSetCache;
 
     public DefaultJwtTokenValidator(
-        String issuer, List<String> acceptedAudience,
-        URL jwkSetUrl,
-        ResourceRetriever jwksResourceRetriever) {
-        this.audienceValidatorMap = initializeMap(issuer, acceptedAudience, jwkSetUrl, jwksResourceRetriever);
+        String issuer,
+        List<String> acceptedAudience,
+        RemoteJWKSetCache remoteJWKSetCache
+    ) {
+        this.remoteJWKSetCache = remoteJWKSetCache;
+        this.audienceValidatorMap = initializeMap(issuer, acceptedAudience);
     }
 
+    @Override
     public void assertValidToken(String tokenString) throws JwtTokenValidatorException {
         assertValidToken(tokenString, null);
     }
@@ -57,11 +61,14 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
             "Could not find appropriate validator to validate token. check your config.");
     }
 
-    protected IDTokenValidator createValidator(String issuer, String clientId, URL jwkSetUrl,
-                                               ResourceRetriever jwksResourceRetriever) {
+    protected IDTokenValidator createValidator(String issuer, String clientId) {
         Issuer iss = new Issuer(issuer);
         ClientID clientID = new ClientID(clientId);
-        return new IDTokenValidator(iss, clientID, JWSALG, jwkSetUrl, jwksResourceRetriever);
+        JWSVerificationKeySelector<SecurityContext> jwsKeySelector = new JWSVerificationKeySelector<>(
+            JWS_ALG,
+            remoteJWKSetCache.configure()
+        );
+        return new IDTokenValidator(iss, clientID, jwsKeySelector, null);
     }
 
     private static Date expiryDate(JWT token) {
@@ -72,14 +79,13 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
         }
     }
 
-    private Map<String, IDTokenValidator> initializeMap(String issuer, List<String> acceptedAudience, URL jwkSetUrl,
-                                                        ResourceRetriever jwksResourceRetriever) {
+    private Map<String, IDTokenValidator> initializeMap(String issuer, List<String> acceptedAudience) {
         if (acceptedAudience == null || acceptedAudience.isEmpty()) {
             throw new IllegalArgumentException("Accepted audience cannot be null or empty in validator config.");
         }
         Map<String, IDTokenValidator> map = new HashMap<>();
         for (String aud : acceptedAudience) {
-            map.put(aud, createValidator(issuer, aud, jwkSetUrl, jwksResourceRetriever));
+            map.put(aud, createValidator(issuer, aud));
         }
         return map;
     }
