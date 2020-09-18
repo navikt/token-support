@@ -242,9 +242,11 @@ Add the modules that you need as Maven dependencies.
 Each issuer can be configured to use or not use a proxy by specifying the following properties:
 - **`no.nav.security.jwt.issuer.[issuer shortname].proxyurl`** - The full url of the proxy, e.g. http://proxyhost:8088
 
-## Running your app locally while using these modules
+## Running JUnit tests or running your app locally while using these modules
 
-There is a separate module **token-validation-test-support** which you can use to generate tokens for local use. Please see separate [README](https://github.com/navikt/token-support/tree/master/oidc-spring-test) for more information. *Please make sure to never use the local mode properties in any other environment than your local development environment as the private keys to sign the token provided by oidc-spring-test is fully available here on github for all to see and use.*
+There is a separate module in **token-validation-spring-test** for Spring apps, see separate [README](token-validation-spring-test/README.md) for more information. 
+
+For apps not using Spring we recommend you use the [mock-oauth2-server](https://github.com/navikt/mock-oauth2-server) and setup your tests/properties accordingly.
 
 ## Build & Release
 

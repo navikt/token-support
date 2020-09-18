@@ -1,4 +1,7 @@
-# oidc-spring-test
+# token-validation-test-support
+
+:warning: | Deprecated in favour of [token-validation-spring-test](../token-validation-spring-test)
+:---: | :---
 
 Contains config for setting up a local signed JWT token generator (can also be used as a static class) which can be used to simulate the ID token received via OpenID Connect (OIDC). The module also contains config to stub OIDC metadata (OIDC Discovery) and JWKS uri for keys used to sign the token, which should work nicely together with the validation in oidc-spring-support.
 

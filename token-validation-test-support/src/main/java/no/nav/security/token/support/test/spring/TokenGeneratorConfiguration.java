@@ -9,6 +9,15 @@ import org.springframework.context.annotation.Primary;
 
 import no.nav.security.token.support.test.JwkGenerator;
 
+/**
+ * @deprecated use @EnableMockAuth2Server instead
+ *
+ *      <dependency>
+ * 			<groupId>no.nav.security</groupId>
+ * 			<artifactId>token-validation-spring-test</artifactId>
+ * 		</dependency>
+ */
+@Deprecated(since = "1.3.0")
 @Configuration
 @Import(TokenGeneratorController.class)
 public class TokenGeneratorConfiguration {

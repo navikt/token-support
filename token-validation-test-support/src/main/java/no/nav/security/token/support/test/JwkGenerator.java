@@ -14,6 +14,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.IOUtils;
 
+@Deprecated
 public class JwkGenerator {
     public static final String DEFAULT_KEYID = "localhost-signer";
     public static final String DEFAULT_JWKSET_FILE = "/jwkset.json";

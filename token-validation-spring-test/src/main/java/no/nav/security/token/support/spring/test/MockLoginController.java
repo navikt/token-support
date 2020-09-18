@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/local")
@@ -43,7 +44,7 @@ public class MockLoginController {
                     issuerId,
                     subject,
                     audience,
-                    Collections.emptyMap(),
+                    Map.of("acr", "Level4"),
                     expiry != null ? Long.parseLong(expiry) : 3600
                 )
             ).serialize();
