@@ -82,9 +82,7 @@ public class IssuerProperties {
         }
 
         public Boolean isConfigured() {
-            if (lifespan == null && refreshTime == null) {
-                return false;
-            } else return lifespan != null && refreshTime != null;
+            return lifespan != null && refreshTime != null;
         }
     }
 }
