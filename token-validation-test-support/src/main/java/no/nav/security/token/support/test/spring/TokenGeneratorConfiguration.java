@@ -10,12 +10,7 @@ import org.springframework.context.annotation.Primary;
 import no.nav.security.token.support.test.JwkGenerator;
 
 /**
- * @deprecated use @EnableMockAuth2Server instead
- *
- *      <dependency>
- * 			<groupId>no.nav.security</groupId>
- * 			<artifactId>token-validation-spring-test</artifactId>
- * 		</dependency>
+ * @deprecated use @EnableMockAuth2Server from the token-validation-spring-test module instead
  */
 @Deprecated(since = "1.3.0")
 @Configuration
