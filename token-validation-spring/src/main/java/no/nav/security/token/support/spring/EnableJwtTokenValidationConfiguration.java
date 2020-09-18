@@ -6,6 +6,7 @@ import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 
+import no.nav.security.token.support.core.JwtTokenConstants;
 import no.nav.security.token.support.filter.JwtTokenExpiryFilter;
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
@@ -35,6 +36,7 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.filter.JwtTokenValidationFilter;
 import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor;
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenHandlerInterceptor;
+import no.nav.security.token.support.spring.validation.interceptor.SpringJwtTokenAnnotationHandler;
 
 @Configuration
 @EnableConfigurationProperties(MultiIssuerProperties.class)
@@ -89,7 +91,7 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 
 	@Bean
 	public JwtTokenValidationFilter tokenValidationFilter(MultiIssuerConfiguration config, TokenValidationContextHolder tokenValidationContextHolder) {
-		return new JwtTokenValidationFilter(new JwtTokenValidationHandler(config), tokenValidationContextHolder);
+        return new JwtTokenValidationFilter(new JwtTokenValidationHandler(config), tokenValidationContextHolder);
 
 	}
 
@@ -103,7 +105,7 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 	public JwtTokenHandlerInterceptor getControllerInterceptor() {
 		logger.debug("registering OIDC token controller handler interceptor");
         return new JwtTokenHandlerInterceptor(enableOIDCTokenValidation,
-                new JwtTokenAnnotationHandler(new SpringTokenValidationContextHolder()));
+                new SpringJwtTokenAnnotationHandler(new SpringTokenValidationContextHolder()));
 	}
 
 
@@ -123,9 +125,9 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 
 	@Bean
     @Qualifier("oidcTokenExpiryFilterRegistrationBean")
-	@ConditionalOnProperty(name="no.nav.security.jwt.expirythreshold", matchIfMissing = false)
+	@ConditionalOnProperty(name= JwtTokenConstants.EXPIRY_THRESHOLD_ENV_PROPERTY, matchIfMissing = false)
 	public FilterRegistrationBean<JwtTokenExpiryFilter> oidcTokenExpiryFilterRegistrationBean(TokenValidationContextHolder tokenValidationContextHolder,
-                                                                                              @Value("${no.nav.security.jwt.expirythreshold}") long expiryThreshold) {
+                                                                                              @Value("${" + JwtTokenConstants.EXPIRY_THRESHOLD_ENV_PROPERTY + "}") long expiryThreshold) {
 		logger.info("Registering expiry filter");
 		final FilterRegistrationBean<JwtTokenExpiryFilter> filterRegistration = new FilterRegistrationBean<>();
 		filterRegistration.setFilter(new JwtTokenExpiryFilter(tokenValidationContextHolder, expiryThreshold));

@@ -1,9 +1,10 @@
 package no.nav.security.token.support.client.spring.oauth2;
 
 import no.nav.security.token.support.client.core.OAuth2CacheFactory;
-import no.nav.security.token.support.client.core.context.OnBehalfOfAssertionResolver;
+import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient;
+import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
@@ -39,19 +40,25 @@ public class OAuth2ClientConfiguration implements ImportAware {
     }
 
     @Bean
-    OAuth2AccessTokenService oAuth2AccessTokenService(OnBehalfOfAssertionResolver onBehalfOfAssertionResolver,
-                                                      OAuth2HttpClient oAuth2HttpClient) {
+    OAuth2AccessTokenService oAuth2AccessTokenService(
+        JwtBearerTokenResolver jwtBearerTokenResolver,
+        OAuth2HttpClient oAuth2HttpClient
+    ) {
         OAuth2AccessTokenService oAuth2AccessTokenService = new OAuth2AccessTokenService(
-            onBehalfOfAssertionResolver,
+            jwtBearerTokenResolver,
             new OnBehalfOfTokenClient(oAuth2HttpClient),
-            new ClientCredentialsTokenClient(oAuth2HttpClient));
+            new ClientCredentialsTokenClient(oAuth2HttpClient),
+            new TokenExchangeClient(oAuth2HttpClient));
 
         if (enableOAuth2ClientAttributes != null && enableOAuth2ClientAttributes.getBoolean("cacheEnabled")) {
             long maximumSize = enableOAuth2ClientAttributes.getNumber("cacheMaximumSize");
             long skewInSeconds = enableOAuth2ClientAttributes.getNumber("cacheEvictSkew");
-            oAuth2AccessTokenService.setClientCredentialsGrantCache(OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
-            oAuth2AccessTokenService.setOnBehalfOfGrantCache(OAuth2CacheFactory.accessTokenResponseCache(maximumSize,
-                skewInSeconds));
+            oAuth2AccessTokenService.setClientCredentialsGrantCache(
+                OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
+            oAuth2AccessTokenService.setOnBehalfOfGrantCache(
+                OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
+            oAuth2AccessTokenService.setExchangeGrantCache(
+                OAuth2CacheFactory.accessTokenResponseCache(maximumSize, skewInSeconds));
         }
         return oAuth2AccessTokenService;
     }
@@ -63,7 +70,7 @@ public class OAuth2ClientConfiguration implements ImportAware {
 
     @Bean
     @ConditionalOnClass(TokenValidationContextHolder.class)
-    OnBehalfOfAssertionResolver onBehalfOfAssertionResolver(TokenValidationContextHolder contextHolder) {
+    JwtBearerTokenResolver jwtBearerTokenResolver(TokenValidationContextHolder contextHolder) {
         return () ->
             contextHolder.getTokenValidationContext() != null ?
                 contextHolder.getTokenValidationContext().getFirstValidToken()
@@ -71,13 +78,17 @@ public class OAuth2ClientConfiguration implements ImportAware {
     }
 
     @Bean
-    @ConditionalOnMissingBean(OnBehalfOfAssertionResolver.class)
+    @ConditionalOnMissingBean(JwtBearerTokenResolver.class)
     @ConditionalOnMissingClass("no.nav.security.token.support.core.context.TokenValidationContextHolder")
-    OnBehalfOfAssertionResolver noOpOnBehalfOfAssertionResolver() {
+    JwtBearerTokenResolver noopJwtBearerTokenResolver() {
         return () -> {
             throw new UnsupportedOperationException(
-                String.format("a no-op implementation of %s is registered, cannot get assertion required for OnBehalfOf grant",
-                    OnBehalfOfAssertionResolver.class));
+                String.format(
+                    "a no-op implementation of %s is registered, cannot get token to exchange required for " +
+                        "OnBehalfOf/TokenExchange grant",
+                    JwtBearerTokenResolver.class
+                )
+            );
         };
     }
 }

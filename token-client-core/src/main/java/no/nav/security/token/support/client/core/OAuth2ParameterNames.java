@@ -9,4 +9,8 @@ public interface OAuth2ParameterNames {
     String SCOPE = "scope";
     String CLIENT_ASSERTION_TYPE = "client_assertion_type";
     String CLIENT_ASSERTION = "client_assertion";
+    String SUBJECT_TOKEN_TYPE = "subject_token_type";
+    String SUBJECT_TOKEN = "subject_token";
+    String AUDIENCE = "audience";
+    String RESOURCE = "resource";
 }

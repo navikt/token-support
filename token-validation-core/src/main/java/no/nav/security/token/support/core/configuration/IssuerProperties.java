@@ -1,22 +1,31 @@
 package no.nav.security.token.support.core.configuration;
 
-import java.net.URL;
-import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class IssuerProperties {
     @NotNull
     private URL discoveryUrl;
-    @NotEmpty
     private List<String> acceptedAudience;
     private String cookieName;
     private URL proxyUrl;
     private boolean usePlaintextForHttps = false;
+    private Validation validation = new Validation(Collections.emptyList());
 
-    // TODO needed?
-    public IssuerProperties() {
+    public IssuerProperties(URL discoveryUrl) {
+        this.discoveryUrl = discoveryUrl;
     }
 
     public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience) {
@@ -29,57 +38,19 @@ public class IssuerProperties {
         this.cookieName = cookieName;
     }
 
-    public URL getDiscoveryUrl() {
-        return discoveryUrl;
+    public IssuerProperties(URL discoveryUrl, Validation validation) {
+        this(discoveryUrl);
+        this.validation = validation;
     }
 
-    // TODO needed?
-    public void setDiscoveryUrl(URL discoveryUrl) {
-        this.discoveryUrl = discoveryUrl;
-    }
+    @Getter
+    @Setter
+    @ToString
+    public static class Validation {
+        private List<String> optionalClaims;
 
-    public String getCookieName() {
-        return cookieName != null ? cookieName.trim() : cookieName;
-    }
-
-    // TODO needed?
-    public void setCookieName(String cookieName) {
-        this.cookieName = cookieName;
-    }
-
-    public List<String> getAcceptedAudience() {
-        return acceptedAudience;
-    }
-
-    // TODO needed?
-    public void setAcceptedAudience(List<String> acceptedAudience) {
-        this.acceptedAudience = acceptedAudience;
-    }
-
-    public URL getProxyUrl() {
-        return proxyUrl;
-    }
-
-    // TODO needed?
-    public void setProxyUrl(URL proxyUrl) {
-        this.proxyUrl = proxyUrl;
-    }
-
-    public boolean isUsePlaintextForHttps() {
-        return usePlaintextForHttps;
-    }
-
-    public void setUsePlaintextForHttps(boolean usePlaintextForHttps) {
-        this.usePlaintextForHttps = usePlaintextForHttps;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "{" +
-                "discoveryUrl=" + discoveryUrl +
-                ", acceptedAudience=" + acceptedAudience +
-                ", cookieName='" + cookieName + '\'' +
-                ", proxyUrl=" + proxyUrl +
-                '}';
+        public Validation(List<String> optionalClaims) {
+            this.optionalClaims = Optional.ofNullable(optionalClaims).orElse(Collections.emptyList());
+        }
     }
 }

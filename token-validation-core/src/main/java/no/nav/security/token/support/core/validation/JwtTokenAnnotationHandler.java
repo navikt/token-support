@@ -62,7 +62,7 @@ public class JwtTokenAnnotationHandler {
         }
     }
 
-    private Annotation getAnnotation(Method method, List<Class<? extends Annotation>> types) {
+    protected Annotation getAnnotation(Method method, List<Class<? extends Annotation>> types) {
         Annotation annotation = findAnnotation(method.getAnnotations(), types);
         if (annotation != null) {
             log.debug("method " + method + " marked @{}", annotation.annotationType());

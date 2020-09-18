@@ -3,12 +3,15 @@ package no.nav.security.token.support.core;
 import com.nimbusds.jose.util.IOUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 import okhttp3.*;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import okio.BufferedSink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 @Data
 public class IssuerMockWebServer {
+    private static final Logger log = LoggerFactory.getLogger(IssuerMockWebServer.class);
     private static final String DISCOVERY_PATH = "/.well-known/openid-configuration";
     private MockWebServer server;
     private MockWebServer proxyServer;
@@ -64,6 +68,14 @@ public class IssuerMockWebServer {
     public void shutdown() throws IOException {
         server.shutdown();
         proxyServer.shutdown();
+    }
+
+    public URL getDiscoveryUrl() {
+        return discoveryUrl;
+    }
+
+    public URL getProxyUrl() {
+        return proxyUrl;
     }
 
     private static MockResponse mockResponse(String json) {

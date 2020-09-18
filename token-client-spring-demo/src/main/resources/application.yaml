@@ -26,8 +26,20 @@ no.nav.security.jwt:
           client-secret: testsecret
           client-auth-method: client_secret_basic
 
+      democlient3:
+        token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
+        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+        authentication:
+          client-id: cluster:namespace:app1
+          client-jwk: token-client-spring-demo/src/main/resources/jwk.json
+          client-auth-method: private_key_jwt
+        token-exchange:
+          audience: cluster:namespace:app2
+
+
 democlient1.url: http://localhost:8181
 democlient2.url: http://localhost:8181
+democlient3.url: http://localhost:8181
 
 mockwebserver:
   port: 8181

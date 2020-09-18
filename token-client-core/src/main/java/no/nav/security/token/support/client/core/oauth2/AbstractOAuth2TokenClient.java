@@ -1,10 +1,7 @@
 package no.nav.security.token.support.client.core.oauth2;
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
-import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
-import no.nav.security.token.support.client.core.ClientProperties;
-import no.nav.security.token.support.client.core.OAuth2ClientException;
-import no.nav.security.token.support.client.core.OAuth2ParameterNames;
+import no.nav.security.token.support.client.core.*;
 import no.nav.security.token.support.client.core.auth.ClientAssertion;
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders;
@@ -67,7 +64,9 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
         ClientProperties clientProperties = grantRequest.getClientProperties();
         Map<String, String> formParameters = new LinkedHashMap<>(clientAuthenticationFormParameters(grantRequest));
         formParameters.put(OAuth2ParameterNames.GRANT_TYPE, grantRequest.getGrantType().getValue());
-        formParameters.put(OAuth2ParameterNames.SCOPE, String.join(" ", clientProperties.getScope()));
+        if (!clientProperties.getGrantType().equals(OAuth2GrantType.TOKEN_EXCHANGE)) {
+            formParameters.put(OAuth2ParameterNames.SCOPE, String.join(" ", clientProperties.getScope()));
+        }
         return formParameters;
     }
 
@@ -76,13 +75,12 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
         Map<String, String> formParameters = new LinkedHashMap<>();
         ClientAuthenticationProperties auth = clientProperties.getAuthentication();
         if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(auth.getClientAuthMethod())) {
-
             formParameters.put(OAuth2ParameterNames.CLIENT_ID, auth.getClientId());
             formParameters.put(OAuth2ParameterNames.CLIENT_SECRET, auth.getClientSecret());
 
         } else if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(auth.getClientAuthMethod())) {
-
             ClientAssertion clientAssertion = new ClientAssertion(clientProperties.getTokenEndpointUrl(), auth);
+
             formParameters.put(OAuth2ParameterNames.CLIENT_ID, auth.getClientId());
             formParameters.put(OAuth2ParameterNames.CLIENT_ASSERTION_TYPE, clientAssertion.assertionType());
             formParameters.put(OAuth2ParameterNames.CLIENT_ASSERTION, clientAssertion.assertion());

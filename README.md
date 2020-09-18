@@ -236,7 +236,8 @@ Add the modules that you need as Maven dependencies.
 - **`no.nav.security.jwt.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a short name for that issuer (not the actual issuer value from the token, but a chosen name to represent config for the actual issuer) you trust, e.g. **`citizen`** or **`employee`** 
 - **`no.nav.security.jwt.issuer.[issuer shortname].discoveryurl`** - The identity provider configuration/discovery endpoint (metadata)
 - **`no.nav.security.jwt.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the JWT token. For OIDC it is the client ID of the client responsible for acquiring the token, in OAuth 2.0 it should be the identifier for you api.
-- **`no.nav.security.jwt.issuer.[issuer shortname].cookiename`** - The value of the cookie containing a ID token (not required, only neccessary if your api receives calls directly from a browser)
+- **`no.nav.security.jwt.issuer.[issuer shortname].cookiename`** - The value of the cookie containing a ID token (not required, only necessary if your api receives calls directly from a browser)
+- **`no.nav.security.jwt.issuer.[issuer shortname].validation.optional_claims`** - A comma separated list of optional claims that will be excluded from default claims.
 
 ## "Corporate" proxy support per issuer
 Each issuer can be configured to use or not use a proxy by specifying the following properties:
@@ -252,35 +253,12 @@ For apps not using Spring we recommend you use the [mock-oauth2-server](https://
 
 ### Sonatype OSS & Maven Central 
 
-#### Snapshot versions
-
-Every commit to the `master` branch (or merged pull request) will trigger a
-release to the [Sonatype OSS snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/no/nav/security/).
-
 #### Releases
 
-In order to release a new version (provided you have access), clone this repository, and
-
-```bash
-# make sure we're up to date!
-git checkout master && git pull
-
-# This will prepare version numbers and commit to github
-mvn release:prepare
-
-# This will clean up any local temporary files
-# that were used during the release.
-mvn release:clean
-```
-
-The `mvn release:prepare` command will ask for a version number to release,
-as well as which version number to bump to. This command will also do
-a `git push` on your behalf, which will update the remote git repository.
-Then, the CI tool will trigger a build, and deploy the artifact.
+In order to release a new version go to https://github.com/navikt/token-support/releases and click edit on the draft release. Edit or approve the changelog and click publish. Github Action will trigger a new release.
 
 First, it will appear in [Sonatype OSS releases](https://oss.sonatype.org/content/repositories/releases/no/nav/security/),
 before eventually (a couple of minutes later) it is synced to [Maven Central](http://central.maven.org/maven2/no/nav/security/).
-
 
 ## Contact
 

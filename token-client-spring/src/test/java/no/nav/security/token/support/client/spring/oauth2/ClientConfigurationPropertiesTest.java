@@ -1,8 +1,8 @@
 package no.nav.security.token.support.client.spring.oauth2;
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
-import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
+import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Map;
@@ -31,7 +30,7 @@ class ClientConfigurationPropertiesTest {
     private ClientConfigurationProperties clientConfigurationProperties;
 
     @BeforeEach
-    void before(){
+    void before() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -50,6 +49,18 @@ class ClientConfigurationPropertiesTest {
         assertThat(clientProperties.getScope()).isNotEmpty();
         assertThat(clientProperties.getTokenEndpointUrl()).isNotNull();
         assertThat(clientProperties.getGrantType().getValue()).isNotNull();
+    }
+
+    @Test
+    void testTokenExchangeProperties() {
+        assertThat(clientConfigurationProperties).isNotNull();
+        assertThat(clientConfigurationProperties.getRegistration()).isNotNull();
+        System.out.println(clientConfigurationProperties);
+        ClientProperties clientProperties =
+            clientConfigurationProperties.getRegistration().get("example1-token-exchange1");
+
+        assertThat(clientProperties).isNotNull();
+        assertThat(clientProperties.getTokenExchange().getAudience()).isNotBlank();
     }
 
     @Test

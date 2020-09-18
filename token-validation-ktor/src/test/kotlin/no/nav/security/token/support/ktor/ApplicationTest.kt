@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class ApplicationTest {
 
@@ -122,6 +123,42 @@ class ApplicationTest {
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertEquals(helloCounterBeforeRequest, helloCounter)
+            }
+        }
+    }
+
+    @Test
+    fun hello_withSoonExpiringJWTinCookieShouldGive_200_OK_andSetTokenExpiresSoonHeader_andHelloCounterIsIncreased() {
+        val helloCounterBeforeRequest = helloCounter
+        withTestApplication({
+            stubOIDCProvider()
+            doConfig()
+            module()
+        }) {
+            handleRequest(HttpMethod.Get, "/hello") {
+                val jwt = JwtTokenGenerator.createSignedJWT("testuser", 1)
+                addHeader("Cookie", "$idTokenCookieName=${jwt.serialize()}")
+            }.apply {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals("true", response.headers["x-token-expires-soon"])
+                assertEquals(helloCounterBeforeRequest + 1, helloCounter)
+            }
+        }
+    }
+
+    @Test
+    fun hello_withoutSoonExpiringJWTinCookieShouldGive_200_OK_andNotSetTokenExpiresSoonHeader() {
+        withTestApplication({
+            stubOIDCProvider()
+            doConfig()
+            module()
+        }) {
+            handleRequest(HttpMethod.Get, "/hello") {
+                val jwt = JwtTokenGenerator.createSignedJWT("testuser", 30)
+                addHeader("Cookie", "$idTokenCookieName=${jwt.serialize()}")
+            }.apply {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNull(response.headers["x-token-expires-soon"])
             }
         }
     }
@@ -301,6 +338,7 @@ class ApplicationTest {
                              acceptedAudience:String = JwtTokenGenerator.AUD,
                              hasCookieConfig:Boolean = true) {
         (environment.config as MapApplicationConfig).apply {
+            put("no.nav.security.jwt.expirythreshold", "5")
             put("no.nav.security.jwt.issuers.size", "1")
             put("no.nav.security.jwt.issuers.0.issuer_name", acceptedIssuer)
             put("no.nav.security.jwt.issuers.0.discoveryurl", server.baseUrl() + "/.well-known/openid-configuration")

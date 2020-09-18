@@ -3,6 +3,7 @@ package no.nav.security.token.support.filter;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
+import no.nav.security.token.support.core.JwtTokenConstants;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
@@ -43,7 +44,7 @@ public class JwtTokenExpiryFilterTest {
         JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(tokenValidationContextHolder,
             EXPIRY_THRESHOLD);
         jwtTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
-        verify(servletResponse).setHeader(JwtTokenExpiryFilter.TOKEN_EXPIRES_SOON_HEADER, "true");
+        verify(servletResponse).setHeader(JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER, "true");
     }
 
     @Test
@@ -53,7 +54,7 @@ public class JwtTokenExpiryFilterTest {
         JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(tokenValidationContextHolder,
             EXPIRY_THRESHOLD);
         jwtTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
-        verify(servletResponse, never()).setHeader(JwtTokenExpiryFilter.TOKEN_EXPIRES_SOON_HEADER, "true");
+        verify(servletResponse, never()).setHeader(JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER, "true");
     }
 
     @Test

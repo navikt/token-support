@@ -5,14 +5,19 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,6 +38,32 @@ public class TestUtils {
                 .clientSecret("clientSecret1")
                 .build())
             .build();
+    }
+
+    public static ClientProperties tokenExchangeClientProperties(
+        String tokenEndpointUrl,
+        OAuth2GrantType oAuth2GrantType,
+        String clientPrivateKey
+    ) {
+        return ClientProperties.builder()
+            .grantType(oAuth2GrantType)
+            .tokenEndpointUrl(URI.create(tokenEndpointUrl))
+            .authentication(ClientAuthenticationProperties.builder()
+                .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+                .clientId("client1")
+                .clientJwk(clientPrivateKey)
+                .build())
+            .tokenExchange(ClientProperties.TokenExchangeProperties.builder()
+                .audience("audience1")
+                .build())
+            .build();
+    }
+
+    public static void withMockServer(Consumer<MockWebServer> test) throws IOException {
+        MockWebServer server = new MockWebServer();
+        server.start();
+        test.accept(server);
+        server.shutdown();
     }
 
     public static MockResponse jsonResponse(String json) {
@@ -65,5 +96,15 @@ public class TestUtils {
             .expirationTime(Date.from(expiry))
             .claim("jti", UUID.randomUUID().toString())
             .build());
+    }
+
+    public static String encodeValue(String value) {
+        String encodedUrl = null;
+        try {
+            encodedUrl = URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return encodedUrl;
     }
 }

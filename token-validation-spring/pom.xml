@@ -4,7 +4,7 @@
     <parent>
         <groupId>no.nav.security</groupId>
         <artifactId>token-support</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
     </parent>
     <artifactId>token-validation-spring</artifactId>
     <name>token-validation-spring</name>
@@ -109,6 +109,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>mock-oauth2-server</artifactId>
+            <version>0.1.35</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

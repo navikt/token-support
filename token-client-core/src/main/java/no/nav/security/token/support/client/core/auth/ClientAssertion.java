@@ -51,6 +51,7 @@ public class ClientAssertion {
             .subject(clientId)
             .claim("jti", UUID.randomUUID().toString())
             .notBeforeTime(Date.from(now))
+            .issueTime(Date.from(now))
             .build()).serialize();
     }
 

@@ -42,7 +42,7 @@ class JwtTokenHandlerInterceptorTest {
     void setup() {
         contextHolder = createContextHolder();
         contextHolder.setTokenValidationContext(new TokenValidationContext(Collections.emptyMap()));
-        JwtTokenAnnotationHandler jwtTokenAnnotationHandler = new JwtTokenAnnotationHandler(contextHolder);
+        JwtTokenAnnotationHandler jwtTokenAnnotationHandler = new SpringJwtTokenAnnotationHandler(contextHolder);
         Map<String, Object> annotationAttributesMap = new HashMap<>();
         annotationAttributesMap.put("ignore", new String[]{"org.springframework", IgnoreClass.class.getName()});
         AnnotationAttributes annotationAttrs = AnnotationAttributes.fromMap(annotationAttributesMap);
@@ -109,6 +109,55 @@ class JwtTokenHandlerInterceptorTest {
         HandlerMethod handlerMethod = handlerMethod(new ProtectedWithClaimsClassProtectedMethod(), "protectedMethod");
         assertThrows(JwtTokenUnauthorizedException.class,
             () -> interceptor.preHandle(request, response, handlerMethod));
+        setupValidOidcContext();
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodIsUnprotectedAccessShouldBeAllowedMeta() {
+        HandlerMethod handlerMethod = handlerMethod(new UnprotectedClassMeta(), "test");
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodShouldBeProtectedOnUnprotectedClassMeta() {
+        HandlerMethod handlerMethod = handlerMethod(new UnprotectedClassProtectedMethodMeta(), "protectedMethod");
+        assertThrows(JwtTokenUnauthorizedException.class,
+                () -> interceptor.preHandle(request, response, handlerMethod));
+        setupValidOidcContext();
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodShouldBeUnprotectedOnProtectedClassMeta() {
+        HandlerMethod handlerMethod = handlerMethod(new ProtectedClassUnprotectedMethodMeta(), "unprotectedMethod");
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodShouldBeProtectedOnProtectedSuperClassMeta() {
+        HandlerMethod handlerMethod = handlerMethod(new ProtectedSubClassMeta(), "test");
+        assertThrows(JwtTokenUnauthorizedException.class,
+                () -> interceptor.preHandle(request, response, handlerMethod));
+        setupValidOidcContext();
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void unprotectedMetaClassProtectedMethodMeta() {
+        HandlerMethod handlerMethod = handlerMethod(new UnprotectedClassProtectedMethodMeta(), "protectedMethod");
+        assertThrows(JwtTokenUnauthorizedException.class,
+                () -> interceptor.preHandle(request, response, handlerMethod));
+        setupValidOidcContext();
+        assertTrue(interceptor.preHandle(request, response, handlerMethod));
+    }
+
+    @Test
+    void methodShouldBeProtectedOnClassProtectedWithClaimsMeta() {
+        HandlerMethod handlerMethod = handlerMethod(new ProtectedWithClaimsClassProtectedMethodMeta(),
+                "protectedMethod");
+        assertThrows(JwtTokenUnauthorizedException.class,
+                () -> interceptor.preHandle(request, response, handlerMethod));
         setupValidOidcContext();
         assertTrue(interceptor.preHandle(request, response, handlerMethod));
     }
@@ -226,6 +275,65 @@ class JwtTokenHandlerInterceptorTest {
         }
 
         @Unprotected
+        public void unprotectedMethod() {
+        }
+
+        public void protectedWithClaimsMethod() {
+        }
+    }
+
+    @UnprotectedMeta
+    private class UnprotectedClassMeta {
+        public void test() {
+        }
+    }
+
+    @UnprotectedMeta
+    private class UnprotectedClassProtectedMethodMeta {
+        @ProtectedMeta
+        public void protectedMethod() {
+        }
+    }
+
+
+
+    @ProtectedMeta
+    private class ProtectedClassMeta {
+        public void test() {
+        }
+    }
+
+    @ProtectedMeta
+    private class ProtectedSuperClassMeta {
+
+    }
+
+    private class ProtectedSubClassMeta extends ProtectedSuperClassMeta {
+        public void test() {
+        }
+    }
+
+
+
+    @ProtectedMeta
+    private class ProtectedClassUnprotectedMethodMeta {
+        public void protectedMethod() {
+        }
+
+        @UnprotectedMeta
+        public void unprotectedMethod() {
+        }
+    }
+
+
+
+    @ProtectedWithClaimsMeta
+    private class ProtectedWithClaimsClassProtectedMethodMeta {
+        @ProtectedMeta
+        public void protectedMethod() {
+        }
+
+        @UnprotectedMeta
         public void unprotectedMethod() {
         }
 
