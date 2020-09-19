@@ -1,6 +1,7 @@
 package no.nav.security.token.support.core.validation;
 
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWT;
@@ -21,17 +22,17 @@ import java.util.stream.Collectors;
 public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
     private final String issuer;
-    private final RemoteJWKSetCache jwkSetCache;
+    private final RemoteJWKSet<SecurityContext> remoteJWKSetCache;
     private final List<String> defaultRequiredClaims = List.of("sub", "aud", "iss", "iat", "exp", "nbf");
     private final List<String> requiredClaims;
 
     public ConfigurableJwtTokenValidator(
         String issuer,
         List<String> optionalClaims,
-        RemoteJWKSetCache jwkSetCache
+        RemoteJWKSet<SecurityContext> remoteJWKSetCache
     ) {
         this.issuer = issuer;
-        this.jwkSetCache = jwkSetCache;
+        this.remoteJWKSetCache = remoteJWKSetCache;
         this.requiredClaims = removeOptionalClaims(
             defaultRequiredClaims,
             Optional.ofNullable(optionalClaims).orElse(Collections.emptyList())
@@ -43,7 +44,7 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
         verify(issuer, tokenString,
             new JWSVerificationKeySelector<>(
                 JWSAlgorithm.RS256,
-                jwkSetCache.configure()
+                remoteJWKSetCache
             )
         );
     }

@@ -73,7 +73,7 @@ public class DefaultJwtTokenValidatorTest extends AbstractJwtValidatorTest {
             return new DefaultJwtTokenValidator(
                 issuer,
                 expectedAudience,
-                remoteJWKSetCache
+                remoteJWKSetCache.configure()
             );
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);

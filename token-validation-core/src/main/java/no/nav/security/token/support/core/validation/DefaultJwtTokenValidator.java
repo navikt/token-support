@@ -1,6 +1,7 @@
 package no.nav.security.token.support.core.validation;
 
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWT;
@@ -23,12 +24,12 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJwtTokenValidator.class);
     private static final JWSAlgorithm JWS_ALG = JWSAlgorithm.RS256;
     private final Map<String, IDTokenValidator> audienceValidatorMap;
-    private final RemoteJWKSetCache remoteJWKSetCache;
+    private final RemoteJWKSet<SecurityContext> remoteJWKSetCache;
 
     public DefaultJwtTokenValidator(
         String issuer,
         List<String> acceptedAudience,
-        RemoteJWKSetCache remoteJWKSetCache
+        RemoteJWKSet<SecurityContext> remoteJWKSetCache
     ) {
         this.remoteJWKSetCache = remoteJWKSetCache;
         this.audienceValidatorMap = initializeMap(issuer, acceptedAudience);
@@ -66,7 +67,7 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
         ClientID clientID = new ClientID(clientId);
         JWSVerificationKeySelector<SecurityContext> jwsKeySelector = new JWSVerificationKeySelector<>(
             JWS_ALG,
-            remoteJWKSetCache.configure()
+            remoteJWKSetCache
         );
         return new IDTokenValidator(iss, clientID, jwsKeySelector, null);
     }

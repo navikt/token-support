@@ -42,7 +42,7 @@ public class ConfigurableJwtTokenValidatorTest extends AbstractJwtValidatorTest 
                     ),
                     new MockResourceRetriever(),
                     new URL("https://someurl")
-                )
+                ).configure()
             );
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);

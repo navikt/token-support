@@ -36,7 +36,7 @@ public class IssuerConfiguration {
             metaData,
             resourceRetriever,
             issuerProperties
-        ).createTokenValidator();
+        ).getJwtTokenValidator();
     }
 
     public String getName() {
