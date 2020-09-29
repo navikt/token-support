@@ -237,9 +237,9 @@ Add the modules that you need as Maven dependencies.
 - **`no.nav.security.jwt.issuer.[issuer shortname].discoveryurl`** - The identity provider configuration/discovery endpoint (metadata)
 - **`no.nav.security.jwt.issuer.[issuer shortname].accepted_audience`** - The value of the audience (aud) claim in the JWT token. For OIDC it is the client ID of the client responsible for acquiring the token, in OAuth 2.0 it should be the identifier for you api.
 - **`no.nav.security.jwt.issuer.[issuer shortname].cookiename`** - The value of the cookie containing a ID token (not required, only necessary if your api receives calls directly from a browser)
-- **`no.nav.security.jwt.issuer.[issuer shortname].validation.optional_claims`** - A comma separated list of optional claims that will be excluded from default claims.
-- **`no.nav.security.jwt.issuer.[issuer shortname].jwksetcache.lifespan`** - Cache the retrieved JWK keys to speed up subsequent look-ups. A non-negative lifespan expressed in minutes. (Default 15 min)
-- **`no.nav.security.jwt.issuer.[issuer shortname].jwksetcache.refreshtime`** - A non-negative refresh time expressed in minutes. (Default 5 min)
+- **`no.nav.security.jwt.issuer.[issuer shortname].validation.optional-claims`** - A comma separated list of optional claims that will be excluded from default claims.
+- **`no.nav.security.jwt.issuer.[issuer shortname].jwks-cache.lifespan`** - Cache the retrieved JWK keys to speed up subsequent look-ups. A non-negative lifespan expressed in minutes. (Default 15 min)
+- **`no.nav.security.jwt.issuer.[issuer shortname].jwks-cache.refreshtime`** - A non-negative refresh time expressed in minutes. (Default 5 min)
 
 ## "Corporate" proxy support per issuer
 Each issuer can be configured to use or not use a proxy by specifying the following properties:
