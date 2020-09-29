@@ -23,7 +23,7 @@ public class IssuerProperties {
     private URL proxyUrl;
     private boolean usePlaintextForHttps = false;
     private Validation validation = new Validation(Collections.emptyList());
-    private JwkSetCache jwkSetCache = new JwkSetCache(null, null);
+    private JwksCache jwksCache = new JwksCache(null, null);
 
     public IssuerProperties(URL discoveryUrl) {
         this.discoveryUrl = discoveryUrl;
@@ -44,14 +44,14 @@ public class IssuerProperties {
         this.validation = validation;
     }
 
-    public IssuerProperties(URL discoveryUrl, JwkSetCache jwkSetCache) {
+    public IssuerProperties(URL discoveryUrl, JwksCache jwksCache) {
         this(discoveryUrl);
-        this.jwkSetCache = jwkSetCache;
+        this.jwksCache = jwksCache;
     }
 
-    public IssuerProperties(URL discoveryUrl, Validation validation, JwkSetCache jwkSetCache) {
+    public IssuerProperties(URL discoveryUrl, Validation validation, JwksCache jwksCache) {
         this(discoveryUrl, validation);
-        this.jwkSetCache = jwkSetCache;
+        this.jwksCache = jwksCache;
     }
 
     @Getter
@@ -72,11 +72,11 @@ public class IssuerProperties {
     @Getter
     @Setter
     @ToString
-    public static class JwkSetCache {
+    public static class JwksCache {
         private Long lifespan;
         private Long refreshTime;
 
-        public JwkSetCache(Long lifespan, Long refreshTime) {
+        public JwksCache(Long lifespan, Long refreshTime) {
             this.lifespan = Optional.ofNullable(lifespan).orElse(null);
             this.refreshTime = Optional.ofNullable(refreshTime).orElse(null);
         }

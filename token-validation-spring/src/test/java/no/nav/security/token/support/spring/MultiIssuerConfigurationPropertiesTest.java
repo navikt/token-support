@@ -47,8 +47,8 @@ public class MultiIssuerConfigurationPropertiesTest {
         assertTrue(config.getIssuer().containsKey("number5"));
         assertEquals("http://metadata5", config.getIssuer().get("number5").getDiscoveryUrl().toString());
         System.out.println(config.getIssuer().toString());
-        assertEquals(10L, config.getIssuer().get("number5").getJwkSetCache().getLifespan());
-        assertEquals(5L, config.getIssuer().get("number5").getJwkSetCache().getRefreshTime());
+        assertEquals(10L, config.getIssuer().get("number5").getJwksCache().getLifespan());
+        assertEquals(5L, config.getIssuer().get("number5").getJwksCache().getRefreshTime());
     }
 
 }

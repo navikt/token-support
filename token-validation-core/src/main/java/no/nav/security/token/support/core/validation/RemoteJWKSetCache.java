@@ -10,23 +10,23 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 public class RemoteJWKSetCache {
-    private final IssuerProperties.JwkSetCache jwkSetCache;
+    private final IssuerProperties.JwksCache jwksCache;
     private final ResourceRetriever resourceRetriever;
     private final URL jwKsUrl;
 
     public RemoteJWKSetCache(IssuerProperties issuerProperties, ResourceRetriever resourceRetriever, URL jwKsUrl) {
-        this.jwkSetCache = issuerProperties.getJwkSetCache();
+        this.jwksCache = issuerProperties.getJwksCache();
         this.resourceRetriever = resourceRetriever;
         this.jwKsUrl = jwKsUrl;
     }
 
     public RemoteJWKSet<SecurityContext> configure() {
-        return this.jwkSetCache.isConfigured() ? new RemoteJWKSet<>(
+        return this.jwksCache.isConfigured() ? new RemoteJWKSet<>(
             jwKsUrl,
             resourceRetriever,
             new DefaultJWKSetCache(
-                this.jwkSetCache.getLifespan(),
-                this.jwkSetCache.getRefreshTime(),
+                this.jwksCache.getLifespan(),
+                this.jwksCache.getRefreshTime(),
                 TimeUnit.MINUTES
             )
         ) : new RemoteJWKSet<>(jwKsUrl, resourceRetriever);

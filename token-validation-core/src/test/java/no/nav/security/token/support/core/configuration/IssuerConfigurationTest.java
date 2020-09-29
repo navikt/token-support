@@ -77,7 +77,7 @@ class IssuerConfigurationTest {
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
-        assertThat(!issuerProperties.getJwkSetCache().isConfigured());
+        assertThat(!issuerProperties.getJwksCache().isConfigured());
         assertThat(issuerProperties.getValidation().isConfigured());
     }
 
@@ -86,7 +86,7 @@ class IssuerConfigurationTest {
         IssuerProperties issuerProperties = new IssuerProperties(
             issuerMockWebServer.getDiscoveryUrl(),
             new IssuerProperties.Validation(List.of("sub", "aud")),
-            new IssuerProperties.JwkSetCache(15L, 5L)
+            new IssuerProperties.JwksCache(15L, 5L)
         );
         IssuerConfiguration config = new IssuerConfiguration(
             "issuer1",
@@ -99,7 +99,7 @@ class IssuerConfigurationTest {
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
-        assertThat(issuerProperties.getJwkSetCache().isConfigured());
+        assertThat(issuerProperties.getJwksCache().isConfigured());
         assertThat(issuerProperties.getValidation().isConfigured());
     }
 }
