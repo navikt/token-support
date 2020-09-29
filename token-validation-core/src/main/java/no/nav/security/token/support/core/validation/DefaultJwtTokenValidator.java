@@ -10,6 +10,8 @@ import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.id.Issuer;
 import com.nimbusds.openid.connect.sdk.Nonce;
 import com.nimbusds.openid.connect.sdk.validators.IDTokenValidator;
+import lombok.AccessLevel;
+import lombok.Getter;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +26,15 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJwtTokenValidator.class);
     private static final JWSAlgorithm JWS_ALG = JWSAlgorithm.RS256;
     private final Map<String, IDTokenValidator> audienceValidatorMap;
-    private final RemoteJWKSet<SecurityContext> remoteJWKSetCache;
+    @Getter(AccessLevel.PROTECTED)
+    private final RemoteJWKSet<SecurityContext> remoteJWKSet;
 
     public DefaultJwtTokenValidator(
         String issuer,
         List<String> acceptedAudience,
-        RemoteJWKSet<SecurityContext> remoteJWKSetCache
+        RemoteJWKSet<SecurityContext> remoteJWKSet
     ) {
-        this.remoteJWKSetCache = remoteJWKSetCache;
+        this.remoteJWKSet = remoteJWKSet;
         this.audienceValidatorMap = initializeMap(issuer, acceptedAudience);
     }
 
@@ -67,7 +70,7 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
         ClientID clientID = new ClientID(clientId);
         JWSVerificationKeySelector<SecurityContext> jwsKeySelector = new JWSVerificationKeySelector<>(
             JWS_ALG,
-            remoteJWKSetCache
+            remoteJWKSet
         );
         return new IDTokenValidator(iss, clientID, jwsKeySelector, null);
     }

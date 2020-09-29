@@ -14,8 +14,8 @@ no.nav.security.jwt:
     knownissuer3:
       discoveryurl: http://localhost:1111/knownissuer3/.well-known/openid-configuration
       accepted_audience: aud-localhost
-      cache.lifespan: 10
-      cache.refreshtime: 2
+      jwks-cache.lifespan: 10
+      jwks-cache.refreshtime: 2
 
 logging.level.org.springframework: INFO
 logging.level.no.nav: DEBUG

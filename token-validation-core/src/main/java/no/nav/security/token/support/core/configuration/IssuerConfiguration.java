@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import static no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator;
+
 /*
  * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
  * OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
@@ -20,7 +22,7 @@ import java.util.List;
 public class IssuerConfiguration {
 
     private String name;
-    private AuthorizationServerMetadata metaData;
+    private AuthorizationServerMetadata metadata;
     private final List<String> acceptedAudience;
     private String cookieName;
     private final JwtTokenValidator tokenValidator;
@@ -29,14 +31,10 @@ public class IssuerConfiguration {
     public IssuerConfiguration(String name, IssuerProperties issuerProperties, ResourceRetriever resourceRetriever) {
         this.name = name;
         this.resourceRetriever = resourceRetriever;
-        this.metaData = getProviderMetadata(resourceRetriever, issuerProperties.getDiscoveryUrl());
+        this.metadata = getProviderMetadata(resourceRetriever, issuerProperties.getDiscoveryUrl());
         this.acceptedAudience = issuerProperties.getAcceptedAudience();
         this.cookieName = issuerProperties.getCookieName();
-        this.tokenValidator = new ValidationConfiguration(
-            metaData,
-            resourceRetriever,
-            issuerProperties
-        ).getJwtTokenValidator();
+        this.tokenValidator = tokenValidator(issuerProperties, metadata, resourceRetriever);
     }
 
     public String getName() {
@@ -61,12 +59,12 @@ public class IssuerConfiguration {
     }
 
     public AuthorizationServerMetadata getMetaData() {
-        return metaData;
+        return metadata;
     }
 
     // TODO needed?
     public void setMetaData(AuthorizationServerMetadata metaData) {
-        this.metaData = metaData;
+        this.metadata = metaData;
     }
 
     // TODO needed?
@@ -99,7 +97,7 @@ public class IssuerConfiguration {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [name=" + name + ", metaData=" + metaData + ", acceptedAudience="
+        return getClass().getSimpleName() + " [name=" + name + ", metaData=" + metadata + ", acceptedAudience="
             + acceptedAudience + ", cookieName=" + cookieName + ", tokenValidator=" + tokenValidator
             + ", resourceRetriever=" + resourceRetriever + "]";
     }

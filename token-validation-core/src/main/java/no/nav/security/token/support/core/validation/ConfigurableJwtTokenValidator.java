@@ -11,6 +11,8 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
+import lombok.AccessLevel;
+import lombok.Getter;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 
 import java.util.Collections;
@@ -22,17 +24,18 @@ import java.util.stream.Collectors;
 public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
     private final String issuer;
-    private final RemoteJWKSet<SecurityContext> remoteJWKSetCache;
+    @Getter(AccessLevel.PROTECTED)
+    private final RemoteJWKSet<SecurityContext> remoteJWKSet;
     private final List<String> defaultRequiredClaims = List.of("sub", "aud", "iss", "iat", "exp", "nbf");
     private final List<String> requiredClaims;
 
     public ConfigurableJwtTokenValidator(
         String issuer,
         List<String> optionalClaims,
-        RemoteJWKSet<SecurityContext> remoteJWKSetCache
+        RemoteJWKSet<SecurityContext> remoteJWKSet
     ) {
         this.issuer = issuer;
-        this.remoteJWKSetCache = remoteJWKSetCache;
+        this.remoteJWKSet = remoteJWKSet;
         this.requiredClaims = removeOptionalClaims(
             defaultRequiredClaims,
             Optional.ofNullable(optionalClaims).orElse(Collections.emptyList())
@@ -44,7 +47,7 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
         verify(issuer, tokenString,
             new JWSVerificationKeySelector<>(
                 JWSAlgorithm.RS256,
-                remoteJWKSetCache
+                remoteJWKSet
             )
         );
     }
