@@ -326,9 +326,11 @@ Add the module that you need as dependencies.
 - **`no.nav.security.jwt.client.registration[client shortname].token-exchange`** - All properties relevant for the grant token-exchange must be listed under `token-exchange`.
 - **`no.nav.security.jwt.client.registration[client shortname].token-exchange.audience`** - The logical name of the target service where the client intends to use the requested security token.
 
-## Running your app locally while using these modules
+## Running JUnit tests or running your app locally while using these modules
 
-There is a separate module **token-validation-test-support** which you can use to generate tokens for local use. Please see separate [README](token-validation-test-support) for more information. *Please make sure to never use the local mode properties in any other environment than your local development environment as the private keys to sign the token provided by oidc-spring-test is fully available here on github for all to see and use.*
+There is a separate module in **token-validation-spring-test** for Spring apps, see separate [README](token-validation-spring-test/README.md) for more information. 
+
+For apps not using Spring we recommend you use the [mock-oauth2-server](https://github.com/navikt/mock-oauth2-server) and setup your tests/properties accordingly.
 
 ## Build & Release
 

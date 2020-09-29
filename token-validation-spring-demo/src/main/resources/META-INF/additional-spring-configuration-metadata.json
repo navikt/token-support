@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "mock-oauth2-server.port",
+      "type": "java.lang.String",
+      "description": "Description for mock-oauth2-server.port."
+    },
+    {
+      "name": "mock-oauth2-server.interactive-login",
+      "type": "java.lang.String",
+      "description": "Description for mock-oauth2-server.interactive-login."
+    }
+  ] }

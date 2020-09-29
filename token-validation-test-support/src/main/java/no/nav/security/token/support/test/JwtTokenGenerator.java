@@ -15,6 +15,10 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
+/**
+ * @deprecated use MockOAuth2Server.issueToken instead - ref https://github.com/navikt/mock-oauth2-server
+ */
+@Deprecated(since = "1.3.0")
 public class JwtTokenGenerator {
 
     public static final String ISS = "iss-localhost";

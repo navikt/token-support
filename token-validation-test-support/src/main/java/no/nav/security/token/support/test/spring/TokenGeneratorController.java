@@ -20,6 +20,7 @@ import com.nimbusds.jwt.SignedJWT;
 import no.nav.security.token.support.test.JwkGenerator;
 import no.nav.security.token.support.test.JwtTokenGenerator;
 
+@Deprecated
 @RestController
 @RequestMapping("/local")
 public class TokenGeneratorController {

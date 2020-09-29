@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 
+@Deprecated
 @Path("local")
 public class TestTokenGeneratorResource {
 

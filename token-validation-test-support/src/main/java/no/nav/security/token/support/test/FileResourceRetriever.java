@@ -16,6 +16,7 @@ import com.nimbusds.jose.util.Resource;
 
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 
+@Deprecated
 public class FileResourceRetriever extends ProxyAwareResourceRetriever {
 
     private final String metadataFile;
@@ -24,11 +25,11 @@ public class FileResourceRetriever extends ProxyAwareResourceRetriever {
     public FileResourceRetriever(String metadataFile, String jwksFile) {
         this.metadataFile = metadataFile;
         this.jwksFile = jwksFile;
-    } 
-    
+    }
+
     @Override
 	public Resource retrieveResource(URL url) {
-		String content = getContentFromFile(url); 	
+		String content = getContentFromFile(url);
     	return content != null ? new Resource(content, "application/json") : null;
 	}
 
@@ -45,11 +46,11 @@ public class FileResourceRetriever extends ProxyAwareResourceRetriever {
              throw new RuntimeException(e);
          }
     }
-  
+
     private InputStream getInputStream(String file) {
     	return FileResourceRetriever.class.getResourceAsStream(file);
     }
-    
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [metadataFile=" + metadataFile + ", jwksFile=" + jwksFile + "]";
