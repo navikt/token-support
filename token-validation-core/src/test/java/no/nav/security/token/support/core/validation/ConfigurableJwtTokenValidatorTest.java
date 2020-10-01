@@ -1,12 +1,12 @@
 package no.nav.security.token.support.core.validation;
 
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jwt.JWT;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,13 +31,12 @@ public class ConfigurableJwtTokenValidatorTest extends AbstractJwtValidatorTest 
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
     }
 
-    private ConfigurableJwtTokenValidator tokenValidator(String issuer, List<String> optionalClaims){
+    private ConfigurableJwtTokenValidator tokenValidator(String issuer, List<String> optionalClaims) {
         try {
             return new ConfigurableJwtTokenValidator(
                 issuer,
-                new URL("https://someurl"),
-                new MockResourceRetriever(),
-                optionalClaims
+                optionalClaims,
+                new RemoteJWKSet<>(URI.create("https://someurl").toURL(), new MockResourceRetriever())
             );
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);

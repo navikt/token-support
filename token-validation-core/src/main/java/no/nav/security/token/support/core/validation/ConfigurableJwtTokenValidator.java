@@ -4,7 +4,6 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
@@ -12,9 +11,10 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
+import lombok.AccessLevel;
+import lombok.Getter;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -24,19 +24,19 @@ import java.util.stream.Collectors;
 public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
     private final String issuer;
+    @Getter(AccessLevel.PROTECTED)
     private final RemoteJWKSet<SecurityContext> remoteJWKSet;
     private final List<String> defaultRequiredClaims = List.of("sub", "aud", "iss", "iat", "exp", "nbf");
     private final List<String> requiredClaims;
 
     public ConfigurableJwtTokenValidator(
         String issuer,
-        URL jwkSetUrl,
-        ResourceRetriever resourceRetriever,
-        List<String> optionalClaims
+        List<String> optionalClaims,
+        RemoteJWKSet<SecurityContext> remoteJWKSet
     ) {
         this.issuer = issuer;
-        this.remoteJWKSet = new RemoteJWKSet<>(jwkSetUrl, resourceRetriever);
-        this.requiredClaims = filterList(
+        this.remoteJWKSet = remoteJWKSet;
+        this.requiredClaims = removeOptionalClaims(
             defaultRequiredClaims,
             Optional.ofNullable(optionalClaims).orElse(Collections.emptyList())
         );
@@ -77,7 +77,7 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
         }
     }
 
-    private static <T> List<T> filterList(List<T> first, List<T> second){
+    private static <T> List<T> removeOptionalClaims(List<T> first, List<T> second) {
         return first.stream()
             .filter(c -> !second.contains(c))
             .collect(Collectors.toList());

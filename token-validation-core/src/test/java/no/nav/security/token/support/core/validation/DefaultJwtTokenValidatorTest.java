@@ -1,5 +1,6 @@
 package no.nav.security.token.support.core.validation;
 
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jwt.JWT;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 import org.junit.jupiter.api.Test;
@@ -61,8 +62,11 @@ public class DefaultJwtTokenValidatorTest extends AbstractJwtValidatorTest {
 
     private DefaultJwtTokenValidator createOIDCTokenValidator(String issuer, List<String> expectedAudience) {
         try {
-            return new DefaultJwtTokenValidator(issuer, expectedAudience, URI.create("https://someurl").toURL(),
-                new MockResourceRetriever());
+            return new DefaultJwtTokenValidator(
+                issuer,
+                expectedAudience,
+                new RemoteJWKSet<>(URI.create("https://someurl").toURL(), new MockResourceRetriever())
+            );
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

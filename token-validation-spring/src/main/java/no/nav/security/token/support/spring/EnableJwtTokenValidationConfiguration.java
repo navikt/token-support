@@ -8,7 +8,6 @@ import javax.servlet.DispatcherType;
 
 import no.nav.security.token.support.core.JwtTokenConstants;
 import no.nav.security.token.support.filter.JwtTokenExpiryFilter;
-import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
 import org.slf4j.Logger;
