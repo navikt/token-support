@@ -195,7 +195,7 @@ public class ProductResource {
 
 See demo application in **`token-validation-ktor-demo`**.
 
-## Configuration
+### token-validation-* configuration
 
 Add the modules that you need as Maven dependencies.
 * token-validation-spring:
@@ -231,7 +231,7 @@ Add the modules that you need as Maven dependencies.
     </dependency>
 ```
 
-### Required properties (yaml or properties)
+#### Required properties (yaml or properties)
 
 - **`no.nav.security.jwt.issuer.[issuer shortname]`** - all properties relevant for a particular issuer must be listed under a short name for that issuer (not the actual issuer value from the token, but a chosen name to represent config for the actual issuer) you trust, e.g. **`citizen`** or **`employee`** 
 - **`no.nav.security.jwt.issuer.[issuer shortname].discoveryurl`** - The identity provider configuration/discovery endpoint (metadata)
@@ -241,9 +241,92 @@ Add the modules that you need as Maven dependencies.
 - **`no.nav.security.jwt.issuer.[issuer shortname].jwks-cache.lifespan`** - Cache the retrieved JWK keys to speed up subsequent look-ups. A non-negative lifespan expressed in minutes. (Default 15 min)
 - **`no.nav.security.jwt.issuer.[issuer shortname].jwks-cache.refreshtime`** - A non-negative refresh time expressed in minutes. (Default 5 min)
 
-## "Corporate" proxy support per issuer
+#### "Corporate" proxy support per issuer
 Each issuer can be configured to use or not use a proxy by specifying the following properties:
 - **`no.nav.security.jwt.issuer.[issuer shortname].proxyurl`** - The full url of the proxy, e.g. http://proxyhost:8088
+
+### token-client-core
+Provides core OAuth 2.0 client support, supporting the following OAuth 2.0 grants:
+* `jwt_bearer`
+* `client_credentials`
+* `token_exchange` 
+
+This module can be used standalone (e.g. if you do not use Spring or Ktor). 
+You will however need to code the part to "hook in" the client and trigger the token retrieval. If you use Spring you should use the specific wrapper module.
+
+When requesting a token from an OAuth 2.0 Authorization Server the client must authenticate itself with one of the following client authentication methods:
+* `private_key_jwt`
+* `client_secret_post`
+* `client_secret_basic`
+
+The module will choose the client authentication method based on provided configuration in the class `ClientProperties`.
+
+Use the interface `JwtBearerTokenResolver` to supply a JWT that should be exchanged for another, i.e. in `jwt_bearer` or `token_exchange` grants. 
+The `OAuth2HttpClient` interface lets you provide a HTTP client of your choosing to perform the actual POST request to the OAuth 2.0 server.
+
+### token-client-spring
+Spring Boot wrapper for the module **token-client-core**, providing auto configuration for Spring.  
+Simply annotate your SpringApplication class or any Spring Configuration class with `EnableOAuth2Client`.
+Enable caching for the OAuth 2.0 `access_token` response with `cacheEnabled = true` and configurable `cacheEvictSkew` and `cacheMaximumSize` properties.
+
+```java
+@EnableOAuth2Client(cacheEnabled = true)
+@Configuration
+public class Configuration {
+    // ...
+}
+```
+
+Detailed samples are available in the token-client-spring-demo module.
+### token-client-ktor
+Not implemented as of now. See demo application in **`token-client-ktor-demo`**.
+
+### token-client-* configuration
+
+Add the module that you need as dependencies.
+* token-client-spring:
+```xml
+   <dependency>     
+        <groupId>no.nav.security</groupId>
+        <artifactId>token-client-spring</artifactId>
+        <version>${token-support.version}</version>
+    </dependency>
+```
+* token-client-core (included as dependency of the above):
+```xml
+   <dependency>     
+        <groupId>no.nav.security</groupId>
+        <artifactId>token-client-core</artifactId>
+        <version>${token-support.version}</version>
+    </dependency>
+```
+
+#### Required properties (yaml or properties)
+- **`no.nav.security.jwt.client.registration[client shortname]`** - All properties relevant for a particular client must be listed under a `short name` for that client
+- **`no.nav.security.jwt.client.registration[client shortname].token-endpoint-url`** - The identity provider /token endpoint, to retrieve a token
+- **`no.nav.security.jwt.client.registration[client shortname].grant-type`** - The OAuth 2.0 grant_type to use. Accepted grant types:
+    - `urn:ietf:params:oauth:grant-type:jwt-bearer`
+    - `client_credentials`
+    - `urn:ietf:params:oauth:grant-type:token-exchange`
+
+#### Not required
+- **`no.nav.security.jwt.client.registration[client shortname].scope`** - OAuth 2.0 scopes provide a way to limit the amount of access for access tokens
+
+#### Required Authentication properties (yaml or properties)
+- **`no.nav.security.jwt.client.registration[client shortname].authentication`** - All properties relevant for client authentication must be listed under `authentication`.
+- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-id`** - The client ID for your application (usually preregistered at your OAuth 2.0 authorization server.
+- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-auth-method`** - Standard methods for client authentication. Supported methods are:
+    - `client_secret_basic`
+    - `client_secret_post`
+    - `private_key_jwt`
+
+##### Any of
+- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-secret`** - The client secret must be kept confidential.
+- **`no.nav.security.jwt.client.registration[client shortname].authentication.client-jwk`** - `client-jwk` - Used to sign the client JWT, instead of `client-secret` for authentication against a provider.
+
+#### Token-exchange
+- **`no.nav.security.jwt.client.registration[client shortname].token-exchange`** - All properties relevant for the grant token-exchange must be listed under `token-exchange`.
+- **`no.nav.security.jwt.client.registration[client shortname].token-exchange.audience`** - The logical name of the target service where the client intends to use the requested security token.
 
 ## Running JUnit tests or running your app locally while using these modules
 

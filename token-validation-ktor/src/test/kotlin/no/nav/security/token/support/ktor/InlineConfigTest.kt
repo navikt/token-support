@@ -9,6 +9,8 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
+import no.nav.security.token.support.ktor.inlineconfigtestapp.helloCounter
+import no.nav.security.token.support.ktor.inlineconfigtestapp.inlineConfiguredModule
 import no.nav.security.token.support.test.JwkGenerator
 import no.nav.security.token.support.test.JwtTokenGenerator
 import org.junit.jupiter.api.AfterAll

@@ -35,6 +35,7 @@
         <module>token-validation-ktor-demo</module>
         <module>token-client-spring</module>
         <module>token-client-spring-demo</module>
+        <module>token-client-kotlin-demo</module>
         <module>token-client-core</module>
     </modules>
 

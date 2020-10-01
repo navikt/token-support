@@ -27,7 +27,8 @@ fun Application.inlineConfiguredModule() {
                 acceptedAudience = listOf("aud-localhost", "anotherAudience"),
                 discoveryUrl = "http://localhost:33445/.well-known/openid-configuration"
             )
-        ))
+        )
+        )
     }
 
     routing {

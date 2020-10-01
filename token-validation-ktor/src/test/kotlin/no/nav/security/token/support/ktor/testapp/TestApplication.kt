@@ -30,7 +30,8 @@ fun Application.module() {
     install(Authentication) {
         tokenValidationSupport("validToken", config = config)
         tokenValidationSupport("validUser", config = config,
-            requiredClaims = RequiredClaims(issuer = acceptedIssuer, claimMap = arrayOf("NAVident=X112233")))
+            requiredClaims = RequiredClaims(issuer = acceptedIssuer, claimMap = arrayOf("NAVident=X112233"))
+        )
         tokenValidationSupport("validGroup", config = config,
             additionalValidation = {
                 val claims = it.getClaims(acceptedIssuer)
