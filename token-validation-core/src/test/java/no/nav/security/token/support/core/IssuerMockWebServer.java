@@ -2,8 +2,6 @@ package no.nav.security.token.support.core;
 
 import com.nimbusds.jose.util.IOUtils;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 import okhttp3.*;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -18,7 +16,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-@Slf4j
 @Data
 public class IssuerMockWebServer {
     private static final Logger log = LoggerFactory.getLogger(IssuerMockWebServer.class);
