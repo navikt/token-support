@@ -1,0 +1,3 @@
+# Application Listeners
+org.springframework.context.ApplicationListener=\
+no.nav.security.token.support.spring.test.MockOAuth2ServerApplicationListener

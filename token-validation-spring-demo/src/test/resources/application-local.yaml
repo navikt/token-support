@@ -1,0 +1,17 @@
+
+http.proxy.parametername: notused
+
+no.nav.security.jwt:
+  expirythreshold: 1 #threshold in minutes until token expires
+  issuer:
+    issuer1:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/issuer1/.well-known/openid-configuration
+      accepted_audience: demoapplication
+      cookie_name: issuer1-idtoken
+    issuer2:
+      discoveryurl: http://localhost:${mock-oauth2-server.port}/issuer2/.well-known/openid-configuration
+      accepted_audience: demoapplication
+      cookie_name: issuer2-idtoken
+
+logging.level.org.springframework: INFO
+logging.level.no.nav: DEBUG
