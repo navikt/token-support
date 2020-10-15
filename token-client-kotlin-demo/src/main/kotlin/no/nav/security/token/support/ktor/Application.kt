@@ -29,6 +29,7 @@ import no.nav.security.token.support.ktor.oauth.ClientPropertiesConfig
 import no.nav.security.token.support.ktor.oauth.TokenResolver
 import no.nav.security.token.support.ktor.utils.Jackson
 import no.nav.security.token.support.ktor.utils.configFor
+import java.net.InetAddress
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -37,7 +38,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 fun Application.module() {
 
     // mock oAuth2 server for demo app
-    MockOAuth2Server().start(1111)
+    MockOAuth2Server().start(InetAddress.getLocalHost(),1111)
 
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(Jackson.defaultMapper))

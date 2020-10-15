@@ -227,12 +227,8 @@ class ProtectedRestControllerIntegrationTest {
             }
 
             @Override
-            public String audience(@NotNull TokenRequest tokenRequest) {
-                return Optional.ofNullable(jwtClaimsSet.getAudience())
-                    .stream()
-                    .flatMap(a -> a.stream())
-                    .findFirst()
-                    .orElse(null);
+            public List<String> audience(@NotNull TokenRequest tokenRequest) {
+                return jwtClaimsSet.getAudience();
             }
 
             @NotNull

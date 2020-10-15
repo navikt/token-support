@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.*;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 @EnableJwtTokenValidation
 @EnableConfigurationProperties(MultiIssuerProperties.class)
@@ -26,7 +27,7 @@ public class ProtectedApplicationConfig {
     @Bean
     public MockOAuth2Server mockOAuth2Server() throws IOException {
         MockOAuth2Server mockOAuth2Server = new MockOAuth2Server();
-        mockOAuth2Server.start(1111);
+        mockOAuth2Server.start(InetAddress.getLocalHost(), 1111);
         return mockOAuth2Server;
     }
 }

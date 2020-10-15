@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Primary;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Set;
 
 @Configuration
@@ -59,7 +60,7 @@ public class MockOAuth2ServerAutoConfiguration {
             int port = properties.getPort();
             if (port > 0) {
                 log.debug("starting mock oauth2 server on port " + port);
-                mockOAuth2Server.start(port);
+                mockOAuth2Server.start(InetAddress.getByName("localhost"));
             } else {
                 throw new RuntimeException("could not find " + "mock-oauth2-server.port" + " in environment. cannot " +
                     "start server.");
