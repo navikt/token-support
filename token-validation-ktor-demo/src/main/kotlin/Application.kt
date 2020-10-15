@@ -10,23 +10,18 @@ import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.ktor.tokenValidationSupport
-import no.nav.security.token.support.test.FileResourceRetriever
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @KtorExperimentalAPI
 @Suppress("unused") // Referenced in application.conf
-fun Application.module(enableMock: Boolean = this.environment.config.property("no.nav.security.jwt.mock.enable").getString().toBoolean()) {
+fun Application.module() {
 
     val config = this.environment.config
 
     install(Authentication) {
-        if (enableMock)
-            tokenValidationSupport(config = config, resourceRetriever = mockResourceRetriever)
-        else
-            tokenValidationSupport(config = config)
+        tokenValidationSupport(config = config)
     }
 
     routing {
@@ -41,6 +36,3 @@ fun Application.module(enableMock: Boolean = this.environment.config.property("n
         }
     }
 }
-
-private val mockResourceRetriever: ProxyAwareResourceRetriever =
-    FileResourceRetriever("/metadata.json", "/jwkset.json")

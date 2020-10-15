@@ -1,17 +1,14 @@
 package com.example
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.*
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import io.ktor.application.Application
 import io.ktor.config.MapApplicationConfig
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
 import io.ktor.util.KtorExperimentalAPI
-import no.nav.security.token.support.test.JwkGenerator
-import no.nav.security.token.support.test.JwtTokenGenerator
+import no.nav.security.mock.oauth2.MockOAuth2Server
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -24,13 +21,31 @@ class ApplicationTokenTest {
 
     @Test
     fun hello_withMissingJWTShouldGive_401_Unauthorized() {
+        withTestApplication {
+            with(handleRequest(HttpMethod.Get, "/hello")) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+            }
+        }
+    }
+
+    @Test
+    fun hello_withInvalidJWTShouldGive_401_Unauthorized() {
         withTestApplication({
-            stubOIDCProvider()
-            doConfig()
-            module(enableMock = false)
+            doConfig(
+                acceptedAudience = "some-audience",
+                acceptedIssuer = "some-issuer"
+            )
+            module()
         }) {
-            handleRequest(HttpMethod.Get, "/hello") {
-            }.apply {
+            with(handleRequest(HttpMethod.Get, "/hello") {
+                addHeader("Authorization", "Bearer ${server.issueToken(audience = "not-accepted").serialize()}")
+            }) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+            }
+
+            with(handleRequest(HttpMethod.Get, "/hello") {
+                addHeader("Authorization", "Bearer ${server.issueToken(issuerId = "not-accepted").serialize()}")
+            }) {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
             }
         }
@@ -38,15 +53,10 @@ class ApplicationTokenTest {
 
     @Test
     fun hello_withValidJWTinHeaderShouldGive_200_OK() {
-        withTestApplication({
-            stubOIDCProvider()
-            doConfig()
-            module(enableMock = false)
-        }) {
-            handleRequest(HttpMethod.Get, "/hello") {
-                val jwt = JwtTokenGenerator.createSignedJWT("testuser")
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
-            }.apply {
+        withTestApplication {
+            with(handleRequest(HttpMethod.Get, "/hello") {
+                addHeader("Authorization", "Bearer ${server.issueToken().serialize()}")
+            }) {
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         }
@@ -54,15 +64,10 @@ class ApplicationTokenTest {
 
     @Test
     fun hello_withValidJWTinCookieShouldGive_200_OK() {
-        withTestApplication({
-            stubOIDCProvider()
-            doConfig()
-            module(enableMock = false)
-        }) {
-            handleRequest(HttpMethod.Get, "/hello") {
-                val jwt = JwtTokenGenerator.createSignedJWT("testuser")
-                addHeader("Cookie", "$idTokenCookieName=${jwt.serialize()}")
-            }.apply {
+        withTestApplication {
+            with(handleRequest(HttpMethod.Get, "/hello") {
+                addHeader("Cookie", "$idTokenCookieName=${server.issueToken().serialize()}")
+            }) {
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         }
@@ -70,67 +75,49 @@ class ApplicationTokenTest {
 
     @Test
     fun openhello_withMissingJWTShouldGive_200() {
-        withTestApplication({
-            stubOIDCProvider()
-            doConfig()
-            module(enableMock = false)
-        }) {
-            handleRequest(HttpMethod.Get, "/openhello") {
-            }.apply {
+        withTestApplication {
+            with(handleRequest(HttpMethod.Get, "/openhello")) {
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         }
     }
 
+    private fun <R> withTestApplication(test: TestApplicationEngine.() -> R): R {
+        return withTestApplication({
+            doConfig()
+            module()
+        }) {
+            test()
+        }
+    }
+
+    private fun Application.doConfig(
+        acceptedIssuer: String = "default",
+        acceptedAudience: String = "default"
+    ) {
+        (environment.config as MapApplicationConfig).apply {
+            put("no.nav.security.jwt.issuers.size", "1")
+            put("no.nav.security.jwt.issuers.0.issuer_name", acceptedIssuer)
+            put("no.nav.security.jwt.issuers.0.discoveryurl", "${server.wellKnownUrl(acceptedIssuer)}")
+            put("no.nav.security.jwt.issuers.0.accepted_audience", acceptedAudience)
+            put("no.nav.security.jwt.issuers.0.cookie_name", idTokenCookieName)
+        }
+    }
+
     companion object {
-        val server: WireMockServer = WireMockServer(WireMockConfiguration.options().dynamicPort())
+        val server = MockOAuth2Server()
+
         @BeforeAll
         @JvmStatic
         fun before() {
             server.start()
-            configureFor(server.port())
+
         }
 
         @AfterAll
         @JvmStatic
         fun after() {
-            server.stop()
+            server.shutdown()
         }
-    }
-}
-
-@KtorExperimentalAPI
-private fun stubOIDCProvider() {
-    stubFor(
-        any(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(
-            okJson(
-                "{\"jwks_uri\": \"${ApplicationTokenTest.server.baseUrl()}/keys\", " +
-                    "\"subject_types_supported\": [\"pairwise\"], " +
-                    "\"issuer\": \"${JwtTokenGenerator.ISS}\"}"
-            )
-        )
-    )
-
-    stubFor(
-        any(urlPathEqualTo("/keys")).willReturn(
-            okJson(JwkGenerator.getJWKSet().toPublicJWKSet().toString())
-        )
-    )
-}
-
-@KtorExperimentalAPI
-private fun Application.doConfig(
-    acceptedIssuer: String = JwtTokenGenerator.ISS,
-    acceptedAudience: String = JwtTokenGenerator.AUD
-) {
-    (environment.config as MapApplicationConfig).apply {
-        put("no.nav.security.jwt.issuers.size", "1")
-        put("no.nav.security.jwt.issuers.0.issuer_name", acceptedIssuer)
-        put(
-            "no.nav.security.jwt.issuers.0.discoveryurl",
-            "${ApplicationTokenTest.server.baseUrl()}/.well-known/openid-configuration"
-        )
-        put("no.nav.security.jwt.issuers.0.accepted_audience", acceptedAudience)
-        put("no.nav.security.jwt.issuers.0.cookie_name", idTokenCookieName)
     }
 }
