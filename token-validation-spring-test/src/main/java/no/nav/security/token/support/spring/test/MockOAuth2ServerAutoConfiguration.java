@@ -60,7 +60,7 @@ public class MockOAuth2ServerAutoConfiguration {
             int port = properties.getPort();
             if (port > 0) {
                 log.debug("starting mock oauth2 server on port " + port);
-                mockOAuth2Server.start(InetAddress.getByName("localhost"));
+                mockOAuth2Server.start(InetAddress.getByName("localhost"), port);
             } else {
                 throw new RuntimeException("could not find " + "mock-oauth2-server.port" + " in environment. cannot " +
                     "start server.");

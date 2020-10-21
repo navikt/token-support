@@ -215,6 +215,7 @@ class ProtectedRestControllerIntegrationTest {
                 return 30;
             }
 
+            @NotNull
             @Override
             public String subject(@NotNull TokenRequest tokenRequest) {
                 return jwtClaimsSet.getSubject();
@@ -226,6 +227,7 @@ class ProtectedRestControllerIntegrationTest {
                 return issuerId;
             }
 
+            @NotNull
             @Override
             public List<String> audience(@NotNull TokenRequest tokenRequest) {
                 return jwtClaimsSet.getAudience();
