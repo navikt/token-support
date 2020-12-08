@@ -12,21 +12,21 @@ import java.util.Optional;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 
-public class SpringJwtTokenAnnotationHandler extends JwtTokenAnnotationHandler {
+public final class SpringJwtTokenAnnotationHandler extends JwtTokenAnnotationHandler {
 
-    public SpringJwtTokenAnnotationHandler(TokenValidationContextHolder tokenValidationContextHolder) {
-        super(tokenValidationContextHolder);
+    public SpringJwtTokenAnnotationHandler(TokenValidationContextHolder holder) {
+        super(holder);
     }
 
     @Override
-    protected Annotation getAnnotation(Method method, List<Class<? extends Annotation>> types) {
-        return Optional.ofNullable(scanAnnotation(method, types))
-                .orElseGet(() -> scanAnnotation(method.getDeclaringClass(), types));
+    protected Annotation getAnnotation(Method m, List<Class<? extends Annotation>> types) {
+        return Optional.ofNullable(findAnnotation(m, types))
+                .orElseGet(() -> findAnnotation(m.getDeclaringClass(), types));
     }
 
-    private static Annotation scanAnnotation(AnnotatedElement a, List<Class<? extends Annotation>> types) {
+    private static Annotation findAnnotation(AnnotatedElement e, List<Class<? extends Annotation>> types) {
         return types.stream()
-                .map(t -> findMergedAnnotation(a, t))
+                .map(t -> findMergedAnnotation(e, t))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
