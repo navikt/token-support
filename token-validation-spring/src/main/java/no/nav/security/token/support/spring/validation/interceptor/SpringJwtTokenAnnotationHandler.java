@@ -1,13 +1,13 @@
 package no.nav.security.token.support.spring.validation.interceptor;
 
+import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
@@ -26,7 +26,7 @@ public class SpringJwtTokenAnnotationHandler extends JwtTokenAnnotationHandler {
 
     private static Annotation scanAnnotation(AnnotatedElement a, List<Class<? extends Annotation>> types) {
         return types.stream()
-                .map(t -> AnnotatedElementUtils.findMergedAnnotation(a, t))
+                .map(t -> findMergedAnnotation(a, t))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
