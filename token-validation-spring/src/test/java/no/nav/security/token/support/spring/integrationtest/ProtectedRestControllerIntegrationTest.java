@@ -1,14 +1,25 @@
 package no.nav.security.token.support.spring.integrationtest;
 
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
-import com.nimbusds.jwt.SignedJWT;
-import com.nimbusds.oauth2.sdk.TokenRequest;
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import no.nav.security.mock.oauth2.MockOAuth2Server;
-import no.nav.security.mock.oauth2.token.OAuth2TokenCallback;
-import no.nav.security.token.support.test.JwkGenerator;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static no.nav.security.token.support.spring.integrationtest.MetaProtectedRestController.METAPROTECTED;
+import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.PROTECTED;
+import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.PROTECTED_WITH_CLAIMS;
+import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.PROTECTED_WITH_CLAIMS2;
+import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.PROTECTED_WITH_CLAIMS_ANY_CLAIMS;
+import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.UNPROTECTED;
+import static no.nav.security.token.support.test.JwtTokenGenerator.ACR;
+import static no.nav.security.token.support.test.JwtTokenGenerator.AUD;
+import static no.nav.security.token.support.test.JwtTokenGenerator.createSignedJWT;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.Filter;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,16 +32,19 @@ import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.Filter;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.oauth2.sdk.TokenRequest;
 
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.*;
-import static no.nav.security.token.support.test.JwtTokenGenerator.*;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import no.nav.security.mock.oauth2.MockOAuth2Server;
+import no.nav.security.mock.oauth2.token.OAuth2TokenCallback;
+import no.nav.security.token.support.test.JwkGenerator;
 
 @SpringBootTest
-@ContextConfiguration(classes = {ProtectedApplication.class, ProtectedApplicationConfig.class})
+@ContextConfiguration(classes = { ProtectedApplication.class, ProtectedApplicationConfig.class })
 @ActiveProfiles("test")
 class ProtectedRestControllerIntegrationTest {
 
@@ -56,21 +70,21 @@ class ProtectedRestControllerIntegrationTest {
     @Test
     void unprotectedMethod() {
         given()
-            .when()
-            .get(UNPROTECTED)
-            .then()
-            .log().ifValidationFails()
-            .statusCode(HttpStatus.OK.value());
+                .when()
+                .get(UNPROTECTED)
+                .then()
+                .log().ifValidationFails()
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
     void noTokenInRequest() {
         given()
-            .when()
-            .get(PROTECTED)
-            .then()
-            .log().ifValidationFails()
-            .statusCode(HttpStatus.UNAUTHORIZED.value());
+                .when()
+                .get(PROTECTED)
+                .then()
+                .log().ifValidationFails()
+                .statusCode(HttpStatus.UNAUTHORIZED.value());
 
     }
 
@@ -100,8 +114,8 @@ class ProtectedRestControllerIntegrationTest {
     @Test
     void signedTokenInRequestProtectedWithClaimsMethodMissingRequiredClaims() {
         JWTClaimsSet jwtClaimsSet = defaultJwtClaimsSetBuilder()
-            .claim("importantclaim", "vip")
-            .build();
+                .claim("importantclaim", "vip")
+                .build();
         expectStatusCode(PROTECTED_WITH_CLAIMS, issueToken("knownissuer", jwtClaimsSet).serialize(), HttpStatus.UNAUTHORIZED);
     }
 
@@ -119,17 +133,23 @@ class ProtectedRestControllerIntegrationTest {
     }
 
     @Test
+    void signedTokenInRequestProtectedMetaMethodShouldBeOk() {
+        JWT jwt = issueToken("knownissuer", jwtClaimsSetKnownIssuer());
+        expectStatusCode(METAPROTECTED, jwt.serialize(), HttpStatus.OK);
+    }
+
+    @Test
     void signedTokenInRequestProtectedWithClaimsMethodShouldBeOk() {
         JWTClaimsSet jwtClaimsSet = defaultJwtClaimsSetBuilder()
-            .claim("importantclaim", "vip")
-            .claim("acr", "Level4")
-            .build();
+                .claim("importantclaim", "vip")
+                .claim("acr", "Level4")
+                .build();
 
         expectStatusCode(PROTECTED_WITH_CLAIMS, issueToken("knownissuer", jwtClaimsSet).serialize(), HttpStatus.OK);
 
         JWTClaimsSet jwtClaimsSet2 = defaultJwtClaimsSetBuilder()
-            .claim("claim1", "1")
-            .build();
+                .claim("claim1", "1")
+                .build();
 
         expectStatusCode(PROTECTED_WITH_CLAIMS_ANY_CLAIMS, issueToken("knownissuer", jwtClaimsSet2).serialize(), HttpStatus.OK);
     }
@@ -138,12 +158,12 @@ class ProtectedRestControllerIntegrationTest {
     void signedTokenInRequestWithoutSubAndAudClaimsShouldBeOk() {
         Date now = new Date();
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-            .jwtID(UUID.randomUUID().toString())
-            .claim("auth_time", now)
-            .notBeforeTime(now)
-            .issueTime(now)
-            .expirationTime(new Date(now.getTime() + TimeUnit.MINUTES.toMillis(1)))
-            .build();
+                .jwtID(UUID.randomUUID().toString())
+                .claim("auth_time", now)
+                .notBeforeTime(now)
+                .issueTime(now)
+                .expirationTime(new Date(now.getTime() + TimeUnit.MINUTES.toMillis(1)))
+                .build();
 
         expectStatusCode(PROTECTED_WITH_CLAIMS2, issueToken("knownissuer2", jwtClaimsSet).serialize(), HttpStatus.OK);
     }
@@ -152,36 +172,36 @@ class ProtectedRestControllerIntegrationTest {
     void signedTokenInRequestWithoutSubAndAudClaimsShouldBeNotBeOk() {
         Date now = new Date();
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-            .jwtID(UUID.randomUUID().toString())
-            .claim("auth_time", now)
-            .notBeforeTime(now)
-            .issueTime(now)
-            .expirationTime(new Date(now.getTime() + TimeUnit.MINUTES.toMillis(1)))
-            .build();
+                .jwtID(UUID.randomUUID().toString())
+                .claim("auth_time", now)
+                .notBeforeTime(now)
+                .issueTime(now)
+                .expirationTime(new Date(now.getTime() + TimeUnit.MINUTES.toMillis(1)))
+                .build();
 
         expectStatusCode(PROTECTED_WITH_CLAIMS, issueToken("knownissuer", jwtClaimsSet).serialize(), HttpStatus.UNAUTHORIZED);
     }
 
     private static void expectStatusCode(String uri, String token, HttpStatus httpStatus) {
         given()
-            .header("Authorization", "Bearer " + token)
-            .when()
-            .get(uri)
-            .then()
-            .log().ifValidationFails()
-            .statusCode(httpStatus.value());
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .get(uri)
+                .then()
+                .log().ifValidationFails()
+                .statusCode(httpStatus.value());
     }
 
     private static JWTClaimsSet.Builder defaultJwtClaimsSetBuilder() {
         Date now = new Date();
         return new JWTClaimsSet.Builder()
-            .subject("testsub")
-            .audience(AUD)
-            .jwtID(UUID.randomUUID().toString())
-            .claim("auth_time", now)
-            .notBeforeTime(now)
-            .issueTime(now)
-            .expirationTime(new Date(now.getTime() + TimeUnit.MINUTES.toMillis(1)));
+                .subject("testsub")
+                .audience(AUD)
+                .jwtID(UUID.randomUUID().toString())
+                .claim("auth_time", now)
+                .notBeforeTime(now)
+                .issueTime(now)
+                .expirationTime(new Date(now.getTime() + TimeUnit.MINUTES.toMillis(1)));
     }
 
     private static JWTClaimsSet jwtClaimsSetKnownIssuer() {
@@ -193,19 +213,19 @@ class ProtectedRestControllerIntegrationTest {
     }
 
     public static JWTClaimsSet buildClaimSet(String subject, String audience, String authLevel,
-                                             long expiry) {
+            long expiry) {
         Date now = new Date();
         return new JWTClaimsSet.Builder()
-            .subject(subject)
-            .audience(audience)
-            .jwtID(UUID.randomUUID().toString())
-            .claim("acr", authLevel)
-            .claim("ver", "1.0")
-            .claim("nonce", "myNonce")
-            .claim("auth_time", now)
-            .notBeforeTime(now)
-            .issueTime(now)
-            .expirationTime(new Date(now.getTime() + expiry)).build();
+                .subject(subject)
+                .audience(audience)
+                .jwtID(UUID.randomUUID().toString())
+                .claim("acr", authLevel)
+                .claim("ver", "1.0")
+                .claim("nonce", "myNonce")
+                .claim("auth_time", now)
+                .notBeforeTime(now)
+                .issueTime(now)
+                .expirationTime(new Date(now.getTime() + expiry)).build();
     }
 
     private SignedJWT issueToken(String issuerId, JWTClaimsSet jwtClaimsSet) {
@@ -229,10 +249,10 @@ class ProtectedRestControllerIntegrationTest {
             @Override
             public String audience(@NotNull TokenRequest tokenRequest) {
                 return Optional.ofNullable(jwtClaimsSet.getAudience())
-                    .stream()
-                    .flatMap(a -> a.stream())
-                    .findFirst()
-                    .orElse(null);
+                        .stream()
+                        .flatMap(a -> a.stream())
+                        .findFirst()
+                        .orElse(null);
             }
 
             @NotNull
