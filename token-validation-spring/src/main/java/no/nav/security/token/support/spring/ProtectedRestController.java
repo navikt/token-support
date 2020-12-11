@@ -1,4 +1,4 @@
-package no.nav.security.token.support.spring.integrationtest;
+package no.nav.security.token.support.spring;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -16,16 +16,19 @@ import no.nav.security.token.support.core.api.ProtectedWithClaims;
 
 @RestController
 @Documented
-@ProtectedWithClaims(issuer = "knownissuer")
+@ProtectedWithClaims(issuer = "must-be-set-to-issuer")
 @Target(TYPE)
 @Retention(RUNTIME)
 @RequestMapping
-public @interface MetaProtected {
+public @interface ProtectedRestController {
     @AliasFor(annotation = RequestMapping.class, attribute = "value")
-    String[] value() default {};
+    String[] value() default "/";
 
     @AliasFor(annotation = ProtectedWithClaims.class, attribute = "claimMap")
     String[] claimMap() default "acr=Level4";
+
+    @AliasFor(annotation = ProtectedWithClaims.class, attribute = "issuer")
+    String issuer();
 
     @AliasFor(annotation = RequestMapping.class, attribute = "produces")
     String[] produces() default APPLICATION_JSON_VALUE;
