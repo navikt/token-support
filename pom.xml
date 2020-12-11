@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.nav.security</groupId>
     <artifactId>token-support</artifactId>
@@ -48,7 +48,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <java.version>11</java.version>
-        <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
+        <spring-boot.version>2.3.7.RELEASE</spring-boot.version>
         <oauth2-oidc-sdk.version>8.28.1</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <rest-assured.version>4.3.2</rest-assured.version>
@@ -137,6 +137,21 @@
             </build>
         </profile>
         <profile>
+            <id>deploy-to-github</id>
+            <activation>
+                <property>
+                    <name>deploy-to-github</name>
+                </property>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>Github navikt Maven Packages</name>
+                    <url>https://maven.pkg.github.com/navikt/token-support</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
             <id>deploy-to-sonatype</id>
             <activation>
                 <property>
@@ -183,8 +198,7 @@
                             <execution>
                                 <id>default-deploy</id>
                                 <phase>deploy</phase>
-                                <!-- By default, this is the phase deploy
-                                    goal will bind to -->
+                                <!-- By default, this is the phase deploy goal will bind to -->
                                 <goals>
                                     <goal>deploy</goal>
                                 </goals>

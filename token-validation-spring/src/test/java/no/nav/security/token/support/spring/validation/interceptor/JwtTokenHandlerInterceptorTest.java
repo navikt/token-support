@@ -1,16 +1,13 @@
 package no.nav.security.token.support.spring.validation.interceptor;
 
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
-import net.minidev.json.JSONArray;
-import no.nav.security.token.support.core.api.Protected;
-import no.nav.security.token.support.core.api.ProtectedWithClaims;
-import no.nav.security.token.support.core.api.Unprotected;
-import no.nav.security.token.support.core.context.TokenValidationContext;
-import no.nav.security.token.support.core.context.TokenValidationContextHolder;
-import no.nav.security.token.support.core.jwt.JwtToken;
-import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -20,15 +17,18 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import net.minidev.json.JSONArray;
+import no.nav.security.token.support.core.api.Protected;
+import no.nav.security.token.support.core.api.ProtectedWithClaims;
+import no.nav.security.token.support.core.api.Unprotected;
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
+import no.nav.security.token.support.core.jwt.JwtToken;
+import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 
 class JwtTokenHandlerInterceptorTest {
 
@@ -43,8 +43,7 @@ class JwtTokenHandlerInterceptorTest {
         contextHolder = createContextHolder();
         contextHolder.setTokenValidationContext(new TokenValidationContext(Collections.emptyMap()));
         JwtTokenAnnotationHandler jwtTokenAnnotationHandler = new SpringJwtTokenAnnotationHandler(contextHolder);
-        Map<String, Object> annotationAttributesMap = new HashMap<>();
-        annotationAttributesMap.put("ignore", new String[]{"org.springframework", IgnoreClass.class.getName()});
+        Map<String, Object> annotationAttributesMap = Map.of("ignore", new String[] { "org.springframework", IgnoreClass.class.getName() });
         AnnotationAttributes annotationAttrs = AnnotationAttributes.fromMap(annotationAttributesMap);
         interceptor = new JwtTokenHandlerInterceptor(annotationAttrs, jwtTokenAnnotationHandler);
         request = new MockHttpServletRequest();
@@ -61,8 +60,8 @@ class JwtTokenHandlerInterceptorTest {
     void notAnnotatedShouldThrowException() {
         HandlerMethod handlerMethod = handlerMethod(new NotAnnotatedClass(), "test");
         assertThatExceptionOfType(ResponseStatusException.class).isThrownBy(
-            () -> interceptor.preHandle(request, response, handlerMethod))
-            .withMessageContaining(HttpStatus.NOT_IMPLEMENTED.toString());
+                () -> interceptor.preHandle(request, response, handlerMethod))
+                .withMessageContaining(HttpStatus.NOT_IMPLEMENTED.toString());
     }
 
     @Test
@@ -75,7 +74,7 @@ class JwtTokenHandlerInterceptorTest {
     void methodShouldBeProtected() {
         HandlerMethod handlerMethod = handlerMethod(new ProtectedClass(), "test");
         assertThrows(JwtTokenUnauthorizedException.class,
-            () -> interceptor.preHandle(request, response, handlerMethod));
+                () -> interceptor.preHandle(request, response, handlerMethod));
         setupValidOidcContext();
         assertTrue(interceptor.preHandle(request, response, handlerMethod));
     }
@@ -84,7 +83,7 @@ class JwtTokenHandlerInterceptorTest {
     void methodShouldBeProtectedOnUnprotectedClass() {
         HandlerMethod handlerMethod = handlerMethod(new UnprotectedClassProtectedMethod(), "protectedMethod");
         assertThrows(JwtTokenUnauthorizedException.class,
-            () -> interceptor.preHandle(request, response, handlerMethod));
+                () -> interceptor.preHandle(request, response, handlerMethod));
         setupValidOidcContext();
         assertTrue(interceptor.preHandle(request, response, handlerMethod));
     }
@@ -99,7 +98,7 @@ class JwtTokenHandlerInterceptorTest {
     void methodShouldBeProtectedWithClaims() {
         HandlerMethod handlerMethod = handlerMethod(new ProtectedClassProtectedWithClaimsMethod(), "protectedMethod");
         assertThrows(JwtTokenUnauthorizedException.class,
-            () -> interceptor.preHandle(request, response, handlerMethod));
+                () -> interceptor.preHandle(request, response, handlerMethod));
         setupValidOidcContext();
         assertTrue(interceptor.preHandle(request, response, handlerMethod));
     }
@@ -108,7 +107,7 @@ class JwtTokenHandlerInterceptorTest {
     void methodShouldBeProtectedOnClassProtectedWithClaims() {
         HandlerMethod handlerMethod = handlerMethod(new ProtectedWithClaimsClassProtectedMethod(), "protectedMethod");
         assertThrows(JwtTokenUnauthorizedException.class,
-            () -> interceptor.preHandle(request, response, handlerMethod));
+                () -> interceptor.preHandle(request, response, handlerMethod));
         setupValidOidcContext();
         assertTrue(interceptor.preHandle(request, response, handlerMethod));
     }
@@ -180,11 +179,11 @@ class JwtTokenHandlerInterceptorTest {
         groupsValues.add("456");
 
         JWT jwt = new PlainJWT(new JWTClaimsSet.Builder()
-            .subject("subject")
-            .issuer("http//issuer1")
-            .claim("acr", "Level4")
-            .claim("groups", groupsValues)
-            .claim(claimName, claimValue).build());
+                .subject("subject")
+                .issuer("http//issuer1")
+                .claim("acr", "Level4")
+                .claim("groups", groupsValues)
+                .claim(claimName, claimValue).build());
         return new JwtToken(jwt.serialize());
     }
 
@@ -295,8 +294,6 @@ class JwtTokenHandlerInterceptorTest {
         }
     }
 
-
-
     @ProtectedMeta
     private class ProtectedClassMeta {
         public void test() {
@@ -313,8 +310,6 @@ class JwtTokenHandlerInterceptorTest {
         }
     }
 
-
-
     @ProtectedMeta
     private class ProtectedClassUnprotectedMethodMeta {
         public void protectedMethod() {
@@ -324,8 +319,6 @@ class JwtTokenHandlerInterceptorTest {
         public void unprotectedMethod() {
         }
     }
-
-
 
     @ProtectedWithClaimsMeta
     private class ProtectedWithClaimsClassProtectedMethodMeta {

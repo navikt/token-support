@@ -5,6 +5,10 @@
             <username>${env.SONATYPE_USER}</username>
             <password>${env.SONATYPE_PASSWORD}</password>
         </server>
+        <server>
+            <id>github</id>
+            <username>${env.GH_USERNAME}</username>
+            <username>${env.GH_PASSWORD}</username>
     </servers>
 
     <profiles>
