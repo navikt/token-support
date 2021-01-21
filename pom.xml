@@ -48,8 +48,8 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <java.version>11</java.version>
-        <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
-        <oauth2-oidc-sdk.version>8.33</oauth2-oidc-sdk.version>
+        <spring-boot.version>2.4.2</spring-boot.version>
+        <oauth2-oidc-sdk.version>8.32.1</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <rest-assured.version>4.3.3</rest-assured.version>
         <hibernate-validator.version>6.1.6.Final</hibernate-validator.version>
@@ -59,9 +59,10 @@
         <ktor.version>1.5.0</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>1.4.21-2</kotlin.version>
-        <mock-oauth2-server.version>0.1.35</mock-oauth2-server.version>
+        <mock-oauth2-server.version>0.3.0.RC2</mock-oauth2-server.version>
         <groovy.version>3.0.7</groovy.version>
         <logback.version>1.2.3</logback.version>
+        <nimbus.jose.jwt.version>8.20.1</nimbus.jose.jwt.version>
     </properties>
 
     <scm>
@@ -326,6 +327,11 @@
                 <artifactId>mock-oauth2-server</artifactId>
                 <version>${mock-oauth2-server.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>nimbus-jose-jwt</artifactId>
+                <version>${nimbus.jose.jwt.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -358,6 +364,10 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
         </dependency>
     </dependencies>
 </project>
