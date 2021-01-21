@@ -1,12 +1,11 @@
 package no.nav.security.token.support.spring.integrationtest;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-import static no.nav.security.token.support.spring.integrationtest.MetaProtectedRestController.METAPROTECTED;
-import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.PROTECTED;
-import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.PROTECTED_WITH_CLAIMS;
-import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.PROTECTED_WITH_CLAIMS2;
-import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.PROTECTED_WITH_CLAIMS_ANY_CLAIMS;
-import static no.nav.security.token.support.spring.integrationtest.ProtectedRestController.UNPROTECTED;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS2;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS_ANY_CLAIMS;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.UNPROTECTED;
 import static no.nav.security.token.support.test.JwtTokenGenerator.ACR;
 import static no.nav.security.token.support.test.JwtTokenGenerator.AUD;
 import static no.nav.security.token.support.test.JwtTokenGenerator.createSignedJWT;
@@ -130,12 +129,6 @@ class ProtectedRestControllerIntegrationTest {
     void signedTokenInRequestProtectedMethodShouldBeOk() {
         JWT jwt = issueToken("knownissuer", jwtClaimsSetKnownIssuer());
         expectStatusCode(PROTECTED, jwt.serialize(), HttpStatus.OK);
-    }
-
-    @Test
-    void signedTokenInRequestProtectedMetaMethodShouldBeOk() {
-        JWT jwt = issueToken("knownissuer", jwtClaimsSetKnownIssuer());
-        expectStatusCode(METAPROTECTED, jwt.serialize(), HttpStatus.OK);
     }
 
     @Test
