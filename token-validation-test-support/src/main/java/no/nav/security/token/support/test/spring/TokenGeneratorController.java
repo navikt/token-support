@@ -90,7 +90,7 @@ public class TokenGeneratorController {
                 Charset.defaultCharset());
     }
 
-    class TokenEndpoint {
+    static class TokenEndpoint {
         final String desc;
         final String uri;
         final String[] params;
