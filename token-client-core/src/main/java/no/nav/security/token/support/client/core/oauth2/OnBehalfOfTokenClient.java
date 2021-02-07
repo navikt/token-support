@@ -14,6 +14,8 @@ public class OnBehalfOfTokenClient extends AbstractOAuth2TokenClient<OnBehalfOfG
         super(oAuth2HttpClient);
     }
 
+
+    @Override
     protected Map<String, String> formParameters(OnBehalfOfGrantRequest grantRequest) {
         Map<String, String> formParameters = new LinkedHashMap<>();
         formParameters.put(OAuth2ParameterNames.ASSERTION, grantRequest.getAssertion());
