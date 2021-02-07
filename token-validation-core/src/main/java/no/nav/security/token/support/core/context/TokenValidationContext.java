@@ -28,6 +28,13 @@ public class TokenValidationContext {
         return jwtToken(issuerName).orElse(null);
     }
 
+    @Override
+    public String toString() {
+        return "TokenValidationContext{" +
+            "issuers=" + issuerShortNameValidatedTokenMap.keySet() +
+            '}';
+    }
+
     public JwtTokenClaims getClaims(String issuerName) {
         return jwtToken(issuerName)
             .map(JwtToken::getJwtTokenClaims)
