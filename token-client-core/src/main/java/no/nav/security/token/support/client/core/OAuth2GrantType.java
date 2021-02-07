@@ -1,5 +1,6 @@
 package no.nav.security.token.support.client.core;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class OAuth2GrantType {
@@ -24,6 +25,11 @@ public class OAuth2GrantType {
             .map(OAuth2GrantType.class::cast)
             .filter(grantType -> value.equals(grantType.getValue()))
             .isPresent();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 
     @Override
