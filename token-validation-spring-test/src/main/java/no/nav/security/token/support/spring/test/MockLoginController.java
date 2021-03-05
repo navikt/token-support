@@ -71,17 +71,17 @@ public class MockLoginController {
     }
 
     private Map<String, Object> extractClaims(
-        Map<String, String> allClaims,
+        Map<String, String> allParameters,
         List<String> groups,
-        String... ignoredClaims
+        String... ignoredParameters
     ) {
-        Map<String, Object> claimsWithoutDefaults = allClaims
+        Map<String, Object> claimsWithoutDefaults = allParameters
             .keySet()
             .stream()
-            .filter(key -> !Arrays.asList(ignoredClaims).contains(key))
+            .filter(key -> !Arrays.asList(ignoredParameters).contains(key))
             .collect(Collectors.toMap(
                 key -> key,
-                key -> allClaims.get(key)
+                key -> allParameters.get(key)
             ));
         if (groups != null) {
             claimsWithoutDefaults.put("groups", groups);
