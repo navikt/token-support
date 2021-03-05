@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/local")
@@ -34,8 +35,16 @@ public class MockLoginController {
         @RequestParam(value = "cookiename", defaultValue = "localhost-idtoken") String cookieName,
         @RequestParam(value = "redirect", required = false) String redirect,
         @RequestParam(value = "expiry", required = false) String expiry,
+        @RequestParam(value = "groups", required = false) List<String> groups,
+        @RequestParam Map<String, String> allParameters,
         HttpServletResponse response
     ) throws IOException {
+
+        Map<String, Object> claims = extractClaims(
+            allParameters,
+            groups,
+            "issuerId", "audience", "subject", "cookiename", "redirect", "expiry", "groups"
+        );
 
         String token =
             mockOAuth2Server.issueToken(
@@ -45,7 +54,7 @@ public class MockLoginController {
                     issuerId,
                     subject,
                     List.of(audience),
-                    Map.of("acr", "Level4"),
+                    claims,
                     expiry != null ? Long.parseLong(expiry) : 3600
                 )
             ).serialize();
@@ -60,4 +69,24 @@ public class MockLoginController {
         }
         return cookie;
     }
+
+    private Map<String, Object> extractClaims(
+        Map<String, String> allClaims,
+        List<String> groups,
+        String... ignoredClaims
+    ) {
+        Map<String, Object> claimsWithoutDefaults = allClaims
+            .keySet()
+            .stream()
+            .filter(key -> !Arrays.asList(ignoredClaims).contains(key))
+            .collect(Collectors.toMap(
+                key -> key,
+                key -> allClaims.get(key)
+            ));
+        if (groups != null) {
+            claimsWithoutDefaults.put("groups", groups);
+        }
+        return claimsWithoutDefaults;
+    }
+
 }
