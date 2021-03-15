@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableMockOAuth2Server
 @EnableAutoConfiguration
 class TestApplication {
     public static void main(String[] args) {

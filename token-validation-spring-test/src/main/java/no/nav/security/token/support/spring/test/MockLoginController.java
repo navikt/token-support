@@ -3,15 +3,13 @@ package no.nav.security.token.support.spring.test;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.core.api.Unprotected;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,16 +33,8 @@ public class MockLoginController {
         @RequestParam(value = "cookiename", defaultValue = "localhost-idtoken") String cookieName,
         @RequestParam(value = "redirect", required = false) String redirect,
         @RequestParam(value = "expiry", required = false) String expiry,
-        @RequestParam(value = "groups", required = false) List<String> groups,
-        @RequestParam Map<String, String> allParameters,
         HttpServletResponse response
     ) throws IOException {
-
-        Map<String, Object> claims = extractClaims(
-            allParameters,
-            groups,
-            "issuerId", "audience", "subject", "cookiename", "redirect", "expiry", "groups"
-        );
 
         String token =
             mockOAuth2Server.issueToken(
@@ -54,7 +44,7 @@ public class MockLoginController {
                     issuerId,
                     subject,
                     List.of(audience),
-                    claims,
+                    Map.of("acr", "Level4"),
                     expiry != null ? Long.parseLong(expiry) : 3600
                 )
             ).serialize();
@@ -70,23 +60,40 @@ public class MockLoginController {
         return cookie;
     }
 
-    private Map<String, Object> extractClaims(
-        Map<String, String> allParameters,
-        List<String> groups,
-        String... ignoredParameters
-    ) {
-        Map<String, Object> claimsWithoutDefaults = allParameters
-            .keySet()
-            .stream()
-            .filter(key -> !Arrays.asList(ignoredParameters).contains(key))
-            .collect(Collectors.toMap(
-                key -> key,
-                key -> allParameters.get(key)
-            ));
-        if (groups != null) {
-            claimsWithoutDefaults.put("groups", groups);
+    @Unprotected
+    @PostMapping("/cookie")
+    public Cookie addCoaaokie(
+        @RequestParam(value = "issuerId") String issuerId,
+        @RequestParam(value = "audience") String audience,
+        @RequestParam(value = "subject", defaultValue = "12345678910") String subject,
+        @RequestParam(value = "cookiename", defaultValue = "localhost-idtoken") String cookieName,
+        @RequestParam(value = "redirect", required = false) String redirect,
+        @RequestParam(value = "expiry", required = false) String expiry,
+        @RequestBody Map<String, Object> claims,
+        HttpServletResponse response
+    ) throws IOException {
+        String token =
+            mockOAuth2Server.issueToken(
+                issuerId,
+                MockLoginController.class.getSimpleName(),
+                new DefaultOAuth2TokenCallback(
+                    issuerId,
+                    subject,
+                    List.of(audience),
+                    claims != null ? claims : Collections.emptyMap(),
+                    expiry != null ? Long.parseLong(expiry) : 3600
+                )
+            ).serialize();
+
+        Cookie cookie = new Cookie(cookieName, token);
+        cookie.setDomain("localhost");
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        if (redirect != null) {
+            response.sendRedirect(redirect);
+            return null;
         }
-        return claimsWithoutDefaults;
+        return cookie;
     }
 
 }
