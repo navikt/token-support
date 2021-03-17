@@ -1,36 +1,43 @@
 package no.nav.security.token.support.ktor
 
-import com.github.benmanes.caffeine.cache.Cache
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
-import io.ktor.auth.principal
-import io.ktor.features.ContentNegotiation
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.jackson.JacksonConverter
-import io.ktor.response.respond
-import io.ktor.routing.get
-import io.ktor.routing.routing
-import io.ktor.util.KtorExperimentalAPI
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.nimbusds.jwt.SignedJWT
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.json.*
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.jackson.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.util.*
 import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.token.support.client.core.OAuth2CacheFactory
-import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient
+import no.nav.security.token.support.client.core.OAuth2GrantType
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
-import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
-import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
-import no.nav.security.token.support.ktor.http.DefaultOAuth2HttpClient
-import no.nav.security.token.support.ktor.model.DemoTokenResponse
-import no.nav.security.token.support.ktor.model.OAuth2Cache
-import no.nav.security.token.support.ktor.oauth.ClientPropertiesConfig
-import no.nav.security.token.support.ktor.oauth.TokenResolver
-import no.nav.security.token.support.ktor.utils.Jackson
-import no.nav.security.token.support.ktor.utils.configFor
+import no.nav.security.token.support.ktor.oauth.ClientConfig
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+
+val defaultHttpClient = HttpClient(CIO) {
+    install(JsonFeature) {
+        serializer = JacksonSerializer {
+            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        }
+    }
+}
+
+val defaultMapper: ObjectMapper = jacksonObjectMapper().apply {
+    configure(SerializationFeature.INDENT_OUTPUT, true)
+    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    setSerializationInclusion(JsonInclude.Include.NON_NULL)
+}
 
 @KtorExperimentalAPI
 @Suppress("unused") // Referenced in application.conf
@@ -40,81 +47,60 @@ fun Application.module() {
     MockOAuth2Server().start(1111)
 
     install(ContentNegotiation) {
-        register(ContentType.Application.Json, JacksonConverter(Jackson.defaultMapper))
+        register(ContentType.Application.Json, JacksonConverter(defaultMapper))
     }
-
-    val config = this.environment.config
 
     install(Authentication) {
-        tokenValidationSupport(config = config)
+        tokenValidationSupport(config = environment.config)
     }
 
-
-    val clientPropertiesConfig = ClientPropertiesConfig(this.environment.config)
-    val tokenResolver = TokenResolver()
-    val httpClient = DefaultOAuth2HttpClient()
-    val accessTokenService = setupOAuth2AccessTokenService(
-        tokenResolver = tokenResolver,
-        httpClient = httpClient,
-        clientPropertiesConfig = clientPropertiesConfig
-    )
+    val oauth2Client = checkNotNull(ClientConfig(environment.config, defaultHttpClient).clients["issuer1"])
 
     routing {
         get("/client_credentials") {
-            val oAuth2Response = accessTokenService.getAccessToken(
-                clientPropertiesConfig.configFor("client_credentials-client")
-            )
+            val oAuth2Response = oauth2Client.clientCredentials("targetscope")
             call.respond(
                 HttpStatusCode.OK,
                 DemoTokenResponse(
+                    OAuth2GrantType.CLIENT_CREDENTIALS.value,
                     oAuth2Response
                 )
             )
         }
         authenticate {
             get("/onbehalfof") {
-                tokenResolver.tokenPrincipal = call.principal()
-                val oAuth2Response = accessTokenService.getAccessToken(
-                    clientPropertiesConfig.configFor("onbehalfof-client")
-                )
+                val token = call.principal<TokenValidationContextPrincipal>().asTokenString()
+                val oAuth2Response = oauth2Client.onBehalfOf(token, "targetscope")
                 call.respond(
                     HttpStatusCode.OK,
                     DemoTokenResponse(
+                        OAuth2GrantType.JWT_BEARER.value,
                         oAuth2Response
                     )
                 )
             }
             get("/tokenx") {
+                val token = call.principal<TokenValidationContextPrincipal>().asTokenString()
+                val oAuth2Response = oauth2Client.tokenExchange(token, "targetaudience")
                 call.respond(
                     HttpStatusCode.OK,
-                    "Token X not supported in mock-oauth2-server yet"
+                    DemoTokenResponse(
+                        OAuth2GrantType.TOKEN_EXCHANGE.value,
+                        oAuth2Response
+                    )
                 )
             }
         }
     }
 }
 
-internal fun setupOAuth2AccessTokenService(
-    tokenResolver: TokenResolver,
-    httpClient: DefaultOAuth2HttpClient,
-    clientPropertiesConfig: ClientPropertiesConfig
-): OAuth2AccessTokenService {
-    val accessTokenService = OAuth2AccessTokenService(
-        tokenResolver,
-        OnBehalfOfTokenClient(httpClient),
-        ClientCredentialsTokenClient(httpClient),
-        TokenExchangeClient(httpClient)
-    )
-    if (clientPropertiesConfig.cacheConfig.enabled) {
-        accessTokenService.onBehalfOfGrantCache = clientPropertiesConfig.cacheConfig.cache()
-        accessTokenService.clientCredentialsGrantCache = clientPropertiesConfig.cacheConfig.cache()
-        accessTokenService.setExchangeGrantCache(clientPropertiesConfig.cacheConfig.cache())
-    }
-    return accessTokenService
+data class DemoTokenResponse(
+    val grantType: String,
+    val tokenResponse: OAuth2AccessTokenResponse
+) {
+    val claims: Map<String, Any> = SignedJWT.parse(tokenResponse.accessToken).jwtClaimsSet.claims
 }
 
-internal inline fun <reified T> OAuth2Cache.cache(): Cache<T, OAuth2AccessTokenResponse> =
-    OAuth2CacheFactory.accessTokenResponseCache(
-        maximumSize,
-        evictSkew
-    )
+internal fun TokenValidationContextPrincipal?.asTokenString(): String =
+    this?.context?.firstValidToken?.map { it.tokenAsString }?.orElse(null)
+        ?: throw RuntimeException("no token found in call context")
