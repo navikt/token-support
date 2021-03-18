@@ -101,7 +101,7 @@
         <dependency>
             <groupId>io.kotest</groupId>
             <artifactId>kotest-runner-junit5-jvm</artifactId>
-            <version>4.4.1</version>
+            <version>4.4.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
