@@ -1,9 +1,6 @@
 package no.nav.security.token.support.core.configuration;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.net.URL;
@@ -54,8 +51,16 @@ public class IssuerProperties {
         this.jwksCache = jwksCache;
     }
 
+    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName, Validation validation, JwksCache jwksCache) {
+        this(discoveryUrl, acceptedAudience);
+        this.cookieName = cookieName;
+        this.validation = validation;
+        this.jwksCache = jwksCache;
+    }
+
     @Getter
     @Setter
+    @EqualsAndHashCode
     @ToString
     public static class Validation {
         private List<String> optionalClaims;
@@ -71,6 +76,7 @@ public class IssuerProperties {
 
     @Getter
     @Setter
+    @EqualsAndHashCode
     @ToString
     public static class JwksCache {
         private Long lifespan;

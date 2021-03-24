@@ -1,15 +1,12 @@
 package no.nav.security.token.support.ktor
 
-import io.ktor.application.call
+import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.config.ApplicationConfig
-import io.ktor.config.MapApplicationConfig
-import io.ktor.http.CookieEncoding
-import io.ktor.http.Headers
-import io.ktor.http.decodeCookieValue
-import io.ktor.request.RequestCookies
-import io.ktor.response.respond
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.config.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.util.*
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
@@ -44,14 +41,7 @@ class TokenSupportAuthenticationProvider(
     internal val jwtTokenExpiryThresholdHandler: JwtTokenExpiryThresholdHandler
 
     init {
-        val issuerPropertiesMap: Map<String, IssuerProperties> = applicationConfig.configList("no.nav.security.jwt.issuers")
-            .associate { issuerConfig ->
-                issuerConfig.property("issuer_name").getString() to IssuerProperties(
-                    URL(issuerConfig.property("discoveryurl").getString()),
-                    issuerConfig.property("accepted_audience").getString().split(","),
-                    issuerConfig.propertyOrNull("cookie_name")?.getString()
-                )
-            }
+        val issuerPropertiesMap: Map<String, IssuerProperties> = applicationConfig.asIssuerProps()
         jwtTokenValidationHandler = JwtTokenValidationHandler(
             MultiIssuerConfiguration(issuerPropertiesMap, resourceRetriever)
         )
@@ -100,7 +90,7 @@ fun Authentication.Configuration.tokenValidationSupport(
             }
         } catch (e: Throwable) {
             val message = e.message ?: e.javaClass.simpleName
-            log.trace("Token verification failed: {}", message)
+            log.debug("Token verification failed: {}", message)
         }
         context.challenge("JWTAuthKey", AuthenticationFailedCause.InvalidCredentials) {
             call.respond(UnauthorizedResponse())
@@ -177,3 +167,17 @@ internal data class JwtTokenHttpRequest(private val cookies: RequestCookies, pri
 
     override fun getHeader(name: String) = headers[name]
 }
+
+fun ApplicationConfig.asIssuerProps(): Map<String, IssuerProperties> = this.configList("no.nav.security.jwt.issuers")
+    .associate { issuerConfig ->
+        issuerConfig.property("issuer_name").getString() to IssuerProperties(
+            URL(issuerConfig.property("discoveryurl").getString()),
+            issuerConfig.property("accepted_audience").getString().split(","),
+            issuerConfig.propertyOrNull("cookie_name")?.getString(),
+            IssuerProperties.Validation(issuerConfig.propertyOrNull("validation.optional_claims")?.getString()?.split(",") ?: emptyList()),
+            IssuerProperties.JwksCache(
+                issuerConfig.propertyOrNull("jwks_cache.lifespan")?.getString()?.toLong(),
+                issuerConfig.propertyOrNull("jwks_cache.refreshtime")?.getString()?.toLong()
+            )
+        )
+    }
