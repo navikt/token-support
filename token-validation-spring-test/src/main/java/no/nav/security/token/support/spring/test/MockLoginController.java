@@ -49,42 +49,42 @@ public class MockLoginController {
                 )
             ).serialize();
 
-        Cookie cookie = new Cookie(cookieName, token);
-        cookie.setDomain("localhost");
-        cookie.setPath("/");
-        response.addCookie(cookie);
-        if (redirect != null) {
-            response.sendRedirect(redirect);
-            return null;
-        }
-        return cookie;
+        return createCookieAndAddToResponse(
+            response,
+            cookieName,
+            token,
+            redirect
+        );
     }
 
     @Unprotected
-    @PostMapping("/cookie")
-    public Cookie addCoaaokie(
-        @RequestParam(value = "issuerId") String issuerId,
-        @RequestParam(value = "audience") String audience,
-        @RequestParam(value = "subject", defaultValue = "12345678910") String subject,
+    @PostMapping("/cookie/{issuerId}")
+    public Cookie addCookie(
+        @PathVariable(value = "issuerId") String issuerId,
         @RequestParam(value = "cookiename", defaultValue = "localhost-idtoken") String cookieName,
         @RequestParam(value = "redirect", required = false) String redirect,
-        @RequestParam(value = "expiry", required = false) String expiry,
         @RequestBody Map<String, Object> claims,
         HttpServletResponse response
     ) throws IOException {
-        String token =
-            mockOAuth2Server.issueToken(
-                issuerId,
-                MockLoginController.class.getSimpleName(),
-                new DefaultOAuth2TokenCallback(
-                    issuerId,
-                    subject,
-                    List.of(audience),
-                    claims != null ? claims : Collections.emptyMap(),
-                    expiry != null ? Long.parseLong(expiry) : 3600
-                )
-            ).serialize();
+        String token = mockOAuth2Server.anyToken(
+            mockOAuth2Server.issuerUrl(issuerId),
+            claims
+        ).serialize();
 
+        return createCookieAndAddToResponse(
+            response,
+            cookieName,
+            token,
+            redirect
+        );
+    }
+
+    private Cookie createCookieAndAddToResponse(
+        HttpServletResponse response,
+        String cookieName,
+        String token,
+        String redirect
+    ) throws IOException {
         Cookie cookie = new Cookie(cookieName, token);
         cookie.setDomain("localhost");
         cookie.setPath("/");
@@ -95,5 +95,4 @@ public class MockLoginController {
         }
         return cookie;
     }
-
 }
