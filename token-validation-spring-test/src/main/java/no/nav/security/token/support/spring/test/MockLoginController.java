@@ -3,17 +3,16 @@ package no.nav.security.token.support.spring.test;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.core.api.Unprotected;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/local")
@@ -50,6 +49,42 @@ public class MockLoginController {
                 )
             ).serialize();
 
+        return createCookieAndAddToResponse(
+            response,
+            cookieName,
+            token,
+            redirect
+        );
+    }
+
+    @Unprotected
+    @PostMapping("/cookie/{issuerId}")
+    public Cookie addCookie(
+        @PathVariable(value = "issuerId") String issuerId,
+        @RequestParam(value = "cookiename", defaultValue = "localhost-idtoken") String cookieName,
+        @RequestParam(value = "redirect", required = false) String redirect,
+        @RequestBody Map<String, Object> claims,
+        HttpServletResponse response
+    ) throws IOException {
+        String token = mockOAuth2Server.anyToken(
+            mockOAuth2Server.issuerUrl(issuerId),
+            claims
+        ).serialize();
+
+        return createCookieAndAddToResponse(
+            response,
+            cookieName,
+            token,
+            redirect
+        );
+    }
+
+    private Cookie createCookieAndAddToResponse(
+        HttpServletResponse response,
+        String cookieName,
+        String token,
+        String redirect
+    ) throws IOException {
         Cookie cookie = new Cookie(cookieName, token);
         cookie.setDomain("localhost");
         cookie.setPath("/");
