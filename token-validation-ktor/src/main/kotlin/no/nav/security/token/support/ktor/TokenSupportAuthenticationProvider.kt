@@ -44,14 +44,7 @@ class TokenSupportAuthenticationProvider(
     internal val jwtTokenExpiryThresholdHandler: JwtTokenExpiryThresholdHandler
 
     init {
-        val issuerPropertiesMap: Map<String, IssuerProperties> = applicationConfig.configList("no.nav.security.jwt.issuers")
-            .associate { issuerConfig ->
-                issuerConfig.property("issuer_name").getString() to IssuerProperties(
-                    URL(issuerConfig.property("discoveryurl").getString()),
-                    issuerConfig.property("accepted_audience").getString().split(","),
-                    issuerConfig.propertyOrNull("cookie_name")?.getString()
-                )
-            }
+        val issuerPropertiesMap: Map<String, IssuerProperties> = applicationConfig.asIssuerProps()
         jwtTokenValidationHandler = JwtTokenValidationHandler(
             MultiIssuerConfiguration(issuerPropertiesMap, resourceRetriever)
         )
@@ -177,3 +170,17 @@ internal data class JwtTokenHttpRequest(private val cookies: RequestCookies, pri
 
     override fun getHeader(name: String) = headers[name]
 }
+
+fun ApplicationConfig.asIssuerProps(): Map<String, IssuerProperties> = this.configList("no.nav.security.jwt.issuers")
+    .associate { issuerConfig ->
+        issuerConfig.property("issuer_name").getString() to IssuerProperties(
+            URL(issuerConfig.property("discoveryurl").getString()),
+            issuerConfig.property("accepted_audience").getString().split(","),
+            issuerConfig.propertyOrNull("cookie_name")?.getString(),
+            IssuerProperties.Validation(issuerConfig.propertyOrNull("validation.optional_claims")?.getString()?.split(",") ?: emptyList()),
+            IssuerProperties.JwksCache(
+                issuerConfig.propertyOrNull("jwks_cache.lifespan")?.getString()?.toLong(),
+                issuerConfig.propertyOrNull("jwks_cache.refreshtime")?.getString()?.toLong()
+            )
+        )
+    }
