@@ -1,15 +1,12 @@
 package no.nav.security.token.support.ktor
 
-import io.ktor.application.call
+import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.config.ApplicationConfig
-import io.ktor.config.MapApplicationConfig
-import io.ktor.http.CookieEncoding
-import io.ktor.http.Headers
-import io.ktor.http.decodeCookieValue
-import io.ktor.request.RequestCookies
-import io.ktor.response.respond
-import io.ktor.util.KtorExperimentalAPI
+import io.ktor.config.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.util.*
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
@@ -93,7 +90,7 @@ fun Authentication.Configuration.tokenValidationSupport(
             }
         } catch (e: Throwable) {
             val message = e.message ?: e.javaClass.simpleName
-            log.trace("Token verification failed: {}", message)
+            log.debug("Token verification failed: {}", message)
         }
         context.challenge("JWTAuthKey", AuthenticationFailedCause.InvalidCredentials) {
             call.respond(UnauthorizedResponse())

@@ -1,17 +1,12 @@
 package no.nav.security.token.support.ktor.testapp
 
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
-import io.ktor.http.ContentType
-import io.ktor.response.respondText
-import io.ktor.routing.get
-import io.ktor.routing.routing
-import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.http.*
+import io.ktor.response.*
+import io.ktor.routing.*
 import no.nav.security.token.support.ktor.RequiredClaims
+import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
 import no.nav.security.token.support.ktor.tokenValidationSupport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -25,7 +20,7 @@ var openHelloCounter = 0
 fun Application.module() {
 
     val config = this.environment.config
-    val acceptedIssuer = "iss-localhost"
+    val acceptedIssuer = "default"
 
     install(Authentication) {
         tokenValidationSupport("validToken", config = config)
