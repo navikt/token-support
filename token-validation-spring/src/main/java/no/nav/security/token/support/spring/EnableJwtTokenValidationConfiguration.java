@@ -41,7 +41,7 @@ import no.nav.security.token.support.spring.validation.interceptor.SpringJwtToke
 @EnableConfigurationProperties(MultiIssuerProperties.class)
 public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, EnvironmentAware, ImportAware {
 
-	private final Logger logger = LoggerFactory.getLogger(EnableJwtTokenValidationConfiguration.class);
+    private final Logger logger = LoggerFactory.getLogger(EnableJwtTokenValidationConfiguration.class);
 
 	private Environment env;
 
@@ -110,7 +110,10 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 
 	@Bean
 	@Qualifier("oidcTokenValidationFilterRegistrationBean")
-	public FilterRegistrationBean<JwtTokenValidationFilter> oidcTokenValidationFilterRegistrationBean(JwtTokenValidationFilter validationFilter) {
+	public FilterRegistrationBean<JwtTokenValidationFilter> oidcTokenValidationFilterRegistrationBean(JwtTokenValidationFilter validationFilter,
+                                                                                                      @Value("${" + JwtTokenConstants.TOKEN_VALIDATION_FILTER_ORDER_PROPERTY
+                                                                                                          + ":" + Ordered.HIGHEST_PRECEDENCE + "}")
+                                                                                                          Integer tokenValidationFilterOrder) {
 		logger.info("Registering validation filter");
 		final FilterRegistrationBean<JwtTokenValidationFilter> filterRegistration = new FilterRegistrationBean<>();
 		filterRegistration.setFilter(validationFilter);
@@ -118,7 +121,7 @@ public class EnableJwtTokenValidationConfiguration implements WebMvcConfigurer, 
 		filterRegistration
 				.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC));
 		filterRegistration.setAsyncSupported(true);
-		filterRegistration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		filterRegistration.setOrder(tokenValidationFilterOrder);
 		return filterRegistration;
 	}
 
