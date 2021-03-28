@@ -3,7 +3,6 @@ package no.nav.security.token.support.client.spring.oauth2;
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public class Oauth2ClientRequestInterceptor implements ClientHttpRequestIntercep
 
     @Override
     public ClientHttpResponse intercept(HttpRequest req, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        Optional.ofNullable(matcher.findProperties(properties, req))
+        matcher.findProperties(properties, req)
                 .ifPresentOrElse(config -> req.getHeaders().setBearerAuth(service.getAccessToken(config).getAccessToken()),
                         () -> LOG.info("Ingen konfig for {}", req.getURI()));
 

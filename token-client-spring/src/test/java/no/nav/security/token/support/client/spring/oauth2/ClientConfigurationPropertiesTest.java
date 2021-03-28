@@ -1,25 +1,25 @@
 package no.nav.security.token.support.client.spring.oauth2;
 
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
-import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
-import no.nav.security.token.support.client.core.ClientProperties;
-import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest;
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
-import no.nav.security.token.support.core.context.TokenValidationContextHolder;
-import org.junit.jupiter.api.BeforeEach;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Map;
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
+import no.nav.security.token.support.client.core.ClientProperties;
+import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest;
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 
-@SpringBootTest(classes = {OAuth2ClientConfiguration.class, RestTemplateAutoConfiguration.class})
+@SpringBootTest(classes = { OAuth2ClientConfiguration.class, RestTemplateAutoConfiguration.class })
 @ActiveProfiles("test")
 class ClientConfigurationPropertiesTest {
 
@@ -29,17 +29,11 @@ class ClientConfigurationPropertiesTest {
     @Autowired
     private ClientConfigurationProperties clientConfigurationProperties;
 
-    @BeforeEach
-    void before() {
-        MockitoAnnotations.initMocks(this);
-    }
-
     @Test
     void testClientConfigIsValid() {
         assertThat(clientConfigurationProperties).isNotNull();
         assertThat(clientConfigurationProperties.getRegistration()).isNotNull();
-        ClientProperties clientProperties =
-            clientConfigurationProperties.getRegistration().values().stream().findFirst().orElse(null);
+        ClientProperties clientProperties = clientConfigurationProperties.getRegistration().values().stream().findFirst().orElse(null);
         assertThat(clientProperties).isNotNull();
         ClientAuthenticationProperties auth = clientProperties.getAuthentication();
         assertThat(auth).isNotNull();
@@ -56,8 +50,7 @@ class ClientConfigurationPropertiesTest {
         assertThat(clientConfigurationProperties).isNotNull();
         assertThat(clientConfigurationProperties.getRegistration()).isNotNull();
         System.out.println(clientConfigurationProperties);
-        ClientProperties clientProperties =
-            clientConfigurationProperties.getRegistration().get("example1-token-exchange1");
+        ClientProperties clientProperties = clientConfigurationProperties.getRegistration().get("example1-token-exchange1");
 
         assertThat(clientProperties).isNotNull();
         assertThat(clientProperties.getTokenExchange().getAudience()).isNotBlank();
@@ -67,8 +60,7 @@ class ClientConfigurationPropertiesTest {
     void testClientConfigWithClientAuthMethodAsPrivateKeyJwt() {
         assertThat(clientConfigurationProperties).isNotNull();
         assertThat(clientConfigurationProperties.getRegistration()).isNotNull();
-        ClientProperties clientProperties =
-            clientConfigurationProperties.getRegistration().get("example1-clientcredentials3");
+        ClientProperties clientProperties = clientConfigurationProperties.getRegistration().get("example1-clientcredentials3");
         assertThat(clientProperties).isNotNull();
         ClientAuthenticationProperties auth = clientProperties.getAuthentication();
         assertThat(auth).isNotNull();
