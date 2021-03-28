@@ -1,12 +1,9 @@
 package no.nav.security.token.support.client.spring.oauth2;
 
-import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
-
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -22,7 +19,6 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
  * en konfigurerbar matcher
  *
  */
-@Order(HIGHEST_PRECEDENCE)
 public class Oauth2ClientRequestInterceptor implements ClientHttpRequestInterceptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(Oauth2ClientRequestInterceptor.class);
