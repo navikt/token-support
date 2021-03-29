@@ -8,19 +8,19 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.stereotype.Component;
 
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 
 /**
  *
- * Interceptor som setter Authorization header til et innvekslet token, gyldig
- * kun for target app. Gjeldende klient konfigurasjon for denne kan slås opp via
- * en konfigurerbar matcher
+ * Interceptor som veksler inn et token og setter Authorization header til
+ * dette, med audience kun for target app. Gjeldende klient konfigurasjon kan
+ * slås opp via en konfigurerbar matcher. Må settes opp av de enkelte
+ * klient-applikasjonene selv, iingen automatisk registrering i application
+ * context. {@link ClientConfigurationPropertiesMatcher}
  *
  */
-@Component
 public class Oauth2ClientRequestInterceptor implements ClientHttpRequestInterceptor {
 
     private static final Logger LOG = LoggerFactory.getLogger(Oauth2ClientRequestInterceptor.class);
