@@ -1,21 +1,22 @@
 package no.nav.security.token.support.core.validation;
 
-import no.nav.security.token.support.core.configuration.IssuerConfiguration;
-import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
-import no.nav.security.token.support.core.context.TokenValidationContext;
-import no.nav.security.token.support.core.jwt.JwtToken;
-import no.nav.security.token.support.core.exceptions.IssuerConfigurationException;
-import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
-import no.nav.security.token.support.core.http.HttpRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import no.nav.security.token.support.core.configuration.IssuerConfiguration;
+import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.exceptions.IssuerConfigurationException;
+import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
+import no.nav.security.token.support.core.http.HttpRequest;
+import no.nav.security.token.support.core.jwt.JwtToken;
 
 public class JwtTokenValidationHandler {
 
@@ -31,15 +32,18 @@ public class JwtTokenValidationHandler {
         List<JwtToken> tokensOnRequest = JwtTokenRetriever.retrieveUnvalidatedTokens(config, request);
 
         Map<String, JwtToken> validatedTokens = tokensOnRequest.stream()
-            .map(this::validate)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toConcurrentMap(
-                Map.Entry::getKey,
-                Map.Entry::getValue
-            ));
+                .map(this::validate)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toConcurrentMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue));
 
         LOG.debug("found {} tokens on request, number of validated tokens is {}", tokensOnRequest.size(), validatedTokens.size());
+        if (validatedTokens.isEmpty() && !tokensOnRequest.isEmpty()) {
+            LOG.debug("Found {} unvalidated token(s) with issuer(s) {} on request, is this a configuration error?", tokensOnRequest.size(),
+                    tokensOnRequest.stream().map(JwtToken::getIssuer).collect(Collectors.toList()));
+        }
         return new TokenValidationContext(validatedTokens);
     }
 
@@ -54,7 +58,6 @@ public class JwtTokenValidationHandler {
                 tokenValidator(jwtToken).assertValidToken(jwtToken.getTokenAsString());
                 long end = System.currentTimeMillis();
 
-
                 LOG.debug("validated token from issuer[{}] in {} ms", jwtToken.getIssuer(), (end - start));
                 return Optional.of(entry(issuerShortName, jwtToken));
             }
@@ -63,11 +66,10 @@ public class JwtTokenValidationHandler {
 
         } catch (JwtTokenValidatorException e) {
             LOG.info(
-                "found invalid token for issuer [{}, expires at {}], exception message:{} ",
-                jwtToken.getIssuer(),
-                e.getExpiryDate(),
-                e.getMessage()
-            );
+                    "found invalid token for issuer [{}, expires at {}], exception message:{} ",
+                    jwtToken.getIssuer(),
+                    e.getExpiryDate(),
+                    e.getMessage());
             return Optional.empty();
         }
     }
@@ -78,9 +80,8 @@ public class JwtTokenValidationHandler {
 
     private IssuerConfiguration issuerConfiguration(String issuer) {
         return config.getIssuer(issuer)
-            .orElseThrow(
-                issuerConfigurationException(String.format("could not find IssuerConfiguration for issuer=%s", issuer))
-            );
+                .orElseThrow(
+                        issuerConfigurationException(String.format("could not find IssuerConfiguration for issuer=%s", issuer)));
     }
 
     private static Supplier<IssuerConfigurationException> issuerConfigurationException(String message) {
