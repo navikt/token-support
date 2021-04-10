@@ -9,11 +9,10 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 
 /**
  *
- * Default implementasjon matcher host i request med registration navn. Override
- * for andre strategier, brukes typisk sammen med
- * {@link Oauth2ClientRequestInterceptor}. Må settes opp av de enkelte
- * klient-applikasjonene selv, iingen automatisk registrering i application
- * context.
+ * Default implementation that matcher host in request URL with the registration
+ * name. Override for other strategies. Will typically be used with
+ * {@link Oauth2ClientRequestInterceptor}. Must be registered by the
+ * applications themselves, no automatic bean registration
  *
  */
 public interface ClientConfigurationPropertiesMatcher {

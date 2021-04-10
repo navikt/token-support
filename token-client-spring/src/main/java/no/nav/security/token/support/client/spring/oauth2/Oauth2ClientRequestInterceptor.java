@@ -14,11 +14,13 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 
 /**
  *
- * Interceptor som veksler inn et token og setter Authorization header til
- * dette, med audience kun for target app. Gjeldende klient konfigurasjon kan
- * slås opp via en konfigurerbar matcher. Må settes opp av de enkelte
- * klient-applikasjonene selv, iingen automatisk registrering i application
- * context. {@link ClientConfigurationPropertiesMatcher}
+ * Interceptor that exchanges a token using the {@link OAuth2AccessTokenService}
+ * and sets Authorization header to this new token, where the aud claim is set
+ * to the destination app. The configuration fo this app is retrieved through a
+ * configurable matcher implementing
+ * {@link ClientConfigurationPropertiesMatcher}. If no configuration is found,
+ * this interceptor is NOOP. Must be registered by the applications themselves,
+ * no automatic bean registration.
  *
  */
 public class Oauth2ClientRequestInterceptor implements ClientHttpRequestInterceptor {
