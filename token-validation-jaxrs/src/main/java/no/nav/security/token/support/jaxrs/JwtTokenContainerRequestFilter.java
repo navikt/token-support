@@ -1,7 +1,6 @@
 package no.nav.security.token.support.jaxrs;
 
-import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
-import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
+import java.lang.reflect.Method;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -11,17 +10,20 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-import java.lang.reflect.Method;
+
+import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
+import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 
 @Provider
 public class JwtTokenContainerRequestFilter implements ContainerRequestFilter {
 
     private final JwtTokenAnnotationHandler jwtTokenAnnotationHandler;
-    private final ResourceInfo resourceInfo;
+
+    @Context
+    private ResourceInfo resourceInfo;
 
     @Inject
-    public JwtTokenContainerRequestFilter(@Context ResourceInfo resourceInfo) {
-        this.resourceInfo = resourceInfo;
+    public JwtTokenContainerRequestFilter() {
         this.jwtTokenAnnotationHandler = new JwtTokenAnnotationHandler(JaxrsTokenValidationContextHolder.getHolder());
     }
 
@@ -30,7 +32,7 @@ public class JwtTokenContainerRequestFilter implements ContainerRequestFilter {
         Method method = resourceInfo.getResourceMethod();
         try {
             jwtTokenAnnotationHandler.assertValidAnnotation(method);
-        } catch (JwtTokenInvalidClaimException e){
+        } catch (JwtTokenInvalidClaimException e) {
             throw new WebApplicationException(e, Response.Status.FORBIDDEN);
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.UNAUTHORIZED);
