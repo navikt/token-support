@@ -23,14 +23,14 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
  * no automatic bean registration.
  *
  */
-public class Oauth2ClientRequestInterceptor implements ClientHttpRequestInterceptor {
+public class OAuth2ClientRequestInterceptor implements ClientHttpRequestInterceptor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Oauth2ClientRequestInterceptor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OAuth2ClientRequestInterceptor.class);
     private final ClientConfigurationProperties properties;
     private final OAuth2AccessTokenService service;
     private final ClientConfigurationPropertiesMatcher matcher;
 
-    public Oauth2ClientRequestInterceptor(ClientConfigurationProperties properties,
+    public OAuth2ClientRequestInterceptor(ClientConfigurationProperties properties,
             OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
         this.properties = properties;
         this.service = service;

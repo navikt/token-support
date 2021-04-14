@@ -11,7 +11,7 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
  *
  * Default implementation that matcher host in request URL with the registration
  * name. Override for other strategies. Will typically be used with
- * {@link Oauth2ClientRequestInterceptor}. Must be registered by the
+ * {@link OAuth2ClientRequestInterceptor}. Must be registered by the
  * applications themselves, no automatic bean registration
  *
  */
