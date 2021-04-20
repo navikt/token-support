@@ -1,18 +1,21 @@
 package no.nav.security.token.support.core.validation;
 
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
-import no.nav.security.token.support.core.context.TokenValidationContext;
-import no.nav.security.token.support.core.context.TokenValidationContextHolder;
-import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
-import no.nav.security.token.support.core.jwt.JwtToken;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
+import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
+import no.nav.security.token.support.core.jwt.JwtToken;
 
 public class JwtTokenAnnotationHandlerTest {
 
@@ -26,12 +29,13 @@ public class JwtTokenAnnotationHandlerTest {
         validationContextMap.put("issuer3", jwtToken("https://three", "acr=Level1"));
         validationContextMap.put("issuer4", jwtToken("https://four", "acr=Level3", "foo=bar"));
 
-        TokenValidationContext tvc  = new TokenValidationContext(validationContextMap);
+        TokenValidationContext tvc = new TokenValidationContext(validationContextMap);
         TokenValidationContextHolder tokenValidationContextHolder = new TokenValidationContextHolder() {
             @Override
             public TokenValidationContext getTokenValidationContext() {
                 return tvc;
             }
+
             @Override
             public void setTokenValidationContext(TokenValidationContext tokenValidationContext) {
             }
@@ -40,42 +44,51 @@ public class JwtTokenAnnotationHandlerTest {
     }
 
     @Test
+    public void multipleIssuers() {
+        final String[] protectedWithAnyClaim = new String[] { "acr=Level3", "acr=Level4" }; // Require either acr=Level3 or acr=Level4
+        final String[] issuers = new String[] { "issuer1", "issuer2" };
+
+        assertTrue(annotationHandler.handleProtectedWithClaims(issuers, protectedWithAnyClaim, true));
+
+        assertThrows(JwtTokenInvalidClaimException.class, () -> annotationHandler.handleProtectedWithClaims("issuer3", protectedWithAnyClaim, true));
+
+        assertTrue(annotationHandler.handleProtectedWithClaims("issuer4", protectedWithAnyClaim, true));
+    }
+
+    @Test
     public void checkThatAlternativeClaimsWithSameKeyWorks() {
-        final String[] protectedWithAnyClaim = new String[] {"acr=Level3", "acr=Level4"}; // Require either acr=Level3 or acr=Level4
+        final String[] protectedWithAnyClaim = new String[] { "acr=Level3", "acr=Level4" }; // Require either acr=Level3 or acr=Level4
 
         assertTrue(annotationHandler.handleProtectedWithClaims("issuer1", protectedWithAnyClaim, true));
 
         assertTrue(annotationHandler.handleProtectedWithClaims("issuer2", protectedWithAnyClaim, true));
 
-        assertThrows(JwtTokenInvalidClaimException.class, () ->
-            annotationHandler.handleProtectedWithClaims("issuer3", protectedWithAnyClaim, true));
+        assertThrows(JwtTokenInvalidClaimException.class, () -> annotationHandler.handleProtectedWithClaims("issuer3", protectedWithAnyClaim, true));
 
         assertTrue(annotationHandler.handleProtectedWithClaims("issuer4", protectedWithAnyClaim, true));
     }
 
     @Test
     public void checkThatMultipleRequiredClaimsWorks() {
-        final String[] protectedWithAllClaims = new String[] {"acr=Level3", "foo=bar"}; // Require acr=Level3 and foo=bar
+        final String[] protectedWithAllClaims = new String[] { "acr=Level3", "foo=bar" }; // Require acr=Level3 and foo=bar
 
-        assertThrows(JwtTokenInvalidClaimException.class, () ->
-            annotationHandler.handleProtectedWithClaims("issuer1", protectedWithAllClaims, false));
-        assertThrows(JwtTokenInvalidClaimException.class, () ->
-            annotationHandler.handleProtectedWithClaims("issuer2", protectedWithAllClaims, false));
-        assertThrows(JwtTokenInvalidClaimException.class, () ->
-            annotationHandler.handleProtectedWithClaims("issuer3", protectedWithAllClaims, false));
+        assertThrows(JwtTokenInvalidClaimException.class,
+                () -> annotationHandler.handleProtectedWithClaims("issuer1", protectedWithAllClaims, false));
+        assertThrows(JwtTokenInvalidClaimException.class,
+                () -> annotationHandler.handleProtectedWithClaims("issuer2", protectedWithAllClaims, false));
+        assertThrows(JwtTokenInvalidClaimException.class,
+                () -> annotationHandler.handleProtectedWithClaims("issuer3", protectedWithAllClaims, false));
 
         assertTrue(annotationHandler.handleProtectedWithClaims("issuer4", protectedWithAllClaims, false));
     }
 
     @Test
     public void checkThatClaimWithUnknownValueIsRejected() {
-        final String[] protectedWithClaims = new String[] {"acr=Level3", "acr=Level4"};
+        final String[] protectedWithClaims = new String[] { "acr=Level3", "acr=Level4" };
 
         // Token from issuer3 only contains acr=Level1
-        assertThrows(JwtTokenInvalidClaimException.class, () ->
-            annotationHandler.handleProtectedWithClaims("issuer3", protectedWithClaims, true));
-        assertThrows(JwtTokenInvalidClaimException.class, () ->
-            annotationHandler.handleProtectedWithClaims("issuer3", protectedWithClaims, false));
+        assertThrows(JwtTokenInvalidClaimException.class, () -> annotationHandler.handleProtectedWithClaims("issuer3", protectedWithClaims, true));
+        assertThrows(JwtTokenInvalidClaimException.class, () -> annotationHandler.handleProtectedWithClaims("issuer3", protectedWithClaims, false));
     }
 
     @Test
@@ -93,10 +106,10 @@ public class JwtTokenAnnotationHandlerTest {
         assertTrue(annotationHandler.handleProtectedWithClaims("issuer4", protectedWithClaims, false));
     }
 
-    private JwtToken jwtToken(String issuer, String...claims) {
+    private JwtToken jwtToken(String issuer, String... claims) {
         JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder()
-            .issuer(issuer)
-            .subject("subject");
+                .issuer(issuer)
+                .subject("subject");
         Arrays.stream(claims).map(c -> c.split("=")).forEach(pair -> {
             builder.claim(pair[0], pair[1]);
         });

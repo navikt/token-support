@@ -1,5 +1,17 @@
 package no.nav.security.token.support.core.validation;
 
+import static no.nav.security.token.support.core.utils.JwtTokenUtil.contextHasValidToken;
+import static no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import no.nav.security.token.support.core.api.Unprotected;
@@ -8,19 +20,6 @@ import no.nav.security.token.support.core.exceptions.AnnotationRequiredException
 import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException;
 import no.nav.security.token.support.core.jwt.JwtToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static no.nav.security.token.support.core.utils.JwtTokenUtil.contextHasValidToken;
-import static no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken;
 
 public class JwtTokenAnnotationHandler {
 
@@ -35,8 +34,8 @@ public class JwtTokenAnnotationHandler {
         Annotation annotation = getAnnotation(method, Arrays.asList(ProtectedWithClaims.class, Protected.class, Unprotected.class));
         if (annotation == null) {
             throw new AnnotationRequiredException("Server misconfigured - controller/method ["
-                + method.getClass().getName() + "." + method.getName()
-                + "] not annotated @Unprotected, @Protected or added to ignore list");
+                    + method.getClass().getName() + "." + method.getName()
+                    + "] not annotated @Unprotected, @Protected or added to ignore list");
         }
         return assertValidAnnotation(annotation);
     }
@@ -50,14 +49,15 @@ public class JwtTokenAnnotationHandler {
             return handleProtectedWithClaimsAnnotation((ProtectedWithClaims) annotation);
         } else if (annotation instanceof Protected) {
             log.debug("annotation is of type={}, check if context has valid token.", Protected.class.getSimpleName());
-            if (contextHasValidToken(tokenValidationContextHolder)){
+            if (contextHasValidToken(tokenValidationContextHolder)) {
                 return true;
             } else {
                 throw new JwtTokenMissingException("no valid token found in validation context");
             }
 
         } else {
-            log.debug("annotation is unknown,  type={}, no token validation performed. but possible bug so throw exception", annotation.annotationType());
+            log.debug("annotation is unknown,  type={}, no token validation performed. but possible bug so throw exception",
+                    annotation.annotationType());
             return false;
         }
     }
@@ -77,9 +77,8 @@ public class JwtTokenAnnotationHandler {
         return null;
     }
 
-    private static Annotation findAnnotation(Annotation[] annotations, List<Class<? extends Annotation>> types){
-        return annotations != null ?
-            Arrays.stream(annotations)
+    private static Annotation findAnnotation(Annotation[] annotations, List<Class<? extends Annotation>> types) {
+        return annotations != null ? Arrays.stream(annotations)
                 .filter(a -> types.contains(a.annotationType()))
                 .findFirst()
                 .orElse(null) : null;
@@ -90,12 +89,24 @@ public class JwtTokenAnnotationHandler {
     }
 
     protected boolean handleProtectedWithClaims(String issuer, String[] requiredClaims, boolean combineWithOr) {
-        if (Objects.nonNull(issuer) && issuer.length() > 0) {
+        return handleProtectedWithClaims(new String[] { issuer }, requiredClaims, combineWithOr);
+    }
 
-            JwtToken jwtToken = getJwtToken(issuer, tokenValidationContextHolder)
-                .orElseThrow(() -> new JwtTokenMissingException("no valid token found in validation context"));
-            if (!containsRequiredClaims(jwtToken, combineWithOr, requiredClaims)) {
-                throw new JwtTokenInvalidClaimException("required claims not present in token." + Arrays.asList(requiredClaims));
+    protected boolean handleProtectedWithClaims(String[] issuers, String[] requiredClaims, boolean combineWithOr) {
+        if (Objects.nonNull(issuers) && issuers.length > 0) {
+            boolean found = false;
+            for (var issuer : issuers) {
+                var jwtToken = getJwtToken(issuer, tokenValidationContextHolder);
+                if (jwtToken.isPresent()) {
+                    if (!containsRequiredClaims(jwtToken.get(), combineWithOr, requiredClaims)) {
+                        throw new JwtTokenInvalidClaimException("required claims not present in token." + Arrays.asList(requiredClaims));
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new JwtTokenMissingException("no valid token found in validation context");
             }
         }
         return true;
@@ -104,15 +115,15 @@ public class JwtTokenAnnotationHandler {
     protected boolean containsRequiredClaims(JwtToken jwtBearerToken, boolean combineWithOr, String... claims) {
         log.debug("choose matching logic based on combineWithOr=" + combineWithOr);
         return combineWithOr ? containsAnyClaim(jwtBearerToken, claims)
-            : containsAllClaims(jwtBearerToken, claims);
+                : containsAllClaims(jwtBearerToken, claims);
     }
 
     private boolean containsAllClaims(JwtToken jwtToken, String... claims) {
         if (claims != null && claims.length > 0) {
             return Arrays.stream(claims)
-                .map(claimUnparsed -> claimUnparsed.split("="))
-                .filter(pair -> pair.length == 2)
-                .allMatch(pair -> jwtToken.containsClaim(pair[0].trim(), pair[1].trim()));
+                    .map(claimUnparsed -> claimUnparsed.split("="))
+                    .filter(pair -> pair.length == 2)
+                    .allMatch(pair -> jwtToken.containsClaim(pair[0].trim(), pair[1].trim()));
         }
         return true;
     }
@@ -120,9 +131,9 @@ public class JwtTokenAnnotationHandler {
     private boolean containsAnyClaim(JwtToken jwtToken, String... claims) {
         if (claims != null && claims.length > 0) {
             return Arrays.stream(claims)
-                .map(claimUnparsed -> claimUnparsed.split("="))
-                .filter(pair -> pair.length == 2)
-                .anyMatch(pair -> jwtToken.containsClaim(pair[0].trim(), pair[1].trim()));
+                    .map(claimUnparsed -> claimUnparsed.split("="))
+                    .filter(pair -> pair.length == 2)
+                    .anyMatch(pair -> jwtToken.containsClaim(pair[0].trim(), pair[1].trim()));
         }
         log.debug("no claims listed, so claim checking is ok.");
         return true;
