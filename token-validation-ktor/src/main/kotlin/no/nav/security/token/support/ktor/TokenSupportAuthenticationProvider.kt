@@ -7,7 +7,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.util.*
-import no.nav.security.token.support.core.configuration.IssuerProperties
+import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.core.context.TokenValidationContext
@@ -17,6 +17,8 @@ import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import org.slf4j.LoggerFactory
 import java.net.URL
+import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
+import no.nav.security.token.support.core.configuration.IssuerProperties
 
 data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
@@ -138,11 +140,15 @@ private class InternalTokenValidationContextHolder(private var tokenValidationCo
 internal class AdditionalValidationReturnedFalse : RuntimeException()
 
 internal class RequiredClaimsException(message: String, cause: Exception) : RuntimeException(message, cause)
-internal class RequiredClaimsHandler(tokenValidationContextHolder: TokenValidationContextHolder) :
+internal class RequiredClaimsHandler(val tokenValidationContextHolder: TokenValidationContextHolder) :
     JwtTokenAnnotationHandler(tokenValidationContextHolder) {
     internal fun handleRequiredClaims(requiredClaims: RequiredClaims) {
         try {
-            handleProtectedWithClaims(requiredClaims.issuer, requiredClaims.claimMap, requiredClaims.combineWithOr)
+			var jwtToken = getJwtToken(requiredClaims.issuer, tokenValidationContextHolder);
+            if (jwtToken.isEmpty()) {
+                throw  JwtTokenMissingException("no valid token found in validation context");
+            }
+            handleProtectedWithClaims(requiredClaims.issuer, requiredClaims.claimMap, requiredClaims.combineWithOr,jwtToken.get())
         } catch (e: RuntimeException) {
             throw RequiredClaimsException(e.message ?: "", e)
         }
