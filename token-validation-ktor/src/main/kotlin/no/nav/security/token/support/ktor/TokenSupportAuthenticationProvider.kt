@@ -17,6 +17,7 @@ import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import org.slf4j.LoggerFactory
 import java.net.URL
+import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.core.configuration.IssuerProperties
 
@@ -148,7 +149,9 @@ internal class RequiredClaimsHandler(val tokenValidationContextHolder: TokenVali
             if (jwtToken.isEmpty()) {
                 throw  JwtTokenMissingException("no valid token found in validation context");
             }
-            handleProtectedWithClaims(requiredClaims.issuer, requiredClaims.claimMap, requiredClaims.combineWithOr,jwtToken.get())
+            if (!handleProtectedWithClaims(requiredClaims.issuer, requiredClaims.claimMap, requiredClaims.combineWithOr,jwtToken.get())) 
+                throw  JwtTokenInvalidClaimException("required claims not present in token." + requiredClaims.claimMap)
+            
         } catch (e: RuntimeException) {
             throw RequiredClaimsException(e.message ?: "", e)
         }
