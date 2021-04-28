@@ -1,7 +1,11 @@
 package no.nav.security.token.support.spring.validation.interceptor;
 
-import no.nav.security.token.support.core.exceptions.AnnotationRequiredException;
-import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -11,10 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import no.nav.security.token.support.core.exceptions.AnnotationRequiredException;
+import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 
 public class JwtTokenHandlerInterceptor implements HandlerInterceptor {
 
@@ -24,7 +26,7 @@ public class JwtTokenHandlerInterceptor implements HandlerInterceptor {
     private final Map<Object, Boolean> handlerFlags = new ConcurrentHashMap<>();
 
     public JwtTokenHandlerInterceptor(AnnotationAttributes enableJwtTokenValidation,
-                                      JwtTokenAnnotationHandler jwtTokenAnnotationHandler) {
+            JwtTokenAnnotationHandler jwtTokenAnnotationHandler) {
         this.jwtTokenAnnotationHandler = jwtTokenAnnotationHandler;
 
         if (enableJwtTokenValidation != null) {
@@ -49,14 +51,14 @@ public class JwtTokenHandlerInterceptor implements HandlerInterceptor {
                 return jwtTokenAnnotationHandler.assertValidAnnotation(handlerMethod.getMethod());
             } catch (AnnotationRequiredException e) {
                 logger.error("received AnnotationRequiredException from JwtTokenAnnotationHandler. return " +
-                    "status={}", HttpStatus.NOT_IMPLEMENTED, e);
+                        "status={}", HttpStatus.NOT_IMPLEMENTED, e);
                 throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "endpoint not accessible");
             } catch (Exception e) {
                 throw new JwtTokenUnauthorizedException(e);
             }
         }
         logger.debug("Handler is of type {}, allowing unprotected access to the resources it accesses",
-            handler.getClass().getSimpleName());
+                handler.getClass().getSimpleName());
         return true;
     }
 

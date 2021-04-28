@@ -5,6 +5,7 @@ import static no.nav.security.token.support.spring.integrationtest.AProtectedRes
 import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS;
 import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS2;
 import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS_ANY_CLAIMS;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_MULTIPLE;
 import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.UNPROTECTED;
 import static no.nav.security.token.support.test.JwtTokenGenerator.ACR;
 import static no.nav.security.token.support.test.JwtTokenGenerator.AUD;
@@ -21,6 +22,7 @@ import javax.servlet.Filter;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -129,6 +131,32 @@ class ProtectedRestControllerIntegrationTest {
     void signedTokenInRequestProtectedMethodShouldBeOk() {
         JWT jwt = issueToken("knownissuer", jwtClaimsSetKnownIssuer());
         expectStatusCode(PROTECTED, jwt.serialize(), HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("Token matches one of the configured issuers, including claims")
+    void multipleIssuersOneOKIncludingClaims() {
+        JWTClaimsSet jwtClaimsSet = defaultJwtClaimsSetBuilder()
+                .claim("claim1", "3")
+                .claim("claim2", "4")
+                .claim("acr", "Level4")
+                .build();
+        JWT jwt = issueToken("knownissuer", jwtClaimsSet);
+        expectStatusCode(PROTECTED_WITH_MULTIPLE, jwt.serialize(), HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("Token matches one of the configured issuers, but not all claims match")
+    void multipleIssuersOneIssuerMatchesButClaimsDont() {
+        JWT jwt = issueToken("knownissuer", jwtClaimsSetKnownIssuer());
+        expectStatusCode(PROTECTED_WITH_MULTIPLE, jwt.serialize(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    @DisplayName("Token matches none of the configured issuers")
+    void multipleIssuersNoIssuerMatches() {
+        JWT jwt = issueToken("knownissuer3", jwtClaimsSetKnownIssuer());
+        expectStatusCode(PROTECTED_WITH_MULTIPLE, jwt.serialize(), HttpStatus.UNAUTHORIZED);
     }
 
     @Test
