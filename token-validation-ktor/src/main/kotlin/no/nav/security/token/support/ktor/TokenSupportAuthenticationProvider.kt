@@ -145,7 +145,7 @@ internal class RequiredClaimsHandler(val tokenValidationContextHolder: TokenVali
     JwtTokenAnnotationHandler(tokenValidationContextHolder) {
     internal fun handleRequiredClaims(requiredClaims: RequiredClaims) {
         try {
-			var jwtToken = getJwtToken(requiredClaims.issuer, tokenValidationContextHolder);
+			val jwtToken = getJwtToken(requiredClaims.issuer, tokenValidationContextHolder);
             if (jwtToken.isEmpty()) {
                 throw  JwtTokenMissingException("no valid token found in validation context");
             }

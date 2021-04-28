@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
-import no.nav.security.token.support.core.api.Protection;
+import no.nav.security.token.support.core.api.RequiredIssuers;
 import no.nav.security.token.support.core.api.Unprotected;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.exceptions.AnnotationRequiredException;
@@ -35,7 +35,7 @@ public class JwtTokenAnnotationHandler {
 
     public boolean assertValidAnnotation(Method method) throws AnnotationRequiredException {
         Annotation annotation = getAnnotation(method,
-                List.of(Protection.class, ProtectedWithClaims.class, Protected.class, Unprotected.class));
+                List.of(RequiredIssuers.class, ProtectedWithClaims.class, Protected.class, Unprotected.class));
         if (annotation == null) {
             throw new AnnotationRequiredException("Server misconfigured - controller/method ["
                     + method.getClass().getName() + "." + method.getName()
@@ -49,9 +49,9 @@ public class JwtTokenAnnotationHandler {
             log.debug("annotation is of type={}, no token validation performed.", Unprotected.class.getSimpleName());
             return true;
         }
-        if (annotation instanceof Protection) {
+        if (annotation instanceof RequiredIssuers) {
             boolean hasToken = false;
-            var ann = Protection.class.cast(annotation);
+            var ann = RequiredIssuers.class.cast(annotation);
             for (var sub : ann.value()) {
                 var jwtToken = getJwtToken(sub.issuer(), tokenValidationContextHolder);
                 if (jwtToken.isEmpty()) {
@@ -92,12 +92,12 @@ public class JwtTokenAnnotationHandler {
 
     }
 
-    private static Map<String, String[]> issuersAndClaims(Protection ann) {
+    private static Map<String, String[]> issuersAndClaims(RequiredIssuers ann) {
         return Arrays.stream(ann.value())
                 .collect(Collectors.toMap(ProtectedWithClaims::issuer, ProtectedWithClaims::claimMap));
     }
 
-    private static List<String> issuers(Protection ann) {
+    private static List<String> issuers(RequiredIssuers ann) {
         return Arrays.stream(ann.value()).map(ProtectedWithClaims::issuer).collect(Collectors.toList());
     }
 
