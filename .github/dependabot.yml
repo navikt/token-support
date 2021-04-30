@@ -1,10 +1,4 @@
 version: 2
-registries:
-  maven-repository-maven-pkg-github-com-navikt-fp-felles:
-    type: maven-repository
-    url: https://maven.pkg.github.com/navikt/fp-felles/
-    username: x-access-token
-    password: "${{secrets.MAVEN_REPOSITORY_MAVEN_PKG_GITHUB_COM_NAVIKT_FP_FELLES_PASSWORD}}"
 
 updates:
 - package-ecosystem: maven
@@ -34,5 +28,4 @@ updates:
   - dependency-name: com.github.ben-manes.caffeine:caffeine
     versions:
     - 2.9.0
-  registries:
-  - maven-repository-maven-pkg-github-com-navikt-fp-felles
+    
