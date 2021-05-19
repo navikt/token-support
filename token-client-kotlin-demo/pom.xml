@@ -76,13 +76,13 @@
         <dependency>
             <groupId>io.kotest</groupId>
             <artifactId>kotest-assertions-core-jvm</artifactId>
-            <version>4.5.0</version>
+            <version>4.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.kotest</groupId>
             <artifactId>kotest-runner-junit5-jvm</artifactId>
-            <version>4.5.0</version>
+            <version>4.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
