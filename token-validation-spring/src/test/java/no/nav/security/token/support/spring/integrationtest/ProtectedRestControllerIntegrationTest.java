@@ -13,6 +13,7 @@ import static no.nav.security.token.support.test.JwtTokenGenerator.createSignedJ
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -268,12 +269,8 @@ class ProtectedRestControllerIntegrationTest {
             }
 
             @Override
-            public String audience(@NotNull TokenRequest tokenRequest) {
-                return Optional.ofNullable(jwtClaimsSet.getAudience())
-                        .stream()
-                        .flatMap(a -> a.stream())
-                        .findFirst()
-                        .orElse(null);
+            public List<String> audience(@NotNull TokenRequest tokenRequest) {
+                return jwtClaimsSet.getAudience();
             }
 
             @NotNull
