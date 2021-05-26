@@ -48,6 +48,10 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
         try {
             token = JWTParser.parse(tokenString);
             get(token).validate(token, expectedNonce != null ? new Nonce(expectedNonce) : null);
+        } catch (NoSuchMethodError e) {
+            String msg = "Dependant method not found. Ensure that nimbus-jose-jwt and/or oauth2-oidc-sdk has versions >= 9.x (e.g. Spring Boot >= 2.5.0)";
+            LOG.error(msg, e);
+            throw new JwtTokenValidatorException(msg, e);
         } catch (Throwable t) {
             throw new JwtTokenValidatorException("Token validation failed", expiryDate(token), t);
         }
