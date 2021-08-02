@@ -57,7 +57,7 @@
         <okhttp3.version>4.9.1</okhttp3.version>
         <ktor.version>1.6.2</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.version>1.5.20</kotlin.version>
+        <kotlin.version>1.5.21</kotlin.version>
         <mock-oauth2-server.version>0.3.4</mock-oauth2-server.version>
         <groovy.version>3.0.8</groovy.version>
         <logback.version>1.2.5</logback.version>
