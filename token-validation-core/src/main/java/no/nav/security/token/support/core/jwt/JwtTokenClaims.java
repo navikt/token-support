@@ -1,6 +1,7 @@
 package no.nav.security.token.support.core.jwt;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +57,8 @@ public class JwtTokenClaims {
             String claimAsString = (String) claim;
             return claimAsString.equals(value);
         }
-        if (claim instanceof List<?>) {
-            List<?> claimasList = (List<?>) claim;
+        if (claim instanceof Collection<?>) {
+            Collection<?> claimasList = (Collection<?>) claim;
             return claimasList.contains(value);
         }
         return false;
