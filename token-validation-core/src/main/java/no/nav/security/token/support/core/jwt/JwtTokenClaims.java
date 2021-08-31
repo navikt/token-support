@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.nimbusds.jose.shaded.json.JSONArray;
 import com.nimbusds.jwt.JWTClaimsSet;
 
 public class JwtTokenClaims {
@@ -57,12 +56,8 @@ public class JwtTokenClaims {
             String claimAsString = (String) claim;
             return claimAsString.equals(value);
         }
-        if (claim instanceof JSONArray) {
-            JSONArray claimasList = (JSONArray) claim;
-            return claimasList.contains(value);
-        }
-        if(claim instanceof net.minidev.json.JSONArray) {
-            net.minidev.json.JSONArray claimasList = (net.minidev.json.JSONArray) claim;
+        if (claim instanceof List<?>) {
+            List<?> claimasList = (List<?>) claim;
             return claimasList.contains(value);
         }
         return false;
