@@ -177,6 +177,15 @@ class ProtectedRestControllerIntegrationTest {
     }
 
     @Test
+    void signedTokenInRequestProtectedWithArrayClaimsMethodShouldBeOk() {
+        JWTClaimsSet jwtClaimsSet = defaultJwtClaimsSetBuilder()
+            .claim("claim1", List.of("1"))
+            .build();
+
+        expectStatusCode(PROTECTED_WITH_CLAIMS_ANY_CLAIMS, issueToken("knownissuer", jwtClaimsSet).serialize(), HttpStatus.OK);
+    }
+
+    @Test
     void signedTokenInRequestWithoutSubAndAudClaimsShouldBeOk() {
         Date now = new Date();
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
