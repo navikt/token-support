@@ -193,7 +193,7 @@ public class ProductResource {
 ```
 ### token-validation-ktor
 
-See demo application in **`token-validation-ktor-demo`**.
+See demo application in **`token-validation-ktor-demo`** for example configurations and setups.
 
 ### token-validation-* configuration
 

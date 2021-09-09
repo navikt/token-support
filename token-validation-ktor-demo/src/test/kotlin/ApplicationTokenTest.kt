@@ -38,13 +38,69 @@ class ApplicationTokenTest {
             module()
         }) {
             with(handleRequest(HttpMethod.Get, "/hello") {
-                addHeader("Authorization", "Bearer ${server.issueToken(audience = "not-accepted").serialize()}")
+                val token = server.issueToken(audience = "not-accepted").serialize()
+                addHeader("Authorization", "Bearer $token")
             }) {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
             }
 
             with(handleRequest(HttpMethod.Get, "/hello") {
-                addHeader("Authorization", "Bearer ${server.issueToken(issuerId = "not-accepted").serialize()}")
+                val token = server.issueToken(issuerId = "not-accepted").serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+            }
+        }
+    }
+
+    @Test
+    fun user_withInvalidJWTShouldGive_401_Unauthorized() {
+        withTestApplication({
+            doConfig(
+                acceptedAudience = "some-audience",
+                acceptedIssuer = "some-issuer"
+            )
+            module()
+        }) {
+            with(handleRequest(HttpMethod.Get, "/user") {
+                val token = server.issueToken(claims = mapOf("NAVident" to "Z12345")).serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+            }
+        }
+    }
+
+    @Test
+    fun users_withInvalidJWTShouldGive_401_Unauthorized() {
+        withTestApplication({
+            doConfig(
+                acceptedAudience = "some-audience",
+                acceptedIssuer = "some-issuer"
+            )
+            module()
+        }) {
+            with(handleRequest(HttpMethod.Get, "/users") {
+                val token = server.issueToken(claims = mapOf("NAVident" to "Y12345")).serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+            }
+        }
+    }
+
+    @Test
+    fun scope_withInvalidJWTShouldGive_401_Unauthorized() {
+        withTestApplication({
+            doConfig(
+                acceptedAudience = "some-audience",
+                acceptedIssuer = "some-issuer"
+            )
+            module()
+        }) {
+            with(handleRequest(HttpMethod.Get, "/scope") {
+                val token = server.issueToken(claims = mapOf("scope" to "nav:domain:invalid")).serialize()
+                addHeader("Authorization", "Bearer $token")
             }) {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
             }
@@ -77,6 +133,70 @@ class ApplicationTokenTest {
     fun openhello_withMissingJWTShouldGive_200() {
         withTestApplication {
             with(handleRequest(HttpMethod.Get, "/openhello")) {
+                assertEquals(HttpStatusCode.OK, response.status())
+            }
+        }
+    }
+
+    @Test
+    fun user_withValidJWTinHeaderShouldGive_200_OK() {
+        withTestApplication {
+            with(handleRequest(HttpMethod.Get, "/user") {
+                val token = server.issueToken(claims = mapOf("NAVident" to "X12345")).serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+            }
+        }
+    }
+
+    @Test
+    fun users_withValidJWTinHeaderShouldGive_200_OK() {
+        withTestApplication {
+            with(handleRequest(HttpMethod.Get, "/users") {
+                val token = server.issueToken(claims = mapOf("NAVident" to "X12345")).serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+            }
+
+            with(handleRequest(HttpMethod.Get, "/users") {
+                val token = server.issueToken(claims = mapOf("NAVident" to "Z12345")).serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+            }
+        }
+    }
+
+    @Test
+    fun scope_withValidJWTinHeaderShouldGive_200_OK() {
+        withTestApplication {
+            with(handleRequest(HttpMethod.Get, "/scope") {
+                val token = server.issueToken(claims = mapOf("scope" to "nav:domain:read nav:domain:write")).serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+            }
+
+            with(handleRequest(HttpMethod.Get, "/scope") {
+                val token = server.issueToken(claims = mapOf("scope" to "nav:domain:write")).serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+            }
+
+            with(handleRequest(HttpMethod.Get, "/scope") {
+                val token = server.issueToken(claims = mapOf("scope" to "nav:domain:read")).serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+            }
+
+            with(handleRequest(HttpMethod.Get, "/scope") {
+                val token = server.issueToken(claims = mapOf("scope" to "nav:domain:read nav:domain:other")).serialize()
+                addHeader("Authorization", "Bearer $token")
+            }) {
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         }
