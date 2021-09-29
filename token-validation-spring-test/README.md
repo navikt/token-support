@@ -35,7 +35,7 @@ See [token-validation-spring-demo](../token-validation-spring-demo) for usage sc
 * Point your browser to `http://localhost:[app-port]/[app-contextroot]/local/cookie?redirect=/[app-contextroot]/api` in order to get a token and redirect to your api.
 
 For **JUnit** tests, your Spring application context should contain a bean of the type `MockOAuth2Server` which can be used to issue tokens and provides a JWKS endpoint for validation.
-* Usage: [DemoControllerTest.java](../token-validation-spring-demo/token-validation-spring-demo/src/test/java/no/nav/security/token/support/demo/spring/rest/DemoControllerTest.java)
+* Usage: [DemoControllerTest.java](../token-validation-spring-demo/src/test/java/no/nav/security/token/support/demo/spring/rest/DemoControllerTest.java)
 * For detailed usage and features see the [mock-oauth2-server](https://github.com/navikt/mock-oauth2-server) documentation.
 
 
