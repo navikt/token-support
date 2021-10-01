@@ -52,7 +52,7 @@
         <oauth2-oidc-sdk.version>9.17</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <rest-assured.version>4.4.0</rest-assured.version>
-        <mockwebserver.version>4.9.1</mockwebserver.version>
+        <mockwebserver.version>4.9.2</mockwebserver.version>
         <caffeine.version>3.0.4</caffeine.version>
         <okhttp3.version>4.9.1</okhttp3.version>
         <ktor.version>1.6.3</ktor.version>
