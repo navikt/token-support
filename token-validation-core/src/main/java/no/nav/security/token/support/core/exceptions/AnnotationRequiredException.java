@@ -9,7 +9,7 @@ public class AnnotationRequiredException extends RuntimeException {
 
     public AnnotationRequiredException(Method method) {
         this("Server misconfigured - controller/method ["
-                + method.getClass().getName() + "." + method.getName()
+                + method.getDeclaringClass().getName() + "." + method.getName()
                 + "] not annotated @Unprotected, @Protected, @RequiredClaims or added to ignore list");
     }
 }
