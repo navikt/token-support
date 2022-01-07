@@ -43,8 +43,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions-ecosystem/action-add-labels@v1
-        if: ${{ contains("$GITHUB_REF", 'dependabot') }}
+        if: ${{ contains(github.ref, 'dependabot') }}
         with:
           labels: dependencies
-      - name: Adding to
-        run: echo add lables to "$GITHUB_REF" contains("$GITHUB_REF", 'dependabot')
