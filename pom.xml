@@ -57,12 +57,12 @@
         <okhttp3.version>4.9.1</okhttp3.version>
         <ktor.version>1.6.7</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.version>1.5.31</kotlin.version>
+        <kotlin.version>1.6.10</kotlin.version>
         <mock-oauth2-server.version>0.3.4</mock-oauth2-server.version>
         <groovy.version>3.0.9</groovy.version>
         <logback.version>1.2.10</logback.version>
         <nimbus.jose.jwt.version>9.15.2</nimbus.jose.jwt.version>
-        <kotest.version>5.0.0</kotest.version>
+        <kotest.version>5.0.3</kotest.version>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
     </properties>
 
