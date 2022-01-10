@@ -1,5 +1,6 @@
 package no.nav.security.token.support.demo.spring.rest;
 
+import com.nimbusds.jose.JOSEObjectType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
@@ -86,6 +87,7 @@ class DemoControllerTest {
             new DefaultOAuth2TokenCallback(
                 issuerId,
                 subject,
+                JOSEObjectType.JWT.getType(),
                 List.of(audience),
                 Collections.emptyMap(),
                 3600

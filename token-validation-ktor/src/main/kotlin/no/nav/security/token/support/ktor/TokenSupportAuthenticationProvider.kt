@@ -6,7 +6,6 @@ import io.ktor.config.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
-import io.ktor.util.*
 import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
@@ -23,10 +22,8 @@ import no.nav.security.token.support.core.configuration.IssuerProperties
 
 data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
-@KtorExperimentalAPI
 private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::class.java.name)
 
-@KtorExperimentalAPI
 class TokenSupportAuthenticationProvider(
     providerConfig: ProviderConfiguration,
     applicationConfig: ApplicationConfig,
@@ -53,10 +50,9 @@ class TokenSupportAuthenticationProvider(
         jwtTokenExpiryThresholdHandler = JwtTokenExpiryThresholdHandler(expiryThreshold)
     }
 
-    class ProviderConfiguration internal constructor(name: String?): AuthenticationProvider.Configuration(name)
+    class ProviderConfiguration internal constructor(name: String?): Configuration(name)
 }
 
-@KtorExperimentalAPI
 fun Authentication.Configuration.tokenValidationSupport(
     name: String? = null,
     config: ApplicationConfig,
@@ -113,7 +109,6 @@ data class IssuerConfig(
     val cookieName: String? = null
 )
 
-@KtorExperimentalAPI
 class TokenSupportConfig(vararg issuers: IssuerConfig) : MapApplicationConfig(
     *(issuers.mapIndexed { index, issuerConfig ->
         listOf(
@@ -127,7 +122,7 @@ class TokenSupportConfig(vararg issuers: IssuerConfig) : MapApplicationConfig(
                 it
             }
         }
-    }.flatMap { it }.plus("no.nav.security.jwt.issuers.size" to issuers.size.toString()).toTypedArray())
+    }.flatten().plus("no.nav.security.jwt.issuers.size" to issuers.size.toString()).toTypedArray())
 )
 
 private class InternalTokenValidationContextHolder(private var tokenValidationContext: TokenValidationContext) :
@@ -141,13 +136,13 @@ private class InternalTokenValidationContextHolder(private var tokenValidationCo
 internal class AdditionalValidationReturnedFalse : RuntimeException()
 
 internal class RequiredClaimsException(message: String, cause: Exception) : RuntimeException(message, cause)
-internal class RequiredClaimsHandler(val tokenValidationContextHolder: TokenValidationContextHolder) :
+internal class RequiredClaimsHandler(private val tokenValidationContextHolder: TokenValidationContextHolder) :
     JwtTokenAnnotationHandler(tokenValidationContextHolder) {
     internal fun handleRequiredClaims(requiredClaims: RequiredClaims) {
         try {
-			val jwtToken = getJwtToken(requiredClaims.issuer, tokenValidationContextHolder);
-            if (jwtToken.isEmpty()) {
-                throw  JwtTokenMissingException("no valid token found in validation context");
+			val jwtToken = getJwtToken(requiredClaims.issuer, tokenValidationContextHolder)
+            if (jwtToken.isEmpty) {
+                throw  JwtTokenMissingException("no valid token found in validation context")
             }
             if (!handleProtectedWithClaims(requiredClaims.issuer, requiredClaims.claimMap, requiredClaims.combineWithOr,jwtToken.get())) 
                 throw  JwtTokenInvalidClaimException("required claims not present in token." + requiredClaims.claimMap)
@@ -165,7 +160,6 @@ internal data class NameValueCookie(@JvmField val name: String, @JvmField val va
 
 internal data class JwtTokenHttpRequest(private val cookies: RequestCookies, private val headers: Headers) :
     HttpRequest {
-    @KtorExperimentalAPI
     override fun getCookies() =
         cookies.rawCookies.map {
             NameValueCookie(

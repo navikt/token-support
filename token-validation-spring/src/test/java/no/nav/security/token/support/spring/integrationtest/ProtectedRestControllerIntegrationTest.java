@@ -1,26 +1,15 @@
 package no.nav.security.token.support.spring.integrationtest;
 
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED;
-import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS;
-import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS2;
-import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS_ANY_CLAIMS;
-import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_MULTIPLE;
-import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.UNPROTECTED;
-import static no.nav.security.token.support.test.JwtTokenGenerator.ACR;
-import static no.nav.security.token.support.test.JwtTokenGenerator.AUD;
-import static no.nav.security.token.support.test.JwtTokenGenerator.createSignedJWT;
-
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.Filter;
-
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.oauth2.sdk.TokenRequest;
+import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import no.nav.security.mock.oauth2.MockOAuth2Server;
+import no.nav.security.mock.oauth2.token.OAuth2TokenCallback;
+import no.nav.security.token.support.test.JwkGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,16 +23,24 @@ import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
-import com.nimbusds.jwt.SignedJWT;
-import com.nimbusds.oauth2.sdk.TokenRequest;
+import javax.servlet.Filter;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import no.nav.security.mock.oauth2.MockOAuth2Server;
-import no.nav.security.mock.oauth2.token.OAuth2TokenCallback;
-import no.nav.security.token.support.test.JwkGenerator;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS2;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_CLAIMS_ANY_CLAIMS;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.PROTECTED_WITH_MULTIPLE;
+import static no.nav.security.token.support.spring.integrationtest.AProtectedRestController.UNPROTECTED;
+import static no.nav.security.token.support.test.JwtTokenGenerator.ACR;
+import static no.nav.security.token.support.test.JwtTokenGenerator.AUD;
+import static no.nav.security.token.support.test.JwtTokenGenerator.createSignedJWT;
 
 @SpringBootTest
 @ContextConfiguration(classes = { ProtectedApplication.class, ProtectedApplicationConfig.class })
@@ -261,6 +258,12 @@ class ProtectedRestControllerIntegrationTest {
 
     private SignedJWT issueToken(String issuerId, JWTClaimsSet jwtClaimsSet) {
         OAuth2TokenCallback callback = new OAuth2TokenCallback() {
+            @NotNull
+            @Override
+            public String typeHeader(@NotNull TokenRequest tokenRequest) {
+                return JOSEObjectType.JWT.getType();
+            }
+
             @Override
             public long tokenExpiry() {
                 return 30;

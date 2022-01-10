@@ -1,18 +1,22 @@
 package no.nav.security.token.support.spring.test;
 
+import com.nimbusds.jose.JOSEObjectType;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.core.api.Unprotected;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/local")
@@ -43,6 +47,7 @@ public class MockLoginController {
                 new DefaultOAuth2TokenCallback(
                     issuerId,
                     subject,
+                    JOSEObjectType.JWT.getType(),
                     List.of(audience),
                     Map.of("acr", "Level4"),
                     expiry != null ? Long.parseLong(expiry) : 3600
