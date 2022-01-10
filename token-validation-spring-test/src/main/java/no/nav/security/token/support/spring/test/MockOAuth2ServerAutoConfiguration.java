@@ -35,6 +35,7 @@ public class MockOAuth2ServerAutoConfiguration {
         this.mockOAuth2Server = new MockOAuth2Server(
             new OAuth2Config(
                 properties.isInteractiveLogin(),
+                null,
                 new OAuth2TokenProvider(),
                 Set.of(new DefaultOAuth2TokenCallback())
             )
