@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 import static com.nimbusds.oauth2.sdk.token.AccessTokenType.BEARER;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-public class Oauth2ClientExchangeFilterFunction implements ExchangeFilterFunction {
+public class OAuth2ClientExchangeFilterFunction implements ExchangeFilterFunction {
 
     private static final Logger LOG = LoggerFactory.getLogger(Oauth2ClientExchangeFilterFunction.class);
 
@@ -21,7 +21,7 @@ public class Oauth2ClientExchangeFilterFunction implements ExchangeFilterFunctio
     private final ClientConfigurationPropertiesMatcher matcher;
     private final ClientConfigurationProperties configs;
 
-    public Oauth2ClientExchangeFilterFunction(ClientConfigurationProperties configs, OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
+    public OAuth2ClientExchangeFilterFunction(ClientConfigurationProperties configs, OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
         this.service = service;
         this.matcher = matcher;
         this.configs = configs;
