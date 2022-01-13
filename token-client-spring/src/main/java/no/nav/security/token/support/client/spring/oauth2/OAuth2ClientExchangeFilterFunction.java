@@ -15,7 +15,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 public class OAuth2ClientExchangeFilterFunction implements ExchangeFilterFunction {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Oauth2ClientExchangeFilterFunction.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OAuth2ClientExchangeFilterFunction.class);
 
     private final OAuth2AccessTokenService service;
     private final ClientConfigurationPropertiesMatcher matcher;
