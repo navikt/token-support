@@ -30,16 +30,10 @@ public class OAuth2ClientExchangeFilterFunction implements ExchangeFilterFunctio
     @Override
     public Mono<ClientResponse> filter(ClientRequest req, ExchangeFunction next) {
         var url = req.url();
-        LOG.trace("Sjekker token exchange for {}", url);
         var config = matcher.findProperties(configs, url);
         if (config.isPresent()) {
-            LOG.trace("Gjør token exchange for {} med konfig {}", url, config);
-            var token = service.getAccessToken(config.get()).getAccessToken();
-            LOG.trace("Token exchange for {} OK", url);
-            return next.exchange(ClientRequest.from(req).header(AUTHORIZATION, BEARER + token)
-                .build());
+            return next.exchange(ClientRequest.from(req).header(AUTHORIZATION, BEARER + " " + service.getAccessToken(config.get()).getAccessToken()).build());
         }
-        LOG.trace("Ingen token exchange for {}", url);
         return next.exchange(ClientRequest.from(req).build());
     }
 
