@@ -19,7 +19,8 @@ import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 
-@SpringBootTest(classes = { OAuth2ClientConfiguration.class, RestTemplateAutoConfiguration.class })
+
+@SpringBootTest(classes = { ConfigurationWithCacheEnabled.class,OAuth2ClientConfiguration.class })
 @ActiveProfiles("test")
 class ClientConfigurationPropertiesTest {
 

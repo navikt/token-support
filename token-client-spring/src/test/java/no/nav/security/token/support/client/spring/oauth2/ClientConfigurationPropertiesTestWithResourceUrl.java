@@ -10,12 +10,14 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
-@SpringBootTest(classes = {OAuth2ClientConfiguration.class, RestTemplateAutoConfiguration.class})
+@SpringBootTest(classes = {OAuth2ClientConfiguration.class, ConfigurationWithCacheEnabled.class})
 @ActiveProfiles("test-withresourceurl")
 class ClientConfigurationPropertiesTestWithResourceUrl {
 

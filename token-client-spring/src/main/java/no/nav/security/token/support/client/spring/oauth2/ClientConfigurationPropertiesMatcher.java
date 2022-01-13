@@ -12,7 +12,7 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
  *
  * Default implementation that matcher host in request URL with the registration
  * name. Override for other strategies. Will typically be used with
- * {@link OAuth2ClientRequestInterceptor} or {@link Oauth2ClientExchangeFilterFunction}. Must be registered by the
+ * {@link OAuth2ClientRequestInterceptor} or {@link OAuth2ClientExchangeFilterFunction}. Must be registered by the
  * applications themselves, no automatic bean registration
  *
  */
@@ -20,7 +20,7 @@ public interface ClientConfigurationPropertiesMatcher {
 
     @Deprecated(since="1.3.9", forRemoval = true)
     default Optional<ClientProperties> findProperties(ClientConfigurationProperties properties, HttpRequest request) {
-        return Optional.ofNullable(properties.getRegistration().get(request.getURI().getHost()));
+        return findProperties(properties,request.getURI());
     }
     default Optional<ClientProperties> findProperties(ClientConfigurationProperties properties, URI uri) {
         return Optional.ofNullable(properties.getRegistration().get(uri.getHost()));

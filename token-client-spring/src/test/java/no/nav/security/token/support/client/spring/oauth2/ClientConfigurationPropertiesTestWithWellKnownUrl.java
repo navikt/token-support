@@ -21,8 +21,10 @@ import java.io.IOException;
 
 import static no.nav.security.token.support.client.spring.oauth2.TestUtils.jsonResponse;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
-@SpringBootTest(classes = {OAuth2ClientConfiguration.class, RestTemplateAutoConfiguration.class})
+@SpringBootTest(classes = {OAuth2ClientConfiguration.class, ConfigurationWithCacheEnabled.class})
 @ContextConfiguration(initializers = ClientConfigurationPropertiesTestWithWellKnownUrl.RandomPortInitializer.class)
 @ActiveProfiles("test-withwellknownurl")
 class ClientConfigurationPropertiesTestWithWellKnownUrl {
@@ -82,4 +84,3 @@ class ClientConfigurationPropertiesTestWithWellKnownUrl {
         }
     }
 }
-
