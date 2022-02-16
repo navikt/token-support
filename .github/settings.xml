@@ -38,11 +38,10 @@
                 </repository>
                 <repository>
                     <id>github</id>
-                    <name>GitHub</name>
+                    <name>gitHub</name>
                     <url>https://maven.pkg.github.com/navikt/token-support/</url>
                 </repository>
             </repositories>
         </profile>
     </profiles>
 </settings>
-
