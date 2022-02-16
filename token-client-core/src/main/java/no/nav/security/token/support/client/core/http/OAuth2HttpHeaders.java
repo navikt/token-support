@@ -1,16 +1,7 @@
 package no.nav.security.token.support.client.core.http;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
-
-@ToString
-@EqualsAndHashCode
 public class OAuth2HttpHeaders {
 
     private final Map<String, List<String>> headers;
@@ -31,6 +22,33 @@ public class OAuth2HttpHeaders {
     @SuppressWarnings("WeakerAccess")
     public Map<String, List<String>> headers() {
         return headers;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof OAuth2HttpHeaders)) return false;
+        final OAuth2HttpHeaders other = (OAuth2HttpHeaders) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$headers = this.headers;
+        final Object other$headers = other.headers;
+        if (this$headers == null ? other$headers != null : !this$headers.equals(other$headers)) return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof OAuth2HttpHeaders;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $headers = this.headers;
+        result = result * PRIME + ($headers == null ? 43 : $headers.hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "OAuth2HttpHeaders(headers=" + this.headers + ")";
     }
 
     @SuppressWarnings("WeakerAccess")

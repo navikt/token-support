@@ -1,10 +1,11 @@
 package no.nav.security.token.support.demo.spring.mockwebserver;
 
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,7 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Configuration
 public class MockWebServerConfiguration {
 
@@ -37,6 +37,7 @@ public class MockWebServerConfiguration {
         "}\n";
 
     private static final String TOKEN_ENDPOINT_URI = "/oauth2/v2.0/token";
+    private static final Logger log = LoggerFactory.getLogger(MockWebServerConfiguration.class);
     private final int port;
     private final MockWebServer server;
 

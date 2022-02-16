@@ -3,7 +3,6 @@ package no.nav.security.token.support.client.spring.oauth2;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import lombok.extern.slf4j.Slf4j;
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,7 +37,6 @@ import static no.nav.security.token.support.client.spring.oauth2.TestUtils.jsonR
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@Slf4j
 @SpringBootTest(classes = {ConfigurationWithCacheEnabled.class})
 @ActiveProfiles("test")
 class OAuth2AccessTokenServiceIntegrationTest {
@@ -51,6 +50,7 @@ class OAuth2AccessTokenServiceIntegrationTest {
         "    \"access_token\": \"<base64URL>\",\n" +
         "    \"refresh_token\": \"<base64URL>\"\n" +
         "}\n";
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(OAuth2AccessTokenServiceIntegrationTest.class);
 
     @MockBean
     private TokenValidationContextHolder tokenValidationContextHolder;

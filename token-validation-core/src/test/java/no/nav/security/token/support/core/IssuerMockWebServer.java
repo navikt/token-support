@@ -1,7 +1,6 @@
 package no.nav.security.token.support.core;
 
 import com.nimbusds.jose.util.IOUtils;
-import lombok.Data;
 import okhttp3.*;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -16,7 +15,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-@Data
 public class IssuerMockWebServer {
     private static final Logger log = LoggerFactory.getLogger(IssuerMockWebServer.class);
     private static final String DISCOVERY_PATH = "/.well-known/openid-configuration";
@@ -90,6 +88,80 @@ public class IssuerMockWebServer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public MockWebServer getServer() {
+        return this.server;
+    }
+
+    public MockWebServer getProxyServer() {
+        return this.proxyServer;
+    }
+
+    public boolean isStartProxyServer() {
+        return this.startProxyServer;
+    }
+
+    public void setServer(MockWebServer server) {
+        this.server = server;
+    }
+
+    public void setProxyServer(MockWebServer proxyServer) {
+        this.proxyServer = proxyServer;
+    }
+
+    public void setDiscoveryUrl(URL discoveryUrl) {
+        this.discoveryUrl = discoveryUrl;
+    }
+
+    public void setProxyUrl(URL proxyUrl) {
+        this.proxyUrl = proxyUrl;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof IssuerMockWebServer)) return false;
+        final IssuerMockWebServer other = (IssuerMockWebServer) o;
+        if (!other.canEqual((Object) this)) return false;
+        final Object this$server = this.getServer();
+        final Object other$server = other.getServer();
+        if (this$server == null ? other$server != null : !this$server.equals(other$server)) return false;
+        final Object this$proxyServer = this.getProxyServer();
+        final Object other$proxyServer = other.getProxyServer();
+        if (this$proxyServer == null ? other$proxyServer != null : !this$proxyServer.equals(other$proxyServer))
+            return false;
+        final Object this$discoveryUrl = this.getDiscoveryUrl();
+        final Object other$discoveryUrl = other.getDiscoveryUrl();
+        if (this$discoveryUrl == null ? other$discoveryUrl != null : !this$discoveryUrl.equals(other$discoveryUrl))
+            return false;
+        final Object this$proxyUrl = this.getProxyUrl();
+        final Object other$proxyUrl = other.getProxyUrl();
+        if (this$proxyUrl == null ? other$proxyUrl != null : !this$proxyUrl.equals(other$proxyUrl)) return false;
+        if (this.isStartProxyServer() != other.isStartProxyServer()) return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof IssuerMockWebServer;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $server = this.getServer();
+        result = result * PRIME + ($server == null ? 43 : $server.hashCode());
+        final Object $proxyServer = this.getProxyServer();
+        result = result * PRIME + ($proxyServer == null ? 43 : $proxyServer.hashCode());
+        final Object $discoveryUrl = this.getDiscoveryUrl();
+        result = result * PRIME + ($discoveryUrl == null ? 43 : $discoveryUrl.hashCode());
+        final Object $proxyUrl = this.getProxyUrl();
+        result = result * PRIME + ($proxyUrl == null ? 43 : $proxyUrl.hashCode());
+        result = result * PRIME + (this.isStartProxyServer() ? 79 : 97);
+        return result;
+    }
+
+    public String toString() {
+        return "IssuerMockWebServer(server=" + this.getServer() + ", proxyServer=" + this.getProxyServer() + ", discoveryUrl=" + this.getDiscoveryUrl() + ", proxyUrl=" + this.getProxyUrl() + ", startProxyServer=" + this.isStartProxyServer() + ")";
     }
 
     static class ProxyDispatcher extends Dispatcher {

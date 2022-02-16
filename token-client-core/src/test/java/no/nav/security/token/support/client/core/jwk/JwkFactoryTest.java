@@ -2,8 +2,8 @@ package no.nav.security.token.support.client.core.jwk;
 
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,11 +16,11 @@ import java.security.cert.CertificateException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 class JwkFactoryTest {
 
     private static final String KEY_STORE_FILE = "/selfsigned.jks";
     private static final String ALIAS = "client_assertion";
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(JwkFactoryTest.class);
 
     @Test
     void getKeyFromJwkFile() {
