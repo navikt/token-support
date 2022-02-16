@@ -160,8 +160,8 @@ This example shows
 - First method - An unprotected endpoint. No token is required to use this endpoint.
 - Second method - A protected endpoint. This endpoint will require a valid token from one of the configured issuers.
 - Third method - A protected endpoint. This endpoint will require a valid token from the "employee" or "manager" issuer.
-- Fourth method - A protected endpoint. This endpoint will require a valid token from the "manager" issuer and a claim where key is "acr" and value is "Level4" 
-
+- Fourth method - A protected endpoint. This endpoint will require a valid token from the "manager" issuer and a claim where key is "acr" and value is "Level4". 
+- Fifth method - A non-annotated endpoint. This endpoint will not be accessible from outside the server (will return a 501 NOT_IMPLEMENTED).
 ```java
 @Path("/rest")
 public class ProductResource {
@@ -197,6 +197,12 @@ public class ProductResource {
   @ProtectedWithClaims(issuer = "manager", claimMap = { "acr=Level4" })
   public void add(String id) {		
     return service.delete(id);   
+  }
+
+  @GET
+  @PATH("/product/{id}")
+  public void add(String id) {
+    return service.get(id);
   }
 }
 ```
