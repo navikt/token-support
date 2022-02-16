@@ -158,9 +158,9 @@ new ResourceConfig()
 This example shows
 
 - First method - An unprotected endpoint. No token is required to use this endpoint.
-- Second method - A protected endpoint. This endpoint will require a valid token from the "employee" issuer. 
-- Third method - A protected endpoint. This endpoint will require a valid token from one of the configured issuers.
-- Fourth method - A non-annotated endpoint. This endpoint will not be accessible from outside the server (will return a 501 NOT_IMPLEMENTED). 
+- Second method - A protected endpoint. This endpoint will require a valid token from one of the configured issuers.
+- Third method - A protected endpoint. This endpoint will require a valid token from the "employee" or "manager" issuer.
+- Fourth method - A protected endpoint. This endpoint will require a valid token from the "manager" issuer and a claim where key is "acr" and value is "Level4" 
 
 ```java
 @Path("/rest")
@@ -181,6 +181,16 @@ public class ProductResource {
   public Product add(Product product) {		
     return service.create(product);
   }
+
+  @PUT
+  @PATH("/product")
+  @RequiredIssuers(value = {
+          ProtectedWithClaims(issuer = "employee"),
+          ProtectedWithClaims(issuer = "manager")
+  })
+  public Product add(Product product) {
+    return service.update(product);
+  }
 	
   @DELETE
   @PATH("/product/{id}")
@@ -188,9 +198,12 @@ public class ProductResource {
   public void add(String id) {		
     return service.delete(id);   
   }
-
 }
 ```
+
+The claimMap in **`@ProtectedWithClaims`** can contain entries where the expected value is an asterisk, e.g.: **`"acr=*"`**. This will require that the claim is present in the token, without regards to its value.
+
+
 ### token-validation-ktor
 
 See demo application in **`token-validation-ktor-demo`** for example configurations and setups.
