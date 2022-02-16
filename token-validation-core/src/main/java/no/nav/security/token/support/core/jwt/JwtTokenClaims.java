@@ -53,13 +53,16 @@ public class JwtTokenClaims {
         if (claim == null) {
             return false;
         }
+        if (value.equals("*")) {
+            return true;
+        }
         if (claim instanceof String) {
             String claimAsString = (String) claim;
-            return claimAsString.equals(value) || value.equals("*");
+            return claimAsString.equals(value);
         }
         if (claim instanceof Collection<?>) {
             Collection<?> claimasList = (Collection<?>) claim;
-            return claimasList.contains(value) || (value.equals("*") && !claimasList.isEmpty());
+            return claimasList.contains(value);
         }
         return false;
     }

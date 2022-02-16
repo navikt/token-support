@@ -37,7 +37,7 @@ class JwtTokenClaimsTest {
         ).isTrue();
         assertThat(
             withClaim("emptyArrayClaim", List.of()).containsClaim("emptyArrayClaim", "*")
-        ).isFalse();
+        ).isTrue();
     }
 
     private JwtTokenClaims withClaim(String name, Object value) {
