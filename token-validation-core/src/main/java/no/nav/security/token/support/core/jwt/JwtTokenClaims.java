@@ -55,11 +55,11 @@ public class JwtTokenClaims {
         }
         if (claim instanceof String) {
             String claimAsString = (String) claim;
-            return claimAsString.equals(value);
+            return claimAsString.equals(value) || value.equals("*");
         }
         if (claim instanceof Collection<?>) {
             Collection<?> claimasList = (Collection<?>) claim;
-            return claimasList.contains(value);
+            return claimasList.contains(value) || (value.equals("*") && !claimasList.isEmpty());
         }
         return false;
     }

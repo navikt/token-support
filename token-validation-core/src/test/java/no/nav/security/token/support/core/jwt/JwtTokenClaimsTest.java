@@ -14,11 +14,30 @@ class JwtTokenClaimsTest {
     @Test
     void containsClaimShouldHandleBothStringAndListClaim() {
         assertThat(
-            withClaim("arrayClaim", List.of("1","2")).containsClaim("arrayClaim", "1")
+            withClaim("arrayClaim", List.of("1", "2")).containsClaim("arrayClaim", "1")
         ).isTrue();
         assertThat(
             withClaim("stringClaim", "1").containsClaim("stringClaim", "1")
         ).isTrue();
+    }
+
+    @Test
+    void containsClaimShouldHandleAsterisk() {
+        assertThat(
+            withClaim("stringClaim", "1").containsClaim("stringClaim", "*")
+        ).isTrue();
+        assertThat(
+            withClaim("emptyStringClaim", "").containsClaim("emptyStringClaim", "*")
+        ).isTrue();
+        assertThat(
+            withClaim("nullStringClaim", null).containsClaim("nullStringClaim", "*")
+        ).isFalse();
+        assertThat(
+            withClaim("arrayClaim", List.of("1", "2")).containsClaim("arrayClaim", "*")
+        ).isTrue();
+        assertThat(
+            withClaim("emptyArrayClaim", List.of()).containsClaim("emptyArrayClaim", "*")
+        ).isFalse();
     }
 
     private JwtTokenClaims withClaim(String name, Object value) {
