@@ -1,7 +1,6 @@
 package no.nav.security.token.support.core;
 
 import com.nimbusds.jose.util.IOUtils;
-import lombok.Data;
 import okhttp3.*;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -15,8 +14,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-@Data
 public class IssuerMockWebServer {
     private static final Logger log = LoggerFactory.getLogger(IssuerMockWebServer.class);
     private static final String DISCOVERY_PATH = "/.well-known/openid-configuration";
@@ -90,6 +89,55 @@ public class IssuerMockWebServer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public MockWebServer getServer() {
+        return this.server;
+    }
+
+    public MockWebServer getProxyServer() {
+        return this.proxyServer;
+    }
+
+    public boolean isStartProxyServer() {
+        return this.startProxyServer;
+    }
+
+    public void setServer(MockWebServer server) {
+        this.server = server;
+    }
+
+    public void setProxyServer(MockWebServer proxyServer) {
+        this.proxyServer = proxyServer;
+    }
+
+    public void setDiscoveryUrl(URL discoveryUrl) {
+        this.discoveryUrl = discoveryUrl;
+    }
+
+    public void setProxyUrl(URL proxyUrl) {
+        this.proxyUrl = proxyUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IssuerMockWebServer that = (IssuerMockWebServer) o;
+        return startProxyServer == that.startProxyServer &&
+            Objects.equals(server, that.server) &&
+            Objects.equals(proxyServer, that.proxyServer) &&
+            Objects.equals(discoveryUrl, that.discoveryUrl) &&
+            Objects.equals(proxyUrl, that.proxyUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(server, proxyServer, discoveryUrl, proxyUrl, startProxyServer);
+    }
+
+    public String toString() {
+        return "IssuerMockWebServer(server=" + this.getServer() + ", proxyServer=" + this.getProxyServer() + ", discoveryUrl=" + this.getDiscoveryUrl() + ", proxyUrl=" + this.getProxyUrl() + ", startProxyServer=" + this.isStartProxyServer() + ")";
     }
 
     static class ProxyDispatcher extends Dispatcher {

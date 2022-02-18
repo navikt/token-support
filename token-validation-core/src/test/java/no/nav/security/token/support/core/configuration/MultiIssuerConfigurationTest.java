@@ -1,11 +1,12 @@
 package no.nav.security.token.support.core.configuration;
 
 import com.nimbusds.jose.util.DefaultResourceRetriever;
-import lombok.extern.slf4j.Slf4j;
 import no.nav.security.token.support.core.IssuerMockWebServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -14,8 +15,8 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 class MultiIssuerConfigurationTest {
+    private static final Logger log = LoggerFactory.getLogger(MultiIssuerConfigurationTest.class);
     private IssuerMockWebServer issuerMockWebServer;
     private URL discoveryUrl;
     private URL proxyUrl;
@@ -70,5 +71,3 @@ class MultiIssuerConfigurationTest {
         assertThat(config.getResourceRetriever()).isNotNull();
     }
 }
-
-

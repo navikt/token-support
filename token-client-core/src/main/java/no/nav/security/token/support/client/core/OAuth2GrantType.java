@@ -19,12 +19,11 @@ public class OAuth2GrantType {
     }
 
     @Override
-    public boolean equals(Object o){
-        return Optional.ofNullable(o)
-            .filter(OAuth2GrantType.class::isInstance)
-            .map(OAuth2GrantType.class::cast)
-            .filter(grantType -> value.equals(grantType.getValue()))
-            .isPresent();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OAuth2GrantType that = (OAuth2GrantType) o;
+        return value.equals(that.value);
     }
 
     @Override

@@ -11,8 +11,6 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
-import lombok.AccessLevel;
-import lombok.Getter;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 
 import java.util.Collections;
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
     private final String issuer;
-    @Getter(AccessLevel.PROTECTED)
     private final RemoteJWKSet<SecurityContext> remoteJWKSet;
     private final List<String> defaultRequiredClaims = List.of("sub", "aud", "iss", "iat", "exp", "nbf");
     private final List<String> requiredClaims;
@@ -89,5 +86,9 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
         } catch (Throwable t) {
             throw new JwtTokenValidatorException("Token verification failed: " + t.getMessage(), t);
         }
+    }
+
+    protected RemoteJWKSet<SecurityContext> getRemoteJWKSet() {
+        return this.remoteJWKSet;
     }
 }

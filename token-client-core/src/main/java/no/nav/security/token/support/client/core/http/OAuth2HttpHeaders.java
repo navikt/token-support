@@ -1,16 +1,9 @@
 package no.nav.security.token.support.client.core.http;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import static java.lang.String.*;
 
-@ToString
-@EqualsAndHashCode
 public class OAuth2HttpHeaders {
 
     private final Map<String, List<String>> headers;
@@ -28,17 +21,33 @@ public class OAuth2HttpHeaders {
         return new Builder();
     }
 
-    @SuppressWarnings("WeakerAccess")
     public Map<String, List<String>> headers() {
         return headers;
     }
 
-    @SuppressWarnings("WeakerAccess")
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OAuth2HttpHeaders that = (OAuth2HttpHeaders) o;
+        return Objects.equals(headers, that.headers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(headers);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [headers=" + headers + "]";
+    }
+
     public static class Builder {
         private final TreeMap<String, List<String>> headersMap;
 
         public Builder() {
-            headersMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            headersMap = new TreeMap<>(CASE_INSENSITIVE_ORDER);
         }
 
         public Builder header(String name, String value) {

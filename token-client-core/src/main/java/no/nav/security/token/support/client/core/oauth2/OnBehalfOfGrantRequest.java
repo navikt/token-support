@@ -1,10 +1,10 @@
 package no.nav.security.token.support.client.core.oauth2;
 
-import lombok.EqualsAndHashCode;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
 
-@EqualsAndHashCode(callSuper = true)
+import java.util.Objects;
+
 public class OnBehalfOfGrantRequest extends AbstractOAuth2GrantRequest {
     private final String assertion;
 
@@ -15,5 +15,19 @@ public class OnBehalfOfGrantRequest extends AbstractOAuth2GrantRequest {
 
     String getAssertion() {
         return this.assertion;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        OnBehalfOfGrantRequest that = (OnBehalfOfGrantRequest) o;
+        return Objects.equals(assertion, that.assertion);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), assertion);
     }
 }

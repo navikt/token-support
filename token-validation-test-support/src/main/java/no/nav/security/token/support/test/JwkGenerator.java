@@ -3,6 +3,7 @@ package no.nav.security.token.support.test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -33,7 +34,7 @@ public class JwkGenerator {
     public static JWKSet getJWKSet() {
         try {
             return JWKSet.parse(IOUtils.readInputStreamToString(
-                    JwkGenerator.class.getResourceAsStream(DEFAULT_JWKSET_FILE), Charset.forName("UTF-8")));
+                    JwkGenerator.class.getResourceAsStream(DEFAULT_JWKSET_FILE), StandardCharsets.UTF_8));
         } catch (IOException | ParseException io) {
             throw new RuntimeException(io);
         }

@@ -1,7 +1,5 @@
 package no.nav.security.token.support.spring.test;
 
-import lombok.Getter;
-import lombok.ToString;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.OAuth2Config;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
@@ -78,8 +76,6 @@ public class MockOAuth2ServerAutoConfiguration {
     }
 }
 
-@ToString
-@Getter
 @ConstructorBinding
 @ConfigurationProperties(MockOAuth2ServerProperties.PREFIX)
 class MockOAuth2ServerProperties {
@@ -91,5 +87,18 @@ class MockOAuth2ServerProperties {
     MockOAuth2ServerProperties(int port, boolean interactiveLogin) {
         this.port = port;
         this.interactiveLogin = interactiveLogin;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
+    public boolean isInteractiveLogin() {
+        return this.interactiveLogin;
+    }
+
+    @Override
+    public String toString() {
+        return "MockOAuth2ServerProperties(port=" + this.getPort() + ", interactiveLogin=" + this.isInteractiveLogin() + ")";
     }
 }

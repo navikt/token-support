@@ -36,6 +36,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -258,7 +259,7 @@ class JwtTokenValidationFilterTest {
         }
 
         private String getContentFromFile() throws IOException {
-            return IOUtils.readInputStreamToString(getInputStream("/mockmetadata.json"), Charset.forName("UTF-8"));
+            return IOUtils.readInputStreamToString(getInputStream("/mockmetadata.json"), StandardCharsets.UTF_8);
         }
 
         private InputStream getInputStream(String file) {

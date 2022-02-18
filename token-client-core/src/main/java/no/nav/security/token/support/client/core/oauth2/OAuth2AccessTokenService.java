@@ -1,11 +1,12 @@
 package no.nav.security.token.support.client.core.oauth2;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import lombok.extern.slf4j.Slf4j;
 import no.nav.security.token.support.client.core.ClientProperties;
 import no.nav.security.token.support.client.core.OAuth2ClientException;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +14,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @SuppressWarnings("WeakerAccess")
-@Slf4j
 public class OAuth2AccessTokenService {
 
     public static final List<OAuth2GrantType> SUPPORTED_GRANT_TYPES = Arrays.asList(
@@ -21,6 +21,7 @@ public class OAuth2AccessTokenService {
         OAuth2GrantType.CLIENT_CREDENTIALS,
         OAuth2GrantType.TOKEN_EXCHANGE
     );
+    private static final Logger log = LoggerFactory.getLogger(OAuth2AccessTokenService.class);
 
     private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache;
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;
@@ -129,5 +130,18 @@ public class OAuth2AccessTokenService {
         return new OnBehalfOfGrantRequest(clientProperties, tokenResolver.token()
             .orElseThrow(() -> new OAuth2ClientException("no authenticated jwt token found in validation context, " +
                 "cannot do on-behalf-of")));
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [" +
+            "                            clientCredentialsGrantCache=" + clientCredentialsGrantCache +
+            ",                             onBehalfOfGrantCache=" + onBehalfOfGrantCache +
+            ",                             tokenExchangeClient=" + tokenExchangeClient +
+            ",                             tokenResolver=" + tokenResolver +
+            ",                             onBehalfOfTokenClient=" + onBehalfOfTokenClient +
+            ",                             clientCredentialsTokenClient=" + clientCredentialsTokenClient +
+            ",                             exchangeGrantCache=" + exchangeGrantCache +
+            "]";
     }
 }

@@ -4,7 +4,8 @@ package no.nav.security.token.support.client.core.jwk;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,9 +23,9 @@ import java.text.ParseException;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@Slf4j
 public class JwkFactory {
 
+    private static final Logger log = LoggerFactory.getLogger(JwkFactory.class);
     private static final boolean USE_CERTIFICATE_SHA1_THUMBPRINT = true;
 
     public static RSAKey fromJsonFile(String filePath){
@@ -102,5 +103,3 @@ public class JwkFactory {
         }
     }
 }
-
-
