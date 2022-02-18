@@ -55,7 +55,7 @@ class ClientConfigurationPropertiesTestWithWellKnownUrl {
     public static class RandomPortInitializer
         implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-        private String wellKnown = "{\n" +
+        private final String wellKnown = "{\n" +
             "  \"issuer\" : \"https://someissuer\",\n" +
             "  \"token_endpoint\" : \"https://someissuer/token\",\n" +
             "  \"jwks_uri\" : \"https://someissuer/jwks\",\n" +
@@ -82,4 +82,3 @@ class ClientConfigurationPropertiesTestWithWellKnownUrl {
         }
     }
 }
-

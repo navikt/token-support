@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -113,7 +114,7 @@ class JwtTokenRetrieverTest {
         }
 
         private String getContentFromFile() throws IOException {
-            return IOUtils.readInputStreamToString(getInputStream("/metadata.json"), Charset.forName("UTF-8"));
+            return IOUtils.readInputStreamToString(getInputStream("/metadata.json"), StandardCharsets.UTF_8);
         }
 
         private InputStream getInputStream(String file) {

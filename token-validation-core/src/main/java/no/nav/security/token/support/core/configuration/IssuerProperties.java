@@ -182,35 +182,21 @@ public class IssuerProperties {
             this.refreshTime = refreshTime;
         }
 
-        public boolean equals(final Object o) {
-            if (o == this) return true;
-            if (!(o instanceof JwksCache)) return false;
-            final JwksCache other = (JwksCache) o;
-            if (!other.canEqual((Object) this)) return false;
-            final Object this$lifespan = this.getLifespan();
-            final Object other$lifespan = other.getLifespan();
-            if (this$lifespan == null ? other$lifespan != null : !this$lifespan.equals(other$lifespan)) return false;
-            final Object this$refreshTime = this.getRefreshTime();
-            final Object other$refreshTime = other.getRefreshTime();
-            if (this$refreshTime == null ? other$refreshTime != null : !this$refreshTime.equals(other$refreshTime))
-                return false;
-            return true;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            JwksCache jwksCache = (JwksCache) o;
+            return lifespan.equals(jwksCache.lifespan) && refreshTime.equals(jwksCache.refreshTime);
         }
 
-        protected boolean canEqual(final Object other) {
-            return other instanceof JwksCache;
-        }
-
+        @Override
         public int hashCode() {
-            final int PRIME = 59;
-            int result = 1;
-            final Object $lifespan = this.getLifespan();
-            result = result * PRIME + ($lifespan == null ? 43 : $lifespan.hashCode());
-            final Object $refreshTime = this.getRefreshTime();
-            result = result * PRIME + ($refreshTime == null ? 43 : $refreshTime.hashCode());
-            return result;
+            return Objects.hash(lifespan, refreshTime);
         }
 
+        @Override
         public String toString() {
             return "IssuerProperties.JwksCache(lifespan=" + this.getLifespan() + ", refreshTime=" + this.getRefreshTime() + ")";
         }

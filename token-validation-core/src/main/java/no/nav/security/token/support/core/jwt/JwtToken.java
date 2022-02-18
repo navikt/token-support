@@ -8,8 +8,8 @@ import java.text.ParseException;
 
 public class JwtToken {
 
-    private String encodedToken;
-    private JWT jwt;
+    private final String encodedToken;
+    private final JWT jwt;
     private final JwtTokenClaims jwtTokenClaims;
 
     public JwtToken(String encodedToken) {

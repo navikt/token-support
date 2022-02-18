@@ -46,10 +46,10 @@ public class JwtTokenAnnotationHandler {
             return true;
         }
         if (a instanceof RequiredIssuers) {
-            return handleRequiredIssuers(RequiredIssuers.class.cast(a));
+            return handleRequiredIssuers((RequiredIssuers) a);
         }
         if (a instanceof ProtectedWithClaims) {
-            return handleProtectedWithClaims(ProtectedWithClaims.class.cast(a));
+            return handleProtectedWithClaims((ProtectedWithClaims) a);
         }
         if (a instanceof Protected) {
             return handleProtected();

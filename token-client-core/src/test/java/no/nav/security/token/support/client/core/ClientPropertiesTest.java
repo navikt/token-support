@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class ClientPropertiesTest {
 
-    private String wellKnownJson =
+    private final String wellKnownJson =
         "{\n" +
             "  \"issuer\" : \"https://someissuer\",\n" +
             "  \"token_endpoint\" : \"https://someissuer/token\",\n" +

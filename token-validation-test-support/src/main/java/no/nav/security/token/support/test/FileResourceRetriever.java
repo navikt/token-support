@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jose.util.Resource;
@@ -36,10 +37,10 @@ public class FileResourceRetriever extends ProxyAwareResourceRetriever {
     private String getContentFromFile(URL url){
     	try {
 	    	if (url.toString().contains("metadata")) {
-	            return IOUtils.readInputStreamToString( getInputStream(metadataFile), Charset.forName("UTF-8"));
+	            return IOUtils.readInputStreamToString( getInputStream(metadataFile), StandardCharsets.UTF_8);
 	        }
 	        if (url.toString().contains("jwks")) {
-	            return IOUtils.readInputStreamToString(getInputStream(jwksFile), Charset.forName("UTF-8"));
+	            return IOUtils.readInputStreamToString(getInputStream(jwksFile), StandardCharsets.UTF_8);
 	        }
 	        return null;
     	 } catch (IOException e) {

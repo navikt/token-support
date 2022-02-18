@@ -114,6 +114,7 @@ public class ClientAuthenticationProperties {
         return Objects.hash(clientId, clientAuthMethod, clientSecret, clientJwk, clientRsaKey);
     }
 
+    @Override
     public String toString() {
         return "ClientAuthenticationProperties(clientId=" + this.getClientId() + ", clientAuthMethod=" + this.getClientAuthMethod() + ", clientSecret=" + this.getClientSecret() + ", clientJwk=" + this.getClientJwk() + ", clientRsaKey=" + this.getClientRsaKey() + ")";
     }
@@ -155,6 +156,7 @@ public class ClientAuthenticationProperties {
             return new ClientAuthenticationProperties(clientId, clientAuthMethod, clientSecret, clientJwk);
         }
 
+        @Override
         public String toString() {
             return "ClientAuthenticationProperties.ClientAuthenticationPropertiesBuilder(clientId=" + this.clientId + ", clientAuthMethod=" + this.clientAuthMethod + ", clientSecret=" + this.clientSecret + ", clientJwk=" + this.clientJwk + ")";
         }

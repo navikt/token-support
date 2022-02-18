@@ -145,6 +145,7 @@ public class ClientProperties {
         return Objects.hash(tokenEndpointUrl, grantType, scope, authentication, resourceUrl, tokenExchange, wellKnownUrl, authorizationServerMetadata, resourceRetriever);
     }
 
+    @Override
     public String toString() {
         return "ClientProperties(tokenEndpointUrl=" + this.getTokenEndpointUrl() + ", grantType=" + this.getGrantType() + ", scope=" + this.getScope() + ", authentication=" + this.getAuthentication() + ", resourceUrl=" + this.getResourceUrl() + ", tokenExchange=" + this.getTokenExchange() + ", wellKnownUrl=" + this.getWellKnownUrl() + ", authorizationServerMetadata=" + this.getAuthorizationServerMetadata() + ", resourceRetriever=" + this.getResourceRetriever() + ")";
     }
@@ -190,14 +191,13 @@ public class ClientProperties {
             if (!(o instanceof TokenExchangeProperties))
                 return false;
             final TokenExchangeProperties other = (TokenExchangeProperties) o;
-            if (!other.canEqual((Object) this)) return false;
+            if (!other.canEqual(this)) return false;
             final Object this$audience = this.getAudience();
             final Object other$audience = other.getAudience();
             if (this$audience == null ? other$audience != null : !this$audience.equals(other$audience)) return false;
             final Object this$resource = this.getResource();
             final Object other$resource = other.getResource();
-            if (this$resource == null ? other$resource != null : !this$resource.equals(other$resource)) return false;
-            return true;
+            return this$resource == null ? other$resource == null : this$resource.equals(other$resource);
         }
 
         protected boolean canEqual(final Object other) {
@@ -243,6 +243,7 @@ public class ClientProperties {
                 return new TokenExchangeProperties(audience, resource);
             }
 
+            @Override
             public String toString() {
                 return "ClientProperties.TokenExchangeProperties.TokenExchangePropertiesBuilder(audience=" + this.audience + ", resource=" + this.resource + ")";
             }

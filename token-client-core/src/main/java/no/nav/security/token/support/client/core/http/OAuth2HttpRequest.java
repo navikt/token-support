@@ -6,9 +6,9 @@ import java.util.Map;
 
 public class OAuth2HttpRequest {
 
-    private URI tokenEndpointUrl;
-    private OAuth2HttpHeaders oAuth2HttpHeaders;
-    private Map<String, String> formParameters;
+    private final URI tokenEndpointUrl;
+    private final OAuth2HttpHeaders oAuth2HttpHeaders;
+    private final Map<String, String> formParameters;
 
     OAuth2HttpRequest(URI tokenEndpointUrl, OAuth2HttpHeaders oAuth2HttpHeaders, Map<String, String> formParameters) {
         this.tokenEndpointUrl = tokenEndpointUrl;
@@ -93,7 +93,7 @@ public class OAuth2HttpRequest {
                 default:
                     formParameters = new java.util.LinkedHashMap<String, String>(this.formParameters$key.size() < 1073741824 ? 1 + this.formParameters$key.size() + (this.formParameters$key.size() - 3) / 3 : Integer.MAX_VALUE);
                     for (int $i = 0; $i < this.formParameters$key.size(); $i++)
-                        formParameters.put(this.formParameters$key.get($i), (String) this.formParameters$value.get($i));
+                        formParameters.put(this.formParameters$key.get($i), this.formParameters$value.get($i));
                     formParameters = java.util.Collections.unmodifiableMap(formParameters);
             }
 
