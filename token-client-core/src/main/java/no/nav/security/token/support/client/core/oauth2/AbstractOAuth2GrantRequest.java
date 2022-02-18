@@ -36,4 +36,9 @@ abstract class AbstractOAuth2GrantRequest {
     public int hashCode() {
         return Objects.hash(oAuth2GrantType, clientProperties);
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [oAuth2GrantType=" + oAuth2GrantType + ", clientProperties=" + clientProperties + "]";
+    }
 }
