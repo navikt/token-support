@@ -101,4 +101,9 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
     }
 
     protected abstract Map<String, String> formParameters(T grantRequest);
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [oAuth2HttpClient=" + oAuth2HttpClient + "]";
+    }
 }
