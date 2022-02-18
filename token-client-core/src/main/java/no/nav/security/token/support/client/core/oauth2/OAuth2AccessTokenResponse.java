@@ -54,6 +54,7 @@ public class OAuth2AccessTokenResponse {
         return this.additonalParameters;
     }
 
+    @Override
     public String toString() {
         return "OAuth2AccessTokenResponse(accessToken=" + this.getAccessToken() + ", expiresAt=" + this.getExpiresAt() + ", expiresIn=" + this.getExpiresIn() + ", additonalParameters=" + this.getAdditonalParameters() + ")";
     }
@@ -91,6 +92,7 @@ public class OAuth2AccessTokenResponse {
             return new OAuth2AccessTokenResponse(accessToken, expiresAt, expiresIn, additonalParameters);
         }
 
+        @Override
         public String toString() {
             return "OAuth2AccessTokenResponse.OAuth2AccessTokenResponseBuilder(accessToken=" + this.accessToken + ", expiresAt=" + this.expiresAt + ", expiresIn=" + this.expiresIn + ", additonalParameters=" + this.additonalParameters + ")";
         }

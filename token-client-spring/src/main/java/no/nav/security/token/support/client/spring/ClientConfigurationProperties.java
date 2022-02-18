@@ -41,6 +41,7 @@ public class ClientConfigurationProperties {
         return Objects.hash(registration);
     }
 
+    @@Override
     public String toString() {
         return "ClientConfigurationProperties(registration=" + this.getRegistration() + ")";
     }

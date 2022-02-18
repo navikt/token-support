@@ -186,34 +186,20 @@ public class ClientProperties {
             return this.resource;
         }
 
-        public boolean equals(final Object o) {
-            if (o == this) return true;
-            if (!(o instanceof TokenExchangeProperties))
-                return false;
-            final TokenExchangeProperties other = (TokenExchangeProperties) o;
-            if (!other.canEqual(this)) return false;
-            final Object this$audience = this.getAudience();
-            final Object other$audience = other.getAudience();
-            if (this$audience == null ? other$audience != null : !this$audience.equals(other$audience)) return false;
-            final Object this$resource = this.getResource();
-            final Object other$resource = other.getResource();
-            return this$resource == null ? other$resource == null : this$resource.equals(other$resource);
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TokenExchangeProperties that = (TokenExchangeProperties) o;
+            return audience.equals(that.audience) && resource.equals(that.resource);
         }
 
-        protected boolean canEqual(final Object other) {
-            return other instanceof TokenExchangeProperties;
-        }
-
+        @Override
         public int hashCode() {
-            final int PRIME = 59;
-            int result = 1;
-            final Object $audience = this.getAudience();
-            result = result * PRIME + ($audience == null ? 43 : $audience.hashCode());
-            final Object $resource = this.getResource();
-            result = result * PRIME + ($resource == null ? 43 : $resource.hashCode());
-            return result;
+            return Objects.hash(audience, resource);
         }
 
+        @Override
         public String toString() {
             return "ClientProperties.TokenExchangeProperties(audience=" + this.getAudience() + ", resource=" + this.getResource() + ")";
         }
@@ -301,6 +287,7 @@ public class ClientProperties {
             return new ClientProperties(tokenEndpointUrl, wellKnownUrl, grantType, scope, authentication, resourceUrl, tokenExchange);
         }
 
+        @Override
         public String toString() {
             return "ClientProperties.ClientPropertiesBuilder(tokenEndpointUrl=" + this.tokenEndpointUrl + ", wellKnownUrl=" + this.wellKnownUrl + ", grantType=" + this.grantType + ", scope=" + this.scope + ", authentication=" + this.authentication + ", resourceUrl=" + this.resourceUrl + ", tokenExchange=" + this.tokenExchange + ")";
         }

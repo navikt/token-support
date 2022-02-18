@@ -112,6 +112,7 @@ public class IssuerProperties {
         this.jwksCache = jwksCache;
     }
 
+    @Override
     public String toString() {
         return "IssuerProperties(discoveryUrl=" + this.getDiscoveryUrl() + ", acceptedAudience=" + this.getAcceptedAudience() + ", cookieName=" + this.getCookieName() + ", proxyUrl=" + this.getProxyUrl() + ", usePlaintextForHttps=" + this.isUsePlaintextForHttps() + ", validation=" + this.getValidation() + ", jwksCache=" + this.getJwksCache() + ")";
     }
@@ -148,6 +149,7 @@ public class IssuerProperties {
             return Objects.hash(optionalClaims);
         }
 
+        @Override
         public String toString() {
             return "IssuerProperties.Validation(optionalClaims=" + this.getOptionalClaims() + ")";
         }
@@ -198,7 +200,7 @@ public class IssuerProperties {
 
         @Override
         public String toString() {
-            return "IssuerProperties.JwksCache(lifespan=" + this.getLifespan() + ", refreshTime=" + this.getRefreshTime() + ")";
+            return getClass().getSimpleName() + " [lifespan=" + lifespan + ",refreshTime=" + refreshTime + "]";
         }
     }
 }

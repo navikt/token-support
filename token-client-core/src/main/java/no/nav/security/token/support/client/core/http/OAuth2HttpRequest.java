@@ -100,6 +100,7 @@ public class OAuth2HttpRequest {
             return new OAuth2HttpRequest(tokenEndpointUrl, oAuth2HttpHeaders, formParameters);
         }
 
+        @Override
         public String toString() {
             return "OAuth2HttpRequest.OAuth2HttpRequestBuilder(tokenEndpointUrl=" + this.tokenEndpointUrl + ", oAuth2HttpHeaders=" + this.oAuth2HttpHeaders + ", formParameters$key=" + this.formParameters$key + ", formParameters$value=" + this.formParameters$value + ")";
         }
