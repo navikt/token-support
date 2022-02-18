@@ -131,4 +131,17 @@ public class OAuth2AccessTokenService {
             .orElseThrow(() -> new OAuth2ClientException("no authenticated jwt token found in validation context, " +
                 "cannot do on-behalf-of")));
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [" +
+            "                            clientCredentialsGrantCache=" + clientCredentialsGrantCache +
+            ",                             onBehalfOfGrantCache=" + onBehalfOfGrantCache +
+            ",                             tokenExchangeClient=" + tokenExchangeClient +
+            ",                             tokenResolver=" + tokenResolver +
+            ",                             onBehalfOfTokenClient=" + onBehalfOfTokenClient +
+            ",                             clientCredentialsTokenClient=" + clientCredentialsTokenClient +
+            ",                             exchangeGrantCache=" + exchangeGrantCache +
+            "]";
+    }
 }

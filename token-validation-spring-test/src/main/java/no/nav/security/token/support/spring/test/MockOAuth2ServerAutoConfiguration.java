@@ -97,6 +97,7 @@ class MockOAuth2ServerProperties {
         return this.interactiveLogin;
     }
 
+    @Override
     public String toString() {
         return "MockOAuth2ServerProperties(port=" + this.getPort() + ", interactiveLogin=" + this.isInteractiveLogin() + ")";
     }
