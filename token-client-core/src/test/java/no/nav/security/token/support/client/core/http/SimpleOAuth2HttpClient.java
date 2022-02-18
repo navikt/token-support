@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class SimpleOAuth2HttpClient implements OAuth2HttpClient {
 
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(SimpleOAuth2HttpClient.class);
+    private static final Logger log = LoggerFactory.getLogger(SimpleOAuth2HttpClient.class);
     private final ObjectMapper objectMapper;
 
     public SimpleOAuth2HttpClient() {

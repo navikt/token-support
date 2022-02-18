@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class IssuerMockWebServer {
     private static final Logger log = LoggerFactory.getLogger(IssuerMockWebServer.class);
@@ -118,46 +119,21 @@ public class IssuerMockWebServer {
         this.proxyUrl = proxyUrl;
     }
 
-    public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof IssuerMockWebServer)) return false;
-        final IssuerMockWebServer other = (IssuerMockWebServer) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$server = this.getServer();
-        final Object other$server = other.getServer();
-        if (this$server == null ? other$server != null : !this$server.equals(other$server)) return false;
-        final Object this$proxyServer = this.getProxyServer();
-        final Object other$proxyServer = other.getProxyServer();
-        if (this$proxyServer == null ? other$proxyServer != null : !this$proxyServer.equals(other$proxyServer))
-            return false;
-        final Object this$discoveryUrl = this.getDiscoveryUrl();
-        final Object other$discoveryUrl = other.getDiscoveryUrl();
-        if (this$discoveryUrl == null ? other$discoveryUrl != null : !this$discoveryUrl.equals(other$discoveryUrl))
-            return false;
-        final Object this$proxyUrl = this.getProxyUrl();
-        final Object other$proxyUrl = other.getProxyUrl();
-        if (this$proxyUrl == null ? other$proxyUrl != null : !this$proxyUrl.equals(other$proxyUrl)) return false;
-        if (this.isStartProxyServer() != other.isStartProxyServer()) return false;
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IssuerMockWebServer that = (IssuerMockWebServer) o;
+        return startProxyServer == that.startProxyServer &&
+            Objects.equals(server, that.server) &&
+            Objects.equals(proxyServer, that.proxyServer) &&
+            Objects.equals(discoveryUrl, that.discoveryUrl) &&
+            Objects.equals(proxyUrl, that.proxyUrl);
     }
 
-    protected boolean canEqual(final Object other) {
-        return other instanceof IssuerMockWebServer;
-    }
-
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $server = this.getServer();
-        result = result * PRIME + ($server == null ? 43 : $server.hashCode());
-        final Object $proxyServer = this.getProxyServer();
-        result = result * PRIME + ($proxyServer == null ? 43 : $proxyServer.hashCode());
-        final Object $discoveryUrl = this.getDiscoveryUrl();
-        result = result * PRIME + ($discoveryUrl == null ? 43 : $discoveryUrl.hashCode());
-        final Object $proxyUrl = this.getProxyUrl();
-        result = result * PRIME + ($proxyUrl == null ? 43 : $proxyUrl.hashCode());
-        result = result * PRIME + (this.isStartProxyServer() ? 79 : 97);
-        return result;
+        return Objects.hash(server, proxyServer, discoveryUrl, proxyUrl, startProxyServer);
     }
 
     public String toString() {

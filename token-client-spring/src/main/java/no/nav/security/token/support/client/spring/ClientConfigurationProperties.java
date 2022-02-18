@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Validated
@@ -27,28 +28,17 @@ public class ClientConfigurationProperties {
         return this.registration;
     }
 
-    public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof ClientConfigurationProperties)) return false;
-        final ClientConfigurationProperties other = (ClientConfigurationProperties) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$registration = this.getRegistration();
-        final Object other$registration = other.getRegistration();
-        if (this$registration == null ? other$registration != null : !this$registration.equals(other$registration))
-            return false;
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientConfigurationProperties that = (ClientConfigurationProperties) o;
+        return Objects.equals(registration, that.registration);
     }
 
-    protected boolean canEqual(final Object other) {
-        return other instanceof ClientConfigurationProperties;
-    }
-
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $registration = this.getRegistration();
-        result = result * PRIME + ($registration == null ? 43 : $registration.hashCode());
-        return result;
+        return Objects.hash(registration);
     }
 
     public String toString() {

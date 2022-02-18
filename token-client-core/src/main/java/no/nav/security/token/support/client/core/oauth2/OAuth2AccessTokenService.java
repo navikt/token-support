@@ -6,6 +6,7 @@ import no.nav.security.token.support.client.core.OAuth2ClientException;
 import no.nav.security.token.support.client.core.OAuth2GrantType;
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +21,7 @@ public class OAuth2AccessTokenService {
         OAuth2GrantType.CLIENT_CREDENTIALS,
         OAuth2GrantType.TOKEN_EXCHANGE
     );
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(OAuth2AccessTokenService.class);
+    private static final Logger log = LoggerFactory.getLogger(OAuth2AccessTokenService.class);
 
     private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache;
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;

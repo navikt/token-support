@@ -124,74 +124,25 @@ public class ClientProperties {
         return this.resourceRetriever;
     }
 
-    public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof ClientProperties)) return false;
-        final ClientProperties other = (ClientProperties) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$tokenEndpointUrl = this.getTokenEndpointUrl();
-        final Object other$tokenEndpointUrl = other.getTokenEndpointUrl();
-        if (this$tokenEndpointUrl == null ? other$tokenEndpointUrl != null : !this$tokenEndpointUrl.equals(other$tokenEndpointUrl))
-            return false;
-        final Object this$grantType = this.getGrantType();
-        final Object other$grantType = other.getGrantType();
-        if (this$grantType == null ? other$grantType != null : !this$grantType.equals(other$grantType)) return false;
-        final Object this$scope = this.getScope();
-        final Object other$scope = other.getScope();
-        if (this$scope == null ? other$scope != null : !this$scope.equals(other$scope)) return false;
-        final Object this$authentication = this.getAuthentication();
-        final Object other$authentication = other.getAuthentication();
-        if (this$authentication == null ? other$authentication != null : !this$authentication.equals(other$authentication))
-            return false;
-        final Object this$resourceUrl = this.getResourceUrl();
-        final Object other$resourceUrl = other.getResourceUrl();
-        if (this$resourceUrl == null ? other$resourceUrl != null : !this$resourceUrl.equals(other$resourceUrl))
-            return false;
-        final Object this$tokenExchange = this.getTokenExchange();
-        final Object other$tokenExchange = other.getTokenExchange();
-        if (this$tokenExchange == null ? other$tokenExchange != null : !this$tokenExchange.equals(other$tokenExchange))
-            return false;
-        final Object this$wellKnownUrl = this.getWellKnownUrl();
-        final Object other$wellKnownUrl = other.getWellKnownUrl();
-        if (this$wellKnownUrl == null ? other$wellKnownUrl != null : !this$wellKnownUrl.equals(other$wellKnownUrl))
-            return false;
-        final Object this$authorizationServerMetadata = this.getAuthorizationServerMetadata();
-        final Object other$authorizationServerMetadata = other.getAuthorizationServerMetadata();
-        if (this$authorizationServerMetadata == null ? other$authorizationServerMetadata != null : !this$authorizationServerMetadata.equals(other$authorizationServerMetadata))
-            return false;
-        final Object this$resourceRetriever = this.getResourceRetriever();
-        final Object other$resourceRetriever = other.getResourceRetriever();
-        if (this$resourceRetriever == null ? other$resourceRetriever != null : !this$resourceRetriever.equals(other$resourceRetriever))
-            return false;
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientProperties that = (ClientProperties) o;
+        return Objects.equals(tokenEndpointUrl, that.tokenEndpointUrl) &&
+            Objects.equals(grantType, that.grantType) &&
+            Objects.equals(scope, that.scope) &&
+            Objects.equals(authentication, that.authentication) &&
+            Objects.equals(resourceUrl, that.resourceUrl) &&
+            Objects.equals(tokenExchange, that.tokenExchange) &&
+            Objects.equals(wellKnownUrl, that.wellKnownUrl) &&
+            Objects.equals(authorizationServerMetadata, that.authorizationServerMetadata) &&
+            Objects.equals(resourceRetriever, that.resourceRetriever);
     }
 
-    protected boolean canEqual(final Object other) {
-        return other instanceof ClientProperties;
-    }
-
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $tokenEndpointUrl = this.getTokenEndpointUrl();
-        result = result * PRIME + ($tokenEndpointUrl == null ? 43 : $tokenEndpointUrl.hashCode());
-        final Object $grantType = this.getGrantType();
-        result = result * PRIME + ($grantType == null ? 43 : $grantType.hashCode());
-        final Object $scope = this.getScope();
-        result = result * PRIME + ($scope == null ? 43 : $scope.hashCode());
-        final Object $authentication = this.getAuthentication();
-        result = result * PRIME + ($authentication == null ? 43 : $authentication.hashCode());
-        final Object $resourceUrl = this.getResourceUrl();
-        result = result * PRIME + ($resourceUrl == null ? 43 : $resourceUrl.hashCode());
-        final Object $tokenExchange = this.getTokenExchange();
-        result = result * PRIME + ($tokenExchange == null ? 43 : $tokenExchange.hashCode());
-        final Object $wellKnownUrl = this.getWellKnownUrl();
-        result = result * PRIME + ($wellKnownUrl == null ? 43 : $wellKnownUrl.hashCode());
-        final Object $authorizationServerMetadata = this.getAuthorizationServerMetadata();
-        result = result * PRIME + ($authorizationServerMetadata == null ? 43 : $authorizationServerMetadata.hashCode());
-        final Object $resourceRetriever = this.getResourceRetriever();
-        result = result * PRIME + ($resourceRetriever == null ? 43 : $resourceRetriever.hashCode());
-        return result;
+        return Objects.hash(tokenEndpointUrl, grantType, scope, authentication, resourceUrl, tokenExchange, wellKnownUrl, authorizationServerMetadata, resourceRetriever);
     }
 
     public String toString() {

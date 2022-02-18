@@ -4,6 +4,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +21,7 @@ class JwkFactoryTest {
 
     private static final String KEY_STORE_FILE = "/selfsigned.jks";
     private static final String ALIAS = "client_assertion";
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(JwkFactoryTest.class);
+    private static final Logger log = LoggerFactory.getLogger(JwkFactoryTest.class);
 
     @Test
     void getKeyFromJwkFile() {

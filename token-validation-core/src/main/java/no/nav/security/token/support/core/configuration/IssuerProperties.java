@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class IssuerProperties {
@@ -134,28 +135,17 @@ public class IssuerProperties {
             this.optionalClaims = optionalClaims;
         }
 
-        public boolean equals(final Object o) {
-            if (o == this) return true;
-            if (!(o instanceof Validation)) return false;
-            final Validation other = (Validation) o;
-            if (!other.canEqual((Object) this)) return false;
-            final Object this$optionalClaims = this.getOptionalClaims();
-            final Object other$optionalClaims = other.getOptionalClaims();
-            if (this$optionalClaims == null ? other$optionalClaims != null : !this$optionalClaims.equals(other$optionalClaims))
-                return false;
-            return true;
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Validation that = (Validation) o;
+            return optionalClaims.equals(that.optionalClaims);
         }
 
-        protected boolean canEqual(final Object other) {
-            return other instanceof Validation;
-        }
-
+        @Override
         public int hashCode() {
-            final int PRIME = 59;
-            int result = 1;
-            final Object $optionalClaims = this.getOptionalClaims();
-            result = result * PRIME + ($optionalClaims == null ? 43 : $optionalClaims.hashCode());
-            return result;
+            return Objects.hash(optionalClaims);
         }
 
         public String toString() {

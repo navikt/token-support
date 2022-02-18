@@ -2,6 +2,8 @@ package no.nav.security.token.support.client.core.http;
 
 import java.util.*;
 
+import static java.lang.String.*;
+
 public class OAuth2HttpHeaders {
 
     private final Map<String, List<String>> headers;
@@ -19,44 +21,33 @@ public class OAuth2HttpHeaders {
         return new Builder();
     }
 
-    @SuppressWarnings("WeakerAccess")
     public Map<String, List<String>> headers() {
         return headers;
     }
 
-    public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof OAuth2HttpHeaders)) return false;
-        final OAuth2HttpHeaders other = (OAuth2HttpHeaders) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$headers = this.headers;
-        final Object other$headers = other.headers;
-        if (this$headers == null ? other$headers != null : !this$headers.equals(other$headers)) return false;
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OAuth2HttpHeaders that = (OAuth2HttpHeaders) o;
+        return Objects.equals(headers, that.headers);
     }
 
-    protected boolean canEqual(final Object other) {
-        return other instanceof OAuth2HttpHeaders;
-    }
-
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $headers = this.headers;
-        result = result * PRIME + ($headers == null ? 43 : $headers.hashCode());
-        return result;
+        return Objects.hash(headers);
     }
 
+    @Override
     public String toString() {
-        return "OAuth2HttpHeaders(headers=" + this.headers + ")";
+        return getClass().getSimpleName() + " [headers=" + headers + "]";
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static class Builder {
         private final TreeMap<String, List<String>> headersMap;
 
         public Builder() {
-            headersMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            headersMap = new TreeMap<>(CASE_INSENSITIVE_ORDER);
         }
 
         public Builder header(String name, String value) {

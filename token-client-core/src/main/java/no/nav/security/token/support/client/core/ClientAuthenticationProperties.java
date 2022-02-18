@@ -97,50 +97,21 @@ public class ClientAuthenticationProperties {
         return this.clientRsaKey;
     }
 
-    public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof ClientAuthenticationProperties)) return false;
-        final ClientAuthenticationProperties other = (ClientAuthenticationProperties) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$clientId = this.getClientId();
-        final Object other$clientId = other.getClientId();
-        if (this$clientId == null ? other$clientId != null : !this$clientId.equals(other$clientId)) return false;
-        final Object this$clientAuthMethod = this.getClientAuthMethod();
-        final Object other$clientAuthMethod = other.getClientAuthMethod();
-        if (this$clientAuthMethod == null ? other$clientAuthMethod != null : !this$clientAuthMethod.equals(other$clientAuthMethod))
-            return false;
-        final Object this$clientSecret = this.getClientSecret();
-        final Object other$clientSecret = other.getClientSecret();
-        if (this$clientSecret == null ? other$clientSecret != null : !this$clientSecret.equals(other$clientSecret))
-            return false;
-        final Object this$clientJwk = this.getClientJwk();
-        final Object other$clientJwk = other.getClientJwk();
-        if (this$clientJwk == null ? other$clientJwk != null : !this$clientJwk.equals(other$clientJwk)) return false;
-        final Object this$clientRsaKey = this.getClientRsaKey();
-        final Object other$clientRsaKey = other.getClientRsaKey();
-        if (this$clientRsaKey == null ? other$clientRsaKey != null : !this$clientRsaKey.equals(other$clientRsaKey))
-            return false;
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientAuthenticationProperties that = (ClientAuthenticationProperties) o;
+        return Objects.equals(clientId, that.clientId)
+            && Objects.equals(clientAuthMethod, that.clientAuthMethod)
+            && Objects.equals(clientSecret, that.clientSecret)
+            && Objects.equals(clientJwk, that.clientJwk)
+            && Objects.equals(clientRsaKey, that.clientRsaKey);
     }
 
-    protected boolean canEqual(final Object other) {
-        return other instanceof ClientAuthenticationProperties;
-    }
-
+    @Override
     public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $clientId = this.getClientId();
-        result = result * PRIME + ($clientId == null ? 43 : $clientId.hashCode());
-        final Object $clientAuthMethod = this.getClientAuthMethod();
-        result = result * PRIME + ($clientAuthMethod == null ? 43 : $clientAuthMethod.hashCode());
-        final Object $clientSecret = this.getClientSecret();
-        result = result * PRIME + ($clientSecret == null ? 43 : $clientSecret.hashCode());
-        final Object $clientJwk = this.getClientJwk();
-        result = result * PRIME + ($clientJwk == null ? 43 : $clientJwk.hashCode());
-        final Object $clientRsaKey = this.getClientRsaKey();
-        result = result * PRIME + ($clientRsaKey == null ? 43 : $clientRsaKey.hashCode());
-        return result;
+        return Objects.hash(clientId, clientAuthMethod, clientSecret, clientJwk, clientRsaKey);
     }
 
     public String toString() {
