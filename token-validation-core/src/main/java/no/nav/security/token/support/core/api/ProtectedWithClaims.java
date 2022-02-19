@@ -11,10 +11,11 @@ import java.lang.annotation.Target;
 @Target({ TYPE, METHOD })
 @Protected
 public @interface ProtectedWithClaims {
-		
+
 	String issuer();
 	/**
-	 * Required claims in token in key=value format
+	 * Required claims in token in key=value format.
+     * If the value is an asterisk (*), it checks that the required key is present.
 	 * @return array containing claims as key=value
 	 */
 	String[] claimMap() default {};
