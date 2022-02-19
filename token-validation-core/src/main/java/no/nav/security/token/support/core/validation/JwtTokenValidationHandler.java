@@ -1,10 +1,8 @@
 package no.nav.security.token.support.core.validation;
 
 import java.util.AbstractMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -29,7 +27,7 @@ public class JwtTokenValidationHandler {
 
     public TokenValidationContext getValidatedTokens(HttpRequest request) {
 
-        List<JwtToken> tokensOnRequest = JwtTokenRetriever.retrieveUnvalidatedTokens(config, request);
+        var tokensOnRequest = JwtTokenRetriever.retrieveUnvalidatedTokens(config, request);
 
         Map<String, JwtToken> validatedTokens = tokensOnRequest.stream()
                 .map(this::validate)
@@ -51,7 +49,7 @@ public class JwtTokenValidationHandler {
         try {
             LOG.debug("check if token with issuer={} is present in config", jwtToken.getIssuer());
             if (config.getIssuer(jwtToken.getIssuer()).isPresent()) {
-                String issuerShortName = issuerConfiguration(jwtToken.getIssuer()).getName();
+                var issuerShortName = issuerConfiguration(jwtToken.getIssuer()).getName();
                 LOG.debug("found token from trusted issuer={} with shortName={} in request", jwtToken.getIssuer(), issuerShortName);
 
                 long start = System.currentTimeMillis();
@@ -80,12 +78,7 @@ public class JwtTokenValidationHandler {
 
     private IssuerConfiguration issuerConfiguration(String issuer) {
         return config.getIssuer(issuer)
-                .orElseThrow(
-                        issuerConfigurationException(String.format("could not find IssuerConfiguration for issuer=%s", issuer)));
-    }
-
-    private static Supplier<IssuerConfigurationException> issuerConfigurationException(String message) {
-        return () -> new IssuerConfigurationException(message);
+                .orElseThrow(() -> new IssuerConfigurationException(String.format("could not find IssuerConfiguration for issuer=%s", issuer)));
     }
 
     private static <T, U> Map.Entry<T, U> entry(T key, U value) {

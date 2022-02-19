@@ -1,0 +1,71 @@
+package no.nav.security.token.support.client.spring.oauth2
+import org.mockito.MockitoAnnotations
+import okhttp3.mockwebserver.MockWebServer
+import java.io.IOException
+import org.springframework.boot.web.client.RestTemplateBuilder
+import kotlin.Throws
+import java.lang.InterruptedException
+import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders
+import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import java.net.URI
+
+internal class DefaultOAuth2HttpClientTest {
+    private lateinit var server: MockWebServer
+    private var tokenEndpointUrl: URI? = null
+    private lateinit var client: DefaultOAuth2HttpClient
+    @BeforeEach
+    @Throws(IOException::class)
+    fun setup() {
+        MockitoAnnotations.openMocks(this)
+        server = MockWebServer()
+        server.start()
+        tokenEndpointUrl = server.url("/oauth2/token").toUri()
+        client = DefaultOAuth2HttpClient(RestTemplateBuilder())
+    }
+
+    @AfterEach
+    @Throws(IOException::class)
+    fun teardown() {
+        server.shutdown()
+    }
+
+    @Test
+    @Throws(InterruptedException::class)
+    fun testPostAllHeadersAndFormParametersShouldBePresent() {
+        server.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
+        val request = OAuth2HttpRequest.builder()
+            .tokenEndpointUrl(tokenEndpointUrl)
+            .formParameter("param1", "value1")
+            .formParameter("param2", "value2")
+            .oAuth2HttpHeaders(
+                    OAuth2HttpHeaders.builder()
+                        .header("header1", "headervalue1")
+                        .header("header2", "headervalue2")
+                        .build())
+            .build()
+        client.post(request)
+        val recordedRequest = server.takeRequest()
+        val body = recordedRequest.body.readUtf8()
+        assertThat(recordedRequest.headers["header1"]).isEqualTo("headervalue1")
+        assertThat(recordedRequest.headers["header2"]).isEqualTo("headervalue2")
+        assertThat(body).contains("param1=value1")
+        assertThat(body).contains("param2=value2")
+    }
+
+    companion object {
+        private const val TOKEN_RESPONSE = "{\n" +
+                "    \"token_type\": \"Bearer\",\n" +
+                "    \"scope\": \"scope1 scope2\",\n" +
+                "    \"expires_at\": 1568141495,\n" +
+                "    \"ext_expires_in\": 3599,\n" +
+                "    \"expires_in\": 3599,\n" +
+                "    \"access_token\": \"<base64URL>\",\n" +
+                "    \"refresh_token\": \"<base64URL>\"\n" +
+                "}\n"
+    }
+}

@@ -22,7 +22,7 @@ public class OAuth2GrantType {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OAuth2GrantType that = (OAuth2GrantType) o;
+        var that = (OAuth2GrantType) o;
         return value.equals(that.value);
     }
 

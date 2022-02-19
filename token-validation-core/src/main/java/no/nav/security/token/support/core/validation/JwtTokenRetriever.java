@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.*;
+
 public class JwtTokenRetriever {
 
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenRetriever.class);
@@ -23,38 +25,38 @@ public class JwtTokenRetriever {
         return Stream.concat(
             getTokensFromHeader(config, request).stream(),
             getTokensFromCookies(config, request).stream())
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private static List<JwtToken> getTokensFromHeader(MultiIssuerConfiguration config, HttpRequest request) {
         try {
             LOG.debug("checking authorization header for tokens");
-            String authorization = request.getHeader(AUTHORIZATION_HEADER);
+            var authorization = request.getHeader(AUTHORIZATION_HEADER);
             if (authorization != null) {
                 String[] headerValues = authorization.split(",");
                 return extractBearerTokens(headerValues)
                     .stream()
                     .map(JwtToken::new)
                     .filter(jwtToken -> config.getIssuer(jwtToken.getIssuer()).isPresent())
-                    .collect(Collectors.toList());
+                    .collect(toList());
             }
             LOG.debug("no tokens found in authorization header");
         } catch (Exception e) {
             LOG.warn("received exception when attempting to extract and parse token from Authorization header", e);
         }
-        return Collections.emptyList();
+        return List.of();
     }
 
     private static List<JwtToken> getTokensFromCookies(MultiIssuerConfiguration config, HttpRequest request) {
         try {
-            List<HttpRequest.NameValue> cookies = request.getCookies() != null ? Arrays.asList(request.getCookies()) : Collections.emptyList();
+            List<HttpRequest.NameValue> cookies = request.getCookies() != null ? Arrays.asList(request.getCookies()) : List.of();
             return cookies.stream()
                 .filter(nameValue -> containsCookieName(config, nameValue.getName()))
                 .map(nameValue -> new JwtToken(nameValue.getValue()))
-                .collect(Collectors.toList());
+                .collect(toList());
         } catch (Exception e) {
             LOG.warn("received exception when attempting to extract and parse token from cookie", e);
-            return Collections.emptyList();
+            return List.of();
         }
     }
 
@@ -69,6 +71,6 @@ public class JwtTokenRetriever {
             .filter(pair -> pair.length == 2)
             .filter(pair -> pair[0].trim().equalsIgnoreCase(BEARER))
             .map(pair -> pair[1].trim())
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 }

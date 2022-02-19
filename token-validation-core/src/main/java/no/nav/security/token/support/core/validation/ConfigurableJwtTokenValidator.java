@@ -64,10 +64,10 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
     private void verify(String tokenString, JWTClaimsSetVerifier<SecurityContext> jwtClaimsSetVerifier, JWSVerificationKeySelector<SecurityContext> keySelector) {
         try {
-            ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
+            var  jwtProcessor = new DefaultJWTProcessor<>();
             jwtProcessor.setJWSKeySelector(keySelector);
             jwtProcessor.setJWTClaimsSetVerifier(jwtClaimsSetVerifier);
-            JWT token = parse(tokenString);
+            var token = parse(tokenString);
             jwtProcessor.process(token, null);
         } catch (Throwable t) {
             throw new JwtTokenValidatorException("Token validation failed: " + t.getMessage(), t);

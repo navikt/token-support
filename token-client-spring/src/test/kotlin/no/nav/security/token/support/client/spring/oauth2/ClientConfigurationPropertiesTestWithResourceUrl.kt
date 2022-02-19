@@ -1,0 +1,46 @@
+package no.nav.security.token.support.client.spring.oauth2
+
+
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.boot.test.mock.mockito.MockBean
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import org.springframework.beans.factory.annotation.Autowired
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import org.mockito.MockitoAnnotations
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
+@SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestTemplateAutoConfiguration::class])
+@ActiveProfiles("test-withresourceurl")
+internal class ClientConfigurationPropertiesTestWithResourceUrl {
+
+    @MockBean
+    private val tokenValidationContextHolder: TokenValidationContextHolder? = null
+
+    @Autowired
+    private lateinit var clientConfigurationProperties: ClientConfigurationProperties
+    @BeforeEach
+    fun before() {
+        MockitoAnnotations.openMocks(this)
+    }
+
+    @Test
+    fun testClientConfigIsValid() {
+        assertThat(clientConfigurationProperties).isNotNull
+        assertThat(clientConfigurationProperties.registration).isNotNull
+        val clientProperties = clientConfigurationProperties.registration.values().stream().findFirst().orElse(null)
+        assertThat(clientProperties).isNotNull
+        val auth = clientProperties.authentication
+        assertThat(auth).isNotNull
+        assertThat(auth.clientAuthMethod).isNotNull
+        assertThat(auth.clientId).isNotNull
+        assertThat(auth.clientSecret).isNotNull
+        assertThat(clientProperties.scope).isNotEmpty
+        assertThat(clientProperties.tokenEndpointUrl).isNotNull
+        assertThat(clientProperties.grantType.value).isNotNull
+        assertThat(clientProperties.resourceUrl).isNotNull
+    }
+}

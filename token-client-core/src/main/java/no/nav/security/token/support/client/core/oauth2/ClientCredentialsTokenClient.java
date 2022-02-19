@@ -13,6 +13,6 @@ public class ClientCredentialsTokenClient extends AbstractOAuth2TokenClient<Clie
 
     @Override
     protected Map<String, String> formParameters(ClientCredentialsGrantRequest grantRequest) {
-        return Collections.emptyMap();
+        return Map.of();
     }
 }

@@ -5,16 +5,18 @@ import no.nav.security.token.support.client.core.OAuth2GrantType;
 
 import java.util.Objects;
 
+import static no.nav.security.token.support.client.core.OAuth2GrantType.*;
+
 public class OnBehalfOfGrantRequest extends AbstractOAuth2GrantRequest {
     private final String assertion;
 
     public OnBehalfOfGrantRequest(ClientProperties clientProperties, String assertion) {
-        super(OAuth2GrantType.JWT_BEARER, clientProperties);
+        super(JWT_BEARER, clientProperties);
         this.assertion = assertion;
     }
 
     String getAssertion() {
-        return this.assertion;
+        return assertion;
     }
 
     @Override

@@ -61,12 +61,12 @@ public class JwtTokenExpiryFilter implements Filter {
     }
 
     private void addHeaderOnTokenExpiryThreshold(HttpServletResponse response) {
-        TokenValidationContext tokenValidationContext = contextHolder.getTokenValidationContext();
+        var tokenValidationContext = contextHolder.getTokenValidationContext();
         LOG.debug("Getting TokenValidationContext: {}", tokenValidationContext);
         if (tokenValidationContext != null) {
             LOG.debug("Getting issuers from validationcontext {}", tokenValidationContext.getIssuers());
             for (String issuer : tokenValidationContext.getIssuers()) {
-                JwtTokenClaims jwtTokenClaims = tokenValidationContext.getClaims(issuer);
+                var jwtTokenClaims = tokenValidationContext.getClaims(issuer);
                 if (tokenExpiresBeforeThreshold(jwtTokenClaims)) {
                     LOG.debug("Setting response header {}", JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER);
                     response.setHeader(JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER, "true");

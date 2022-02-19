@@ -16,7 +16,6 @@ public class OAuth2HttpHeaders {
         return new OAuth2HttpHeaders(headers);
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static Builder builder() {
         return new Builder();
     }
@@ -29,7 +28,7 @@ public class OAuth2HttpHeaders {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OAuth2HttpHeaders that = (OAuth2HttpHeaders) o;
+        var that = (OAuth2HttpHeaders) o;
         return Objects.equals(headers, that.headers);
     }
 

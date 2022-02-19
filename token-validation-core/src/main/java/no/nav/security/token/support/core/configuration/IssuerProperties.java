@@ -121,7 +121,7 @@ public class IssuerProperties {
         private List<String> optionalClaims;
 
         public Validation(List<String> optionalClaims) {
-            this.optionalClaims = Optional.ofNullable(optionalClaims).orElse(Collections.emptyList());
+            this.optionalClaims = Optional.ofNullable(optionalClaims).orElse(List.of());
         }
 
         public Boolean isConfigured() {
@@ -189,7 +189,7 @@ public class IssuerProperties {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            JwksCache jwksCache = (JwksCache) o;
+            var jwksCache = (JwksCache) o;
             return lifespan.equals(jwksCache.lifespan) && refreshTime.equals(jwksCache.refreshTime);
         }
 

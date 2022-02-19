@@ -46,20 +46,17 @@ public class MultiIssuerConfiguration {
 
     private void loadIssuerConfigurations() {
 
-        for (Entry<String, IssuerProperties> entry : issuerPropertiesMap.entrySet()) {
-            String shortName = entry.getKey();
+        issuerPropertiesMap.forEach((shortName, value) -> {
             issuerShortNames.add(shortName);
-            IssuerConfiguration config = createIssuerConfiguration(shortName, entry.getValue());
+            IssuerConfiguration config = createIssuerConfiguration(shortName, value);
             issuers.put(shortName, config);
             issuers.put(config.getMetaData().getIssuer().toString(), config);
-        }
+        });
     }
 
     private IssuerConfiguration createIssuerConfiguration(String shortName, IssuerProperties issuerProperties) {
         if (issuerProperties.isUsePlaintextForHttps() || issuerProperties.getProxyUrl() != null){
-            ProxyAwareResourceRetriever resourceRetrieverWithProxy =
-                new ProxyAwareResourceRetriever(issuerProperties.getProxyUrl(), issuerProperties.isUsePlaintextForHttps());
-
+            var resourceRetrieverWithProxy = new ProxyAwareResourceRetriever(issuerProperties.getProxyUrl(), issuerProperties.isUsePlaintextForHttps());
             return new IssuerConfiguration(shortName, issuerProperties, resourceRetrieverWithProxy);
         }
         return new IssuerConfiguration(shortName, issuerProperties, getResourceRetriever());

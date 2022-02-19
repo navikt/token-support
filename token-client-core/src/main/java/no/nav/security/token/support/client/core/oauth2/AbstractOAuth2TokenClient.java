@@ -12,6 +12,8 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*;
+
 abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
 
     private static final String CONTENT_TYPE_FORM_URL_ENCODED = "application/x-www-form-urlencoded;charset=UTF-8";
@@ -24,15 +26,15 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
 
     OAuth2AccessTokenResponse getTokenResponse(T grantRequest) {
 
-        ClientProperties clientProperties = Optional.ofNullable(grantRequest)
+        var clientProperties = Optional.ofNullable(grantRequest)
             .map(AbstractOAuth2GrantRequest::getClientProperties)
             .orElseThrow(() -> new OAuth2ClientException("ClientProperties cannot be null"));
 
         try {
-            Map<String, String> formParameters = createDefaultFormParameters(grantRequest);
+            var formParameters = createDefaultFormParameters(grantRequest);
             formParameters.putAll(this.formParameters(grantRequest));
 
-            OAuth2HttpRequest oAuth2HttpRequest = OAuth2HttpRequest.builder()
+            var oAuth2HttpRequest = OAuth2HttpRequest.builder()
                 .tokenEndpointUrl(clientProperties.getTokenEndpointUrl())
                 .oAuth2HttpHeaders(OAuth2HttpHeaders.of(tokenRequestHeaders(clientProperties)))
                 .formParameters(formParameters)
@@ -48,14 +50,13 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
     }
 
     private Map<String, List<String>> tokenRequestHeaders(ClientProperties clientProperties) {
-        Map<String, List<String>> headers = new HashMap<>();
-        headers.put("Accept", Collections.singletonList(CONTENT_TYPE_JSON));
+        var headers = new HashMap<String, List<String>>();
+        headers.put("Accept", List.of(CONTENT_TYPE_JSON));
         headers.put("Content-Type", Collections.singletonList(CONTENT_TYPE_FORM_URL_ENCODED));
-        ClientAuthenticationProperties auth = clientProperties.getAuthentication();
-        if (ClientAuthenticationMethod.CLIENT_SECRET_BASIC.equals(auth.getClientAuthMethod())) {
+        var auth = clientProperties.getAuthentication();
+        if (CLIENT_SECRET_BASIC.equals(auth.getClientAuthMethod())) {
             headers.put("Authorization",
-                Collections.singletonList("Basic "
-                    + basicAuth(auth.getClientId(), auth.getClientSecret())));
+                List.of("Basic " + basicAuth(auth.getClientId(), auth.getClientSecret())));
         }
         return headers;
     }
@@ -74,11 +75,11 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
         ClientProperties clientProperties = grantRequest.getClientProperties();
         Map<String, String> formParameters = new LinkedHashMap<>();
         ClientAuthenticationProperties auth = clientProperties.getAuthentication();
-        if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(auth.getClientAuthMethod())) {
+        if (CLIENT_SECRET_POST.equals(auth.getClientAuthMethod())) {
             formParameters.put(OAuth2ParameterNames.CLIENT_ID, auth.getClientId());
             formParameters.put(OAuth2ParameterNames.CLIENT_SECRET, auth.getClientSecret());
 
-        } else if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(auth.getClientAuthMethod())) {
+        } else if (PRIVATE_KEY_JWT.equals(auth.getClientAuthMethod())) {
             ClientAssertion clientAssertion = new ClientAssertion(clientProperties.getTokenEndpointUrl(), auth);
 
             formParameters.put(OAuth2ParameterNames.CLIENT_ID, auth.getClientId());

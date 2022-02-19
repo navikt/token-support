@@ -5,12 +5,14 @@ import no.nav.security.token.support.client.core.OAuth2GrantType;
 
 import java.util.Objects;
 
+import static no.nav.security.token.support.client.core.OAuth2GrantType.*;
+
 public class TokenExchangeGrantRequest extends AbstractOAuth2GrantRequest {
 
     private final String subjectToken;
     @SuppressWarnings("WeakerAccess")
     public TokenExchangeGrantRequest(ClientProperties clientProperties, String subjectToken) {
-        super(OAuth2GrantType.TOKEN_EXCHANGE, clientProperties);
+        super(TOKEN_EXCHANGE, clientProperties);
         this.subjectToken = subjectToken;
     }
 

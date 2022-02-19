@@ -87,9 +87,7 @@ public class OAuth2AccessTokenService {
         this.onBehalfOfGrantCache = onBehalfOfGrantCache;
     }
 
-    public void setClientCredentialsGrantCache(
-        Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache
-    ) {
+    public void setClientCredentialsGrantCache(Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache) {
         this.clientCredentialsGrantCache = clientCredentialsGrantCache;
     }
 

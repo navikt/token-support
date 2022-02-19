@@ -1,0 +1,249 @@
+package no.nav.security.token.support.spring.integrationtest
+
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.web.context.WebApplicationContext
+import no.nav.security.mock.oauth2.MockOAuth2Server
+import org.springframework.test.web.servlet.setup.MockMvcConfigurer
+import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder
+import io.restassured.module.mockmvc.RestAssuredMockMvc
+import com.nimbusds.jwt.PlainJWT
+import com.nimbusds.jwt.JWTClaimsSet
+import no.nav.security.mock.oauth2.token.OAuth2TokenCallback
+import com.nimbusds.jose.JOSEObjectType.JWT
+import com.nimbusds.jwt.JWTClaimsSet.Builder
+import com.nimbusds.oauth2.sdk.TokenRequest
+import io.restassured.module.mockmvc.RestAssuredMockMvc.webAppContextSetup
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS2
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS_ANY_CLAIMS
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_MULTIPLE
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.UNPROTECTED
+import no.nav.security.token.support.test.JwkGenerator.*
+import no.nav.security.token.support.test.JwtTokenGenerator.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.OK
+import org.springframework.http.HttpStatus.UNAUTHORIZED
+import java.util.*
+import java.util.concurrent.TimeUnit.MINUTES
+import javax.servlet.Filter
+
+@SpringBootTest
+@ContextConfiguration(classes = [ProtectedApplication::class, ProtectedApplicationConfig::class])
+@ActiveProfiles("test")
+internal class ProtectedRestControllerIntegrationTest {
+    @Autowired
+    private lateinit var ctx: WebApplicationContext
+
+    @Autowired
+    private lateinit var mockOAuth2Server: MockOAuth2Server
+
+    @BeforeEach
+    fun initialiseRestAssuredMockMvcWebApplicationContext() {
+        webAppContextSetup(ctx, object : MockMvcConfigurer {
+            override fun afterConfigurerAdded(builder: ConfigurableMockMvcBuilder<*>) {
+                builder.addFilters(*ctx.getBeansOfType(Filter::class.java).values.toTypedArray())
+            }
+        })
+    }
+
+    @Test
+    fun unprotectedMethod() {
+        RestAssuredMockMvc.given()
+            .`when`()[UNPROTECTED]
+            .then()
+            .log().ifValidationFails()
+            .statusCode(OK.value())
+    }
+
+    @Test
+    fun noTokenInRequest() {
+        RestAssuredMockMvc.given()
+            .`when`()[PROTECTED]
+            .then()
+            .log().ifValidationFails()
+            .statusCode(UNAUTHORIZED.value())
+    }
+
+    @Test
+    fun unparseableTokenInRequest() = expectStatusCode(PROTECTED, "unparseable", UNAUTHORIZED)
+
+    @Test
+    fun unsignedTokenInRequest() =
+        expectStatusCode(PROTECTED, PlainJWT(jwtClaimsSetKnownIssuer()).serialize(), UNAUTHORIZED)
+
+    @Test
+    fun signedTokenInRequestUnknownIssuer() =
+        expectStatusCode(PROTECTED, issueToken("unknown", jwtClaimsSet(AUD)).serialize(), UNAUTHORIZED)
+
+    @Test
+    fun signedTokenInRequestUnknownAudience() =
+        expectStatusCode(PROTECTED, issueToken("knownissuer", jwtClaimsSet("unknown")).serialize(), UNAUTHORIZED)
+
+    @Test
+    fun signedTokenInRequestProtectedWithClaimsMethodMissingRequiredClaims() = expectStatusCode(
+            PROTECTED_WITH_CLAIMS,
+            issueToken(
+                    "knownissuer", defaultJwtClaimsSetBuilder()
+                .claim("importantclaim", "vip")
+                .build()).serialize(),
+            UNAUTHORIZED)
+
+    @Test
+    fun signedTokenInRequestKeyFromUnknownSource() = expectStatusCode(
+            PROTECTED,
+            createSignedJWT(createJWK(DEFAULT_KEYID, generateKeyPair()), jwtClaimsSetKnownIssuer()).serialize(),
+            UNAUTHORIZED)
+
+    @Test
+    fun signedTokenInRequestProtectedMethodShouldBeOk() =
+        expectStatusCode(PROTECTED, issueToken("knownissuer", jwtClaimsSetKnownIssuer()).serialize(), OK)
+
+
+    @Test
+    @DisplayName("Token matches one of the configured issuers, including claims")
+    fun multipleIssuersOneOKIncludingClaims() = expectStatusCode(
+            PROTECTED_WITH_MULTIPLE,
+            issueToken(
+                    "knownissuer", defaultJwtClaimsSetBuilder()
+                .claim("claim1", "3")
+                .claim("claim2", "4")
+                .claim("acr", "Level4")
+                .build()).serialize(), OK)
+
+
+    @Test
+    @DisplayName("Token matches one of the configured issuers, but not all claims match")
+    fun multipleIssuersOneIssuerMatchesButClaimsDont() = expectStatusCode(
+            PROTECTED_WITH_MULTIPLE,
+            issueToken("knownissuer", jwtClaimsSetKnownIssuer()).serialize(),
+            UNAUTHORIZED)
+
+
+    @Test
+    @DisplayName("Token matches none of the configured issuers")
+    fun multipleIssuersNoIssuerMatches() = expectStatusCode(
+            PROTECTED_WITH_MULTIPLE,
+            issueToken("knownissuer3", jwtClaimsSetKnownIssuer()).serialize(),
+            UNAUTHORIZED)
+
+
+    @Test
+    fun signedTokenInRequestProtectedWithClaimsMethodShouldBeOk() {
+        expectStatusCode(
+                PROTECTED_WITH_CLAIMS,
+                issueToken(
+                        "knownissuer", defaultJwtClaimsSetBuilder()
+                    .claim("importantclaim", "vip")
+                    .claim("acr", "Level4")
+                    .build()).serialize(), OK)
+        expectStatusCode(
+                PROTECTED_WITH_CLAIMS_ANY_CLAIMS,
+                issueToken(
+                        "knownissuer", defaultJwtClaimsSetBuilder()
+                    .claim("claim1", "1")
+                    .build()).serialize(), OK)
+    }
+
+    @Test
+    fun signedTokenInRequestProtectedWithArrayClaimsMethodShouldBeOk() = expectStatusCode(
+            PROTECTED_WITH_CLAIMS_ANY_CLAIMS,
+            issueToken(
+                    "knownissuer", defaultJwtClaimsSetBuilder()
+                .claim("claim1", listOf("1"))
+                .build()).serialize(), OK)
+
+
+    @Test
+    fun signedTokenInRequestWithoutSubAndAudClaimsShouldBeOk() {
+        val now = Date()
+        expectStatusCode(
+                PROTECTED_WITH_CLAIMS2,
+                issueToken(
+                        "knownissuer2", Builder()
+                    .jwtID(UUID.randomUUID().toString())
+                    .claim("auth_time", now)
+                    .notBeforeTime(now)
+                    .issueTime(now)
+                    .expirationTime(Date(now.time + MINUTES.toMillis(1)))
+                    .build()).serialize(),
+                OK)
+    }
+
+    @Test
+    fun signedTokenInRequestWithoutSubAndAudClaimsShouldBeNotBeOk() {
+        val now = Date()
+        val jwtClaimsSet = Builder()
+            .jwtID(UUID.randomUUID().toString())
+            .claim("auth_time", now)
+            .notBeforeTime(now)
+            .issueTime(now)
+            .expirationTime(Date(now.time + MINUTES.toMillis(1)))
+            .build()
+        expectStatusCode(
+                PROTECTED_WITH_CLAIMS,
+                issueToken("knownissuer", jwtClaimsSet).serialize(),
+                UNAUTHORIZED)
+    }
+
+    private fun issueToken(issuerId: String, jwtClaimsSet: JWTClaimsSet) =
+        mockOAuth2Server.issueToken(issuerId, "client_id", object : OAuth2TokenCallback {
+            override fun typeHeader(req: TokenRequest) = JWT.type
+            override fun tokenExpiry() = 30L
+            override fun subject(req: TokenRequest) = jwtClaimsSet.subject
+            override fun issuerId() = issuerId
+            override fun audience(req: TokenRequest) = jwtClaimsSet.audience
+            override fun addClaims(req: TokenRequest) = jwtClaimsSet.claims
+        })
+
+
+    companion object {
+        private fun expectStatusCode(uri: String, token: String, httpStatus: HttpStatus) =
+            RestAssuredMockMvc.given()
+                .header("Authorization", "Bearer $token")
+                .`when`()[uri]
+                .then()
+                .log().ifValidationFails()
+                .statusCode(httpStatus.value())
+
+
+        private fun defaultJwtClaimsSetBuilder(): Builder {
+            val now = Date()
+            return Builder()
+                .subject("testsub")
+                .audience(AUD)
+                .jwtID(UUID.randomUUID().toString())
+                .claim("auth_time", now)
+                .notBeforeTime(now)
+                .issueTime(now)
+                .expirationTime(Date(now.time + MINUTES.toMillis(1)))
+        }
+
+        private fun jwtClaimsSetKnownIssuer() = jwtClaimsSet(AUD)
+
+        private fun jwtClaimsSet(audience: String) = buildClaimSet("testsub", audience, ACR, MINUTES.toMillis(1))
+
+
+        fun buildClaimSet(subject: String?, audience: String?, authLevel: String?,
+                          expiry: Long): JWTClaimsSet {
+            val now = Date()
+            return Builder()
+                .subject(subject)
+                .audience(audience)
+                .jwtID(UUID.randomUUID().toString())
+                .claim("acr", authLevel)
+                .claim("ver", "1.0")
+                .claim("nonce", "myNonce")
+                .claim("auth_time", now)
+                .notBeforeTime(now)
+                .issueTime(now)
+                .expirationTime(Date(now.time + expiry)).build()
+        }
+    }
+}
