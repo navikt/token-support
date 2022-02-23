@@ -1,9 +1,9 @@
 package no.nav.security.token.support.test.spring;
 
-import static org.springframework.boot.SpringApplication.run;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
+
+import static org.springframework.boot.SpringApplication.run;
 
 @SpringBootApplication
 @Import(TokenGeneratorConfiguration.class)

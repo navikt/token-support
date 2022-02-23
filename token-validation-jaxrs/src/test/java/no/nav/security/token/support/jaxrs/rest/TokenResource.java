@@ -1,7 +1,7 @@
 package no.nav.security.token.support.jaxrs.rest;
 
-import no.nav.security.token.support.jaxrs.JaxrsTokenValidationContextHolder;
 import no.nav.security.token.support.core.api.Unprotected;
+import no.nav.security.token.support.jaxrs.JaxrsTokenValidationContextHolder;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -1,10 +1,8 @@
 package no.nav.security.token.support.client.spring.oauth2
 
-import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import org.springframework.http.HttpRequest
 import java.net.URI
-import java.util.Optional
+import java.util.*
 
 /**
  *
@@ -15,5 +13,5 @@ import java.util.Optional
  *
  */
 interface ClientConfigurationPropertiesMatcher {
-    fun findProperties(properties: ClientConfigurationProperties, uri: URI) = Optional.ofNullable(properties.registration[uri.host])
+    fun findProperties(properties: ClientConfigurationProperties, uri: URI) = Optional.ofNullable(properties.registration[uri.host.split(".").first()])
 }

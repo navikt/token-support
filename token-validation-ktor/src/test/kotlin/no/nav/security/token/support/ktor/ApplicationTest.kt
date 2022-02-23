@@ -1,11 +1,17 @@
 package no.nav.security.token.support.ktor
 
-import io.ktor.application.*
-import io.ktor.config.*
-import io.ktor.http.*
-import io.ktor.server.testing.*
+import io.ktor.application.Application
+import io.ktor.config.MapApplicationConfig
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.withTestApplication
 import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.token.support.ktor.testapp.*
+import no.nav.security.token.support.ktor.testapp.helloCounter
+import no.nav.security.token.support.ktor.testapp.helloGroupCounter
+import no.nav.security.token.support.ktor.testapp.helloPersonCounter
+import no.nav.security.token.support.ktor.testapp.module
+import no.nav.security.token.support.ktor.testapp.openHelloCounter
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test

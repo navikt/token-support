@@ -2,11 +2,10 @@ package no.nav.security.token.support.spring.validation.interceptor
 
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
+import org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
-import org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation
-import java.util.Objects
-import java.util.Optional
+import java.util.*
 
 
 class SpringJwtTokenAnnotationHandler(holder: TokenValidationContextHolder?) : JwtTokenAnnotationHandler(holder) {

@@ -2,7 +2,6 @@ package no.nav.security.token.support.client.core.oauth2;
 
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class ClientCredentialsTokenClient extends AbstractOAuth2TokenClient<ClientCredentialsGrantRequest> {

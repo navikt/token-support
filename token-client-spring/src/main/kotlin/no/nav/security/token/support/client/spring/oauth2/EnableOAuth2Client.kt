@@ -2,8 +2,6 @@ package no.nav.security.token.support.client.spring.oauth2
 
 import org.springframework.context.annotation.Import
 import java.lang.annotation.Inherited
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy.RUNTIME
 import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
 import kotlin.annotation.AnnotationTarget.CLASS
 
@@ -13,7 +11,7 @@ import kotlin.annotation.AnnotationTarget.CLASS
  */
 @MustBeDocumented
 @Inherited
-@Retention(RUNTIME)
+@Retention(AnnotationRetention.RUNTIME)
 @Target(ANNOTATION_CLASS, CLASS)
 @Import(OAuth2ClientConfiguration::class)
 annotation class EnableOAuth2Client(

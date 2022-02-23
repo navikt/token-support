@@ -5,9 +5,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.features.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback

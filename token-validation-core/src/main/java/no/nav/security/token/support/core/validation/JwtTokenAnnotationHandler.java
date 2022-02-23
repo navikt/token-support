@@ -1,18 +1,5 @@
 package no.nav.security.token.support.core.validation;
 
-import static no.nav.security.token.support.core.utils.JwtTokenUtil.contextHasValidToken;
-import static no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.security.token.support.core.api.Protected;
 import no.nav.security.token.support.core.api.ProtectedWithClaims;
 import no.nav.security.token.support.core.api.RequiredIssuers;
@@ -22,6 +9,18 @@ import no.nav.security.token.support.core.exceptions.AnnotationRequiredException
 import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException;
 import no.nav.security.token.support.core.jwt.JwtToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import static no.nav.security.token.support.core.utils.JwtTokenUtil.contextHasValidToken;
+import static no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken;
 
 public class JwtTokenAnnotationHandler {
 
@@ -45,21 +44,21 @@ public class JwtTokenAnnotationHandler {
             LOG.debug("annotation is of type={}, no token validation performed.", Unprotected.class.getSimpleName());
             return true;
         }
-        if (a instanceof RequiredIssuers) {
-            return handleRequiredIssuers((RequiredIssuers) a);
+        if (a instanceof RequiredIssuers r) {
+            return handleRequiredIssuers(r);
         }
-        if (a instanceof ProtectedWithClaims) {
-            return handleProtectedWithClaims((ProtectedWithClaims) a);
+        if (a instanceof ProtectedWithClaims p) {
+            return handleProtectedWithClaims(p);
         }
         if (a instanceof Protected) {
             return handleProtected();
         }
-        LOG.debug("annotation is unknown,  type={}, no token validation performed. but possible bug so throw exception", a.annotationType());
+        LOG.debug("Annotation is unknown,  type={}, no token validation performed. but possible bug so throw exception", a.annotationType());
         return false;
     }
 
     private boolean handleProtected() {
-        LOG.debug("annotation is of type={}, check if context has valid token.", Protected.class.getSimpleName());
+        LOG.debug("Annotation is of type={}, check if context has valid token.", Protected.class.getSimpleName());
         if (contextHasValidToken(tokenValidationContextHolder)) {
             return true;
         }
@@ -67,7 +66,7 @@ public class JwtTokenAnnotationHandler {
     }
 
     private boolean handleProtectedWithClaims(ProtectedWithClaims a) {
-        LOG.debug("annotation is of type={}, do token validation and claim checking.", ProtectedWithClaims.class.getSimpleName());
+        LOG.debug("Annotation is of type={}, do token validation and claim checking.", ProtectedWithClaims.class.getSimpleName());
         var jwtToken = getJwtToken(a.issuer(), tokenValidationContextHolder);
         if (jwtToken.isEmpty()) {
             throw new JwtTokenMissingException();

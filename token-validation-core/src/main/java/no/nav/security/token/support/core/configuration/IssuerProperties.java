@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNull;
+
 public class IssuerProperties {
     @NotNull
     private URL discoveryUrl;
@@ -22,7 +24,7 @@ public class IssuerProperties {
     }
 
     public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience) {
-        this.discoveryUrl = discoveryUrl;
+        this.discoveryUrl = requireNonNull(discoveryUrl);
         this.acceptedAudience = acceptedAudience;
     }
 

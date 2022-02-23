@@ -1,35 +1,39 @@
 package no.nav.security.token.support.spring.integrationtest
 
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.context.WebApplicationContext
-import no.nav.security.mock.oauth2.MockOAuth2Server
-import org.springframework.test.web.servlet.setup.MockMvcConfigurer
-import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder
-import io.restassured.module.mockmvc.RestAssuredMockMvc
-import com.nimbusds.jwt.PlainJWT
-import com.nimbusds.jwt.JWTClaimsSet
-import no.nav.security.mock.oauth2.token.OAuth2TokenCallback
 import com.nimbusds.jose.JOSEObjectType.JWT
+import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.JWTClaimsSet.Builder
+import com.nimbusds.jwt.PlainJWT
 import com.nimbusds.oauth2.sdk.TokenRequest
+import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.webAppContextSetup
+import no.nav.security.mock.oauth2.MockOAuth2Server
+import no.nav.security.mock.oauth2.token.OAuth2TokenCallback
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS2
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS_ANY_CLAIMS
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_MULTIPLE
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.UNPROTECTED
-import no.nav.security.token.support.test.JwkGenerator.*
-import no.nav.security.token.support.test.JwtTokenGenerator.*
+import no.nav.security.token.support.spring.integrationtest.JwkGenerator.DEFAULT_KEYID
+import no.nav.security.token.support.spring.integrationtest.JwkGenerator.createJWK
+import no.nav.security.token.support.spring.integrationtest.JwkGenerator.generateKeyPair
+import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.ACR
+import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.AUD
+import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.createSignedJWT
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNAUTHORIZED
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder
+import org.springframework.test.web.servlet.setup.MockMvcConfigurer
+import org.springframework.web.context.WebApplicationContext
 import java.util.*
 import java.util.concurrent.TimeUnit.MINUTES
 import javax.servlet.Filter
@@ -194,12 +198,12 @@ internal class ProtectedRestControllerIntegrationTest {
 
     private fun issueToken(issuerId: String, jwtClaimsSet: JWTClaimsSet) =
         mockOAuth2Server.issueToken(issuerId, "client_id", object : OAuth2TokenCallback {
-            override fun typeHeader(req: TokenRequest) = JWT.type
+            override fun typeHeader(tokenRequest: TokenRequest) = JWT.type
             override fun tokenExpiry() = 30L
-            override fun subject(req: TokenRequest) = jwtClaimsSet.subject
+            override fun subject(tokenRequest: TokenRequest) = jwtClaimsSet.subject
             override fun issuerId() = issuerId
-            override fun audience(req: TokenRequest) = jwtClaimsSet.audience
-            override fun addClaims(req: TokenRequest) = jwtClaimsSet.claims
+            override fun audience(tokenRequest: TokenRequest) = jwtClaimsSet.audience
+            override fun addClaims(tokenRequest: TokenRequest) = jwtClaimsSet.claims
         })
 
 

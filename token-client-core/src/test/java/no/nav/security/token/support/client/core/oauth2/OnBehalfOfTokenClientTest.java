@@ -64,7 +64,7 @@ class OnBehalfOfTokenClientTest {
         RecordedRequest recordedRequest = server.takeRequest();
         assertPostMethodAndJsonHeaders(recordedRequest);
         String formParameters = recordedRequest.getBody().readUtf8();
-        assertThat(formParameters).contains("grant_type=" + URLEncoder.encode(OAuth2GrantType.JWT_BEARER.getValue(),
+        assertThat(formParameters).contains("grant_type=" + URLEncoder.encode(OAuth2GrantType.JWT_BEARER.value(),
             StandardCharsets.UTF_8));
         assertThat(formParameters).contains("scope=scope1+scope2");
         assertThat(formParameters).contains("requested_token_use=on_behalf_of");

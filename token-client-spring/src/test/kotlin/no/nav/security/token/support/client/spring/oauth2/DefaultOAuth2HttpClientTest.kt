@@ -1,17 +1,14 @@
 package no.nav.security.token.support.client.spring.oauth2
-import org.mockito.MockitoAnnotations
-import okhttp3.mockwebserver.MockWebServer
-import java.io.IOException
-import org.springframework.boot.web.client.RestTemplateBuilder
-import kotlin.Throws
-import java.lang.InterruptedException
 import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders
 import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
+import okhttp3.mockwebserver.MockWebServer
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.MockitoAnnotations
+import org.springframework.boot.web.client.RestTemplateBuilder
+import java.io.IOException
 import java.net.URI
 
 internal class DefaultOAuth2HttpClientTest {

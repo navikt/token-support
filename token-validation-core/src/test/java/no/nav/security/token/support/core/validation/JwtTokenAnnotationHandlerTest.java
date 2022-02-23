@@ -1,20 +1,18 @@
 package no.nav.security.token.support.core.validation;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
+import no.nav.security.token.support.core.jwt.JwtToken;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
-
-import no.nav.security.token.support.core.context.TokenValidationContext;
-import no.nav.security.token.support.core.context.TokenValidationContextHolder;
-import no.nav.security.token.support.core.jwt.JwtToken;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JwtTokenAnnotationHandlerTest {
 

@@ -6,17 +6,23 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jwt.SignedJWT
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.features.json.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.jackson.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.util.*
+import io.ktor.application.Application
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
+import io.ktor.auth.principal
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.features.ContentNegotiation
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.jackson.JacksonConverter
+import io.ktor.response.respond
+import io.ktor.routing.get
+import io.ktor.routing.routing
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.client.core.OAuth2GrantType
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
@@ -39,7 +45,6 @@ val defaultMapper: ObjectMapper = jacksonObjectMapper().apply {
     setSerializationInclusion(JsonInclude.Include.NON_NULL)
 }
 
-@KtorExperimentalAPI
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 

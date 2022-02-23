@@ -1,16 +1,5 @@
 package no.nav.security.token.support.jaxrs;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
-
-import java.text.ParseException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.filter.JwtTokenValidationFilter;
@@ -20,7 +9,15 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import no.nav.security.token.support.test.JwtTokenGenerator;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import java.text.ParseException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 
 @ActiveProfiles("protected")
 @DirtiesContext

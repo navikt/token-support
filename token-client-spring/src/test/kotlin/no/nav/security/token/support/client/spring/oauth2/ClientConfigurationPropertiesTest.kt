@@ -13,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import java.util.Map
-import javax.validation.Valid
-import javax.validation.constraints.NotEmpty
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestTemplateAutoConfiguration::class])
 @ActiveProfiles("test")

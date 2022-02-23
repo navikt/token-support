@@ -11,18 +11,24 @@ import com.nimbusds.oauth2.sdk.id.Issuer;
 import no.nav.security.token.support.core.configuration.IssuerProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+ import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.nimbusds.jose.jwk.source.DefaultJWKSetCache.*;
 import static no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class JwtTokenValidatorFactoryTest {
 
     @Mock
@@ -36,7 +42,6 @@ class JwtTokenValidatorFactoryTest {
 
     @BeforeEach
     void setup() throws MalformedURLException {
-        MockitoAnnotations.initMocks(this);
         issuerProperties = new IssuerProperties(
             URI.create("http://url").toURL(),
             List.of("aud1")
@@ -54,39 +59,35 @@ class JwtTokenValidatorFactoryTest {
     @Test
     void testCreateConfigurableJwtTokenValidator() {
         issuerProperties.setValidation(new IssuerProperties.Validation(List.of("optionalclaim")));
-        JwtTokenValidator validatorWithDefaultCache = tokenValidator(issuerProperties, metadata, resourceRetriever);
+        var validatorWithDefaultCache = tokenValidator(issuerProperties, metadata, resourceRetriever);
         assertThat(validatorWithDefaultCache).isInstanceOf(ConfigurableJwtTokenValidator.class);
     }
 
     @Test
     void testCreateJwtTokenValidatorWithDefaultCacheValues() {
-        JwtTokenValidator validatorWithDefaultCache = tokenValidator(issuerProperties, metadata, resourceRetriever);
+        var validatorWithDefaultCache = tokenValidator(issuerProperties, metadata, resourceRetriever);
         assertThat(validatorWithDefaultCache).isInstanceOf(DefaultJwtTokenValidator.class);
-        JWKSetCache cache = getCache(validatorWithDefaultCache);
+        var cache = getCache(validatorWithDefaultCache);
         assertThat(cache).isInstanceOf(DefaultJWKSetCache.class);
-        assertThat(((DefaultJWKSetCache) cache).getLifespan(TimeUnit.MINUTES))
-            .isEqualTo(DefaultJWKSetCache.DEFAULT_LIFESPAN_MINUTES);
-        assertThat(((DefaultJWKSetCache) cache).getRefreshTime(TimeUnit.MINUTES))
-            .isEqualTo(DefaultJWKSetCache.DEFAULT_REFRESH_TIME_MINUTES);
+        assertThat(((DefaultJWKSetCache) cache).getLifespan(TimeUnit.MINUTES)).isEqualTo(DEFAULT_LIFESPAN_MINUTES);
+        assertThat(((DefaultJWKSetCache) cache).getRefreshTime(TimeUnit.MINUTES)).isEqualTo(DEFAULT_REFRESH_TIME_MINUTES);
     }
 
     @Test
     void testCreateJwtTokenValidatorWithCustomCacheValues() {
         issuerProperties.setJwksCache(new IssuerProperties.JwksCache(1L, 2L));
-        JwtTokenValidator validatorWithCustomCache = tokenValidator(issuerProperties, metadata, resourceRetriever);
+        var validatorWithCustomCache = tokenValidator(issuerProperties, metadata, resourceRetriever);
         assertThat(validatorWithCustomCache).isInstanceOf(DefaultJwtTokenValidator.class);
-        JWKSetCache cache = getCache(validatorWithCustomCache);
+        var cache = getCache(validatorWithCustomCache);
         assertThat(cache).isInstanceOf(DefaultJWKSetCache.class);
-        assertThat(((DefaultJWKSetCache) cache).getLifespan(TimeUnit.MINUTES))
-            .isEqualTo(1L);
-        assertThat(((DefaultJWKSetCache) cache).getRefreshTime(TimeUnit.MINUTES))
-            .isEqualTo(2L);
+        assertThat(((DefaultJWKSetCache) cache).getLifespan(TimeUnit.MINUTES)).isEqualTo(1L);
+        assertThat(((DefaultJWKSetCache) cache).getRefreshTime(TimeUnit.MINUTES)).isEqualTo(2L);
     }
 
     @Test
     void testCreateValidatorWithProvidedRemoteJWKSet() {
-        JwtTokenValidator jwtTokenValidator = tokenValidator(issuerProperties, metadata, remoteJWKSet);
-        JWKSetCache cache = new DefaultJWKSetCache(1L, 2L, TimeUnit.MINUTES);
+        var jwtTokenValidator = tokenValidator(issuerProperties, metadata, remoteJWKSet);
+        var cache = new DefaultJWKSetCache(1L, 2L, TimeUnit.MINUTES);
         when(remoteJWKSet.getJWKSetCache()).thenReturn(cache);
         assertThat(getCache(jwtTokenValidator)).isEqualTo(cache);
     }

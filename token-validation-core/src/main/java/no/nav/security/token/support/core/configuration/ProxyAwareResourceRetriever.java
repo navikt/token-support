@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.*;
 
-import static java.net.Proxy.Type.*;
+import static java.net.Proxy.Type.HTTP;
 
 public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
 
@@ -37,10 +37,6 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
         }
     }
 
-    private boolean isUsePlainTextForHttps() {
-        return usePlainTextForHttps;
-    }
-
     URL urlWithPlainTextForHttps(URL url) throws IOException {
         try {
             URI uri = url.toURI();
@@ -59,7 +55,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
 
     @Override
     protected HttpURLConnection openConnection(URL url) throws IOException {
-        URL urlToOpen = isUsePlainTextForHttps() ? urlWithPlainTextForHttps(url) : url;
+        URL urlToOpen = usePlainTextForHttps ? urlWithPlainTextForHttps(url) : url;
         return super.openConnection(urlToOpen);
     }
 }

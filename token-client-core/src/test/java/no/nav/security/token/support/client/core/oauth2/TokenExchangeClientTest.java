@@ -104,7 +104,7 @@ class TokenExchangeClientTest {
     }
 
     private void assertThatRequestBodyContainsTokenExchangeFormParameters(String formParameters) {
-        assertThat(formParameters).contains(OAuth2ParameterNames.GRANT_TYPE + "=" + encodeValue(OAuth2GrantType.TOKEN_EXCHANGE.getValue()));
+        assertThat(formParameters).contains(OAuth2ParameterNames.GRANT_TYPE + "=" + encodeValue(OAuth2GrantType.TOKEN_EXCHANGE.value()));
         assertThat(formParameters).contains(OAuth2ParameterNames.AUDIENCE + "=" + "audience1");
         assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN_TYPE + "=" + encodeValue("urn:ietf:params:oauth:token-type:jwt"));
         assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN + "=" + subjectToken);

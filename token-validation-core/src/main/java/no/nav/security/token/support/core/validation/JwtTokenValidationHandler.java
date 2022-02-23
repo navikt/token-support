@@ -1,13 +1,5 @@
 package no.nav.security.token.support.core.validation;
 
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.nav.security.token.support.core.configuration.IssuerConfiguration;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.context.TokenValidationContext;
@@ -15,6 +7,13 @@ import no.nav.security.token.support.core.exceptions.IssuerConfigurationExceptio
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 import no.nav.security.token.support.core.http.HttpRequest;
 import no.nav.security.token.support.core.jwt.JwtToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class JwtTokenValidationHandler {
 
@@ -37,34 +36,34 @@ public class JwtTokenValidationHandler {
                         Map.Entry::getKey,
                         Map.Entry::getValue));
 
-        LOG.debug("found {} tokens on request, number of validated tokens is {}", tokensOnRequest.size(), validatedTokens.size());
+        LOG.debug("Found {} tokens on request, number of validated tokens is {}", tokensOnRequest.size(), validatedTokens.size());
         if (validatedTokens.isEmpty() && !tokensOnRequest.isEmpty()) {
             LOG.debug("Found {} unvalidated token(s) with issuer(s) {} on request, is this a configuration error?", tokensOnRequest.size(),
-                    tokensOnRequest.stream().map(JwtToken::getIssuer).collect(Collectors.toList()));
+                    tokensOnRequest.stream().map(JwtToken::getIssuer).toList());
         }
         return new TokenValidationContext(validatedTokens);
     }
 
     private Optional<Map.Entry<String, JwtToken>> validate(JwtToken jwtToken) {
         try {
-            LOG.debug("check if token with issuer={} is present in config", jwtToken.getIssuer());
+            LOG.debug("Check if token with issuer={} is present in config", jwtToken.getIssuer());
             if (config.getIssuer(jwtToken.getIssuer()).isPresent()) {
                 var issuerShortName = issuerConfiguration(jwtToken.getIssuer()).getName();
-                LOG.debug("found token from trusted issuer={} with shortName={} in request", jwtToken.getIssuer(), issuerShortName);
+                LOG.debug("Found token from trusted issuer={} with shortName={} in request", jwtToken.getIssuer(), issuerShortName);
 
                 long start = System.currentTimeMillis();
                 tokenValidator(jwtToken).assertValidToken(jwtToken.getTokenAsString());
                 long end = System.currentTimeMillis();
 
-                LOG.debug("validated token from issuer[{}] in {} ms", jwtToken.getIssuer(), (end - start));
+                LOG.debug("Validated token from issuer[{}] in {} ms", jwtToken.getIssuer(), (end - start));
                 return Optional.of(entry(issuerShortName, jwtToken));
             }
-            LOG.debug("token is from an unknown issuer={}, skipping validation.", jwtToken.getIssuer());
+            LOG.debug("Token is from an unknown issuer={}, skipping validation.", jwtToken.getIssuer());
             return Optional.empty();
 
         } catch (JwtTokenValidatorException e) {
             LOG.info(
-                    "found invalid token for issuer [{}, expires at {}], exception message:{} ",
+                    "Found invalid token for issuer [{}, expires at {}], exception message:{} ",
                     jwtToken.getIssuer(),
                     e.getExpiryDate(),
                     e.getMessage());
@@ -78,7 +77,7 @@ public class JwtTokenValidationHandler {
 
     private IssuerConfiguration issuerConfiguration(String issuer) {
         return config.getIssuer(issuer)
-                .orElseThrow(() -> new IssuerConfigurationException(String.format("could not find IssuerConfiguration for issuer=%s", issuer)));
+                .orElseThrow(() -> new IssuerConfigurationException(String.format("Could not find IssuerConfiguration for issuer=%s", issuer)));
     }
 
     private static <T, U> Map.Entry<T, U> entry(T key, U value) {

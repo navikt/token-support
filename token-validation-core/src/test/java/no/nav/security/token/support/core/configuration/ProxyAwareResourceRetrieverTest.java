@@ -1,12 +1,12 @@
 package no.nav.security.token.support.core.configuration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ProxyAwareResourceRetrieverTest {
 

@@ -25,11 +25,11 @@ public class OAuth2AccessTokenService {
 
     private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache;
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;
+    private Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache;
     private final TokenExchangeClient tokenExchangeClient;
     private final JwtBearerTokenResolver tokenResolver;
     private final OnBehalfOfTokenClient onBehalfOfTokenClient;
     private final ClientCredentialsTokenClient clientCredentialsTokenClient;
-    private Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache;
 
     public OAuth2AccessTokenService(JwtBearerTokenResolver tokenResolver,
                                     OnBehalfOfTokenClient onBehalfOfTokenClient,
@@ -74,7 +74,7 @@ public class OAuth2AccessTokenService {
         } else {
             throw new OAuth2ClientException(String.format("invalid grant-type=%s from OAuth2ClientConfig.OAuth2Client" +
                     ". grant-type not in supported grant-types (%s)",
-                clientProperties.getGrantType().getValue(), SUPPORTED_GRANT_TYPES));
+                clientProperties.getGrantType().value(), SUPPORTED_GRANT_TYPES));
         }
     }
 
@@ -93,6 +93,10 @@ public class OAuth2AccessTokenService {
 
     public void setExchangeGrantCache(Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache) {
         this.exchangeGrantCache = exchangeGrantCache;
+    }
+
+    public  Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse>  getExchangeGrantCache() {
+        return exchangeGrantCache;
     }
 
     private OAuth2AccessTokenResponse executeOnBehalfOf(ClientProperties clientProperties) {

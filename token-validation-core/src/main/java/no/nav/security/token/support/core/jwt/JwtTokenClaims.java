@@ -1,12 +1,12 @@
 package no.nav.security.token.support.core.jwt;
 
+import com.nimbusds.jwt.JWTClaimsSet;
+
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import com.nimbusds.jwt.JWTClaimsSet;
 
 public class JwtTokenClaims {
 
@@ -56,13 +56,11 @@ public class JwtTokenClaims {
         if (value.equals("*")) {
             return true;
         }
-        if (claim instanceof String) {
-            String claimAsString = (String) claim;
+        if (claim instanceof String claimAsString) {
             return claimAsString.equals(value);
         }
-        if (claim instanceof Collection<?>) {
-            Collection<?> claimasList = (Collection<?>) claim;
-            return claimasList.contains(value);
+        if (claim instanceof Collection<?> claimAsList) {
+            return claimAsList.contains(value);
         }
         return false;
     }

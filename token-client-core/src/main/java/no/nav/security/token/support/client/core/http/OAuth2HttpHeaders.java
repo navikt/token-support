@@ -2,7 +2,7 @@ package no.nav.security.token.support.client.core.http;
 
 import java.util.*;
 
-import static java.lang.String.*;
+import static java.lang.String.CASE_INSENSITIVE_ORDER;
 
 public class OAuth2HttpHeaders {
 

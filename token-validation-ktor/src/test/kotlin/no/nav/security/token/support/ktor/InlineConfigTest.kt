@@ -1,18 +1,19 @@
 package no.nav.security.token.support.ktor
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.client.WireMock.any
+import com.github.tomakehurst.wiremock.client.WireMock.configureFor
+import com.github.tomakehurst.wiremock.client.WireMock.okJson
+import com.github.tomakehurst.wiremock.client.WireMock.stubFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.nimbusds.jwt.JWTClaimsSet
-import no.nav.security.token.support.ktor.inlineconfigtestapp.*
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
 import no.nav.security.token.support.ktor.inlineconfigtestapp.helloCounter
 import no.nav.security.token.support.ktor.inlineconfigtestapp.inlineConfiguredModule
-import no.nav.security.token.support.test.JwkGenerator
-import no.nav.security.token.support.test.JwtTokenGenerator
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -119,12 +120,6 @@ class InlineConfigTest {
         }
     }
 
-
-
-    //////////////////////////////////////////
-    //////////////////////////////////////////
-    //////////////////////////////////////////
-
     fun stubOIDCProvider() {
         stubFor(any(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(
             okJson("{\"jwks_uri\": \"${server.baseUrl()}/keys\", " +
@@ -132,7 +127,7 @@ class InlineConfigTest {
                 "\"issuer\": \"${JwtTokenGenerator.ISS}\"}")))
 
         stubFor(any(urlPathEqualTo("/keys")).willReturn(
-            okJson(JwkGenerator.getJWKSet().toPublicJWKSet().toString())))
+            okJson(JwkGenerator.jWKSet.toPublicJWKSet().toString())))
     }
 
     fun buildClaimSet(subject: String,

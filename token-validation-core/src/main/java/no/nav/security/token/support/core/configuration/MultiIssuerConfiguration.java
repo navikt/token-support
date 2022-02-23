@@ -3,19 +3,18 @@ package no.nav.security.token.support.core.configuration;
 import com.nimbusds.jose.util.ResourceRetriever;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 public class MultiIssuerConfiguration {
 
     private final List<String> issuerShortNames = new ArrayList<>();
-    private ResourceRetriever resourceRetriever;
+    private final ResourceRetriever resourceRetriever;
 
     private final Map<String, IssuerConfiguration> issuers = new HashMap<>();
 
     private final Map<String, IssuerProperties> issuerPropertiesMap;
 
     public MultiIssuerConfiguration(Map<String, IssuerProperties> issuerPropertiesMap) {
-        this(issuerPropertiesMap, null);
+        this(issuerPropertiesMap, new ProxyAwareResourceRetriever());
     }
 
     public MultiIssuerConfiguration(Map<String, IssuerProperties> issuerPropertiesMap,
@@ -38,17 +37,14 @@ public class MultiIssuerConfiguration {
     }
 
     public ResourceRetriever getResourceRetriever() {
-        if (resourceRetriever == null) {
-            resourceRetriever = createDefaultResourceRetriever();
-        }
-        return resourceRetriever;
+            return resourceRetriever;
     }
 
     private void loadIssuerConfigurations() {
 
         issuerPropertiesMap.forEach((shortName, value) -> {
             issuerShortNames.add(shortName);
-            IssuerConfiguration config = createIssuerConfiguration(shortName, value);
+            var config = createIssuerConfiguration(shortName, value);
             issuers.put(shortName, config);
             issuers.put(config.getMetaData().getIssuer().toString(), config);
         });
@@ -59,11 +55,7 @@ public class MultiIssuerConfiguration {
             var resourceRetrieverWithProxy = new ProxyAwareResourceRetriever(issuerProperties.getProxyUrl(), issuerProperties.isUsePlaintextForHttps());
             return new IssuerConfiguration(shortName, issuerProperties, resourceRetrieverWithProxy);
         }
-        return new IssuerConfiguration(shortName, issuerProperties, getResourceRetriever());
-    }
-
-    protected ResourceRetriever createDefaultResourceRetriever() {
-        return new ProxyAwareResourceRetriever();
+        return new IssuerConfiguration(shortName, issuerProperties, resourceRetriever);
     }
 
     @Override

@@ -1,24 +1,21 @@
 package no.nav.security.token.support.test.spring;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.util.IOUtils;
+import com.nimbusds.jwt.SignedJWT;
 import no.nav.security.token.support.core.api.Unprotected;
+import no.nav.security.token.support.test.JwkGenerator;
+import no.nav.security.token.support.test.JwtTokenGenerator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.util.IOUtils;
-import com.nimbusds.jwt.SignedJWT;
-
-import no.nav.security.token.support.test.JwkGenerator;
-import no.nav.security.token.support.test.JwtTokenGenerator;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.Charset;
 
 @Deprecated
 @RestController

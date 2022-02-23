@@ -4,14 +4,16 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.kotest.assertions.asClue
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
-import io.ktor.application.*
-import io.ktor.config.*
-import io.ktor.http.*
-import io.ktor.server.testing.*
+import io.ktor.application.Application
+import io.ktor.config.MapApplicationConfig
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.TestApplicationResponse
+import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.withTestApplication
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.withMockOAuth2Server
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 internal class ApplicationTest {

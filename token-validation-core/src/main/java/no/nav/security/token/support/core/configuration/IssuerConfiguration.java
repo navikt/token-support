@@ -5,32 +5,25 @@ import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
 import no.nav.security.token.support.core.validation.JwtTokenValidator;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 import static no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator;
 
-/*
- * THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS
- * OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
- * ANY IMPLIED WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A
- * PARTICULAR PURPOSE, MERCHANTABILITY OR NON-INFRINGEMENT.
- */
-
 public class IssuerConfiguration {
 
-    private String name;
-    private AuthorizationServerMetadata metadata;
+    private final String name;
+    private final AuthorizationServerMetadata metadata;
     private final List<String> acceptedAudience;
-    private String cookieName;
+    private final String cookieName;
     private final JwtTokenValidator tokenValidator;
-    private ResourceRetriever resourceRetriever;
+    private final ResourceRetriever resourceRetriever;
 
-    public IssuerConfiguration(String name, IssuerProperties issuerProperties, ResourceRetriever resourceRetriever) {
+    public IssuerConfiguration(String name, IssuerProperties issuerProperties, ResourceRetriever retriever) {
         this.name = name;
-        this.resourceRetriever = resourceRetriever;
+        this.resourceRetriever = Optional.ofNullable(retriever).orElseGet(() ->new ProxyAwareResourceRetriever());
         this.metadata = getProviderMetadata(resourceRetriever, issuerProperties.getDiscoveryUrl());
         this.acceptedAudience = issuerProperties.getAcceptedAudience();
         this.cookieName = issuerProperties.getCookieName();
@@ -53,45 +46,19 @@ public class IssuerConfiguration {
         return cookieName;
     }
 
-    // TODO needed?
-    public void setCookieName(String cookieName) {
-        this.cookieName = cookieName;
-    }
-
     public AuthorizationServerMetadata getMetaData() {
         return metadata;
     }
 
-    // TODO needed?
-    public void setMetaData(AuthorizationServerMetadata metaData) {
-        this.metadata = metaData;
-    }
-
-    // TODO needed?
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public ResourceRetriever getResourceRetriever() {
-        if (resourceRetriever == null) {
-            resourceRetriever = new ProxyAwareResourceRetriever();
-        }
         return resourceRetriever;
     }
 
-    // TODO needed?
-    public void setResourceRetriever(ResourceRetriever resourceRetriever) {
-        this.resourceRetriever = resourceRetriever;
-    }
-
     protected static AuthorizationServerMetadata getProviderMetadata(ResourceRetriever resourceRetriever, URL url) {
-        if (url == null) {
-            throw new MetaDataNotAvailableException("discoveryUrl cannot be null, check your configuration.");
-        }
         try {
             return AuthorizationServerMetadata.parse(resourceRetriever.retrieveResource(url).getContent());
         } catch (ParseException | IOException e) {
-            throw new MetaDataNotAvailableException(url, e);
+            throw new MetaDataNotAvailableException("Make sure you are not using proxying in GCP",url, e);
         }
     }
 

@@ -1,15 +1,14 @@
 package no.nav.security.token.support.spring.validation.interceptor
 
-import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
-import org.springframework.web.servlet.HandlerInterceptor
-import java.util.concurrent.ConcurrentHashMap
-import org.springframework.web.method.HandlerMethod
 import no.nav.security.token.support.core.exceptions.AnnotationRequiredException
-import org.springframework.web.server.ResponseStatusException
+import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.http.HttpStatus.NOT_IMPLEMENTED
-import java.lang.Exception
+import org.springframework.web.method.HandlerMethod
+import org.springframework.web.server.ResponseStatusException
+import org.springframework.web.servlet.HandlerInterceptor
+import java.util.concurrent.ConcurrentHashMap
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 

@@ -1,10 +1,10 @@
 package no.nav.security.token.support.spring.integrationtest
 
-import no.nav.security.token.support.spring.ProtectedRestController
-import org.springframework.web.bind.annotation.GetMapping
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.security.token.support.core.api.RequiredIssuers
 import no.nav.security.token.support.core.api.Unprotected
+import no.nav.security.token.support.spring.ProtectedRestController
+import org.springframework.web.bind.annotation.GetMapping
 
 @ProtectedRestController(issuer = AProtectedRestController.ISSUER_SHORTNAME)
 class AProtectedRestController {

@@ -1,20 +1,14 @@
 package no.nav.security.token.support.spring.validation.interceptor
 
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.mock.web.MockHttpServletResponse
-import no.nav.security.token.support.core.context.TokenValidationContext
-import no.nav.security.token.support.core.jwt.JwtToken
-import java.util.HashMap
-import org.springframework.web.method.HandlerMethod
-import org.springframework.web.server.ResponseStatusException
-import no.nav.security.token.support.core.api.Unprotected
-import no.nav.security.token.support.core.api.ProtectedWithClaims
-import java.util.concurrent.ConcurrentHashMap
-import com.nimbusds.jwt.PlainJWT
 import com.nimbusds.jwt.JWTClaimsSet.Builder
+import com.nimbusds.jwt.PlainJWT
 import net.minidev.json.JSONArray
 import no.nav.security.token.support.core.api.Protected
+import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.api.Unprotected
+import no.nav.security.token.support.core.context.TokenValidationContext
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import no.nav.security.token.support.core.jwt.JwtToken
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -22,8 +16,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.core.annotation.AnnotationAttributes.fromMap
 import org.springframework.http.HttpStatus.NOT_IMPLEMENTED
-import java.lang.NoSuchMethodException
-import java.lang.RuntimeException
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.mock.web.MockHttpServletResponse
+import org.springframework.web.method.HandlerMethod
+import org.springframework.web.server.ResponseStatusException
+import java.util.concurrent.ConcurrentHashMap
 
 internal class JwtTokenHandlerInterceptorTest {
     private val contextHolder  = createContextHolder()

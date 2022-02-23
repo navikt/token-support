@@ -1,16 +1,16 @@
 package no.nav.security.token.support.client.spring.oauth2
 
-import org.springframework.boot.web.client.RestTemplateBuilder
-import no.nav.security.token.support.client.core.http.OAuth2HttpClient
-import org.springframework.web.client.RestTemplate
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
-import org.springframework.http.RequestEntity
-import org.springframework.web.client.HttpStatusCodeException
 import no.nav.security.token.support.client.core.OAuth2ClientException
+import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
+import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod.POST
+import org.springframework.http.RequestEntity
 import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.client.HttpStatusCodeException
+import org.springframework.web.client.RestTemplate
 
 class DefaultOAuth2HttpClient(restTemplateBuilder: RestTemplateBuilder) : OAuth2HttpClient {
     private val restTemplate: RestTemplate

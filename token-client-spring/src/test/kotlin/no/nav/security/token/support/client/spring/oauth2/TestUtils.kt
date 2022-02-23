@@ -1,12 +1,11 @@
 package no.nav.security.token.support.client.spring.oauth2
 
 
-import okhttp3.mockwebserver.MockWebServer
-import java.io.IOException
-import kotlin.Throws
 import okhttp3.mockwebserver.MockResponse
-import org.springframework.http.HttpHeaders.*
-import org.springframework.http.MediaType.*
+import okhttp3.mockwebserver.MockWebServer
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import java.io.IOException
 import java.util.function.Consumer
 
 internal object TestUtils {

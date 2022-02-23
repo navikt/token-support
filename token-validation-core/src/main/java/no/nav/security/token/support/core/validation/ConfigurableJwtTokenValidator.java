@@ -7,17 +7,13 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
-import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
-
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
@@ -26,17 +22,10 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
     private final List<String> defaultRequiredClaims = List.of("sub", "aud", "iss", "iat", "exp", "nbf");
     private final List<String> requiredClaims;
 
-    public ConfigurableJwtTokenValidator(
-        String issuer,
-        List<String> optionalClaims,
-        RemoteJWKSet<SecurityContext> remoteJWKSet
-    ) {
+    public ConfigurableJwtTokenValidator(String issuer, List<String> optionalClaims, RemoteJWKSet<SecurityContext> remoteJWKSet) {
         this.issuer = issuer;
         this.remoteJWKSet = remoteJWKSet;
-        this.requiredClaims = removeOptionalClaims(
-            defaultRequiredClaims,
-            Optional.ofNullable(optionalClaims).orElse(Collections.emptyList())
-        );
+        this.requiredClaims = removeOptionalClaims(defaultRequiredClaims, Optional.ofNullable(optionalClaims).orElse(List.of()));
     }
 
     @Override
@@ -77,7 +66,7 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
     private static <T> List<T> removeOptionalClaims(List<T> first, List<T> second) {
         return first.stream()
             .filter(c -> !second.contains(c))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private JWT parse(String tokenString) {

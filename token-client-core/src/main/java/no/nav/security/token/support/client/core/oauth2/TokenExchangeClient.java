@@ -1,7 +1,5 @@
 package no.nav.security.token.support.client.core.oauth2;
 
-import no.nav.security.token.support.client.core.ClientProperties;
-import no.nav.security.token.support.client.core.OAuth2ParameterNames;
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
 
 import java.util.LinkedHashMap;

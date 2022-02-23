@@ -1,11 +1,10 @@
 package no.nav.security.token.support.client.core.oauth2;
 
 import no.nav.security.token.support.client.core.ClientProperties;
-import no.nav.security.token.support.client.core.OAuth2GrantType;
 
 import java.util.Objects;
 
-import static no.nav.security.token.support.client.core.OAuth2GrantType.*;
+import static no.nav.security.token.support.client.core.OAuth2GrantType.TOKEN_EXCHANGE;
 
 public class TokenExchangeGrantRequest extends AbstractOAuth2GrantRequest {
 

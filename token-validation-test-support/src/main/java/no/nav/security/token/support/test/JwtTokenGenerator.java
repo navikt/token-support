@@ -1,19 +1,15 @@
 package no.nav.security.token.support.test;
 
-import java.util.Date;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JOSEObjectType;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.JWSHeader.Builder;
-import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+
+import java.util.Date;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @deprecated use MockOAuth2Server.issueToken instead - ref https://github.com/navikt/mock-oauth2-server

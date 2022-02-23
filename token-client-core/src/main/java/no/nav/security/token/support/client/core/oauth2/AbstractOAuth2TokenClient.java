@@ -1,6 +1,5 @@
 package no.nav.security.token.support.client.core.oauth2;
 
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import no.nav.security.token.support.client.core.*;
 import no.nav.security.token.support.client.core.auth.ClientAssertion;
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient;
@@ -64,7 +63,7 @@ abstract class AbstractOAuth2TokenClient<T extends AbstractOAuth2GrantRequest> {
     Map<String, String> createDefaultFormParameters(T grantRequest) {
         ClientProperties clientProperties = grantRequest.getClientProperties();
         Map<String, String> formParameters = new LinkedHashMap<>(clientAuthenticationFormParameters(grantRequest));
-        formParameters.put(OAuth2ParameterNames.GRANT_TYPE, grantRequest.getGrantType().getValue());
+        formParameters.put(OAuth2ParameterNames.GRANT_TYPE, grantRequest.getGrantType().value());
         if (!clientProperties.getGrantType().equals(OAuth2GrantType.TOKEN_EXCHANGE)) {
             formParameters.put(OAuth2ParameterNames.SCOPE, String.join(" ", clientProperties.getScope()));
         }

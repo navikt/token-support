@@ -3,8 +3,7 @@ package no.nav.security.token.support.spring.validation.interceptor
 import no.nav.security.token.support.core.api.Protected
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.security.token.support.core.api.Unprotected
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy.RUNTIME
+import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
 import kotlin.annotation.AnnotationTarget.CLASS
 import kotlin.annotation.AnnotationTarget.FUNCTION
