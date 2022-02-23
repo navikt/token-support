@@ -10,7 +10,7 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
 import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient
 import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
-import no.nav.security.token.support.client.core.OAuth2CacheFactory.*
+import no.nav.security.token.support.client.core.OAuth2CacheFactory.accessTokenResponseCache
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
@@ -40,7 +40,7 @@ class OAuth2ClientConfiguration : ImportAware {
                     val skew = it.getNumber<Long>("cacheEvictSkew")
                     clientCredentialsGrantCache = accessTokenResponseCache(max, skew)
                     onBehalfOfGrantCache = accessTokenResponseCache(max, skew)
-                    setExchangeGrantCache(accessTokenResponseCache(max, skew))
+                    exchangeGrantCache = accessTokenResponseCache(max, skew)
                 }
             }
         }

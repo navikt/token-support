@@ -95,6 +95,10 @@ public class OAuth2AccessTokenService {
         this.exchangeGrantCache = exchangeGrantCache;
     }
 
+    public  Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse>  getExchangeGrantCache() {
+        return exchangeGrantCache;
+    }
+
     private OAuth2AccessTokenResponse executeOnBehalfOf(ClientProperties clientProperties) {
         final var grantRequest = onBehalfOfGrantRequest(clientProperties);
         return getFromCacheIfEnabled(grantRequest, onBehalfOfGrantCache, onBehalfOfTokenClient::getTokenResponse);
