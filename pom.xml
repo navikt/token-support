@@ -25,7 +25,6 @@
             <organizationUrl>https://www.nav.no</organizationUrl>
         </developer>
     </developers>
-
     <modules>
         <module>token-validation-core</module>
         <module>token-validation-filter</module>
