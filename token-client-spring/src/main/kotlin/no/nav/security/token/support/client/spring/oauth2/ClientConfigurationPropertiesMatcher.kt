@@ -15,5 +15,5 @@ import java.util.Optional
  *
  */
 interface ClientConfigurationPropertiesMatcher {
-    fun findProperties(properties: ClientConfigurationProperties, uri: URI) = Optional.ofNullable(properties.registration[uri.host])
+    fun findProperties(properties: ClientConfigurationProperties, uri: URI) = Optional.ofNullable(properties.registration[uri.host.split(".").first()])
 }
