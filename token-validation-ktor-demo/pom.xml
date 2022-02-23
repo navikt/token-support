@@ -11,7 +11,6 @@
     <properties>
         <kotlin.code.style>official</kotlin.code.style>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--kotlin.compiler.incremental>true</kotlin.compiler.incremental-->
         <main.class>io.ktor.server.netty.EngineMain</main.class>
     </properties>
     <dependencies>
@@ -109,7 +108,6 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.10.0</version>
-                <!--configuration><source>1.8</source><target>1.8</target></configuration-->
                 <executions>
                     <execution>
                         <id>default-compile</id>

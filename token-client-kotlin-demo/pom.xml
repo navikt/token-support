@@ -13,7 +13,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.class>io.ktor.server.netty.EngineMain</main.class>
-        <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
     </properties>
     <dependencies>
         <dependency>
