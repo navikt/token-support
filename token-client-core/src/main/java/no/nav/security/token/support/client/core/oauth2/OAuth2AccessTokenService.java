@@ -25,11 +25,11 @@ public class OAuth2AccessTokenService {
 
     private Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse> clientCredentialsGrantCache;
     private Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse> onBehalfOfGrantCache;
+    private Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache;
     private final TokenExchangeClient tokenExchangeClient;
     private final JwtBearerTokenResolver tokenResolver;
     private final OnBehalfOfTokenClient onBehalfOfTokenClient;
     private final ClientCredentialsTokenClient clientCredentialsTokenClient;
-    private Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse> exchangeGrantCache;
 
     public OAuth2AccessTokenService(JwtBearerTokenResolver tokenResolver,
                                     OnBehalfOfTokenClient onBehalfOfTokenClient,
