@@ -29,7 +29,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B  install jacoco:prepare-agent jacoco:report sonar:sonar  -Dsonar.projectKey=navikt_token-support 
+        run: mvn -B -Pgithub install jacoco:prepare-agent jacoco:report sonar:sonar  -Dsonar.projectKey=navikt_token-support 
 
   release-notes:
     runs-on: ubuntu-latest
