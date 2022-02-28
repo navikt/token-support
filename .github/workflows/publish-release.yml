@@ -53,4 +53,4 @@ jobs:
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions release"
-          mvn  --settings .github/settings.xml -Pgithub --batch-mode -Dmaven.main.skip=true -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true deploy
+          mvn  --settings .github/settings.xml -Pgithub --batch-mode -Dmaven.main.skip=true -Dmaven.test.skip=true  deploy
