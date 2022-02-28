@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
-import java.util.Map
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestTemplateAutoConfiguration::class])
 @ActiveProfiles("test")
@@ -28,7 +27,7 @@ internal class ClientConfigurationPropertiesTest {
     fun testClientConfigIsValid() {
         assertThat(clientConfigurationProperties).isNotNull
         assertThat(clientConfigurationProperties.registration).isNotNull
-        val clientProperties = clientConfigurationProperties.registration.values().stream().findFirst().orElse(null)
+        val clientProperties = clientConfigurationProperties.registration.values.stream().findFirst().orElse(null)
         assertThat(clientProperties).isNotNull
         val auth = clientProperties.authentication
         assertThat(auth).isNotNull
@@ -46,7 +45,7 @@ internal class ClientConfigurationPropertiesTest {
         assertThat(clientConfigurationProperties.registration).isNotNull
         val clientProperties = clientConfigurationProperties.registration["example1-token-exchange1"]
         assertThat(clientProperties).isNotNull
-        assertThat(clientProperties.tokenExchange.audience).isNotBlank
+        assertThat(clientProperties!!.tokenExchange.audience).isNotBlank
     }
 
     @Test
@@ -55,7 +54,7 @@ internal class ClientConfigurationPropertiesTest {
         assertThat(clientConfigurationProperties.registration).isNotNull
         val clientProperties = clientConfigurationProperties.registration["example1-clientcredentials3"]
         assertThat(clientProperties).isNotNull
-        val auth = clientProperties.authentication
+        val auth = clientProperties!!.authentication
         assertThat(auth).isNotNull
         assertThat(auth.clientAuthMethod).isEqualTo(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
         assertThat(auth.clientId).isNotNull
@@ -67,8 +66,8 @@ internal class ClientConfigurationPropertiesTest {
 
     @Test
     fun testDifferentClientPropsShouldNOTBeEqualAndShouldMakeSurroundingRequestsUnequalToo() {
-        val props: Map<String, ClientProperties>? = clientConfigurationProperties.registration
-        assertThat(props!!.size()).isGreaterThan(1)
+        val props = clientConfigurationProperties.registration
+        assertThat(props.size).isGreaterThan(1)
         val p1 = props.get("example1-onbehalfof")
         val p2 = props.get("example1-onbehalfof2")
         assertThat(p1 == p2).isFalse

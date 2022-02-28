@@ -34,7 +34,7 @@ internal class ClientConfigurationPropertiesTestWithWellKnownUrl {
     fun testClientConfigIsValid() {
         assertThat(clientConfigurationProperties).isNotNull
         assertThat(clientConfigurationProperties.registration).isNotNull
-        val clientProperties = clientConfigurationProperties.registration.values().stream().findFirst().orElse(null)
+        val clientProperties = clientConfigurationProperties.registration.values.stream().findFirst().orElse(null)
         assertThat(clientProperties).isNotNull
         val auth = clientProperties.authentication
         assertThat(auth).isNotNull

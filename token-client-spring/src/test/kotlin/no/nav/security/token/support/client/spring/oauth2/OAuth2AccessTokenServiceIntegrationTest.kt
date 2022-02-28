@@ -67,7 +67,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
         get() {
             var clientProperties = clientConfigurationProperties.registration["example1-onbehalfof"]
             Assertions.assertThat(clientProperties).isNotNull
-            clientProperties = clientProperties.toBuilder()
+            clientProperties = clientProperties!!.toBuilder()
                 .tokenEndpointUrl(tokenEndpointUrl)
                 .build()
             server!!.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
@@ -110,7 +110,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             var clientProperties = clientConfigurationProperties.registration["example1-token" +
                     "-exchange1"]
             Assertions.assertThat(clientProperties).isNotNull
-            clientProperties = clientProperties.toBuilder()
+            clientProperties = clientProperties!!.toBuilder()
                 .tokenEndpointUrl(tokenEndpointUrl)
                 .build()
             server!!.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
@@ -138,7 +138,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
         get() {
             var clientProperties = clientConfigurationProperties.registration["example1-clientcredentials1"]
             Assertions.assertThat(clientProperties).isNotNull
-            clientProperties = clientProperties.toBuilder()
+            clientProperties = clientProperties!!.toBuilder()
                 .tokenEndpointUrl(tokenEndpointUrl)
                 .build()
             server!!.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
