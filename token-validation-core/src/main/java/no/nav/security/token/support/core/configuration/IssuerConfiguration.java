@@ -23,7 +23,7 @@ public class IssuerConfiguration {
 
     public IssuerConfiguration(String name, IssuerProperties issuerProperties, ResourceRetriever retriever) {
         this.name = name;
-        this.resourceRetriever = Optional.ofNullable(retriever).orElseGet(() ->new ProxyAwareResourceRetriever());
+        this.resourceRetriever = Optional.ofNullable(retriever).orElseGet(ProxyAwareResourceRetriever::new);
         this.metadata = getProviderMetadata(resourceRetriever, issuerProperties.getDiscoveryUrl());
         this.acceptedAudience = issuerProperties.getAcceptedAudience();
         this.cookieName = issuerProperties.getCookieName();
