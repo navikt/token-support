@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNull;
+
 public class IssuerProperties {
     @NotNull
     private URL discoveryUrl;
@@ -22,7 +24,7 @@ public class IssuerProperties {
     }
 
     public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience) {
-        this.discoveryUrl = discoveryUrl;
+        this.discoveryUrl = requireNonNull(discoveryUrl);
         this.acceptedAudience = acceptedAudience;
     }
 
@@ -121,7 +123,7 @@ public class IssuerProperties {
         private List<String> optionalClaims;
 
         public Validation(List<String> optionalClaims) {
-            this.optionalClaims = Optional.ofNullable(optionalClaims).orElse(Collections.emptyList());
+            this.optionalClaims = Optional.ofNullable(optionalClaims).orElse(List.of());
         }
 
         public Boolean isConfigured() {
@@ -189,7 +191,7 @@ public class IssuerProperties {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            JwksCache jwksCache = (JwksCache) o;
+            var jwksCache = (JwksCache) o;
             return lifespan.equals(jwksCache.lifespan) && refreshTime.equals(jwksCache.refreshTime);
         }
 

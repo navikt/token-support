@@ -31,8 +31,8 @@ public class JwtTokenValidationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
-        if (request instanceof HttpServletRequest) {
-            doTokenValidation((HttpServletRequest) request, (HttpServletResponse) response, chain);
+        if (request instanceof HttpServletRequest req) {
+            doTokenValidation(req, (HttpServletResponse) response, chain);
         } else {
             chain.doFilter(request, response);
         }

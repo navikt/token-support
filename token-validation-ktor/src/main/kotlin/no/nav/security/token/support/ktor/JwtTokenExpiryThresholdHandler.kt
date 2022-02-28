@@ -17,7 +17,7 @@ class JwtTokenExpiryThresholdHandler(private val expiryThreshold: Int) {
 
     fun addHeaderOnTokenExpiryThreshold(call: ApplicationCall, tokenValidationContext: TokenValidationContext) {
         if(expiryThreshold > 0) {
-            for (issuer in tokenValidationContext.issuers) {
+            tokenValidationContext.issuers.forEach { issuer ->
                 val jwtTokenClaims = tokenValidationContext.getClaims(issuer)
                 if (tokenExpiresBeforeThreshold(jwtTokenClaims)) {
                     call.response.header(JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER, "true")

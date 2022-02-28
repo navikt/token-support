@@ -7,12 +7,14 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.*;
 
+import static java.net.Proxy.Type.HTTP;
+
 public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
 
     public static final int DEFAULT_HTTP_CONNECT_TIMEOUT = 21050;
     public static final int DEFAULT_HTTP_READ_TIMEOUT = 30000;
     public static final int DEFAULT_HTTP_SIZE_LIMIT = 50 * 1024;
-    private static final Logger logger = LoggerFactory.getLogger(ProxyAwareResourceRetriever.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProxyAwareResourceRetriever.class);
     private final boolean usePlainTextForHttps;
 
     public ProxyAwareResourceRetriever() {
@@ -31,12 +33,8 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
         super(connectTimeout, readTimeout, sizeLimit);
         this.usePlainTextForHttps = usePlainTextForHttps;
         if (proxyUrl != null) {
-            setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort())));
+            setProxy(new Proxy(HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort())));
         }
-    }
-
-    private boolean isUsePlainTextForHttps() {
-        return usePlainTextForHttps;
     }
 
     URL urlWithPlainTextForHttps(URL url) throws IOException {
@@ -48,7 +46,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
             int port = url.getPort() > 0 ? url.getPort() : 443;
             String newUrl = "http://" + uri.getHost() + ":" + port + uri.getPath()
                 + (uri.getQuery() != null && uri.getQuery().length() > 0 ? "?" + uri.getQuery() : "");
-            logger.debug("using plaintext connection for https url, new url is {}", newUrl);
+            LOG.debug("using plaintext connection for https url, new url is {}", newUrl);
             return URI.create(newUrl).toURL();
         } catch (URISyntaxException e) {
             throw new IOException(e);
@@ -57,7 +55,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
 
     @Override
     protected HttpURLConnection openConnection(URL url) throws IOException {
-        URL urlToOpen = isUsePlainTextForHttps() ? urlWithPlainTextForHttps(url) : url;
+        URL urlToOpen = usePlainTextForHttps ? urlWithPlainTextForHttps(url) : url;
         return super.openConnection(urlToOpen);
     }
 }

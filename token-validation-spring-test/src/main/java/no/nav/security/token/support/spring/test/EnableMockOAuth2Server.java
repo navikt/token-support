@@ -2,6 +2,7 @@ package no.nav.security.token.support.spring.test;
 
 import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
 import org.springframework.context.annotation.Import;
+
 import java.lang.annotation.*;
 
 @Documented

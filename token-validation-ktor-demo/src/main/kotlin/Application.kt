@@ -11,14 +11,12 @@ import io.ktor.http.ContentType
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.security.token.support.ktor.RequiredClaims
 import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
 import no.nav.security.token.support.ktor.tokenValidationSupport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-@KtorExperimentalAPI
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 

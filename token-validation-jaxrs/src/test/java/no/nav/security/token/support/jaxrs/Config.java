@@ -4,7 +4,8 @@ import no.nav.security.token.support.core.config.MultiIssuerProperties;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 import no.nav.security.token.support.filter.JwtTokenValidationFilter;
-import no.nav.security.token.support.test.FileResourceRetriever;
+import no.nav.security.token.support.jaxrs.rest.*;
+import no.nav.security.token.support.jaxrs.servlet.JaxrsJwtTokenValidationFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
@@ -16,15 +17,6 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.context.request.RequestContextListener;
-
-import no.nav.security.token.support.jaxrs.rest.ProtectedClassResource;
-import no.nav.security.token.support.jaxrs.rest.ProtectedMethodResource;
-import no.nav.security.token.support.jaxrs.rest.ProtectedWithClaimsClassResource;
-import no.nav.security.token.support.jaxrs.rest.TokenResource;
-import no.nav.security.token.support.jaxrs.rest.UnprotectedClassResource;
-import no.nav.security.token.support.jaxrs.rest.WithoutAnnotationsResource;
-import no.nav.security.token.support.jaxrs.servlet.JaxrsJwtTokenValidationFilter;
-import no.nav.security.token.support.test.jersey.TestTokenGeneratorResource;
 
 @SpringBootConfiguration
 @EnableConfigurationProperties(MultiIssuerProperties.class)
@@ -80,7 +72,6 @@ public class Config {
             register(ProtectedWithClaimsClassResource.class);
             register(UnprotectedClassResource.class);
             register(WithoutAnnotationsResource.class);
-
             register(TestTokenGeneratorResource.class);
         }
 

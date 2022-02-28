@@ -2,7 +2,6 @@ package no.nav.security.token.support.client.core;
 
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
-import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

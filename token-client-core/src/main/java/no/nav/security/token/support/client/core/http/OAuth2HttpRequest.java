@@ -2,7 +2,11 @@ package no.nav.security.token.support.client.core.http;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.unmodifiableMap;
 
 public class OAuth2HttpRequest {
 
@@ -21,22 +25,22 @@ public class OAuth2HttpRequest {
     }
 
     public URI getTokenEndpointUrl() {
-        return this.tokenEndpointUrl;
+        return tokenEndpointUrl;
     }
 
     public OAuth2HttpHeaders getOAuth2HttpHeaders() {
-        return this.oAuth2HttpHeaders;
+        return oAuth2HttpHeaders;
     }
 
     public Map<String, String> getFormParameters() {
-        return this.formParameters;
+        return formParameters;
     }
 
     public static class OAuth2HttpRequestBuilder {
         private URI tokenEndpointUrl;
         private OAuth2HttpHeaders oAuth2HttpHeaders;
-        private ArrayList<String> formParameters$key;
-        private ArrayList<String> formParameters$value;
+        private List<String> keys;
+        private List<String> values;
 
         OAuth2HttpRequestBuilder() {
         }
@@ -52,57 +56,53 @@ public class OAuth2HttpRequest {
         }
 
         public OAuth2HttpRequestBuilder formParameter(String formParameterKey, String formParameterValue) {
-            if (this.formParameters$key == null) {
-                this.formParameters$key = new ArrayList<String>();
-                this.formParameters$value = new ArrayList<String>();
+            if (keys == null) {
+                keys = new ArrayList<>();
+                values = new ArrayList<>();
             }
-            this.formParameters$key.add(formParameterKey);
-            this.formParameters$value.add(formParameterValue);
+            keys.add(formParameterKey);
+            values.add(formParameterValue);
             return this;
         }
 
         public OAuth2HttpRequestBuilder formParameters(Map<? extends String, ? extends String> formParameters) {
-            if (this.formParameters$key == null) {
-                this.formParameters$key = new ArrayList<String>();
-                this.formParameters$value = new ArrayList<String>();
+            if (keys == null) {
+                keys = new ArrayList<>();
+                values = new ArrayList<>();
             }
-            for (final Map.Entry<? extends String, ? extends String> $lombokEntry : formParameters.entrySet()) {
-                this.formParameters$key.add($lombokEntry.getKey());
-                this.formParameters$value.add($lombokEntry.getValue());
-            }
+            formParameters.forEach((key, value) -> {
+                keys.add(key);
+                values.add(value);
+            });
             return this;
         }
 
         public OAuth2HttpRequestBuilder clearFormParameters() {
-            if (this.formParameters$key != null) {
-                this.formParameters$key.clear();
-                this.formParameters$value.clear();
+            if (keys != null) {
+                keys.clear();
+                values.clear();
             }
             return this;
         }
 
         public OAuth2HttpRequest build() {
-            Map<String, String> formParameters;
-            switch (this.formParameters$key == null ? 0 : this.formParameters$key.size()) {
+            switch (keys == null ? 0 : keys.size()) {
                 case 0:
-                    formParameters = java.util.Collections.emptyMap();
-                    break;
+                    return new OAuth2HttpRequest(tokenEndpointUrl, oAuth2HttpHeaders, Map.of());
                 case 1:
-                    formParameters = java.util.Collections.singletonMap(this.formParameters$key.get(0), this.formParameters$value.get(0));
-                    break;
+                    return new OAuth2HttpRequest(tokenEndpointUrl, oAuth2HttpHeaders, Map.of(this.keys.get(0), this.values.get(0)));
                 default:
-                    formParameters = new java.util.LinkedHashMap<String, String>(this.formParameters$key.size() < 1073741824 ? 1 + this.formParameters$key.size() + (this.formParameters$key.size() - 3) / 3 : Integer.MAX_VALUE);
-                    for (int $i = 0; $i < this.formParameters$key.size(); $i++)
-                        formParameters.put(this.formParameters$key.get($i), this.formParameters$value.get($i));
-                    formParameters = java.util.Collections.unmodifiableMap(formParameters);
+                    var formParameters = new LinkedHashMap<String,String>(keys.size());
+                    for (int i = 0; i < this.keys.size(); i++) {
+                        formParameters.put(this.keys.get(i), this.values.get(i));
+                    }
+                    return new OAuth2HttpRequest(tokenEndpointUrl, oAuth2HttpHeaders, unmodifiableMap(formParameters));
             }
-
-            return new OAuth2HttpRequest(tokenEndpointUrl, oAuth2HttpHeaders, formParameters);
         }
 
         @Override
         public String toString() {
-            return "OAuth2HttpRequest.OAuth2HttpRequestBuilder(tokenEndpointUrl=" + this.tokenEndpointUrl + ", oAuth2HttpHeaders=" + this.oAuth2HttpHeaders + ", formParameters$key=" + this.formParameters$key + ", formParameters$value=" + this.formParameters$value + ")";
+            return "OAuth2HttpRequest.OAuth2HttpRequestBuilder(tokenEndpointUrl=" + tokenEndpointUrl + ", oAuth2HttpHeaders=" + oAuth2HttpHeaders + ", keys=" + keys + ", values=" + values + ")";
         }
     }
 }

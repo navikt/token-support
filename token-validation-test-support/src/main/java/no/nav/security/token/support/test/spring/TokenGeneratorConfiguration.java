@@ -2,12 +2,11 @@ package no.nav.security.token.support.test.spring;
 
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 import no.nav.security.token.support.test.FileResourceRetriever;
+import no.nav.security.token.support.test.JwkGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
-
-import no.nav.security.token.support.test.JwkGenerator;
 
 /**
  * @deprecated use @EnableMockAuth2Server from the token-validation-spring-test module instead

@@ -1,27 +1,19 @@
 package no.nav.security.token.support.filter;
 
+import no.nav.security.token.support.core.JwtTokenConstants;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
+import no.nav.security.token.support.core.jwt.JwtTokenClaims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import no.nav.security.token.support.core.JwtTokenConstants;
-import no.nav.security.token.support.core.context.TokenValidationContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import no.nav.security.token.support.core.jwt.JwtTokenClaims;
-import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 
 /**
  * Checks the expiry time in a validated token against a preconfigured threshold
@@ -61,12 +53,12 @@ public class JwtTokenExpiryFilter implements Filter {
     }
 
     private void addHeaderOnTokenExpiryThreshold(HttpServletResponse response) {
-        TokenValidationContext tokenValidationContext = contextHolder.getTokenValidationContext();
+        var tokenValidationContext = contextHolder.getTokenValidationContext();
         LOG.debug("Getting TokenValidationContext: {}", tokenValidationContext);
         if (tokenValidationContext != null) {
             LOG.debug("Getting issuers from validationcontext {}", tokenValidationContext.getIssuers());
             for (String issuer : tokenValidationContext.getIssuers()) {
-                JwtTokenClaims jwtTokenClaims = tokenValidationContext.getClaims(issuer);
+                var jwtTokenClaims = tokenValidationContext.getClaims(issuer);
                 if (tokenExpiresBeforeThreshold(jwtTokenClaims)) {
                     LOG.debug("Setting response header {}", JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER);
                     response.setHeader(JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER, "true");

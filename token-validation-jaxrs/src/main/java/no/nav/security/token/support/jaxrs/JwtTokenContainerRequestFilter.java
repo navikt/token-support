@@ -1,6 +1,7 @@
 package no.nav.security.token.support.jaxrs;
 
-import java.lang.reflect.Method;
+import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
+import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
 
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
@@ -10,9 +11,7 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-
-import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
-import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler;
+import java.lang.reflect.Method;
 
 @Provider
 public class JwtTokenContainerRequestFilter implements ContainerRequestFilter {

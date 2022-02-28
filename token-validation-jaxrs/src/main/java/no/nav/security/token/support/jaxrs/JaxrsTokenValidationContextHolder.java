@@ -1,7 +1,7 @@
 package no.nav.security.token.support.jaxrs;
 
-import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.context.TokenValidationContext;
+import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 
 public class JaxrsTokenValidationContextHolder implements TokenValidationContextHolder {
 

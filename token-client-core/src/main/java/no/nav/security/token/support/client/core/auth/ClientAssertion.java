@@ -4,7 +4,6 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -43,7 +42,7 @@ public class ClientAssertion {
     }
 
     public String assertion() {
-        Instant now = Instant.now();
+        var now = Instant.now();
         return createSignedJWT(rsaKey, new JWTClaimsSet.Builder()
             .audience(tokenEndpointUrl.toString())
             .expirationTime(Date.from(now.plusSeconds(expiryInSeconds)))
@@ -61,12 +60,11 @@ public class ClientAssertion {
 
     private SignedJWT createSignedJWT(RSAKey rsaJwk, JWTClaimsSet claimsSet) {
         try {
-            JWSHeader.Builder header = new JWSHeader.Builder(JWSAlgorithm.RS256)
+            var header = new JWSHeader.Builder(JWSAlgorithm.RS256)
                 .keyID(rsaJwk.getKeyID())
                 .type(JOSEObjectType.JWT);
-            SignedJWT signedJWT = new SignedJWT(header.build(), claimsSet);
-            JWSSigner signer = new RSASSASigner(rsaJwk.toPrivateKey());
-            signedJWT.sign(signer);
+            var signedJWT = new SignedJWT(header.build(), claimsSet);
+            signedJWT.sign(new RSASSASigner(rsaJwk.toPrivateKey()));
             return signedJWT;
         } catch (JOSEException e) {
             throw new RuntimeException(e);

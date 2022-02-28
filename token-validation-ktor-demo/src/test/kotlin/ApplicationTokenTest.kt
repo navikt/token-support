@@ -7,7 +7,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
-import io.ktor.util.KtorExperimentalAPI
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -16,7 +15,6 @@ import kotlin.test.assertEquals
 
 private const val idTokenCookieName = "selvbetjening-idtoken"
 
-@KtorExperimentalAPI
 class ApplicationTokenTest {
 
     @Test

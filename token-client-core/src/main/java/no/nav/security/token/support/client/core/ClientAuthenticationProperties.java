@@ -8,14 +8,15 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
+
+import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*;
 
 public class ClientAuthenticationProperties {
 
     private static final List<ClientAuthenticationMethod> CLIENT_AUTH_METHODS = List.of(
-        ClientAuthenticationMethod.CLIENT_SECRET_BASIC,
-        ClientAuthenticationMethod.CLIENT_SECRET_POST,
-        ClientAuthenticationMethod.PRIVATE_KEY_JWT
+        CLIENT_SECRET_BASIC,
+        CLIENT_SECRET_POST,
+        PRIVATE_KEY_JWT
     );
 
     @NotNull
@@ -50,10 +51,12 @@ public class ClientAuthenticationProperties {
 
     private static ClientAuthenticationMethod getSupported(ClientAuthenticationMethod clientAuthMethod) {
         return clientAuthMethod == null ?
-            ClientAuthenticationMethod.CLIENT_SECRET_BASIC :
+            CLIENT_SECRET_BASIC :
             Optional.of(clientAuthMethod)
                 .filter(CLIENT_AUTH_METHODS::contains)
-                .orElseThrow(unsupported(clientAuthMethod));
+                .orElseThrow(() -> new IllegalArgumentException(
+                    String.format("unsupported %s with value %s, must be one of %s",
+                        ClientAuthenticationMethod.class.getSimpleName(), clientAuthMethod, CLIENT_AUTH_METHODS)));
     }
 
     public static ClientAuthenticationPropertiesBuilder builder() {
@@ -62,19 +65,13 @@ public class ClientAuthenticationProperties {
 
     private void validateAfterPropertiesSet() {
         Objects.requireNonNull(clientId, "clientId cannot be null");
-        if (ClientAuthenticationMethod.CLIENT_SECRET_BASIC.equals(this.clientAuthMethod)) {
+        if (CLIENT_SECRET_BASIC.equals(this.clientAuthMethod)) {
             Objects.requireNonNull(clientSecret, "clientSecret cannot be null");
-        } else if (ClientAuthenticationMethod.CLIENT_SECRET_POST.equals(this.clientAuthMethod)) {
+        } else if (CLIENT_SECRET_POST.equals(this.clientAuthMethod)) {
             Objects.requireNonNull(clientSecret, "clientSecret cannot be null");
-        } else if (ClientAuthenticationMethod.PRIVATE_KEY_JWT.equals(this.clientAuthMethod)) {
+        } else if (PRIVATE_KEY_JWT.equals(this.clientAuthMethod)) {
             Objects.requireNonNull(clientJwk, "clientPrivateKey must be set");
         }
-    }
-
-    private static Supplier<IllegalArgumentException> unsupported(ClientAuthenticationMethod clientAuthMethod) {
-        return () -> new IllegalArgumentException(
-            String.format("unsupported %s with value %s, must be one of %s",
-                ClientAuthenticationMethod.class.getSimpleName(), clientAuthMethod, CLIENT_AUTH_METHODS));
     }
 
     public @NotNull String getClientId() {
@@ -101,7 +98,7 @@ public class ClientAuthenticationProperties {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ClientAuthenticationProperties that = (ClientAuthenticationProperties) o;
+        var that = (ClientAuthenticationProperties) o;
         return Objects.equals(clientId, that.clientId)
             && Objects.equals(clientAuthMethod, that.clientAuthMethod)
             && Objects.equals(clientSecret, that.clientSecret)

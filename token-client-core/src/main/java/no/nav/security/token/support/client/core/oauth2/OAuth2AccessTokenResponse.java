@@ -3,7 +3,6 @@ package no.nav.security.token.support.client.core.oauth2;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("unused")
 public class OAuth2AccessTokenResponse {
 
     private String accessToken;

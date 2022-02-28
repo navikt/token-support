@@ -2,7 +2,7 @@ package no.nav.security.token.support.ktor
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.ktor.config.*
+import io.ktor.config.MapApplicationConfig
 import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import org.junit.jupiter.api.Test

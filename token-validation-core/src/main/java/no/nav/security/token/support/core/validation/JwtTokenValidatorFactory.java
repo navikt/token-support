@@ -20,7 +20,7 @@ public class JwtTokenValidatorFactory {
         AuthorizationServerMetadata metadata,
         ResourceRetriever resourceRetriever
     ) {
-        RemoteJWKSet<SecurityContext> remoteJWKSet = remoteJwkSet(
+        var remoteJWKSet = remoteJwkSet(
             issuerProperties,
             getJWKsUrl(metadata),
             resourceRetriever
@@ -39,13 +39,12 @@ public class JwtTokenValidatorFactory {
                 issuerProperties.getValidation().getOptionalClaims(),
                 remoteJWKSet
             );
-        } else {
-            return new DefaultJwtTokenValidator(
-                metadata.getIssuer().getValue(),
-                issuerProperties.getAcceptedAudience(),
-                remoteJWKSet
-            );
         }
+        return new DefaultJwtTokenValidator(
+            metadata.getIssuer().getValue(),
+            issuerProperties.getAcceptedAudience(),
+            remoteJWKSet
+        );
     }
 
     private static RemoteJWKSet<SecurityContext> remoteJwkSet(
