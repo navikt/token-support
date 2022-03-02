@@ -28,7 +28,7 @@ class JwtTokenHandlerInterceptor(attrs: AnnotationAttributes?, private val h: Jw
                 log.warn("Received AnnotationRequiredException from JwtTokenAnnotationHandler. return status=$NOT_IMPLEMENTED", e)
                 throw ResponseStatusException(NOT_IMPLEMENTED, "Endpoint not accessible")
             } catch (e: Exception) {
-                throw JwtTokenUnauthorizedException(e)
+                throw JwtTokenUnauthorizedException(cause = e)
             }
         }
         log.debug("Handler is of type ${handler.javaClass.simpleName}, allowing unprotected access to the resources it accesses")

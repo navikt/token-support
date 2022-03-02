@@ -1,8 +1,0 @@
-logging.level.no.nav.security: DEBUG
-server.port: 7001
-
-no.nav.security.jwt.issuers: localhost
-
-no.nav.security.jwt.issuer.localhost:
-  uri: /local/metadata
-  accepted_audience: aud-local

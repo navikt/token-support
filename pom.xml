@@ -31,7 +31,6 @@
         <module>token-validation-filter</module>
         <module>token-validation-spring</module>
         <module>token-validation-spring-test</module>
-        <module>token-validation-test-support</module>
         <module>token-validation-jaxrs</module>
         <module>token-validation-spring-demo</module>
         <module>token-validation-ktor</module>
