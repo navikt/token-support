@@ -1,0 +1,1612 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for no.nav.security:token-validation-spring:jar:2.0.0-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ line 179, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] token-support                                                      [pom]
+[INFO] token-validation-core                                              [jar]
+[INFO] token-validation-filter                                            [jar]
+[INFO] token-validation-spring                                            [jar]
+[INFO] token-validation-spring-test                                       [jar]
+[INFO] token-validation-jaxrs                                             [jar]
+[INFO] token-validation-spring-demo                                       [jar]
+[INFO] token-validation-ktor                                              [jar]
+[INFO] token-validation-ktor-demo                                         [jar]
+[INFO] token-client-core                                                  [jar]
+[INFO] token-client-spring                                                [jar]
+[INFO] token-client-spring-demo                                           [jar]
+[INFO] token-client-kotlin-demo                                           [jar]
+[INFO] 
+[INFO] -------------------< no.nav.security:token-support >--------------------
+[INFO] Building token-support 2.0.0-SNAPSHOT                             [1/13]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-support ---
+[WARNING] The artifact xml-apis:xml-apis:jar:2.0.2 has been relocated to xml-apis:xml-apis:jar:1.0.b2
+[INFO] no.nav.security:token-support:pom:2.0.0-SNAPSHOT
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] ---------------< no.nav.security:token-validation-core >----------------
+[INFO] Building token-validation-core 2.0.0-SNAPSHOT                     [2/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-validation-core ---
+[INFO] no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT
+[INFO] +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  +- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |     \- org.ow2.asm:asm:jar:9.1:compile
+[INFO] |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.10:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.10:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:test
+[INFO] |  +- com.squareup.okhttp3:okhttp:jar:4.9.1:test
+[INFO] |  |  \- com.squareup.okio:okio:jar:2.8.0:test
+[INFO] |  \- junit:junit:jar:4.13.2:test
+[INFO] |     \- org.hamcrest:hamcrest-core:jar:2.2:test
+[INFO] |        \- org.hamcrest:hamcrest:jar:2.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] --------------< no.nav.security:token-validation-filter >---------------
+[INFO] Building token-validation-filter 2.0.0-SNAPSHOT                   [3/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from aap: https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-validation-filter ---
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-validation-filter:jar:2.0.0-SNAPSHOT
+[INFO] +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |  |     \- org.ow2.asm:asm:jar:9.1:compile
+[INFO] |  |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] |  \- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] +- jakarta.servlet:jakarta.servlet-api:jar:4.0.4:provided
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.10:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.10:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] --------------< no.nav.security:token-validation-spring >---------------
+[INFO] Building token-validation-spring 2.0.0-SNAPSHOT                   [4/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from aap: https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-validation-spring ---
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-validation-spring:jar:2.0.0-SNAPSHOT
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-reflect:jar:1.6.10:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] +- no.nav.security:token-validation-filter:jar:2.0.0-SNAPSHOT:compile
+[INFO] +- org.springframework:spring-context:jar:5.3.16:compile
+[INFO] |  +- org.springframework:spring-aop:jar:5.3.16:compile
+[INFO] |  +- org.springframework:spring-beans:jar:5.3.16:compile
+[INFO] |  +- org.springframework:spring-core:jar:5.3.16:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.16:compile
+[INFO] |  \- org.springframework:spring-expression:jar:5.3.16:compile
+[INFO] +- org.springframework.boot:spring-boot:jar:2.6.4:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.16:compile
+[INFO] +- org.springframework:spring-webmvc:jar:5.3.16:compile
+[INFO] +- org.springframework.boot:spring-boot-configuration-processor:jar:2.6.4:compile
+[INFO] +- jakarta.servlet:jakarta.servlet-api:jar:4.0.4:provided
+[INFO] +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  +- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |     \- org.ow2.asm:asm:jar:9.1:compile
+[INFO] |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.10:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.10:test
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.6.4:test
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.6.4:test
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.17.1:test
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.17.1:test
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.36:test
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:test
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.29:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.6.4:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.6.0:test
+[INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  +- org.hamcrest:hamcrest:jar:2.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter:jar:5.8.2:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.5.0:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- org.springframework:spring-test:jar:5.3.16:test
+[INFO] |  \- org.xmlunit:xmlunit-core:jar:2.8.4:test
+[INFO] +- io.rest-assured:spring-mock-mvc:jar:4.5.1:test
+[INFO] |  +- io.rest-assured:rest-assured:jar:4.5.1:test
+[INFO] |  |  +- org.codehaus.groovy:groovy:jar:3.0.9:test
+[INFO] |  |  +- org.codehaus.groovy:groovy-xml:jar:3.0.9:test
+[INFO] |  |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:test
+[INFO] |  |  |  +- org.apache.httpcomponents:httpcore:jar:4.4.15:test
+[INFO] |  |  |  \- commons-codec:commons-codec:jar:1.15:test
+[INFO] |  |  +- org.apache.httpcomponents:httpmime:jar:4.5.13:test
+[INFO] |  |  +- org.ccil.cowan.tagsoup:tagsoup:jar:1.2.1:test
+[INFO] |  |  +- io.rest-assured:json-path:jar:4.5.1:test
+[INFO] |  |  |  +- org.codehaus.groovy:groovy-json:jar:3.0.9:test
+[INFO] |  |  |  \- io.rest-assured:rest-assured-common:jar:4.5.1:test
+[INFO] |  |  \- io.rest-assured:xml-path:jar:4.5.1:test
+[INFO] |  \- io.rest-assured:spring-commons:jar:4.5.1:test
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:2.6.4:test
+[INFO] |  \- org.springframework.boot:spring-boot-starter-json:jar:2.6.4:test
+[INFO] |     +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.1:test
+[INFO] |     +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.13.1:test
+[INFO] |     \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.13.1:test
+[INFO] +- org.springframework.boot:spring-boot-starter-jetty:jar:2.6.4:test
+[INFO] |  +- jakarta.websocket:jakarta.websocket-api:jar:1.1.2:test
+[INFO] |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.58:test
+[INFO] |  +- org.eclipse.jetty:jetty-servlets:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-continuation:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-http:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-util:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-io:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-webapp:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-xml:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-servlet:jar:9.4.45.v20220203:test
+[INFO] |  |     +- org.eclipse.jetty:jetty-security:jar:9.4.45.v20220203:test
+[INFO] |  |     |  \- org.eclipse.jetty:jetty-server:jar:9.4.45.v20220203:test
+[INFO] |  |     \- org.eclipse.jetty:jetty-util-ajax:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty.websocket:websocket-server:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty.websocket:websocket-common:jar:9.4.45.v20220203:test
+[INFO] |  |  |  \- org.eclipse.jetty.websocket:websocket-api:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty.websocket:websocket-client:jar:9.4.45.v20220203:test
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-client:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty.websocket:websocket-servlet:jar:9.4.45.v20220203:test
+[INFO] |  \- org.eclipse.jetty.websocket:javax-websocket-server-impl:jar:9.4.45.v20220203:test
+[INFO] |     +- org.eclipse.jetty:jetty-annotations:jar:9.4.45.v20220203:test
+[INFO] |     |  +- org.eclipse.jetty:jetty-plus:jar:9.4.45.v20220203:test
+[INFO] |     |  \- org.ow2.asm:asm-commons:jar:9.2:test
+[INFO] |     |     +- org.ow2.asm:asm-tree:jar:9.2:test
+[INFO] |     |     \- org.ow2.asm:asm-analysis:jar:9.2:test
+[INFO] |     \- org.eclipse.jetty.websocket:javax-websocket-client-impl:jar:9.4.45.v20220203:test
+[INFO] +- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.4:compile
+[INFO] +- no.nav.security:mock-oauth2-server:jar:0.4.3:test
+[INFO] |  +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:test
+[INFO] |  |  +- com.squareup.okhttp3:okhttp:jar:4.9.1:test
+[INFO] |  |  |  \- com.squareup.okio:okio:jar:2.8.0:test
+[INFO] |  |  \- junit:junit:jar:4.13.2:test
+[INFO] |  |     \- org.hamcrest:hamcrest-core:jar:2.2:test
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:test
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:test
+[INFO] |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:test
+[INFO] |  +- io.netty:netty-all:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-buffer:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-dns:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-haproxy:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-http:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-http2:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-memcache:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-mqtt:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-redis:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-smtp:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-socks:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-stomp:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-xml:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-common:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-handler:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-tcnative-classes:jar:2.0.48.Final:test
+[INFO] |  |  +- io.netty:netty-handler-proxy:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver-dns:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-rxtx:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-sctp:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-udt:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-classes-epoll:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-unix-common:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-classes-kqueue:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver-dns-classes-macos:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-aarch_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-x86_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-aarch_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver-dns-native-macos:jar:osx-x86_64:4.1.74.Final:test
+[INFO] |  |  \- io.netty:netty-resolver-dns-native-macos:jar:osx-aarch_64:4.1.74.Final:test
+[INFO] |  +- io.github.microutils:kotlin-logging-jvm:jar:2.1.21:test
+[INFO] |  +- com.fasterxml.jackson.module:jackson-module-kotlin:jar:2.13.1:test
+[INFO] |  +- org.freemarker:freemarker:jar:2.3.31:test
+[INFO] |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:test
+[INFO] |     +- org.bouncycastle:bcprov-jdk15on:jar:1.70:test
+[INFO] |     \- org.bouncycastle:bcutil-jdk15on:jar:1.70:test
+[INFO] +- org.springframework.boot:spring-boot-starter-validation:jar:2.6.4:test
+[INFO] |  \- org.hibernate.validator:hibernate-validator:jar:6.2.2.Final:test
+[INFO] |     +- org.jboss.logging:jboss-logging:jar:3.4.3.Final:test
+[INFO] |     \- com.fasterxml:classmate:jar:1.5.1:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] \- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] 
+[INFO] ------------< no.nav.security:token-validation-spring-test >------------
+[INFO] Building token-validation-spring-test 2.0.0-SNAPSHOT              [5/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from aap: https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring/2.0.0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-validation-spring-test ---
+[WARNING] no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-validation-spring-test:jar:2.0.0-SNAPSHOT
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:2.6.4:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.6.4:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.6.4:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.17.1:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.17.1:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.36:compile
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.29:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:2.6.4:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.1:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.13.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.13.1:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:2.6.4:compile
+[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.58:compile
+[INFO] |  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.58:compile
+[INFO] |  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.58:compile
+[INFO] |  +- org.springframework:spring-web:jar:5.3.16:compile
+[INFO] |  |  \- org.springframework:spring-beans:jar:5.3.16:compile
+[INFO] |  \- org.springframework:spring-webmvc:jar:5.3.16:compile
+[INFO] |     +- org.springframework:spring-aop:jar:5.3.16:compile
+[INFO] |     \- org.springframework:spring-expression:jar:5.3.16:compile
+[INFO] +- no.nav.security:token-validation-spring:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-reflect:jar:1.6.10:compile
+[INFO] |  +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- no.nav.security:token-validation-filter:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- org.springframework:spring-context:jar:5.3.16:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] |  +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  \- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.4:compile
+[INFO] +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  +- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |     \- org.ow2.asm:asm:jar:9.1:compile
+[INFO] |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] +- no.nav.security:mock-oauth2-server:jar:0.4.3:compile
+[INFO] |  +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:compile
+[INFO] |  |  +- com.squareup.okhttp3:okhttp:jar:4.9.1:compile
+[INFO] |  |  |  \- com.squareup.okio:okio:jar:2.8.0:compile
+[INFO] |  |  \- junit:junit:jar:4.13.2:compile
+[INFO] |  |     \- org.hamcrest:hamcrest-core:jar:2.2:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:compile
+[INFO] |  +- ch.qos.logback:logback-classic:jar:1.2.10:compile
+[INFO] |  |  \- ch.qos.logback:logback-core:jar:1.2.10:compile
+[INFO] |  +- io.netty:netty-all:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-buffer:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-dns:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-haproxy:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-http:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-http2:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-memcache:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-mqtt:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-redis:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-smtp:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-socks:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-stomp:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-xml:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-common:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-handler:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-tcnative-classes:jar:2.0.48.Final:runtime
+[INFO] |  |  +- io.netty:netty-handler-proxy:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-resolver:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-resolver-dns:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-rxtx:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-sctp:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-udt:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-classes-epoll:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-native-unix-common:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-classes-kqueue:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-resolver-dns-classes-macos:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-aarch_64:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-x86_64:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-aarch_64:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-resolver-dns-native-macos:jar:osx-x86_64:4.1.74.Final:runtime
+[INFO] |  |  \- io.netty:netty-resolver-dns-native-macos:jar:osx-aarch_64:4.1.74.Final:runtime
+[INFO] |  +- io.github.microutils:kotlin-logging-jvm:jar:2.1.21:runtime
+[INFO] |  +- com.fasterxml.jackson.module:jackson-module-kotlin:jar:2.13.1:runtime
+[INFO] |  +- org.freemarker:freemarker:jar:2.3.31:runtime
+[INFO] |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:runtime
+[INFO] |     +- org.bouncycastle:bcprov-jdk15on:jar:1.70:runtime
+[INFO] |     \- org.bouncycastle:bcutil-jdk15on:jar:1.70:runtime
+[INFO] +- org.springframework.boot:spring-boot:jar:2.6.4:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.16:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.16:compile
+[INFO] +- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.6.4:compile
+[INFO] |  \- org.springframework.boot:spring-boot-test:jar:2.6.4:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.6.0:test
+[INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  +- org.hamcrest:hamcrest:jar:2.2:compile
+[INFO] |  +- org.junit.jupiter:junit-jupiter:jar:5.8.2:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.5.0:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- org.springframework:spring-test:jar:5.3.16:test
+[INFO] |  \- org.xmlunit:xmlunit-core:jar:2.8.4:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] ---------------< no.nav.security:token-validation-jaxrs >---------------
+[INFO] Building token-validation-jaxrs 2.0.0-SNAPSHOT                    [6/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-validation-jaxrs ---
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-validation-jaxrs:jar:2.0.0-SNAPSHOT
+[INFO] +- jakarta.ws.rs:jakarta.ws.rs-api:jar:2.1.6:compile
+[INFO] +- jakarta.inject:jakarta.inject-api:jar:1.0.1:compile
+[INFO] +- jakarta.servlet:jakarta.servlet-api:jar:4.0.4:provided
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- no.nav.security:token-validation-filter:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  |  +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  |  |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  |  |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] |  |  \- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-jersey:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:2.6.4:test
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:test
+[INFO] |  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:test
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.1:test
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.13.1:test
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.13.1:test
+[INFO] |  +- org.springframework.boot:spring-boot-starter-validation:jar:2.6.4:test
+[INFO] |  |  \- org.hibernate.validator:hibernate-validator:jar:6.2.2.Final:test
+[INFO] |  |     +- org.jboss.logging:jboss-logging:jar:3.4.3.Final:test
+[INFO] |  |     \- com.fasterxml:classmate:jar:1.5.1:test
+[INFO] |  +- org.springframework:spring-web:jar:5.3.16:test
+[INFO] |  |  \- org.springframework:spring-beans:jar:5.3.16:test
+[INFO] |  +- org.glassfish.jersey.core:jersey-server:jar:2.35:test
+[INFO] |  |  +- org.glassfish.jersey.core:jersey-common:jar:2.35:test
+[INFO] |  |  |  \- org.glassfish.hk2:osgi-resource-locator:jar:1.0.3:test
+[INFO] |  |  +- org.glassfish.jersey.core:jersey-client:jar:2.35:test
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:test
+[INFO] |  |  \- org.glassfish.hk2.external:jakarta.inject:jar:2.6.1:test
+[INFO] |  +- org.glassfish.jersey.containers:jersey-container-servlet-core:jar:2.35:test
+[INFO] |  +- org.glassfish.jersey.containers:jersey-container-servlet:jar:2.35:test
+[INFO] |  +- org.glassfish.jersey.ext:jersey-bean-validation:jar:2.35:test
+[INFO] |  +- org.glassfish.jersey.ext:jersey-spring5:jar:2.35:test
+[INFO] |  |  +- org.glassfish.jersey.inject:jersey-hk2:jar:2.35:test
+[INFO] |  |  |  +- org.glassfish.hk2:hk2-locator:jar:2.6.1:test
+[INFO] |  |  |  |  \- org.glassfish.hk2.external:aopalliance-repackaged:jar:2.6.1:test
+[INFO] |  |  |  \- org.javassist:javassist:jar:3.25.0-GA:test
+[INFO] |  |  +- org.glassfish.hk2:hk2:jar:2.6.1:test
+[INFO] |  |  |  +- org.glassfish.hk2:hk2-utils:jar:2.6.1:test
+[INFO] |  |  |  +- org.glassfish.hk2:hk2-api:jar:2.6.1:test
+[INFO] |  |  |  +- org.glassfish.hk2:hk2-core:jar:2.6.1:test
+[INFO] |  |  |  +- org.glassfish.hk2:hk2-runlevel:jar:2.6.1:test
+[INFO] |  |  |  \- org.glassfish.hk2:class-model:jar:2.6.1:test
+[INFO] |  |  |     +- org.ow2.asm:asm-analysis:jar:7.1:test
+[INFO] |  |  |     +- org.ow2.asm:asm-tree:jar:7.1:test
+[INFO] |  |  |     \- org.ow2.asm:asm-util:jar:7.1:test
+[INFO] |  |  +- org.glassfish.hk2:spring-bridge:jar:2.6.1:test
+[INFO] |  |  +- org.springframework:spring-context:jar:5.3.16:test
+[INFO] |  |  |  \- org.springframework:spring-expression:jar:5.3.16:test
+[INFO] |  |  \- org.springframework:spring-aop:jar:5.3.16:test
+[INFO] |  \- org.glassfish.jersey.media:jersey-media-json-jackson:jar:2.35:test
+[INFO] |     +- org.glassfish.jersey.ext:jersey-entity-filtering:jar:2.35:test
+[INFO] |     +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:test
+[INFO] |     \- com.fasterxml.jackson.module:jackson-module-jaxb-annotations:jar:2.13.1:test
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.6.4:test
+[INFO] |  |  +- org.springframework.boot:spring-boot:jar:2.6.4:test
+[INFO] |  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.4:test
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.6.4:test
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.2.10:test
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.10:test
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.17.1:test
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.17.1:test
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.36:test
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.29:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.6.4:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.6.0:test
+[INFO] |  |  \- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |     \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  +- org.hamcrest:hamcrest:jar:2.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter:jar:5.8.2:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.5.0:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- org.springframework:spring-core:jar:5.3.16:test
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.16:test
+[INFO] |  +- org.springframework:spring-test:jar:5.3.16:test
+[INFO] |  \- org.xmlunit:xmlunit-core:jar:2.8.4:test
+[INFO] +- org.springframework.boot:spring-boot-starter-jetty:jar:2.6.4:test
+[INFO] |  +- jakarta.websocket:jakarta.websocket-api:jar:1.1.2:test
+[INFO] |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.58:test
+[INFO] |  +- org.eclipse.jetty:jetty-servlets:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-continuation:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-http:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-util:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-io:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-webapp:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-xml:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-servlet:jar:9.4.45.v20220203:test
+[INFO] |  |     +- org.eclipse.jetty:jetty-security:jar:9.4.45.v20220203:test
+[INFO] |  |     |  \- org.eclipse.jetty:jetty-server:jar:9.4.45.v20220203:test
+[INFO] |  |     \- org.eclipse.jetty:jetty-util-ajax:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty.websocket:websocket-server:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty.websocket:websocket-common:jar:9.4.45.v20220203:test
+[INFO] |  |  |  \- org.eclipse.jetty.websocket:websocket-api:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty.websocket:websocket-client:jar:9.4.45.v20220203:test
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-client:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty.websocket:websocket-servlet:jar:9.4.45.v20220203:test
+[INFO] |  \- org.eclipse.jetty.websocket:javax-websocket-server-impl:jar:9.4.45.v20220203:test
+[INFO] |     +- org.eclipse.jetty:jetty-annotations:jar:9.4.45.v20220203:test
+[INFO] |     |  +- org.eclipse.jetty:jetty-plus:jar:9.4.45.v20220203:test
+[INFO] |     |  +- org.ow2.asm:asm:jar:9.2:compile
+[INFO] |     |  \- org.ow2.asm:asm-commons:jar:9.2:test
+[INFO] |     \- org.eclipse.jetty.websocket:javax-websocket-client-impl:jar:9.4.45.v20220203:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] ------------< no.nav.security:token-validation-spring-demo >------------
+[INFO] Building token-validation-spring-demo 2.0.0-SNAPSHOT              [7/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from aap: https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring-test/2.0.0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata no.nav.security:token-validation-spring-test:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring-test/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-spring-test:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-spring-test:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring-test/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-validation-spring-demo ---
+[WARNING] no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-spring-test:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-spring-test:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring-test/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-validation-spring-demo:jar:2.0.0-SNAPSHOT
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:2.6.4:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.6.4:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.6.4:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.17.1:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.17.1:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.36:compile
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.29:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:2.6.4:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:compile
+[INFO] |  |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:compile
+[INFO] |  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.1:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.13.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.13.1:compile
+[INFO] |  +- org.springframework:spring-web:jar:5.3.16:compile
+[INFO] |  |  \- org.springframework:spring-beans:jar:5.3.16:compile
+[INFO] |  \- org.springframework:spring-webmvc:jar:5.3.16:compile
+[INFO] |     +- org.springframework:spring-aop:jar:5.3.16:compile
+[INFO] |     \- org.springframework:spring-expression:jar:5.3.16:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-jetty:jar:2.6.4:compile
+[INFO] |  +- jakarta.servlet:jakarta.servlet-api:jar:4.0.4:compile
+[INFO] |  +- jakarta.websocket:jakarta.websocket-api:jar:1.1.2:compile
+[INFO] |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.58:compile
+[INFO] |  +- org.eclipse.jetty:jetty-servlets:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-continuation:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-http:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-util:jar:9.4.45.v20220203:compile
+[INFO] |  |  \- org.eclipse.jetty:jetty-io:jar:9.4.45.v20220203:compile
+[INFO] |  +- org.eclipse.jetty:jetty-webapp:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-xml:jar:9.4.45.v20220203:compile
+[INFO] |  |  \- org.eclipse.jetty:jetty-servlet:jar:9.4.45.v20220203:compile
+[INFO] |  |     +- org.eclipse.jetty:jetty-security:jar:9.4.45.v20220203:compile
+[INFO] |  |     |  \- org.eclipse.jetty:jetty-server:jar:9.4.45.v20220203:compile
+[INFO] |  |     \- org.eclipse.jetty:jetty-util-ajax:jar:9.4.45.v20220203:compile
+[INFO] |  +- org.eclipse.jetty.websocket:websocket-server:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty.websocket:websocket-common:jar:9.4.45.v20220203:compile
+[INFO] |  |  |  \- org.eclipse.jetty.websocket:websocket-api:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty.websocket:websocket-client:jar:9.4.45.v20220203:compile
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-client:jar:9.4.45.v20220203:compile
+[INFO] |  |  \- org.eclipse.jetty.websocket:websocket-servlet:jar:9.4.45.v20220203:compile
+[INFO] |  \- org.eclipse.jetty.websocket:javax-websocket-server-impl:jar:9.4.45.v20220203:compile
+[INFO] |     +- org.eclipse.jetty:jetty-annotations:jar:9.4.45.v20220203:compile
+[INFO] |     |  +- org.eclipse.jetty:jetty-plus:jar:9.4.45.v20220203:compile
+[INFO] |     |  +- org.ow2.asm:asm:jar:9.2:compile
+[INFO] |     |  \- org.ow2.asm:asm-commons:jar:9.2:compile
+[INFO] |     |     +- org.ow2.asm:asm-tree:jar:9.2:compile
+[INFO] |     |     \- org.ow2.asm:asm-analysis:jar:9.2:compile
+[INFO] |     \- org.eclipse.jetty.websocket:javax-websocket-client-impl:jar:9.4.45.v20220203:compile
+[INFO] +- no.nav.security:token-validation-spring:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-reflect:jar:1.6.10:compile
+[INFO] |  +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- no.nav.security:token-validation-filter:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- org.springframework:spring-context:jar:5.3.16:compile
+[INFO] |  +- org.springframework.boot:spring-boot:jar:2.6.4:compile
+[INFO] |  +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] |  +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  \- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.4:compile
+[INFO] +- no.nav.security:token-validation-spring-test:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- no.nav.security:mock-oauth2-server:jar:0.4.3:compile
+[INFO] |  |  +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:compile
+[INFO] |  |  |  +- com.squareup.okhttp3:okhttp:jar:4.9.1:compile
+[INFO] |  |  |  |  \- com.squareup.okio:okio:jar:2.8.0:compile
+[INFO] |  |  |  \- junit:junit:jar:4.13.2:compile
+[INFO] |  |  |     \- org.hamcrest:hamcrest-core:jar:2.2:compile
+[INFO] |  |  +- ch.qos.logback:logback-classic:jar:1.2.10:compile
+[INFO] |  |  |  \- ch.qos.logback:logback-core:jar:1.2.10:compile
+[INFO] |  |  +- io.netty:netty-all:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-buffer:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-dns:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-haproxy:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-http:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-http2:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-memcache:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-mqtt:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-redis:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-smtp:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-socks:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-stomp:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-codec-xml:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-common:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-handler:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-tcnative-classes:jar:2.0.48.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-handler-proxy:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-resolver:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-resolver-dns:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-rxtx:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-sctp:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-udt:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-classes-epoll:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-native-unix-common:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-classes-kqueue:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-resolver-dns-classes-macos:jar:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-native-epoll:jar:linux-aarch_64:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-x86_64:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-aarch_64:4.1.74.Final:runtime
+[INFO] |  |  |  +- io.netty:netty-resolver-dns-native-macos:jar:osx-x86_64:4.1.74.Final:runtime
+[INFO] |  |  |  \- io.netty:netty-resolver-dns-native-macos:jar:osx-aarch_64:4.1.74.Final:runtime
+[INFO] |  |  +- io.github.microutils:kotlin-logging-jvm:jar:2.1.21:runtime
+[INFO] |  |  +- com.fasterxml.jackson.module:jackson-module-kotlin:jar:2.13.1:runtime
+[INFO] |  |  +- org.freemarker:freemarker:jar:2.3.31:runtime
+[INFO] |  |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:runtime
+[INFO] |  |     +- org.bouncycastle:bcprov-jdk15on:jar:1.70:runtime
+[INFO] |  |     \- org.bouncycastle:bcutil-jdk15on:jar:1.70:runtime
+[INFO] |  \- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.6.4:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-validation:jar:2.6.4:compile
+[INFO] |  \- org.hibernate.validator:hibernate-validator:jar:6.2.2.Final:compile
+[INFO] |     +- org.jboss.logging:jboss-logging:jar:3.4.3.Final:compile
+[INFO] |     \- com.fasterxml:classmate:jar:1.5.1:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:2.6.4:compile
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.6.0:test
+[INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  +- org.hamcrest:hamcrest:jar:2.2:compile
+[INFO] |  +- org.junit.jupiter:junit-jupiter:jar:5.8.2:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.5.0:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- org.springframework:spring-core:jar:5.3.16:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.16:compile
+[INFO] |  +- org.springframework:spring-test:jar:5.3.16:test
+[INFO] |  \- org.xmlunit:xmlunit-core:jar:2.8.4:test
+[INFO] +- io.rest-assured:spring-mock-mvc:jar:4.5.1:test
+[INFO] |  +- io.rest-assured:rest-assured:jar:4.5.1:test
+[INFO] |  |  +- org.codehaus.groovy:groovy:jar:3.0.9:test
+[INFO] |  |  +- org.codehaus.groovy:groovy-xml:jar:3.0.9:test
+[INFO] |  |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:test
+[INFO] |  |  |  +- org.apache.httpcomponents:httpcore:jar:4.4.15:test
+[INFO] |  |  |  \- commons-codec:commons-codec:jar:1.15:test
+[INFO] |  |  +- org.apache.httpcomponents:httpmime:jar:4.5.13:test
+[INFO] |  |  +- org.ccil.cowan.tagsoup:tagsoup:jar:1.2.1:test
+[INFO] |  |  +- io.rest-assured:json-path:jar:4.5.1:test
+[INFO] |  |  |  +- org.codehaus.groovy:groovy-json:jar:3.0.9:test
+[INFO] |  |  |  \- io.rest-assured:rest-assured-common:jar:4.5.1:test
+[INFO] |  |  \- io.rest-assured:xml-path:jar:4.5.1:test
+[INFO] |  \- io.rest-assured:spring-commons:jar:4.5.1:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] ---------------< no.nav.security:token-validation-ktor >----------------
+[INFO] Building token-validation-ktor 2.0.0-SNAPSHOT                     [8/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-validation-ktor ---
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-validation-ktor:jar:2.0.0-SNAPSHOT
+[INFO] +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] |  \- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-reflect:jar:1.6.10:compile
+[INFO] +- io.ktor:ktor-auth:jar:1.6.7:compile
+[INFO] |  +- io.ktor:ktor-server-core:jar:1.6.7:compile
+[INFO] |  |  +- io.ktor:ktor-utils-jvm:jar:1.6.7:compile
+[INFO] |  |  |  \- io.ktor:ktor-io-jvm:jar:1.6.7:compile
+[INFO] |  |  +- io.ktor:ktor-http-jvm:jar:1.6.7:compile
+[INFO] |  |  +- com.typesafe:config:jar:1.4.1:compile
+[INFO] |  |  \- org.fusesource.jansi:jansi:jar:2.4.0:runtime
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:jar:1.5.2:compile
+[INFO] |  +- io.ktor:ktor-client-core-jvm:jar:1.6.7:compile
+[INFO] |  |  \- io.ktor:ktor-http-cio-jvm:jar:1.6.7:compile
+[INFO] |  \- com.googlecode.json-simple:json-simple:jar:1.1.1:compile
+[INFO] +- io.ktor:ktor-server-netty:jar:1.6.7:test
+[INFO] |  +- io.ktor:ktor-server-host-common:jar:1.6.7:test
+[INFO] |  +- io.netty:netty-codec-http2:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-common:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-buffer:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-handler:jar:4.1.74.Final:test
+[INFO] |  |  \- io.netty:netty-codec-http:jar:4.1.74.Final:test
+[INFO] |  +- org.eclipse.jetty.alpn:alpn-api:jar:1.1.3.v20160715:test
+[INFO] |  +- io.netty:netty-transport-native-kqueue:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-unix-common:jar:4.1.74.Final:test
+[INFO] |  |  \- io.netty:netty-transport-classes-kqueue:jar:4.1.74.Final:test
+[INFO] |  \- io.netty:netty-transport-native-epoll:jar:4.1.74.Final:test
+[INFO] |     \- io.netty:netty-transport-classes-epoll:jar:4.1.74.Final:test
+[INFO] +- org.jetbrains.kotlin:kotlin-test-junit5:jar:1.6.10:test
+[INFO] |  \- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |     +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |     \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] +- io.ktor:ktor-server-test-host:jar:1.6.7:test
+[INFO] |  +- io.ktor:ktor-network-tls-jvm:jar:1.6.7:test
+[INFO] |  |  \- io.ktor:ktor-network-jvm:jar:1.6.7:compile
+[INFO] |  +- io.ktor:ktor-network-tls-certificates:jar:1.6.7:test
+[INFO] |  +- io.ktor:ktor-client-jetty:jar:1.6.7:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-alpn-openjdk8-client:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-alpn-java-client:jar:9.4.45.v20220203:test
+[INFO] |  +- io.ktor:ktor-client-cio-jvm:jar:1.6.7:test
+[INFO] |  +- io.ktor:ktor-websockets:jar:1.6.7:test
+[INFO] |  +- ch.qos.logback:logback-classic:jar:1.2.10:test
+[INFO] |  |  \- ch.qos.logback:logback-core:jar:1.2.10:test
+[INFO] |  +- org.eclipse.jetty.http2:http2-client:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty.http2:http2-common:jar:9.4.45.v20220203:test
+[INFO] |  |  |  \- org.eclipse.jetty.http2:http2-hpack:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-alpn-client:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-client:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-http:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-io:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty.http2:http2-http-client-transport:jar:9.4.45.v20220203:test
+[INFO] |  \- org.jetbrains.kotlinx:kotlinx-coroutines-debug:jar:1.5.2:test
+[INFO] |     +- net.java.dev.jna:jna:jar:5.5.0:test
+[INFO] |     \- net.java.dev.jna:jna-platform:jar:5.5.0:test
+[INFO] +- com.github.tomakehurst:wiremock:jar:2.27.2:test
+[INFO] |  +- org.eclipse.jetty:jetty-server:jar:9.4.45.v20220203:test
+[INFO] |  |  \- javax.servlet:javax.servlet-api:jar:4.0.1:test
+[INFO] |  +- org.eclipse.jetty:jetty-servlet:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-security:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-util-ajax:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-servlets:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-continuation:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-util:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-webapp:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-xml:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-proxy:jar:9.4.45.v20220203:test
+[INFO] |  +- com.google.guava:guava:jar:20.0:test
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:test
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:test
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:test
+[INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:test
+[INFO] |  |  +- org.apache.httpcomponents:httpcore:jar:4.4.15:test
+[INFO] |  |  \- commons-codec:commons-codec:jar:1.15:test
+[INFO] |  +- org.xmlunit:xmlunit-core:jar:2.8.4:test
+[INFO] |  |  \- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |     \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  +- org.xmlunit:xmlunit-legacy:jar:2.8.4:test
+[INFO] |  +- org.xmlunit:xmlunit-placeholders:jar:2.8.4:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.6.0:test
+[INFO] |  +- org.ow2.asm:asm:jar:7.0:compile
+[INFO] |  +- net.sf.jopt-simple:jopt-simple:jar:5.0.3:test
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:test
+[INFO] |  +- com.github.jknack:handlebars:jar:4.0.7:test
+[INFO] |  |  \- org.antlr:antlr4-runtime:jar:4.7.1:test
+[INFO] |  +- com.github.jknack:handlebars-helpers:jar:4.0.7:test
+[INFO] |  +- com.flipkart.zjsonpatch:zjsonpatch:jar:0.4.4:test
+[INFO] |  \- commons-fileupload:commons-fileupload:jar:1.4:test
+[INFO] |     \- commons-io:commons-io:jar:2.2:test
+[INFO] +- commons-logging:commons-logging:jar:1.2:test
+[INFO] +- io.kotest:kotest-assertions-core-jvm:jar:5.1.0:test
+[INFO] |  +- io.kotest:kotest-assertions-shared-jvm:jar:5.1.0:test
+[INFO] |  |  \- io.github.java-diff-utils:java-diff-utils:jar:4.11:test
+[INFO] |  +- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:jar:1.5.2:compile
+[INFO] |  +- io.kotest:kotest-common-jvm:jar:5.1.0:test
+[INFO] |  \- io.kotest:kotest-assertions-api-jvm:jar:5.1.0:test
+[INFO] +- io.kotest:kotest-runner-junit5-jvm:jar:5.1.0:test
+[INFO] |  +- io.kotest:kotest-framework-api-jvm:jar:5.1.0:test
+[INFO] |  |  \- org.jetbrains.kotlinx:kotlinx-coroutines-test-jvm:jar:1.6.0:test
+[INFO] |  +- io.kotest:kotest-framework-engine-jvm:jar:5.1.0:test
+[INFO] |  |  +- io.github.classgraph:classgraph:jar:4.8.138:test
+[INFO] |  |  \- com.github.ajalt:mordant:jar:1.2.1:test
+[INFO] |  |     \- com.github.ajalt:colormath:jar:1.2.0:test
+[INFO] |  +- io.kotest:kotest-framework-discovery-jvm:jar:5.1.0:test
+[INFO] |  +- io.kotest:kotest-extensions-jvm:jar:5.1.0:test
+[INFO] |  |  \- io.mockk:mockk:jar:1.12.2:test
+[INFO] |  |     +- io.mockk:mockk-dsl-jvm:jar:1.12.2:test
+[INFO] |  |     |  \- io.mockk:mockk-dsl:jar:1.12.2:test
+[INFO] |  |     +- io.mockk:mockk-common:jar:1.12.2:test
+[INFO] |  |     \- io.mockk:mockk-agent-jvm:jar:1.12.2:test
+[INFO] |  |        +- io.mockk:mockk-agent-api:jar:1.12.2:test
+[INFO] |  |        \- io.mockk:mockk-agent-common:jar:1.12.2:test
+[INFO] |  +- io.kotest:kotest-framework-concurrency-jvm:jar:5.1.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-suite-api:jar:1.8.2:test
+[INFO] +- no.nav.security:mock-oauth2-server:jar:0.4.3:test
+[INFO] |  +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:test
+[INFO] |  |  +- com.squareup.okhttp3:okhttp:jar:4.9.1:test
+[INFO] |  |  |  \- com.squareup.okio:okio:jar:2.8.0:test
+[INFO] |  |  \- junit:junit:jar:4.13.2:test
+[INFO] |  |     \- org.hamcrest:hamcrest-core:jar:2.2:test
+[INFO] |  |        \- org.hamcrest:hamcrest:jar:2.2:test
+[INFO] |  +- io.netty:netty-all:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-dns:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-haproxy:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-memcache:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-mqtt:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-redis:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-smtp:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-socks:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-stomp:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-xml:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-tcnative-classes:jar:2.0.48.Final:test
+[INFO] |  |  +- io.netty:netty-handler-proxy:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver-dns:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-rxtx:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-sctp:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-udt:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver-dns-classes-macos:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-aarch_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-x86_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-aarch_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver-dns-native-macos:jar:osx-x86_64:4.1.74.Final:test
+[INFO] |  |  \- io.netty:netty-resolver-dns-native-macos:jar:osx-aarch_64:4.1.74.Final:test
+[INFO] |  +- io.github.microutils:kotlin-logging-jvm:jar:2.1.21:test
+[INFO] |  +- com.fasterxml.jackson.module:jackson-module-kotlin:jar:2.13.1:test
+[INFO] |  +- org.freemarker:freemarker:jar:2.3.31:test
+[INFO] |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:test
+[INFO] |     +- org.bouncycastle:bcprov-jdk15on:jar:1.70:test
+[INFO] |     \- org.bouncycastle:bcutil-jdk15on:jar:1.70:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] -------------< no.nav.security:token-validation-ktor-demo >-------------
+[INFO] Building token-validation-ktor-demo 2.0.0-SNAPSHOT                [9/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from aap: https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-ktor/2.0.0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata no.nav.security:token-validation-ktor:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-ktor/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-ktor:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-ktor:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-ktor/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-validation-ktor-demo ---
+[WARNING] no.nav.security:token-validation-ktor:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-ktor:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-ktor/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-validation-ktor-demo:jar:2.0.0-SNAPSHOT
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-reflect:jar:1.6.10:compile
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.10:compile
+[INFO] |  +- ch.qos.logback:logback-core:jar:1.2.10:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- io.ktor:ktor-server-netty:jar:1.6.7:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:jar:1.5.2:compile
+[INFO] |  |  \- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:jar:1.5.2:compile
+[INFO] |  +- io.ktor:ktor-server-host-common:jar:1.6.7:compile
+[INFO] |  |  \- io.ktor:ktor-http-cio-jvm:jar:1.6.7:compile
+[INFO] |  +- io.netty:netty-codec-http2:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-common:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-buffer:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-transport:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-codec:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-handler:jar:4.1.74.Final:compile
+[INFO] |  |  \- io.netty:netty-codec-http:jar:4.1.74.Final:compile
+[INFO] |  +- org.eclipse.jetty.alpn:alpn-api:jar:1.1.3.v20160715:compile
+[INFO] |  +- io.netty:netty-transport-native-kqueue:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-transport-native-unix-common:jar:4.1.74.Final:compile
+[INFO] |  |  \- io.netty:netty-transport-classes-kqueue:jar:4.1.74.Final:compile
+[INFO] |  \- io.netty:netty-transport-native-epoll:jar:4.1.74.Final:compile
+[INFO] |     \- io.netty:netty-transport-classes-epoll:jar:4.1.74.Final:compile
+[INFO] +- no.nav.security:token-validation-ktor:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  |  \- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] |  \- io.ktor:ktor-auth:jar:1.6.7:compile
+[INFO] |     \- com.googlecode.json-simple:json-simple:jar:1.1.1:compile
+[INFO] +- no.nav.security:mock-oauth2-server:jar:0.4.3:test
+[INFO] |  +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:test
+[INFO] |  |  \- com.squareup.okhttp3:okhttp:jar:4.9.1:test
+[INFO] |  |     \- com.squareup.okio:okio:jar:2.8.0:test
+[INFO] |  +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:test
+[INFO] |  +- io.netty:netty-all:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-dns:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-haproxy:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-memcache:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-mqtt:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-redis:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-smtp:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-socks:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-stomp:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-codec-xml:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-tcnative-classes:jar:2.0.48.Final:compile
+[INFO] |  |  +- io.netty:netty-handler-proxy:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-resolver-dns:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-rxtx:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-sctp:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-udt:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver-dns-classes-macos:jar:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-aarch_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-x86_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-aarch_64:4.1.74.Final:test
+[INFO] |  |  +- io.netty:netty-resolver-dns-native-macos:jar:osx-x86_64:4.1.74.Final:test
+[INFO] |  |  \- io.netty:netty-resolver-dns-native-macos:jar:osx-aarch_64:4.1.74.Final:test
+[INFO] |  +- io.github.microutils:kotlin-logging-jvm:jar:2.1.21:test
+[INFO] |  +- com.fasterxml.jackson.module:jackson-module-kotlin:jar:2.13.1:test
+[INFO] |  +- org.freemarker:freemarker:jar:2.3.31:test
+[INFO] |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:test
+[INFO] |     +- org.bouncycastle:bcprov-jdk15on:jar:1.70:test
+[INFO] |     \- org.bouncycastle:bcutil-jdk15on:jar:1.70:test
+[INFO] +- org.jetbrains.kotlin:kotlin-test-junit:jar:1.6.10:test
+[INFO] |  \- junit:junit:jar:4.13.2:test
+[INFO] |     \- org.hamcrest:hamcrest-core:jar:2.2:test
+[INFO] |        \- org.hamcrest:hamcrest:jar:2.2:test
+[INFO] +- io.ktor:ktor-server-test-host:jar:1.6.7:test
+[INFO] |  +- io.ktor:ktor-server-core:jar:1.6.7:compile
+[INFO] |  |  +- io.ktor:ktor-utils-jvm:jar:1.6.7:compile
+[INFO] |  |  |  \- io.ktor:ktor-io-jvm:jar:1.6.7:compile
+[INFO] |  |  +- io.ktor:ktor-http-jvm:jar:1.6.7:compile
+[INFO] |  |  +- com.typesafe:config:jar:1.4.1:compile
+[INFO] |  |  \- org.fusesource.jansi:jansi:jar:2.4.0:runtime
+[INFO] |  +- io.ktor:ktor-network-tls-jvm:jar:1.6.7:test
+[INFO] |  |  \- io.ktor:ktor-network-jvm:jar:1.6.7:compile
+[INFO] |  +- io.ktor:ktor-network-tls-certificates:jar:1.6.7:test
+[INFO] |  +- io.ktor:ktor-client-core-jvm:jar:1.6.7:compile
+[INFO] |  +- io.ktor:ktor-client-jetty:jar:1.6.7:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-alpn-openjdk8-client:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-alpn-java-client:jar:9.4.45.v20220203:test
+[INFO] |  +- io.ktor:ktor-client-cio-jvm:jar:1.6.7:test
+[INFO] |  +- io.ktor:ktor-websockets:jar:1.6.7:test
+[INFO] |  +- org.eclipse.jetty.http2:http2-client:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty.http2:http2-common:jar:9.4.45.v20220203:test
+[INFO] |  |  |  \- org.eclipse.jetty.http2:http2-hpack:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-alpn-client:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-client:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-http:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-io:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty.http2:http2-http-client-transport:jar:9.4.45.v20220203:test
+[INFO] |  \- org.jetbrains.kotlinx:kotlinx-coroutines-debug:jar:1.5.2:test
+[INFO] |     +- net.java.dev.jna:jna:jar:5.5.0:test
+[INFO] |     \- net.java.dev.jna:jna-platform:jar:5.5.0:test
+[INFO] +- com.github.tomakehurst:wiremock:jar:2.27.2:test
+[INFO] |  +- org.eclipse.jetty:jetty-server:jar:9.4.45.v20220203:test
+[INFO] |  |  \- javax.servlet:javax.servlet-api:jar:4.0.1:test
+[INFO] |  +- org.eclipse.jetty:jetty-servlet:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-security:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-util-ajax:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-servlets:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-continuation:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-util:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-webapp:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-xml:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-proxy:jar:9.4.45.v20220203:test
+[INFO] |  +- com.google.guava:guava:jar:20.0:test
+[INFO] |  +- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:test
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:test
+[INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:test
+[INFO] |  |  +- org.apache.httpcomponents:httpcore:jar:4.4.15:test
+[INFO] |  |  \- commons-codec:commons-codec:jar:1.15:test
+[INFO] |  +- org.xmlunit:xmlunit-core:jar:2.8.4:test
+[INFO] |  |  \- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |     \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  +- org.xmlunit:xmlunit-legacy:jar:2.8.4:test
+[INFO] |  +- org.xmlunit:xmlunit-placeholders:jar:2.8.4:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.6.0:test
+[INFO] |  +- org.ow2.asm:asm:jar:7.0:compile
+[INFO] |  +- net.sf.jopt-simple:jopt-simple:jar:5.0.3:test
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:test
+[INFO] |  +- com.github.jknack:handlebars:jar:4.0.7:test
+[INFO] |  |  \- org.antlr:antlr4-runtime:jar:4.7.1:test
+[INFO] |  +- com.github.jknack:handlebars-helpers:jar:4.0.7:test
+[INFO] |  +- com.flipkart.zjsonpatch:zjsonpatch:jar:0.4.4:test
+[INFO] |  \- commons-fileupload:commons-fileupload:jar:1.4:test
+[INFO] |     \- commons-io:commons-io:jar:2.2:test
+[INFO] +- commons-logging:commons-logging:jar:1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] -----------------< no.nav.security:token-client-core >------------------
+[INFO] Building token-client-core 2.0.0-SNAPSHOT                        [10/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-client-core ---
+[INFO] no.nav.security:token-client-core:jar:2.0.0-SNAPSHOT
+[INFO] +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] +- com.github.ben-manes.caffeine:caffeine:jar:3.0.5:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.19.0:compile
+[INFO] |  \- com.google.errorprone:error_prone_annotations:jar:2.10.0:compile
+[INFO] +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  +- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |     \- org.ow2.asm:asm:jar:9.1:compile
+[INFO] |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:test
+[INFO] |  +- com.squareup.okhttp3:okhttp:jar:4.9.1:test
+[INFO] |  |  \- com.squareup.okio:okio:jar:2.8.0:test
+[INFO] |  \- junit:junit:jar:4.13.2:test
+[INFO] |     \- org.hamcrest:hamcrest-core:jar:2.2:test
+[INFO] |        \- org.hamcrest:hamcrest:jar:2.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:test
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:test
+[INFO] |  \- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.10:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.10:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] ----------------< no.nav.security:token-client-spring >-----------------
+[INFO] Building token-client-spring 2.0.0-SNAPSHOT                      [11/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from aap: https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-core/2.0.0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-client-spring ---
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-client-spring:jar:2.0.0-SNAPSHOT
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-reflect:jar:1.6.10:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |  |     \- org.ow2.asm:asm:jar:9.1:compile
+[INFO] |  |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] |  \- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] +- no.nav.security:token-client-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] +- org.springframework:spring-web:jar:5.3.16:compile
+[INFO] |  +- org.springframework:spring-beans:jar:5.3.16:compile
+[INFO] |  \- org.springframework:spring-core:jar:5.3.16:compile
+[INFO] |     \- org.springframework:spring-jcl:jar:5.3.16:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:compile
+[INFO] |  \- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:compile
+[INFO] +- org.springframework.boot:spring-boot:jar:2.6.4:compile
+[INFO] |  \- org.springframework:spring-context:jar:5.3.16:compile
+[INFO] |     +- org.springframework:spring-aop:jar:5.3.16:compile
+[INFO] |     \- org.springframework:spring-expression:jar:5.3.16:compile
+[INFO] +- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.4:compile
+[INFO] +- org.springframework.boot:spring-boot-configuration-processor:jar:2.6.4:compile
+[INFO] +- com.github.ben-manes.caffeine:caffeine:jar:3.0.5:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.19.0:compile
+[INFO] |  \- com.google.errorprone:error_prone_annotations:jar:2.10.0:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.6.4:test
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.6.4:test
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.2.10:test
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.10:test
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.17.1:test
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.17.1:test
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.36:test
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:test
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.29:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.6.4:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.6.0:test
+[INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  +- org.hamcrest:hamcrest:jar:2.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter:jar:5.8.2:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.5.0:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- org.springframework:spring-test:jar:5.3.16:test
+[INFO] |  \- org.xmlunit:xmlunit-core:jar:2.8.4:test
+[INFO] +- org.springframework.boot:spring-boot-starter-validation:jar:2.6.4:test
+[INFO] |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.58:test
+[INFO] |  \- org.hibernate.validator:hibernate-validator:jar:6.2.2.Final:test
+[INFO] |     +- org.jboss.logging:jboss-logging:jar:3.4.3.Final:test
+[INFO] |     \- com.fasterxml:classmate:jar:1.5.1:test
+[INFO] +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:test
+[INFO] |  +- com.squareup.okhttp3:okhttp:jar:4.9.1:test
+[INFO] |  |  \- com.squareup.okio:okio:jar:2.8.0:test
+[INFO] |  \- junit:junit:jar:4.13.2:test
+[INFO] |     \- org.hamcrest:hamcrest-core:jar:2.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] \- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO]    \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] 
+[INFO] --------------< no.nav.security:token-client-spring-demo >--------------
+[INFO] Building token-client-spring-demo 2.0.0-SNAPSHOT                 [12/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from aap: https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-spring/2.0.0-SNAPSHOT/maven-metadata.xml
+[WARNING] Could not transfer metadata no.nav.security:token-client-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-client-spring:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-client-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-client-spring-demo ---
+[WARNING] no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-filter:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-filter/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-client-spring:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-client-spring:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-spring/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-client-spring-demo:jar:2.0.0-SNAPSHOT
+[INFO] +- org.springframework.boot:spring-boot-starter-web:jar:2.6.4:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:2.6.4:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.6.4:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.2.10:compile
+[INFO] |  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.10:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.17.1:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.17.1:compile
+[INFO] |  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.36:compile
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.29:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-json:jar:2.6.4:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.13.1:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.13.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.13.1:compile
+[INFO] |  +- org.springframework:spring-web:jar:5.3.16:compile
+[INFO] |  |  \- org.springframework:spring-beans:jar:5.3.16:compile
+[INFO] |  \- org.springframework:spring-webmvc:jar:5.3.16:compile
+[INFO] |     +- org.springframework:spring-aop:jar:5.3.16:compile
+[INFO] |     \- org.springframework:spring-expression:jar:5.3.16:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-jetty:jar:2.6.4:compile
+[INFO] |  +- jakarta.servlet:jakarta.servlet-api:jar:4.0.4:compile
+[INFO] |  +- jakarta.websocket:jakarta.websocket-api:jar:1.1.2:compile
+[INFO] |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.58:compile
+[INFO] |  +- org.eclipse.jetty:jetty-servlets:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-continuation:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-http:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-util:jar:9.4.45.v20220203:compile
+[INFO] |  |  \- org.eclipse.jetty:jetty-io:jar:9.4.45.v20220203:compile
+[INFO] |  +- org.eclipse.jetty:jetty-webapp:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-xml:jar:9.4.45.v20220203:compile
+[INFO] |  |  \- org.eclipse.jetty:jetty-servlet:jar:9.4.45.v20220203:compile
+[INFO] |  |     +- org.eclipse.jetty:jetty-security:jar:9.4.45.v20220203:compile
+[INFO] |  |     |  \- org.eclipse.jetty:jetty-server:jar:9.4.45.v20220203:compile
+[INFO] |  |     \- org.eclipse.jetty:jetty-util-ajax:jar:9.4.45.v20220203:compile
+[INFO] |  +- org.eclipse.jetty.websocket:websocket-server:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty.websocket:websocket-common:jar:9.4.45.v20220203:compile
+[INFO] |  |  |  \- org.eclipse.jetty.websocket:websocket-api:jar:9.4.45.v20220203:compile
+[INFO] |  |  +- org.eclipse.jetty.websocket:websocket-client:jar:9.4.45.v20220203:compile
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-client:jar:9.4.45.v20220203:compile
+[INFO] |  |  \- org.eclipse.jetty.websocket:websocket-servlet:jar:9.4.45.v20220203:compile
+[INFO] |  \- org.eclipse.jetty.websocket:javax-websocket-server-impl:jar:9.4.45.v20220203:compile
+[INFO] |     +- org.eclipse.jetty:jetty-annotations:jar:9.4.45.v20220203:compile
+[INFO] |     |  +- org.eclipse.jetty:jetty-plus:jar:9.4.45.v20220203:compile
+[INFO] |     |  +- org.ow2.asm:asm:jar:9.2:compile
+[INFO] |     |  \- org.ow2.asm:asm-commons:jar:9.2:compile
+[INFO] |     |     +- org.ow2.asm:asm-tree:jar:9.2:compile
+[INFO] |     |     \- org.ow2.asm:asm-analysis:jar:9.2:compile
+[INFO] |     \- org.eclipse.jetty.websocket:javax-websocket-client-impl:jar:9.4.45.v20220203:compile
+[INFO] +- no.nav.security:token-validation-spring:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-reflect:jar:1.6.10:compile
+[INFO] |  +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- no.nav.security:token-validation-filter:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- org.springframework:spring-context:jar:5.3.16:compile
+[INFO] |  +- org.springframework.boot:spring-boot:jar:2.6.4:compile
+[INFO] |  +- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |  |  +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |  |  +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |  |  |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |  |  \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] |  +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  \- org.springframework.boot:spring-boot-autoconfigure:jar:2.6.4:compile
+[INFO] +- no.nav.security:token-client-spring:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- no.nav.security:token-client-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:compile
+[INFO] |  \- org.springframework.boot:spring-boot-configuration-processor:jar:2.6.4:compile
+[INFO] +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:compile
+[INFO] |  +- com.squareup.okhttp3:okhttp:jar:4.9.1:compile
+[INFO] |  |  \- com.squareup.okio:okio:jar:2.8.0:compile
+[INFO] |  \- junit:junit:jar:4.13.2:compile
+[INFO] |     \- org.hamcrest:hamcrest-core:jar:2.2:compile
+[INFO] +- com.github.ben-manes.caffeine:caffeine:jar:3.0.5:compile
+[INFO] |  +- org.checkerframework:checker-qual:jar:3.19.0:compile
+[INFO] |  \- com.google.errorprone:error_prone_annotations:jar:2.10.0:compile
+[INFO] +- org.springframework.boot:spring-boot-starter-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-test:jar:2.6.4:test
+[INFO] |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.6.4:test
+[INFO] |  +- com.jayway.jsonpath:json-path:jar:2.6.0:test
+[INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+[INFO] |  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+[INFO] |  +- org.hamcrest:hamcrest:jar:2.2:compile
+[INFO] |  +- org.junit.jupiter:junit-jupiter:jar:5.8.2:test
+[INFO] |  +- org.skyscreamer:jsonassert:jar:1.5.0:test
+[INFO] |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+[INFO] |  +- org.springframework:spring-core:jar:5.3.16:compile
+[INFO] |  |  \- org.springframework:spring-jcl:jar:5.3.16:compile
+[INFO] |  +- org.springframework:spring-test:jar:5.3.16:test
+[INFO] |  \- org.xmlunit:xmlunit-core:jar:2.8.4:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] |  \- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] 
+[INFO] --------------< no.nav.security:token-client-kotlin-demo >--------------
+[INFO] Building token-client-kotlin-demo 2.0.0-SNAPSHOT                 [13/13]
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-ktor:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-ktor:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-ktor/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ token-client-kotlin-demo ---
+[WARNING] no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-client-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-client-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-ktor:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-ktor:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-ktor/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[WARNING] no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xmlfailed to transfer from https://maven.pkg.github.com/navikt/aap-domain during a previous attempt. This failure was cached in the local repository and resolution will not be reattempted until the update interval of aap has elapsed or updates are forced. Original error: Could not transfer metadata no.nav.security:token-validation-core:2.0.0-SNAPSHOT/maven-metadata.xml from/to aap (https://maven.pkg.github.com/navikt/aap-domain): authorization failed for https://maven.pkg.github.com/navikt/aap-domain/no/nav/security/token-validation-core/2.0.0-SNAPSHOT/maven-metadata.xml, status: 403 Forbidden
+[INFO] no.nav.security:token-client-kotlin-demo:jar:2.0.0-SNAPSHOT
+[INFO] +- no.nav.security:token-client-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.36:compile
+[INFO] |  +- com.github.ben-manes.caffeine:caffeine:jar:3.0.5:compile
+[INFO] |  |  +- org.checkerframework:checker-qual:jar:3.19.0:compile
+[INFO] |  |  \- com.google.errorprone:error_prone_annotations:jar:2.10.0:compile
+[INFO] |  \- com.nimbusds:oauth2-oidc-sdk:jar:9.27:compile
+[INFO] |     +- com.nimbusds:content-type:jar:2.2:compile
+[INFO] |     +- net.minidev:json-smart:jar:2.4.8:compile
+[INFO] |     |  \- net.minidev:accessors-smart:jar:2.4.8:compile
+[INFO] |     |     \- org.ow2.asm:asm:jar:9.1:compile
+[INFO] |     \- com.nimbusds:lang-tag:jar:1.5:compile
+[INFO] +- no.nav.security:token-validation-ktor:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  +- no.nav.security:token-validation-core:jar:2.0.0-SNAPSHOT:compile
+[INFO] |  \- io.ktor:ktor-auth:jar:1.6.7:compile
+[INFO] |     \- com.googlecode.json-simple:json-simple:jar:1.1.1:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.6.10:compile
+[INFO] |  +- org.jetbrains:annotations:jar:13.0:compile
+[INFO] |  \- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.6.10:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-reflect:jar:1.6.10:compile
+[INFO] +- io.ktor:ktor-client-core:jar:1.6.7:compile
+[INFO] |  +- org.jetbrains.kotlinx:kotlinx-coroutines-core:jar:1.5.2:runtime
+[INFO] |  +- io.ktor:ktor-http:jar:1.6.7:runtime
+[INFO] |  |  \- io.ktor:ktor-utils:jar:1.6.7:runtime
+[INFO] |  |     \- io.ktor:ktor-io:jar:1.6.7:runtime
+[INFO] |  +- io.ktor:ktor-http-cio:jar:1.6.7:runtime
+[INFO] |  \- org.jetbrains.kotlinx:atomicfu:jar:0.17.0:runtime
+[INFO] |     \- org.jetbrains.kotlinx:atomicfu-jvm:jar:0.17.0:runtime
+[INFO] +- io.ktor:ktor-client-jackson:jar:1.6.7:compile
+[INFO] |  +- io.ktor:ktor-client-core-jvm:jar:1.6.7:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] |  +- io.ktor:ktor-client-json-jvm:jar:1.6.7:compile
+[INFO] |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.13.1:compile
+[INFO] |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.13.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.13.1:compile
+[INFO] |  \- com.fasterxml.jackson.module:jackson-module-kotlin:jar:2.13.1:compile
+[INFO] +- io.ktor:ktor-jackson:jar:1.6.7:compile
+[INFO] +- io.ktor:ktor-client-cio-jvm:jar:1.6.7:compile
+[INFO] |  +- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:jar:1.5.2:compile
+[INFO] |  +- io.ktor:ktor-http-cio-jvm:jar:1.6.7:compile
+[INFO] |  |  \- io.ktor:ktor-network-jvm:jar:1.6.7:compile
+[INFO] |  \- io.ktor:ktor-network-tls-jvm:jar:1.6.7:compile
+[INFO] +- io.ktor:ktor-server-netty:jar:1.6.7:compile
+[INFO] |  +- org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:jar:1.5.2:compile
+[INFO] |  +- io.ktor:ktor-server-host-common:jar:1.6.7:compile
+[INFO] |  +- io.netty:netty-codec-http2:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-common:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-buffer:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-transport:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-codec:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-handler:jar:4.1.74.Final:compile
+[INFO] |  |  \- io.netty:netty-codec-http:jar:4.1.74.Final:compile
+[INFO] |  +- org.eclipse.jetty.alpn:alpn-api:jar:1.1.3.v20160715:compile
+[INFO] |  +- io.netty:netty-transport-native-kqueue:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-transport-native-unix-common:jar:4.1.74.Final:compile
+[INFO] |  |  \- io.netty:netty-transport-classes-kqueue:jar:4.1.74.Final:compile
+[INFO] |  \- io.netty:netty-transport-native-epoll:jar:4.1.74.Final:compile
+[INFO] |     \- io.netty:netty-transport-classes-epoll:jar:4.1.74.Final:compile
+[INFO] +- io.ktor:ktor-server-core:jar:1.6.7:compile
+[INFO] |  +- io.ktor:ktor-utils-jvm:jar:1.6.7:compile
+[INFO] |  |  \- io.ktor:ktor-io-jvm:jar:1.6.7:compile
+[INFO] |  +- io.ktor:ktor-http-jvm:jar:1.6.7:compile
+[INFO] |  +- com.typesafe:config:jar:1.4.1:compile
+[INFO] |  \- org.fusesource.jansi:jansi:jar:2.4.0:runtime
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.10:compile
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.10:compile
+[INFO] +- no.nav.security:mock-oauth2-server:jar:0.4.3:compile
+[INFO] |  +- com.squareup.okhttp3:mockwebserver:jar:4.9.1:compile
+[INFO] |  |  \- com.squareup.okhttp3:okhttp:jar:4.9.1:compile
+[INFO] |  |     \- com.squareup.okio:okio:jar:2.8.0:compile
+[INFO] |  +- io.netty:netty-all:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-dns:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-haproxy:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-memcache:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-mqtt:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-redis:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-smtp:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-socks:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-stomp:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-codec-xml:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-tcnative-classes:jar:2.0.48.Final:compile
+[INFO] |  |  +- io.netty:netty-handler-proxy:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-resolver:jar:4.1.74.Final:compile
+[INFO] |  |  +- io.netty:netty-resolver-dns:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-rxtx:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-sctp:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-udt:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-resolver-dns-classes-macos:jar:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-x86_64:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-native-epoll:jar:linux-aarch_64:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-x86_64:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-transport-native-kqueue:jar:osx-aarch_64:4.1.74.Final:runtime
+[INFO] |  |  +- io.netty:netty-resolver-dns-native-macos:jar:osx-x86_64:4.1.74.Final:runtime
+[INFO] |  |  \- io.netty:netty-resolver-dns-native-macos:jar:osx-aarch_64:4.1.74.Final:runtime
+[INFO] |  +- io.github.microutils:kotlin-logging-jvm:jar:2.1.21:runtime
+[INFO] |  +- org.freemarker:freemarker:jar:2.3.31:runtime
+[INFO] |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:runtime
+[INFO] |     +- org.bouncycastle:bcprov-jdk15on:jar:1.70:runtime
+[INFO] |     \- org.bouncycastle:bcutil-jdk15on:jar:1.70:runtime
+[INFO] +- io.kotest:kotest-assertions-core-jvm:jar:5.1.0:test
+[INFO] |  +- io.kotest:kotest-assertions-shared-jvm:jar:5.1.0:test
+[INFO] |  |  +- io.github.java-diff-utils:java-diff-utils:jar:4.11:test
+[INFO] |  |  \- org.opentest4j:opentest4j:jar:1.2.0:test
+[INFO] |  +- io.kotest:kotest-common-jvm:jar:5.1.0:test
+[INFO] |  \- io.kotest:kotest-assertions-api-jvm:jar:5.1.0:test
+[INFO] +- io.kotest:kotest-runner-junit5-jvm:jar:5.1.0:test
+[INFO] |  +- io.kotest:kotest-framework-api-jvm:jar:5.1.0:test
+[INFO] |  |  \- org.jetbrains.kotlinx:kotlinx-coroutines-test-jvm:jar:1.6.0:test
+[INFO] |  +- io.kotest:kotest-framework-engine-jvm:jar:5.1.0:test
+[INFO] |  |  +- io.github.classgraph:classgraph:jar:4.8.138:test
+[INFO] |  |  \- com.github.ajalt:mordant:jar:1.2.1:test
+[INFO] |  |     \- com.github.ajalt:colormath:jar:1.2.0:test
+[INFO] |  +- io.kotest:kotest-framework-discovery-jvm:jar:5.1.0:test
+[INFO] |  +- io.kotest:kotest-extensions-jvm:jar:5.1.0:test
+[INFO] |  |  +- commons-io:commons-io:jar:2.11.0:test
+[INFO] |  |  \- io.mockk:mockk:jar:1.12.2:test
+[INFO] |  |     +- io.mockk:mockk-dsl-jvm:jar:1.12.2:test
+[INFO] |  |     |  \- io.mockk:mockk-dsl:jar:1.12.2:test
+[INFO] |  |     +- io.mockk:mockk-common:jar:1.12.2:test
+[INFO] |  |     \- io.mockk:mockk-agent-jvm:jar:1.12.2:test
+[INFO] |  |        +- io.mockk:mockk-agent-api:jar:1.12.2:test
+[INFO] |  |        \- io.mockk:mockk-agent-common:jar:1.12.2:test
+[INFO] |  +- io.kotest:kotest-framework-concurrency-jvm:jar:5.1.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
+[INFO] |  +- org.junit.platform:junit-platform-suite-api:jar:1.8.2:test
+[INFO] |  \- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] +- io.ktor:ktor-server-test-host:jar:1.6.7:test
+[INFO] |  +- io.ktor:ktor-network-tls-certificates:jar:1.6.7:test
+[INFO] |  +- io.ktor:ktor-client-jetty:jar:1.6.7:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-alpn-openjdk8-client:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-alpn-java-client:jar:9.4.45.v20220203:test
+[INFO] |  +- io.ktor:ktor-websockets:jar:1.6.7:test
+[INFO] |  +- org.eclipse.jetty.http2:http2-client:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty.http2:http2-common:jar:9.4.45.v20220203:test
+[INFO] |  |  |  \- org.eclipse.jetty.http2:http2-hpack:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-alpn-client:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty:jetty-client:jar:9.4.45.v20220203:test
+[INFO] |  |  +- org.eclipse.jetty:jetty-http:jar:9.4.45.v20220203:test
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-util:jar:9.4.45.v20220203:test
+[INFO] |  |  \- org.eclipse.jetty:jetty-io:jar:9.4.45.v20220203:test
+[INFO] |  +- org.eclipse.jetty.http2:http2-http-client-transport:jar:9.4.45.v20220203:test
+[INFO] |  +- junit:junit:jar:4.13.2:compile
+[INFO] |  |  \- org.hamcrest:hamcrest-core:jar:2.2:compile
+[INFO] |  |     \- org.hamcrest:hamcrest:jar:2.2:compile
+[INFO] |  \- org.jetbrains.kotlinx:kotlinx-coroutines-debug:jar:1.5.2:test
+[INFO] |     +- net.java.dev.jna:jna:jar:5.5.0:test
+[INFO] |     \- net.java.dev.jna:jna-platform:jar:5.5.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-params:jar:5.8.2:test
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
+[INFO] +- org.junit.platform:junit-platform-launcher:jar:1.8.2:test
+[INFO] +- org.assertj:assertj-core:jar:3.21.0:test
+[INFO] +- org.mockito:mockito-core:jar:4.0.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.22:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.22:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.mockito:mockito-junit-jupiter:jar:4.0.0:test
+[INFO] +- com.nimbusds:nimbus-jose-jwt:jar:9.20:compile
+[INFO] |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] +- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] \- org.jetbrains.kotlin:kotlin-test:jar:1.6.10:test
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for token-support 2.0.0-SNAPSHOT:
+[INFO] 
+[INFO] token-support ...................................... SUCCESS [  0.589 s]
+[INFO] token-validation-core .............................. SUCCESS [  0.109 s]
+[INFO] token-validation-filter ............................ SUCCESS [  0.867 s]
+[INFO] token-validation-spring ............................ SUCCESS [  0.863 s]
+[INFO] token-validation-spring-test ....................... SUCCESS [  0.506 s]
+[INFO] token-validation-jaxrs ............................. SUCCESS [  0.092 s]
+[INFO] token-validation-spring-demo ....................... SUCCESS [  0.431 s]
+[INFO] token-validation-ktor .............................. SUCCESS [  0.159 s]
+[INFO] token-validation-ktor-demo ......................... SUCCESS [  0.607 s]
+[INFO] token-client-core .................................. SUCCESS [  0.017 s]
+[INFO] token-client-spring ................................ SUCCESS [  0.551 s]
+[INFO] token-client-spring-demo ........................... SUCCESS [  0.616 s]
+[INFO] token-client-kotlin-demo ........................... SUCCESS [  0.051 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.803 s
+[INFO] Finished at: 2022-03-01T15:45:03+01:00
+[INFO] ------------------------------------------------------------------------
