@@ -27,19 +27,15 @@ jobs:
 
       - name: Publish artifact to central
         env:
+          NEW_VERSION: ${{ github.event.release.tag_name }}
           SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           GPG_KEYNAME: ${{ secrets.GPG_KEYNAME }}
           GPG_KEYS: ${{ secrets.GPG_KEYS }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
-        # The GITHUB_REF tag comes in the format 'refs/tags/xxx'.
-        # So if we split on '/' and take the 3rd value, we can get the release name.
         run: |
           export GPG_TTY=$(tty) && echo "$GPG_KEYS" | gpg --fast-import --batch
-          REPO_NAME=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')
-          NEW_VERSION=$(echo "${GITHUB_REF}" | cut -d "/" -f3)
-          echo "-- Setting new release version ${NEW_VERSION} for ${REPO_NAME} --"
+          echo "-- Setting new release version ${NEW_VERSION} --"
           mvn -B versions:set -DnewVersion="${NEW_VERSION}" -DgenerateBackupPoms=false
           echo "-- Build, test and deploy release to Sonatype --"
           mvn -B --settings .github/settings.xml clean deploy -Prelease,deploy-to-sonatype -Dmaven.wagon.http.pool=false
