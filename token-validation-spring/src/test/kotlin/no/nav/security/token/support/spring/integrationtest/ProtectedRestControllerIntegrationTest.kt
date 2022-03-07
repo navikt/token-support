@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit.MINUTES
 import javax.servlet.Filter
 
 
-private const val s = "no.nav.security.jwt.dont-propagate-bearertoken"
+private const val PROP = "no.nav.security.jwt.dont-propagate-bearertoken"
 
 @SpringBootTest
 @ContextConfiguration(classes = [ProtectedApplication::class, ProtectedApplicationConfig::class])
@@ -72,10 +72,10 @@ internal class ProtectedRestControllerIntegrationTest {
     fun registerInterceptorDefault() = runner.run { assertThat(it).getBean(BearerTokenClientHttpRequestInterceptor::class.java).isNotNull() }
 
     @Test
-    fun registerInterceptorEksplisitt() =  runner.withPropertyValues("no.nav.security.jwt.dont-propagate-bearertoken","false").run { assertThat(it).getBean(BearerTokenClientHttpRequestInterceptor::class.java).isNotNull()}
+    fun registerInterceptorEksplisitt() =  runner.withPropertyValues(PROP,"false").run { assertThat(it).getBean(BearerTokenClientHttpRequestInterceptor::class.java).isNotNull()}
 
     @Test
-    fun ikkeRegisterInterceptor() = runner.withPropertyValues("no.nav.security.jwt.dont-propagate-bearertoken","true").run { assertThat(it).doesNotHaveBean(BearerTokenClientHttpRequestInterceptor::class.java) }
+    fun ikkeRegisterInterceptor() = runner.withPropertyValues(PROP,"true").run { assertThat(it).doesNotHaveBean(BearerTokenClientHttpRequestInterceptor::class.java) }
 
 
         @Test
