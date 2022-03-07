@@ -13,4 +13,4 @@ import kotlin.annotation.AnnotationTarget.CLASS
 @Retention(RUNTIME)
 @Target(ANNOTATION_CLASS, CLASS)
 @Import(EnableJwtTokenValidationConfiguration::class)
-annotation class EnableJwtTokenValidation(val ignore: Array<String> = ["org.springframework"], val registerTokenXInteeceptor: Boolean = true)
+annotation class EnableJwtTokenValidation(val ignore: Array<String> = ["org.springframework"])

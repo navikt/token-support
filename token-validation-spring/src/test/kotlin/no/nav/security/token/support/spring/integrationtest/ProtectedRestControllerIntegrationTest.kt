@@ -9,6 +9,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.webAppContextSetup
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.OAuth2TokenCallback
+import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS2
@@ -21,11 +22,14 @@ import no.nav.security.token.support.spring.integrationtest.JwkGenerator.generat
 import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.ACR
 import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.AUD
 import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.createSignedJWT
+import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNAUTHORIZED
@@ -38,6 +42,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit.MINUTES
 import javax.servlet.Filter
 
+
+private const val s = "no.nav.security.jwt.dont-propagate-bearertoken"
+
 @SpringBootTest
 @ContextConfiguration(classes = [ProtectedApplication::class, ProtectedApplicationConfig::class])
 @ActiveProfiles("test")
@@ -45,11 +52,15 @@ internal class ProtectedRestControllerIntegrationTest {
     @Autowired
     private lateinit var ctx: WebApplicationContext
 
+    private lateinit var runner: ApplicationContextRunner
+
     @Autowired
     private lateinit var mockOAuth2Server: MockOAuth2Server
 
     @BeforeEach
     fun initialiseRestAssuredMockMvcWebApplicationContext() {
+        runner = ApplicationContextRunner()
+            .withUserConfiguration(BearerTokenClientHttpRequestInterceptor::class.java, SpringTokenValidationContextHolder::class.java)
         webAppContextSetup(ctx, object : MockMvcConfigurer {
             override fun afterConfigurerAdded(builder: ConfigurableMockMvcBuilder<*>) {
                 builder.addFilters(*ctx.getBeansOfType(Filter::class.java).values.toTypedArray())
@@ -58,6 +69,16 @@ internal class ProtectedRestControllerIntegrationTest {
     }
 
     @Test
+    fun registerInterceptorDefault() = runner.run { assertThat(it).getBean(BearerTokenClientHttpRequestInterceptor::class.java).isNotNull() }
+
+    @Test
+    fun registerInterceptorEksplisitt() =  runner.withPropertyValues("no.nav.security.jwt.dont-propagate-bearertoken","false").run { assertThat(it).getBean(BearerTokenClientHttpRequestInterceptor::class.java).isNotNull()}
+
+    @Test
+    fun ikkeRegisterInterceptor() = runner.withPropertyValues("no.nav.security.jwt.dont-propagate-bearertoken","true").run { assertThat(it).doesNotHaveBean(BearerTokenClientHttpRequestInterceptor::class.java) }
+
+
+        @Test
     fun unprotectedMethod() {
         RestAssuredMockMvc.given()
             .`when`()[UNPROTECTED]

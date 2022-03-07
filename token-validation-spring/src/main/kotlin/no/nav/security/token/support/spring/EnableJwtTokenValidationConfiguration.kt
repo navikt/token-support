@@ -69,7 +69,8 @@ class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebM
     fun expiryFilter(h: TokenValidationContextHolder,@Value("\${no.nav.security.jwt.expirythreshold}") threshold: Long) = JwtTokenExpiryFilter(h,threshold)
 
     @Bean
-    fun bearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder: TokenValidationContextHolder) =  BearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder, attrs.getBoolean("registerTokenXInteeceptor"))
+    @ConditionalOnProperty("no.nav.security.jwt.dont-propagate-bearertoken", matchIfMissing = true)
+    fun bearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder: TokenValidationContextHolder) =  BearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder)
 
 
     @Bean
