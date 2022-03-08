@@ -33,7 +33,11 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
         super(connectTimeout, readTimeout, sizeLimit);
         this.usePlainTextForHttps = usePlainTextForHttps;
         if (proxyUrl != null) {
+            LOG.info("Using proxy URL {}",proxyUrl);
             setProxy(new Proxy(HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort())));
+        }
+        else {
+            LOG.info("No proxying");
         }
     }
 
