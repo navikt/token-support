@@ -95,8 +95,7 @@ class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebM
 
     private fun controllerInterceptor()  = JwtTokenHandlerInterceptor(attrs,SpringJwtTokenAnnotationHandler(SpringTokenValidationContextHolder()))
 
-    private fun configuredProxy() = env.getProperty(env.getProperty("http.proxy.parametername", "http.proxy"),URL::class.java)
-        .apply {
+    private fun configuredProxy() = env.getProperty(env.getProperty("http.proxy.parametername", "http.proxy"),URL::class.java)?.apply {
             if (env.getProperty("nais.cluster.name","local").contains("gcp")) {
                 log.warn("You have enabled proxying in GCP, this is probably not what you want")
             }
