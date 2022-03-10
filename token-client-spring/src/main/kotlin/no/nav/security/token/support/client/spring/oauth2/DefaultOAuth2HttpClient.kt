@@ -12,7 +12,7 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestTemplate
 
-class DefaultOAuth2HttpClient(restTemplateBuilder: RestTemplateBuilder) : OAuth2HttpClient {
+open class DefaultOAuth2HttpClient(restTemplateBuilder: RestTemplateBuilder) : OAuth2HttpClient {
     private val restTemplate: RestTemplate
 
     init {
