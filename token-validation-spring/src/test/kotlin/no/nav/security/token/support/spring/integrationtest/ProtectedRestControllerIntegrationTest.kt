@@ -72,10 +72,10 @@ internal class ProtectedRestControllerIntegrationTest {
     fun registerInterceptorDefault() = runner.run { assertThat(it).hasSingleBean(BearerTokenClientHttpRequestInterceptor::class.java) }
 
     @Test
-    fun registerInterceptorEksplisitt() =  runner.withPropertyValues(PROP,"false").run { assertThat(it).hasSingleBean(BearerTokenClientHttpRequestInterceptor::class.java)}
+    fun registerInterceptorExplicitly() =  runner.withPropertyValues(PROP,"false").run { assertThat(it).hasSingleBean(BearerTokenClientHttpRequestInterceptor::class.java)}
     
     @Test
-    fun ikkeRegisterInterceptor() = runner.withPropertyValues(PROP,"true").run { assertThat(it).doesNotHaveBean(BearerTokenClientHttpRequestInterceptor::class.java) }
+    fun doNotRegisterInterceptor() = runner.withPropertyValues(PROP,"true").run { assertThat(it).doesNotHaveBean(BearerTokenClientHttpRequestInterceptor::class.java) }
 
 
         @Test
