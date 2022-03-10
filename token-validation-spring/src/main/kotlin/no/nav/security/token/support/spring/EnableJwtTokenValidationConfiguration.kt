@@ -28,10 +28,11 @@ import org.springframework.web.context.request.RequestContextListener
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import java.net.URL
-import java.util.*
+import java.util.EnumSet
 import javax.servlet.DispatcherType.ASYNC
 import javax.servlet.DispatcherType.FORWARD
 import javax.servlet.DispatcherType.REQUEST
+
 
 @Configuration
 @EnableConfigurationProperties(MultiIssuerProperties::class)
@@ -68,7 +69,8 @@ class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebM
     fun expiryFilter(h: TokenValidationContextHolder,@Value("\${no.nav.security.jwt.expirythreshold}") threshold: Long) = JwtTokenExpiryFilter(h,threshold)
 
     @Bean
-    fun bearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder: TokenValidationContextHolder?) =  BearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder!!)
+    @ConditionalOnProperty("no.nav.security.jwt.dont-propagate-bearertoken", matchIfMissing = true)
+    fun bearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder: TokenValidationContextHolder) =  BearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder)
 
 
     @Bean
