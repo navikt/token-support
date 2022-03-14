@@ -74,23 +74,23 @@ class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebM
 
 
     @Bean
-    @Order(HIGHEST_PRECEDENCE)
     fun oidcTokenValidationFilterRegistrationBean(filter: JwtTokenValidationFilter): FilterRegistrationBean<JwtTokenValidationFilter> {
         log.info("Registering validation filter")
         val reg = FilterRegistrationBean<JwtTokenValidationFilter>()
         reg.filter = filter
+        reg.order = HIGHEST_PRECEDENCE
         reg.setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
         return reg
     }
 
 
     @Bean
-    @Order(2)
     @ConditionalOnProperty("no.nav.security.jwt.expirythreshold")
     fun oidcTokenExpiryFilterRegistrationBean(filter: JwtTokenExpiryFilter): FilterRegistrationBean<JwtTokenExpiryFilter> {
         log.info("Registering expiry filter")
         val reg = FilterRegistrationBean<JwtTokenExpiryFilter>()
         reg.filter = filter
+        reg.order = 2
         reg.setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
         return reg
     }
