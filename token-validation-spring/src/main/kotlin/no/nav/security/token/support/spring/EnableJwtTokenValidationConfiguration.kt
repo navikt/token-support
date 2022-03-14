@@ -21,7 +21,6 @@ import org.springframework.context.annotation.ImportAware
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.core.annotation.AnnotationAttributes.fromMap
-import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.core.type.AnnotationMetadata
 import org.springframework.web.context.request.RequestContextListener
