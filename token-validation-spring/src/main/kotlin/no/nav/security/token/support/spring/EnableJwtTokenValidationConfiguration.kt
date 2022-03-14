@@ -21,7 +21,6 @@ import org.springframework.context.annotation.ImportAware
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.core.annotation.AnnotationAttributes.fromMap
-import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.core.type.AnnotationMetadata
 import org.springframework.web.context.request.RequestContextListener
@@ -74,23 +73,23 @@ class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebM
 
 
     @Bean
-    @Order(HIGHEST_PRECEDENCE)
     fun oidcTokenValidationFilterRegistrationBean(filter: JwtTokenValidationFilter): FilterRegistrationBean<JwtTokenValidationFilter> {
         log.info("Registering validation filter")
         val reg = FilterRegistrationBean<JwtTokenValidationFilter>()
         reg.filter = filter
+        reg.order = HIGHEST_PRECEDENCE
         reg.setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
         return reg
     }
 
 
     @Bean
-    @Order(2)
     @ConditionalOnProperty("no.nav.security.jwt.expirythreshold")
     fun oidcTokenExpiryFilterRegistrationBean(filter: JwtTokenExpiryFilter): FilterRegistrationBean<JwtTokenExpiryFilter> {
         log.info("Registering expiry filter")
         val reg = FilterRegistrationBean<JwtTokenExpiryFilter>()
         reg.filter = filter
+        reg.order = 2
         reg.setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
         return reg
     }
