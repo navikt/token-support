@@ -29,4 +29,5 @@ jobs:
           GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-        run: mvn -B verify jacoco:prepare-agent jacoco:report sonar:sonar -Dsonar.projectKey=navikt_token-support 
+        run: mvn -B test 
+      
