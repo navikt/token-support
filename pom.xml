@@ -62,7 +62,7 @@
         <groovy.version>3.0.10</groovy.version>
         <logback.version>1.2.11</logback.version>
         <nimbus.jose.jwt.version>9.21</nimbus.jose.jwt.version>
-        <kotest.version>5.1.0</kotest.version>
+        <kotest.version>5.2.1</kotest.version>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
     </properties>
 
