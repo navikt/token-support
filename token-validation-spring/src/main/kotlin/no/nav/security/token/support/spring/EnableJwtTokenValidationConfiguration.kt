@@ -32,6 +32,7 @@ import java.util.EnumSet
 import javax.servlet.DispatcherType.ASYNC
 import javax.servlet.DispatcherType.FORWARD
 import javax.servlet.DispatcherType.REQUEST
+import javax.servlet.Filter
 
 
 @Configuration
@@ -72,28 +73,20 @@ class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebM
     @ConditionalOnProperty("no.nav.security.jwt.dont-propagate-bearertoken", matchIfMissing = true)
     fun bearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder: TokenValidationContextHolder) =  BearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder)
 
+    @Bean
+    fun oidcTokenValidationFilterRegistrationBean(filter: JwtTokenValidationFilter) = filterRegistrationBeanFor(filter, HIGHEST_PRECEDENCE)
 
     @Bean
-    @Order(HIGHEST_PRECEDENCE)
-    fun oidcTokenValidationFilterRegistrationBean(filter: JwtTokenValidationFilter): FilterRegistrationBean<JwtTokenValidationFilter> {
-        log.info("Registering validation filter")
-        val reg = FilterRegistrationBean<JwtTokenValidationFilter>()
-        reg.filter = filter
-        reg.setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
-        return reg
-    }
-
-
-    @Bean
-    @Order(2)
     @ConditionalOnProperty("no.nav.security.jwt.expirythreshold")
-    fun oidcTokenExpiryFilterRegistrationBean(filter: JwtTokenExpiryFilter): FilterRegistrationBean<JwtTokenExpiryFilter> {
-        log.info("Registering expiry filter")
-        val reg = FilterRegistrationBean<JwtTokenExpiryFilter>()
-        reg.filter = filter
-        reg.setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
-        return reg
-    }
+    fun oidcTokenExpiryFilterRegistrationBean(filter: JwtTokenExpiryFilter) = filterRegistrationBeanFor(filter,2)
+
+    private fun filterRegistrationBeanFor(filter: Filter, order: Int) =
+        FilterRegistrationBean(filter)
+            .also { log.info("Registering ${filter.javaClass.simpleName}") }
+            .apply {
+                this.order = order
+                setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
+            }
 
     private fun controllerInterceptor()  = JwtTokenHandlerInterceptor(attrs,SpringJwtTokenAnnotationHandler(SpringTokenValidationContextHolder()))
 

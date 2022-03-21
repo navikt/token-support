@@ -10,33 +10,28 @@ import org.springframework.http.HttpMethod.POST
 import org.springframework.http.RequestEntity
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.HttpStatusCodeException
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.RestOperations
 
-class DefaultOAuth2HttpClient(restTemplateBuilder: RestTemplateBuilder) : OAuth2HttpClient {
-    private val restTemplate: RestTemplate
-
-    init {
-        restTemplate = restTemplateBuilder.build()
-    }
+class DefaultOAuth2HttpClient(val restOperations: RestOperations) : OAuth2HttpClient {
+    constructor(builder: RestTemplateBuilder) :this(builder.build())
 
     override fun post(req: OAuth2HttpRequest) =
          try {
-            restTemplate.exchange(convert(req), OAuth2AccessTokenResponse::class.java).body
+            restOperations.exchange(convert(req), OAuth2AccessTokenResponse::class.java).body
         } catch (e: HttpStatusCodeException) {
             throw OAuth2ClientException("Received $e.statusCode from tokenendpoint $req.tokenEndpointUrl with responsebody $e.responseBodyAsString", e)
         }
 
-    private fun convert(req: OAuth2HttpRequest): RequestEntity<*> {
-        val formParameters = LinkedMultiValueMap<String, String>()
-        formParameters.setAll(req.formParameters)
-        return RequestEntity(formParameters, headers(req), POST, req.tokenEndpointUrl)
-    }
+    private fun convert(req: OAuth2HttpRequest) =
+         with(req) {
+             RequestEntity(
+                     LinkedMultiValueMap<String, String>().apply { setAll(formParameters) },
+                     headers(this),
+                     POST,
+                     tokenEndpointUrl)
+         }
 
-    private fun headers(req: OAuth2HttpRequest): HttpHeaders {
-        val headers = HttpHeaders()
-        headers.putAll(req.oAuth2HttpHeaders.headers())
-        return headers
-    }
+    private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { putAll(req.oAuth2HttpHeaders.headers()) }
 
-    override fun toString() = "$javaClass.simpleName  [restTemplate=$restTemplate]"
+    override fun toString() = "$javaClass.simpleName  [restTemplate=$restOperations]"
 }

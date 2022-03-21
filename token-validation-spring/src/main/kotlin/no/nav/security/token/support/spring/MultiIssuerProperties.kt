@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated
 import javax.validation.Valid
 
 @Configuration
-@ConfigurationProperties(prefix = "no.nav.security.jwt")
+@ConfigurationProperties("no.nav.security.jwt")
 @EnableConfigurationProperties
 @Validated
 data class MultiIssuerProperties(@Valid val issuer: Map<String,IssuerProperties>)
