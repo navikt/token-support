@@ -12,11 +12,15 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
+import java.net.URI
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestTemplateAutoConfiguration::class])
 @ActiveProfiles("test-withresourceurl")
 internal class ClientConfigurationPropertiesTestWithResourceUrl {
 
+    private  val matcher = object: ClientConfigurationPropertiesMatcher {
+
+    }
     @MockBean
     private val tokenValidationContextHolder: TokenValidationContextHolder? = null
 
@@ -29,6 +33,7 @@ internal class ClientConfigurationPropertiesTestWithResourceUrl {
 
     @Test
     fun testClientConfigIsValid() {
+        assertThat(matcher.findProperties(clientConfigurationProperties, URI.create("https://isdialogmelding.dev.intern.nav.no/api/person/v1/behandler/self"))).isNotNull
         assertThat(clientConfigurationProperties).isNotNull
         assertThat(clientConfigurationProperties.registration).isNotNull
         val clientProperties = clientConfigurationProperties.registration.values.stream().findFirst().orElse(null)

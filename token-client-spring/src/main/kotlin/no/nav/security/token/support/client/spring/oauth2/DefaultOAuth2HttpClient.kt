@@ -12,8 +12,9 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestOperations
 
-class DefaultOAuth2HttpClient(val restOperations: RestOperations) : OAuth2HttpClient {
+open class DefaultOAuth2HttpClient(val restOperations: RestOperations) : OAuth2HttpClient {
     constructor(builder: RestTemplateBuilder) :this(builder.build())
+
 
     override fun post(req: OAuth2HttpRequest) =
          try {

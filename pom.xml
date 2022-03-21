@@ -49,20 +49,20 @@
         <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
         <spring-boot.version>2.6.4</spring-boot.version>
-        <oauth2-oidc-sdk.version>9.27</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>9.29</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <rest-assured.version>4.5.1</rest-assured.version>
         <mockwebserver.version>4.9.3</mockwebserver.version>
         <caffeine.version>3.0.5</caffeine.version>
         <okhttp3.version>4.9.1</okhttp3.version>
-        <ktor.version>1.6.7</ktor.version>
+        <ktor.version>1.6.8</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>1.6.10</kotlin.version>
-        <mock-oauth2-server.version>0.4.3</mock-oauth2-server.version>
-        <groovy.version>3.0.9</groovy.version>
-        <logback.version>1.2.10</logback.version>
-        <nimbus.jose.jwt.version>9.20</nimbus.jose.jwt.version>
-        <kotest.version>5.1.0</kotest.version>
+        <mock-oauth2-server.version>0.4.4</mock-oauth2-server.version>
+        <groovy.version>3.0.10</groovy.version>
+        <logback.version>1.2.11</logback.version>
+        <nimbus.jose.jwt.version>9.21</nimbus.jose.jwt.version>
+        <kotest.version>5.2.1</kotest.version>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
     </properties>
 

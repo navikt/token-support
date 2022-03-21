@@ -21,7 +21,6 @@ import org.springframework.context.annotation.ImportAware
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.core.annotation.AnnotationAttributes.fromMap
-import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.core.type.AnnotationMetadata
 import org.springframework.web.context.request.RequestContextListener
@@ -90,8 +89,7 @@ class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebM
 
     private fun controllerInterceptor()  = JwtTokenHandlerInterceptor(attrs,SpringJwtTokenAnnotationHandler(SpringTokenValidationContextHolder()))
 
-    private fun configuredProxy() = env.getProperty(env.getProperty("http.proxy.parametername", "http.proxy"),URL::class.java)
-        .apply {
+    private fun configuredProxy() = env.getProperty(env.getProperty("http.proxy.parametername", "http.proxy"),URL::class.java)?.apply {
             if (env.getProperty("nais.cluster.name","local").contains("gcp")) {
                 log.warn("You have enabled proxying in GCP, this is probably not what you want")
             }
