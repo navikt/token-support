@@ -45,7 +45,7 @@ class OAuth2ClientConfiguration : ImportAware {
         }
 
     @Bean
-    fun oAuth2HttpClient(b: RestTemplateBuilder) = DefaultOAuth2HttpClient(b)
+    fun oAuth2HttpClient(b: RestTemplateBuilder) = DefaultOAuth2HttpClient(b.build())
 
     @Bean
     @ConditionalOnClass(TokenValidationContextHolder::class)
