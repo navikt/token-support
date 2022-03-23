@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.nav.security</groupId>
     <artifactId>token-support</artifactId>
-    <version>2.1.0-SNAHSHOT</version>
+    <version>2.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>token-support</name>
     <description>
