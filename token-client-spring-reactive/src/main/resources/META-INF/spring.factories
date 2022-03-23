@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=no.nav.security.token.support.client.spring.reactive.oauth.OAuth2ReactiveClientAutoConfiguration
