@@ -17,7 +17,7 @@ class DefaultOAuth2WebCLientHttpClient(private var client: WebClient) :OAuth2Htt
     override fun post(req: OAuth2HttpRequest) =
          with(req) {
              client.post()
-                 .uri(req.tokenEndpointUrl)
+                 .uri(tokenEndpointUrl)
                  .accept(APPLICATION_JSON)
                  .headers { HttpHeaders()
                      .apply {
@@ -36,6 +36,6 @@ class DefaultOAuth2WebCLientHttpClient(private var client: WebClient) :OAuth2Htt
                 t: Throwable -> log.warn(" POST $tokenEndpointUrl feilet", t)
             }
             .blockOptional()
-                 .orElseThrow()
+                 .orElseThrow()  // or whatever
         }
 }
