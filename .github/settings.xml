@@ -38,6 +38,12 @@
                 </repository>
                 <repository>
                     <id>github</id>
+                     <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
                     <name>gitHub</name>
                     <url>https://maven.pkg.github.com/navikt/token-support/</url>
                 </repository>
