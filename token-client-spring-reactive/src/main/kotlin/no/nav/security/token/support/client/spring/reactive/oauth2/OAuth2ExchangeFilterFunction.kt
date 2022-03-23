@@ -25,10 +25,11 @@ private val holder: TokenValidationContextHolder) : ExchangeFilterFunction {
             return matcher.findProperties(configs, req.url()).orElse(null)
                 ?.let {
                     next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.getAccessToken(it).accessTokenAsBearer).build())
-                } ?: next.exchange(ClientRequest.from(req).build())
+                } ?: noExchange(next, req)
         }
-        return next.exchange(ClientRequest.from(req).build())
+        return noExchange(next, req)
     }
 
+    private fun noExchange(next: ExchangeFunction, req: ClientRequest) = next.exchange(ClientRequest.from(req).build())
     override fun toString() = "${javaClass.simpleName} [[configs=$configs,service=$service,matcher=$matcher]"
 }
