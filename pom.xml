@@ -39,6 +39,8 @@
         <module>token-client-spring-demo</module>
         <module>token-client-kotlin-demo</module>
         <module>token-client-core</module>
+        <module>token-client-spring-common</module>
+        <module>token-client-spring-reactive</module>
     </modules>
     <properties>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -272,6 +274,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>token-validation-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>token-client-spring-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
