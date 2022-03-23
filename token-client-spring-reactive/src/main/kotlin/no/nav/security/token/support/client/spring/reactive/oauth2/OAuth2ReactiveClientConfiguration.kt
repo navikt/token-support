@@ -49,7 +49,7 @@ class OAuth2ReactiveClientConfiguration : ImportAware{
                     }
 
         @Bean
-        fun oAuth2ReactiveHttpClient(b: WebClient.Builder) = DefaultOAuth2ReactiveHttpClient(b.build())
+        fun oAuth2ReactiveHttpClient(b: WebClient.Builder) = DefaultOAuth2WebCLientHttpClient(b.build())
 
         @Bean
         @ConditionalOnClass(TokenValidationContextHolder::class)

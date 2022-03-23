@@ -41,6 +41,9 @@ public class OAuth2AccessTokenResponse {
         return this.accessToken;
     }
 
+    public String getAccessTokenAsBearer() {
+        return "Bearer " + getAccessToken();
+    }
     public int getExpiresAt() {
         return this.expiresAt;
     }

@@ -15,7 +15,6 @@ import org.springframework.web.client.RestOperations
 open class DefaultOAuth2HttpClient(val restOperations: RestOperations) : OAuth2HttpClient {
     constructor(builder: RestTemplateBuilder) :this(builder.build())
 
-
     override fun post(req: OAuth2HttpRequest) =
          try {
             restOperations.exchange(convert(req), OAuth2AccessTokenResponse::class.java).body
