@@ -6,7 +6,7 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenRespons
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.util.LinkedMultiValueMap
-import org.springframework.web.reactive.function.BodyInserters.*
+import org.springframework.web.reactive.function.BodyInserters.fromFormData
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
