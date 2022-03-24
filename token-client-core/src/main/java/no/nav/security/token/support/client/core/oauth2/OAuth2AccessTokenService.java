@@ -60,7 +60,12 @@ public class OAuth2AccessTokenService {
         return clientCredentialsGrantCache;
     }
 
-    public OAuth2AccessTokenResponse getAccessToken(ClientProperties clientProperties) {
+    public String getAccessTokenAsBearer(ClientProperties clientProperties) {
+        return getAccessToken(clientProperties).getAccessTokenAsBearer();
+    }
+
+
+        public OAuth2AccessTokenResponse getAccessToken(ClientProperties clientProperties) {
         if (clientProperties == null) {
             throw new OAuth2ClientException("ClientProperties cannot be null");
         }
