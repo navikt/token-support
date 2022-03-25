@@ -1,5 +1,6 @@
 package no.nav.security.token.support.spring
 
+import no.nav.security.token.support.core.JwtTokenConstants
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
@@ -18,6 +19,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.ImportAware
+import org.springframework.core.Ordered
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.core.annotation.AnnotationAttributes.fromMap
@@ -73,7 +75,10 @@ class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebM
     fun bearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder: TokenValidationContextHolder) =  BearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder)
 
     @Bean
-    fun oidcTokenValidationFilterRegistrationBean(filter: JwtTokenValidationFilter) = filterRegistrationBeanFor(filter, HIGHEST_PRECEDENCE)
+    fun oidcTokenValidationFilterRegistrationBean(
+        filter: JwtTokenValidationFilter,
+        @Value("\${${JwtTokenConstants.TOKEN_VALIDATION_FILTER_ORDER_PROPERTY}:$HIGHEST_PRECEDENCE}") tokenValidationFilterOrder : Int)
+    = filterRegistrationBeanFor(filter, tokenValidationFilterOrder)
 
     @Bean
     @ConditionalOnProperty("no.nav.security.jwt.expirythreshold")
