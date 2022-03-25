@@ -11,6 +11,8 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -50,6 +52,14 @@ class OAuth2ReactiveClientAutoConfiguration {
             JwtBearerTokenResolver {
                 h.tokenValidationContext?.firstValidToken?.map { it.tokenAsString } ?: Optional.empty()
             }
+
+    @Bean
+    @ConditionalOnMissingBean(JwtBearerTokenResolver::class)
+    @ConditionalOnMissingClass("no.nav.security.token.support.core.context.TokenValidationContextHolder")
+    fun noopJwtBearerTokenResolver() =
+        JwtBearerTokenResolver {
+            throw UnsupportedOperationException("a no-op implementation of ${JwtBearerTokenResolver::class.java}  is registered, cannot get token to exchange required for OnBehalfOf/TokenExchange grant")
+        }
 
     companion object {
         private const val PREFIX = "no.nav.security.token.support.client.spring.reactive."

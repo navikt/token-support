@@ -46,8 +46,8 @@ internal class DefaultOAuth2ReactiveHttpClientTest {
     fun tokenServiceIsRegistered() {
         ApplicationContextRunner().withConfiguration(AutoConfigurations.of(OAuth2ReactiveClientAutoConfiguration::class.java))
             .run {
-                assertThat(it).getBean(JwtBearerTokenResolver::class.java).isNotNull()
-                assertThat(it).getBean(OAuth2AccessTokenService::class.java).isNotNull()
+                assertThat(it).getBean(JwtBearerTokenResolver::class.java).isNotNull
+                assertThat(it).getBean(OAuth2AccessTokenService::class.java).isNotNull
             }
     }
         @Test
