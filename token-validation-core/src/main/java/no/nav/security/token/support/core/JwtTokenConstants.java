@@ -8,6 +8,7 @@ public class JwtTokenConstants {
     public static final String EXPIRY_THRESHOLD_ENV_PROPERTY = "no.nav.security.jwt.expirythreshold";
     public static final String TOKEN_VALIDATION_FILTER_ORDER_PROPERTY = "no.nav.security.jwt.tokenvalidationfilter.order";
     public static final String TOKEN_EXPIRES_SOON_HEADER = "x-token-expires-soon";
+    public static final String BEARER_TOKEN_DONT_PROPAGATE_ENV_PROPERTY = "no.nav.security.jwt.dont-propagate-bearertoken"
 
     public static String getDefaultCookieName(String issuer) {
         return String.format(COOKIE_NAME, issuer);
