@@ -89,8 +89,7 @@ class EnableJwtTokenValidationConfiguration (private val env: Environment) : Web
                 setOrder(order)
                 setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
             }
-
-    x''
+    
     private fun controllerInterceptor()  = JwtTokenHandlerInterceptor(attrs,SpringJwtTokenAnnotationHandler(SpringTokenValidationContextHolder()))
 
     private fun configuredProxy() = env.getProperty(env.getProperty("http.proxy.parametername", "http.proxy"),URL::class.java)?.apply {
