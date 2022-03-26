@@ -5,8 +5,7 @@ import org.springframework.core.annotation.AliasFor
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy.RUNTIME
+import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
 import kotlin.annotation.AnnotationTarget.CLASS
 
