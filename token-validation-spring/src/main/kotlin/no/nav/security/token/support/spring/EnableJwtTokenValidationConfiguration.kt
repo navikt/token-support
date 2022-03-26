@@ -1,5 +1,8 @@
 package no.nav.security.token.support.spring
 
+import no.nav.security.token.support.core.JwtTokenConstants.BEARER_TOKEN_DONT_PROPAGATE_ENV_PROPERTY
+import no.nav.security.token.support.core.JwtTokenConstants.EXPIRY_THRESHOLD_ENV_PROPERTY
+import no.nav.security.token.support.core.JwtTokenConstants.TOKEN_VALIDATION_FILTER_ORDER_PROPERTY
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
@@ -65,29 +68,29 @@ class EnableJwtTokenValidationConfiguration (private val env: Environment) : Web
     fun tokenValidationFilter(config: MultiIssuerConfiguration?, h: TokenValidationContextHolder?) = JwtTokenValidationFilter(JwtTokenValidationHandler(config), h)
 
     @Bean
-    @ConditionalOnProperty("no.nav.security.jwt.expirythreshold")
-    fun expiryFilter(h: TokenValidationContextHolder,@Value("\${no.nav.security.jwt.expirythreshold}") threshold: Long) = JwtTokenExpiryFilter(h,threshold)
+    @ConditionalOnProperty(EXPIRY_THRESHOLD_ENV_PROPERTY)
+    fun expiryFilter(h: TokenValidationContextHolder,@Value("\${$EXPIRY_THRESHOLD_ENV_PROPERTY}") threshold: Long) = JwtTokenExpiryFilter(h,threshold)
 
     @Bean
-    @ConditionalOnProperty("no.nav.security.jwt.dont-propagate-bearertoken", matchIfMissing = true)
+    @ConditionalOnProperty(BEARER_TOKEN_DONT_PROPAGATE_ENV_PROPERTY, matchIfMissing = true)
     fun bearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder: TokenValidationContextHolder) =  BearerTokenClientHttpRequestInterceptor(tokenValidationContextHolder)
 
     @Bean
-    fun oidcTokenValidationFilterRegistrationBean(filter: JwtTokenValidationFilter) = filterRegistrationBeanFor(filter, HIGHEST_PRECEDENCE)
+    fun oidcTokenValidationFilterRegistrationBean(filter: JwtTokenValidationFilter, @Value("\${$TOKEN_VALIDATION_FILTER_ORDER_PROPERTY:$HIGHEST_PRECEDENCE}") order : Int) = filterRegistrationBeanFor(filter, order)
 
     @Bean
-    @ConditionalOnProperty("no.nav.security.jwt.expirythreshold")
+    @ConditionalOnProperty(EXPIRY_THRESHOLD_ENV_PROPERTY)
     fun oidcTokenExpiryFilterRegistrationBean(filter: JwtTokenExpiryFilter) = filterRegistrationBeanFor(filter,2)
 
     private fun filterRegistrationBeanFor(filter: Filter, order: Int) =
         FilterRegistrationBean(filter)
             .also { log.info("Registering ${filter.javaClass.simpleName}") }
             .apply {
-                this.order = order
+                setOrder(order)
                 setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
             }
 
-    
+    x''
     private fun controllerInterceptor()  = JwtTokenHandlerInterceptor(attrs,SpringJwtTokenAnnotationHandler(SpringTokenValidationContextHolder()))
 
     private fun configuredProxy() = env.getProperty(env.getProperty("http.proxy.parametername", "http.proxy"),URL::class.java)?.apply {
