@@ -36,7 +36,7 @@ import javax.servlet.Filter
 
 @Configuration
 @EnableConfigurationProperties(MultiIssuerProperties::class)
-class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebMvcConfigurer, ImportAware {
+class EnableJwtTokenValidationConfiguration (private val env: Environment) : WebMvcConfigurer, ImportAware {
     private val log = LoggerFactory.getLogger(EnableJwtTokenValidationConfiguration::class.java)
     private lateinit var attrs: AnnotationAttributes
 
@@ -87,6 +87,7 @@ class EnableJwtTokenValidationConfiguration(private val env: Environment) : WebM
                 setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
             }
 
+    
     private fun controllerInterceptor()  = JwtTokenHandlerInterceptor(attrs,SpringJwtTokenAnnotationHandler(SpringTokenValidationContextHolder()))
 
     private fun configuredProxy() = env.getProperty(env.getProperty("http.proxy.parametername", "http.proxy"),URL::class.java)?.apply {
