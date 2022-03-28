@@ -52,7 +52,7 @@
         <spring-boot.version>2.6.5</spring-boot.version>
         <oauth2-oidc-sdk.version>9.31</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <rest-assured.version>4.5.1</rest-assured.version>
+        <rest-assured.version>5.0.0</rest-assured.version>
         <mockwebserver.version>4.9.3</mockwebserver.version>
         <caffeine.version>3.0.6</caffeine.version>
         <okhttp3.version>4.9.1</okhttp3.version>
