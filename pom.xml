@@ -7,6 +7,7 @@
     <version>2.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>token-support</name>
+         
     <description>
         This project consist of common modules to support security token handling in a java spring microservices
         architecture, with emphasis on OpenID Connect ID Tokens.
