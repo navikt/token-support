@@ -25,7 +25,12 @@
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>
-            <artifactId>ktor-auth</artifactId>
+            <artifactId>ktor-server-netty-jvm</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-auth-jvm</artifactId>
             <version>${ktor.version}</version>
         </dependency>
         <!-- Test dependencies: -->
@@ -43,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>
-            <artifactId>ktor-server-test-host</artifactId>
+            <artifactId>ktor-server-test-host-jvm</artifactId>
             <version>${ktor.version}</version>
             <scope>test</scope>
             <exclusions>
@@ -80,6 +85,17 @@
             <groupId>no.nav.security</groupId>
             <artifactId>mock-oauth2-server</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-client-kotlin-demo</artifactId>
+            <version>2.1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
