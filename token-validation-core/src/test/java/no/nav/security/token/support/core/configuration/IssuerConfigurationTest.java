@@ -37,7 +37,7 @@ class IssuerConfigurationTest {
             "issuer1", new IssuerProperties(issuerMockWebServer.getDiscoveryUrl(), List.of("audience1")), new ProxyAwareResourceRetriever());
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator() instanceof DefaultJwtTokenValidator).isTrue();
+        assertThat(config.getTokenValidator()).isInstanceOf(DefaultJwtTokenValidator.class);
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
@@ -73,7 +73,7 @@ class IssuerConfigurationTest {
         );
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator() instanceof ConfigurableJwtTokenValidator).isTrue();
+        assertThat(config.getTokenValidator()).isInstanceOf(ConfigurableJwtTokenValidator.class);
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
@@ -95,7 +95,7 @@ class IssuerConfigurationTest {
         );
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator() instanceof ConfigurableJwtTokenValidator).isTrue();
+        assertThat(config.getTokenValidator()).isInstanceOf(ConfigurableJwtTokenValidator.class);
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
