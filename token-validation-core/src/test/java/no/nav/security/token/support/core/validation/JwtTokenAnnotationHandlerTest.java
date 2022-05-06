@@ -46,7 +46,7 @@ public class JwtTokenAnnotationHandlerTest {
     }
 
     @Test
-    public void checkThatAlternativeClaimsWithSameKeyWorks() {
+     void checkThatAlternativeClaimsWithSameKeyWorks() {
         final String[] protectedWithAnyClaim = new String[] { "acr=Level3", "acr=Level4" }; // Require either acr=Level3 or acr=Level4
 
         assertTrue(annotationHandler.handleProtectedWithClaims("issuer1", protectedWithAnyClaim, true, T1));
@@ -60,7 +60,7 @@ public class JwtTokenAnnotationHandlerTest {
     }
 
     @Test
-    public void checkThatMultipleRequiredClaimsWorks() {
+     void checkThatMultipleRequiredClaimsWorks() {
         final String[] protectedWithAllClaims = new String[] { "acr=Level3", "foo=bar" }; // Require acr=Level3 and foo=bar
 
         assertFalse(annotationHandler.handleProtectedWithClaims("issuer1", protectedWithAllClaims, false, T1));
@@ -70,7 +70,7 @@ public class JwtTokenAnnotationHandlerTest {
     }
 
     @Test
-    public void checkThatClaimWithUnknownValueIsRejected() {
+     void checkThatClaimWithUnknownValueIsRejected() {
         final String[] protectedWithClaims = new String[] { "acr=Level3", "acr=Level4" };
 
         // Token from issuer3 only contains acr=Level1
@@ -79,7 +79,7 @@ public class JwtTokenAnnotationHandlerTest {
     }
 
     @Test
-    public void chechThatNoReqiredClaimsWorks() {
+     void chechThatNoReqiredClaimsWorks() {
         final String[] protectedWithClaims = new String[0];
 
         assertTrue(annotationHandler.handleProtectedWithClaims("issuer1", protectedWithClaims, true, T1));

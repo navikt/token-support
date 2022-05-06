@@ -21,14 +21,14 @@ public class DefaultJwtTokenValidatorTest extends AbstractJwtValidatorTest {
     private static final String SUB = "foobar";
 
     @Test
-    public void testAssertValidToken() throws JwtTokenValidatorException {
+     void testAssertValidToken() throws JwtTokenValidatorException {
         JwtTokenValidator validator = createOIDCTokenValidator(ISSUER, Collections.singletonList("aud1"));
         JWT token = createSignedJWT(ISSUER, "aud1", SUB);
         validator.assertValidToken(token.serialize());
     }
 
     @Test
-    public void testAssertUnexpectedIssuer() throws JwtTokenValidatorException {
+     void testAssertUnexpectedIssuer() throws JwtTokenValidatorException {
         JwtTokenValidator validator = createOIDCTokenValidator("https://differentfromtoken",
             Collections.singletonList("aud1"));
         JWT token = createSignedJWT(ISSUER, "aud1", SUB);
@@ -36,14 +36,14 @@ public class DefaultJwtTokenValidatorTest extends AbstractJwtValidatorTest {
     }
 
     @Test
-    public void testAssertUnknownAudience() throws JwtTokenValidatorException {
+     void testAssertUnknownAudience() throws JwtTokenValidatorException {
         JwtTokenValidator validator = createOIDCTokenValidator(ISSUER, Collections.singletonList("aud1"));
         JWT token = createSignedJWT(ISSUER, "unknown", SUB);
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token.serialize()));
     }
 
     @Test
-    public void testGetValidator() throws ParseException, JwtTokenValidatorException {
+     void testGetValidator() throws ParseException, JwtTokenValidatorException {
         List<String> aud = new ArrayList<>();
         aud.add("aud1");
         aud.add("aud2");
