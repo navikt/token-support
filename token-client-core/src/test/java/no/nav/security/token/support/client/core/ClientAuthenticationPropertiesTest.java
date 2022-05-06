@@ -5,21 +5,22 @@ import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ClientAuthenticationPropertiesTest {
 
     @Test
     void validAuthenticationProperties() {
-        new ClientAuthenticationProperties(
+        assertNotNull(new ClientAuthenticationProperties(
             "client",
             null,
             "secret",
-            null);
-        new ClientAuthenticationProperties(
+            null));
+        assertNotNull(new ClientAuthenticationProperties(
             "client",
             ClientAuthenticationMethod.CLIENT_SECRET_POST,
             "secret",
-            null);
+            null));
     }
 
     @Test
