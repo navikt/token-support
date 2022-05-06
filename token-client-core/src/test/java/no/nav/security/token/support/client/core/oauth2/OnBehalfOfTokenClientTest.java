@@ -72,8 +72,8 @@ class OnBehalfOfTokenClientTest {
 
         assertThat(response).isNotNull();
         assertThat(response.getAccessToken()).isNotBlank();
-        assertThat(response.getExpiresAt()).isGreaterThan(0);
-        assertThat(response.getExpiresIn()).isGreaterThan(0);
+        assertThat(response.getExpiresAt()).isPositive()
+        assertThat(response.getExpiresIn()).isPositive()
     }
 
     @Test
