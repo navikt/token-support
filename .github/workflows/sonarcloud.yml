@@ -1,0 +1,28 @@
+name: Sonar
+
+on:
+    push:
+        branches:
+            - main
+env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+jobs:
+    bygg:
+        runs-on: ubuntu-latest
+        steps:
+
+            - name: Sjekk ut kode
+              uses: actions/checkout@v3
+
+            - name: Sett opp Java 17
+              uses: actions/setup-java@v3
+              with:
+                  java-version: 17
+                  distribution: temurin
+                  cache: maven
+            - name: Analyser
+              run: |
+                  mvn versions:set -DnewVersion=${TAG}
+                  mvn --settings .github/.m2/settings.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.login=${SONAR_TOKEN}
