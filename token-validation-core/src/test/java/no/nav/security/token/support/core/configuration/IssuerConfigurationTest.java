@@ -73,7 +73,7 @@ class IssuerConfigurationTest {
         );
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator() instanceof ConfigurableJwtTokenValidator);
+        assertThat(config.getTokenValidator() instanceof ConfigurableJwtTokenValidator).isTrue();
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();

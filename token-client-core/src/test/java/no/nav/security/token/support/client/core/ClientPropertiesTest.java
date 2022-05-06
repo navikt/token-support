@@ -10,6 +10,7 @@ import java.util.List;
 import static no.nav.security.token.support.client.core.TestUtils.jsonResponse;
 import static no.nav.security.token.support.client.core.TestUtils.withMockServer;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ClientPropertiesTest {
 
@@ -65,9 +66,9 @@ class ClientPropertiesTest {
 
     @Test
     void validGrantTypes() {
-        clientPropertiesFromGrantType(OAuth2GrantType.JWT_BEARER);
-        clientPropertiesFromGrantType(OAuth2GrantType.CLIENT_CREDENTIALS);
-        clientPropertiesFromGrantType(OAuth2GrantType.TOKEN_EXCHANGE);
+        assertNotNull(clientPropertiesFromGrantType(OAuth2GrantType.JWT_BEARER));
+        assertNotNull(clientPropertiesFromGrantType(OAuth2GrantType.CLIENT_CREDENTIALS));
+        assertNotNull(clientPropertiesFromGrantType(OAuth2GrantType.TOKEN_EXCHANGE));
     }
 
     @Test
