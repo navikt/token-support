@@ -32,7 +32,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B deploy --settings .github/settings.xml -Pgithub
-  #     run: mvn -B verify jacoco:prepare-agent jacoco:report sonar:sonar -Dsonar.projectKey=navikt_token-support 
 
   release-notes:
     runs-on: ubuntu-latest
