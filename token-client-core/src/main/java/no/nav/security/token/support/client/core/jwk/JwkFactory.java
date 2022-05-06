@@ -24,6 +24,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class JwkFactory {
 
+    private JwkFactory() {
+
+    }
     private static final Logger LOG = LoggerFactory.getLogger(JwkFactory.class);
     private static final boolean USE_CERTIFICATE_SHA1_THUMBPRINT = true;
 
