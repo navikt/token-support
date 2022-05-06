@@ -37,7 +37,7 @@ class IssuerConfigurationTest {
             "issuer1", new IssuerProperties(issuerMockWebServer.getDiscoveryUrl(), List.of("audience1")), new ProxyAwareResourceRetriever());
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator() instanceof DefaultJwtTokenValidator);
+        assertThat(config.getTokenValidator() instanceof DefaultJwtTokenValidator).isTrue();
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
@@ -77,8 +77,8 @@ class IssuerConfigurationTest {
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
-        assertThat(!issuerProperties.getJwksCache().isConfigured());
-        assertThat(issuerProperties.getValidation().isConfigured());
+        assertThat(!issuerProperties.getJwksCache().isConfigured()).isTrue();
+        assertThat(issuerProperties.getValidation().isConfigured()).isTrue();
     }
 
     @Test
@@ -95,11 +95,11 @@ class IssuerConfigurationTest {
         );
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator() instanceof ConfigurableJwtTokenValidator);
+        assertThat(config.getTokenValidator() instanceof ConfigurableJwtTokenValidator).isTrue();
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
-        assertThat(issuerProperties.getJwksCache().isConfigured());
-        assertThat(issuerProperties.getValidation().isConfigured());
+        assertThat(issuerProperties.getJwksCache().isConfigured()).isTrue();
+        assertThat(issuerProperties.getValidation().isConfigured()).isTrue();
     }
 }

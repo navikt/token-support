@@ -10,6 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 public class OAuth2CacheFactory {
 
+    private OAuth2CacheFactory()  {
+
+    }
     public static <T> Cache<T, OAuth2AccessTokenResponse> accessTokenResponseCache(long maximumSize, long skewInSeconds) {
         // Evict based on a varying expiration policy
         return Caffeine.newBuilder()
