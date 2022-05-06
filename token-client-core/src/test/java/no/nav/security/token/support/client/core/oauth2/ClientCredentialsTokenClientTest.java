@@ -138,8 +138,8 @@ class ClientCredentialsTokenClientTest {
     private static void assertThatResponseContainsAccessToken(OAuth2AccessTokenResponse response) {
         assertThat(response).isNotNull();
         assertThat(response.getAccessToken()).isNotBlank();
-        assertThat(response.getExpiresAt()).isPositive()
-        assertThat(response.getExpiresIn()).isPositive()
+        assertThat(response.getExpiresAt()).isPositive();
+        assertThat(response.getExpiresIn()).isPositive();
     }
 
     private static void assertThatClientAuthMethodIsPrivateKeyJwt(

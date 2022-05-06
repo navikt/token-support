@@ -3,7 +3,7 @@ package no.nav.security.token.support.core;
 public class JwtTokenConstants {
 
     private JwtTokenConstants() {
-        
+
     }
     // TODO make private?
     public static final String COOKIE_NAME = "%s-idtoken";
