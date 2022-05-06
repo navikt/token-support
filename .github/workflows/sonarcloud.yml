@@ -25,4 +25,4 @@ jobs:
             - name: Analyser
               run: |
                   mvn versions:set -DnewVersion=${TAG}
-                  mvn --settings .github/.m2/settings.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.login=${SONAR_TOKEN}
+                  mvn --settings .github/settings.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.login=${SONAR_TOKEN}
