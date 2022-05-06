@@ -16,7 +16,7 @@ import java.util.function.Function;
 @SuppressWarnings("WeakerAccess")
 public class OAuth2AccessTokenService {
 
-    public static final List<OAuth2GrantType> SUPPORTED_GRANT_TYPES = Arrays.asList(
+    private static final List<OAuth2GrantType> SUPPORTED_GRANT_TYPES = Arrays.asList(
         OAuth2GrantType.JWT_BEARER,
         OAuth2GrantType.CLIENT_CREDENTIALS,
         OAuth2GrantType.TOKEN_EXCHANGE

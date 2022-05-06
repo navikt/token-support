@@ -10,7 +10,7 @@ abstract class AbstractOAuth2GrantRequest {
     private final OAuth2GrantType oAuth2GrantType;
     private final ClientProperties clientProperties;
 
-    public AbstractOAuth2GrantRequest(OAuth2GrantType oAuth2GrantType, ClientProperties clientProperties) {
+    protected AbstractOAuth2GrantRequest(OAuth2GrantType oAuth2GrantType, ClientProperties clientProperties) {
         this.oAuth2GrantType = oAuth2GrantType;
         this.clientProperties = clientProperties;
     }
