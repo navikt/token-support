@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;
@@ -19,6 +21,9 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
 @Configuration
 public class MockWebServerConfiguration {
@@ -67,7 +72,7 @@ public class MockWebServerConfiguration {
         } else {
             return new MockResponse()
                 .setResponseCode(200)
-                .setHeader("Content-Type", "application/json;charset=UTF-8")
+                .setHeader(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
                 .setBody(DEFAULT_JSON_RESPONSE);
         }
 
@@ -84,7 +89,7 @@ public class MockWebServerConfiguration {
         log.info("returning tokenResponse={}", response);
         return new MockResponse()
             .setResponseCode(200)
-            .setHeader("Content-Type", "application/json;charset=UTF-8")
+            .setHeader(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE)
             .setBody(response);
     }
 
