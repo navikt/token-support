@@ -1,22 +1,19 @@
 package no.nav.security.token.support.ktor
 
-import io.ktor.application.call
-import io.ktor.auth.Authentication
-import io.ktor.auth.AuthenticationFailedCause
-import io.ktor.auth.AuthenticationPipeline
-import io.ktor.auth.AuthenticationProvider
-import io.ktor.auth.Principal
-import io.ktor.auth.UnauthorizedResponse
-import io.ktor.config.ApplicationConfig
-import io.ktor.config.MapApplicationConfig
+import io.ktor.server.application.call
+import io.ktor.server.auth.AuthenticationFailedCause
+import io.ktor.server.auth.UnauthorizedResponse
 import io.ktor.http.CookieEncoding
 import io.ktor.http.Headers
 import io.ktor.http.decodeCookieValue
-import io.ktor.request.RequestCookies
-import io.ktor.response.respond
-import no.nav.security.token.support.core.configuration.IssuerProperties
-import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
-import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
+import io.ktor.server.auth.AuthenticationConfig
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.AuthenticationContext
+import io.ktor.server.auth.AuthenticationProvider
+import io.ktor.server.auth.Principal
+import io.ktor.server.config.ApplicationConfig
+import io.ktor.server.config.MapApplicationConfig
+import io.ktor.server.request.RequestCookies
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException
@@ -27,6 +24,9 @@ import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import org.slf4j.LoggerFactory
 import java.net.URL
+import no.nav.security.token.support.core.configuration.IssuerProperties
+import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
+import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 
 data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
@@ -58,10 +58,16 @@ class TokenSupportAuthenticationProvider(
         jwtTokenExpiryThresholdHandler = JwtTokenExpiryThresholdHandler(expiryThreshold)
     }
 
-    class ProviderConfiguration internal constructor(name: String?): Configuration(name)
+    class ProviderConfiguration internal constructor(name: String?): Config(name)
+
+    override suspend fun onAuthenticate(context: AuthenticationContext) {
+        TODO("Not yet implemented")
+    }
+
 }
 
-fun Authentication.Configuration.tokenValidationSupport(
+//TODO This is the only thing not wokring with ktor 2.0.0 what
+fun Authentication.AuthenticationConfig.tokenValidationSupport(
     name: String? = null,
     config: ApplicationConfig,
     requiredClaims: RequiredClaims? = null,

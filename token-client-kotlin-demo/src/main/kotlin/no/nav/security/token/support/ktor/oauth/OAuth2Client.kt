@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.github.benmanes.caffeine.cache.AsyncLoadingCache
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
-import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.prepareGet
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.Parameters
 import io.ktor.http.ParametersBuilder
 import kotlinx.coroutines.CoroutineScope
@@ -29,7 +31,7 @@ class OAuth2Client(
     private val clientAuthProperties: ClientAuthenticationProperties,
     private val cacheConfig: OAuth2CacheConfig = OAuth2CacheConfig(enabled = true, maximumSize = 1000, evictSkew = 5)
 ) {
-    private val wellKnown: WellKnown = runBlocking { httpClient.get(wellKnownUrl) }
+    private val wellKnown: WellKnown = runBlocking { httpClient.prepareGet(wellKnownUrl).body() }
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -39,7 +41,7 @@ class OAuth2Client(
                 tokenEndpointUrl = wellKnown.tokenEndpointUrl,
                 clientAuthProperties = clientAuthProperties,
                 grantRequest = it
-            )
+            ).body()
         }
 
     suspend fun onBehalfOf(token: String, scope: String) =
@@ -59,7 +61,7 @@ class OAuth2Client(
                 tokenEndpointUrl = wellKnown.tokenEndpointUrl,
                 clientAuthProperties = clientAuthProperties,
                 grantRequest = grantRequest
-            )
+            ).body()
         }
 
     data class WellKnown(
@@ -107,7 +109,7 @@ internal suspend fun HttpClient.tokenRequest(
     tokenEndpointUrl: String,
     clientAuthProperties: ClientAuthenticationProperties,
     grantRequest: GrantRequest
-): OAuth2AccessTokenResponse =
+): HttpResponse =
     submitForm(
         url = tokenEndpointUrl,
         formParameters = Parameters.build {

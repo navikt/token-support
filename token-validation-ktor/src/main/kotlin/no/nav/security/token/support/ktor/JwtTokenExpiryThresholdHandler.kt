@@ -1,7 +1,7 @@
 package no.nav.security.token.support.ktor
 
-import io.ktor.application.ApplicationCall
-import io.ktor.response.header
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.response.header
 import no.nav.security.token.support.core.JwtTokenConstants
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.jwt.JwtTokenClaims
