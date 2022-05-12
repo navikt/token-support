@@ -33,7 +33,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
     ProxyAwareResourceRetriever(URL proxyUrl, boolean usePlainTextForHttps, int connectTimeout, int readTimeout, int sizeLimit) {
         super(connectTimeout, readTimeout, sizeLimit);
         this.usePlainTextForHttps = usePlainTextForHttps;
-        setProxy(proxy(proxyUrl));
+        setProxy(proxyFrom(proxyUrl));
     }
 
     URL urlWithPlainTextForHttps(URL url) throws IOException {
@@ -79,7 +79,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
         return isNoProxy;
     }
 
-    private static Proxy proxy(URL proxyUrl) {
+    private static Proxy proxyFrom(URL proxyUrl) {
         return Optional.ofNullable(proxyUrl)
             .map(u -> new Proxy(HTTP, new InetSocketAddress(u.getHost(), u.getPort())))
             .orElse(null);
