@@ -74,6 +74,11 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
             .isPresent();
     }
 
+    public Proxy getProxy() {
+        return proxyURL != null ? proxy() : null;
+    }
+
+
     private Proxy proxy() {
         return new Proxy(HTTP, new InetSocketAddress(proxyURL.getHost(), proxyURL.getPort()));
     }
