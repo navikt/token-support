@@ -33,7 +33,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
     ProxyAwareResourceRetriever(URL proxyUrl, boolean usePlainTextForHttps, int connectTimeout, int readTimeout, int sizeLimit) {
         super(connectTimeout, readTimeout, sizeLimit);
         this.usePlainTextForHttps = usePlainTextForHttps;
-        setProxy(Optional.ofNullable(proxyUrl).map(ProxyAwareResourceRetriever::proxy).orElse(null));
+        setProxy(proxy(proxyUrl));
     }
 
     URL urlWithPlainTextForHttps(URL url) throws IOException {
@@ -56,10 +56,10 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
     protected HttpURLConnection openConnection(URL url) throws IOException {
         var urlToOpen = usePlainTextForHttps ? urlWithPlainTextForHttps(url) : url;
         if (shouldProxy(url)) {
-            LOG.trace("Connecting to {} via proxy {}",url,getProxy());
+            LOG.trace("Connecting to {} via proxy {}",urlToOpen,getProxy());
             return (HttpURLConnection)urlToOpen.openConnection(getProxy());
         }
-        LOG.trace("Connecting to {} without proxy",url);
+        LOG.trace("Connecting to {} without proxy",urlToOpen);
         return (HttpURLConnection)urlToOpen.openConnection();
     }
 
@@ -68,18 +68,20 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
     }
 
     private boolean isNoProxy(URL url) {
-        var noproxy = System.getenv("NO_PROXY");
-        var isNoProxy =  Optional.ofNullable(noproxy)
+        var noProxy = System.getenv("NO_PROXY");
+        var isNoProxy =  Optional.ofNullable(noProxy)
             .map(s -> Arrays.stream(s.split(","))
                 .anyMatch(url.getHost()::contains))
             .isPresent();
-        if (noproxy != null && isNoProxy) {
-            LOG.trace("Not using proxy for {} since it is covered by NO_PROXY setting",url);
+        if (noProxy != null && isNoProxy) {
+            LOG.trace("Not using proxy for {} since it is covered by the NO_PROXY setting {}",url,noProxy);
         }
         return isNoProxy;
     }
 
     private static Proxy proxy(URL proxyUrl) {
-        return new Proxy(HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort()));
+        return Optional.ofNullable(proxyUrl)
+            .map(u -> new Proxy(HTTP, new InetSocketAddress(u.getHost(), u.getPort())))
+            .orElse(null);
     }
 }
