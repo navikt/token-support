@@ -11,7 +11,7 @@
     </appender>
 
 
-    <root level="debug">
+    <root level="trace">
         <appender-ref ref="stdout" />
     </root>
 

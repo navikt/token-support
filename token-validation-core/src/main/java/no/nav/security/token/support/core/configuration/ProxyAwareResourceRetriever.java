@@ -60,11 +60,11 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
             LOG.trace("Connecting to {} via proxy {}",urlToOpen,getProxy());
             return (HttpURLConnection)urlToOpen.openConnection(getProxy());
         }
-        LOG.trace("Connecting to {} without proxy",urlToOpen);
+        LOG.info("Connecting to {} without proxy",urlToOpen);
         return (HttpURLConnection)urlToOpen.openConnection();
     }
 
-    private boolean shouldProxy(URL url) {
+    boolean shouldProxy(URL url) {
         return getProxy() != null && !isNoProxy(url);
     }
 
@@ -72,10 +72,11 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
         var noProxy = System.getenv("NO_PROXY");
         var isNoProxy =  Optional.ofNullable(noProxy)
             .map(s -> Arrays.stream(s.split(","))
-                .anyMatch(url.getHost()::contains)).orElse(false);
-        
+                .anyMatch(url.toString()::contains)).orElse(false);
         if (noProxy != null && isNoProxy) {
             LOG.trace("Not using proxy for {} since it is covered by the NO_PROXY setting {}",url,noProxy);
+        } else {
+            LOG.trace("Using proxy for {} since it is not  covered by the NO_PROXY setting {}",url,noProxy);
         }
         return isNoProxy;
     }
