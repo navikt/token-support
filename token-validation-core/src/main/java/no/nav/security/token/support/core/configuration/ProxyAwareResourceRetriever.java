@@ -74,6 +74,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
             .isPresent();
     }
 
+    @Override
     public Proxy getProxy() {
         return proxyURL != null ? proxy() : null;
     }
