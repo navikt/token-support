@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Arrays;
+import java.util.Optional;
 
 import static java.net.Proxy.Type.HTTP;
 
@@ -16,6 +18,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
     public static final int DEFAULT_HTTP_SIZE_LIMIT = 50 * 1024;
     private static final Logger LOG = LoggerFactory.getLogger(ProxyAwareResourceRetriever.class);
     private final boolean usePlainTextForHttps;
+    private final URL proxyURL;
 
     public ProxyAwareResourceRetriever() {
         this(null);
@@ -32,13 +35,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
     ProxyAwareResourceRetriever(URL proxyUrl, boolean usePlainTextForHttps, int connectTimeout, int readTimeout, int sizeLimit) {
         super(connectTimeout, readTimeout, sizeLimit);
         this.usePlainTextForHttps = usePlainTextForHttps;
-        if (proxyUrl != null) {
-            LOG.info("Using proxy URL {}",proxyUrl);
-            setProxy(new Proxy(HTTP, new InetSocketAddress(proxyUrl.getHost(), proxyUrl.getPort())));
-        }
-        else {
-            LOG.info("No proxying");
-        }
+        this.proxyURL = proxyUrl;
     }
 
     URL urlWithPlainTextForHttps(URL url) throws IOException {
@@ -60,6 +57,30 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
     @Override
     protected HttpURLConnection openConnection(URL url) throws IOException {
         URL urlToOpen = usePlainTextForHttps ? urlWithPlainTextForHttps(url) : url;
-        return super.openConnection(urlToOpen);
+        if (shouldProxy(url)) {
+            return (HttpURLConnection)urlToOpen.openConnection(proxy());
+        }
+        return (HttpURLConnection)urlToOpen.openConnection();
+    }
+
+    private boolean shouldProxy(URL url) {
+        return proxyURL != null && !isNoProxy(url);
+    }
+
+    private boolean isNoProxy(URL url) {
+        return Optional.ofNullable(System.getenv("NO_PROXY"))
+            .map(s -> Arrays.stream(s.split(","))
+                .anyMatch(url.getHost()::contains))
+            .isPresent();
+    }
+
+    @Override
+    public Proxy getProxy() {
+        return proxyURL != null ? proxy() : null;
+    }
+
+
+    private Proxy proxy() {
+        return new Proxy(HTTP, new InetSocketAddress(proxyURL.getHost(), proxyURL.getPort()));
     }
 }
