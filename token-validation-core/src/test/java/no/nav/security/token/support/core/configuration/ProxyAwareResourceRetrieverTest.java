@@ -13,7 +13,6 @@ class ProxyAwareResourceRetrieverTest {
 
     @Test
     void testNoProxy() throws MalformedURLException {
-        System.out.println("www.aetat.no".contains("aetat.no"));
         var retriever = new ProxyAwareResourceRetriever(new URL("http://proxy:8080"));
         assertTrue(retriever.shouldProxy(new URL("http://www.vg.no")));
         assertFalse(retriever.shouldProxy(new URL("http:/www.aetat.no")));
