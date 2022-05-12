@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static java.net.Proxy.Type.HTTP;
@@ -71,8 +72,8 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
         var noProxy = System.getenv("NO_PROXY");
         var isNoProxy =  Optional.ofNullable(noProxy)
             .map(s -> Arrays.stream(s.split(","))
-                .anyMatch(url.getHost()::contains))
-            .isPresent();
+                .anyMatch(url.getHost()::contains)).orElse(false);
+        
         if (noProxy != null && isNoProxy) {
             LOG.trace("Not using proxy for {} since it is covered by the NO_PROXY setting {}",url,noProxy);
         }
