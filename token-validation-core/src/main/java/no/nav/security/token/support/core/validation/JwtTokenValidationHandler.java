@@ -63,7 +63,7 @@ public class JwtTokenValidationHandler {
 
         } catch (JwtTokenValidatorException e) {
             LOG.info(
-                    "Found invalid token for issuer [{}, expires at {}], exception message:{} ",
+                    "Found invalid token for issuer [{}, expires at {}], message:{} ",
                     jwtToken.getIssuer(),
                     e.getExpiryDate(),
                     e.getMessage());
