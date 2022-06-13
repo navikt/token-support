@@ -73,6 +73,7 @@ class TokenSupportAuthenticationProvider(
                         throw AdditionalValidationReturnedFalse()
                     }
                 }
+                jwtTokenExpiryThresholdHandler.addHeaderOnTokenExpiryThreshold(applicationCall, tokenValidationContext)
                 context.principal(TokenValidationContextPrincipal(tokenValidationContext))
             }
         } catch (e: Throwable) {

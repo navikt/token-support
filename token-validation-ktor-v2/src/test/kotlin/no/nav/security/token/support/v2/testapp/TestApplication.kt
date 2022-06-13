@@ -16,11 +16,6 @@ import no.nav.security.token.support.v2.tokenValidationSupport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-var helloCounter = 0
-var helloPersonCounter = 0
-var helloGroupCounter = 0
-var openHelloCounter = 0
-
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
@@ -45,14 +40,13 @@ fun Application.module() {
     routing {
         authenticate("validToken") {
             get("/hello") {
-                helloCounter++
+
                 call.respondText("<b>Authenticated hello</b>", ContentType.Text.Html)
             }
         }
 
         authenticate("validUser") {
             get("/hello_person") {
-                helloPersonCounter++
                 call.respondText("<b>Hello X112233</b>", ContentType.Text.Html)
             }
         }
@@ -62,13 +56,11 @@ fun Application.module() {
                 val principal: TokenValidationContextPrincipal? = call.authentication.principal()
                 val ident = principal?.context?.getClaims(acceptedIssuer)?.getStringClaim("NAVident")
                 println("NAVident = $ident is accessing hello_group")
-                helloGroupCounter++
                 call.respondText("<b>Hello THEGROUP</b>", ContentType.Text.Html)
             }
         }
 
         get("/openhello") {
-            openHelloCounter++
             call.respondText("<b>Hello in the open</b>", ContentType.Text.Html)
         }
 

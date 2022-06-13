@@ -6,21 +6,20 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.testApplication
 import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.token.support.v2.testapp.helloCounter
-import no.nav.security.token.support.v2.testapp.helloGroupCounter
-import no.nav.security.token.support.v2.testapp.helloPersonCounter
 import no.nav.security.token.support.v2.testapp.module
-import no.nav.security.token.support.v2.testapp.openHelloCounter
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import java.time.Duration
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 class ApplicationTest {
 
     private companion object {
+        private val logger = LoggerFactory.getLogger(ApplicationTest::class.java)
+
         const val ISSUER_ID = "default"
         const val ACCEPTED_AUDIENCE = "default"
 
@@ -29,12 +28,14 @@ class ApplicationTest {
         @BeforeAll
         @JvmStatic
         fun before() {
+            logger.info("Starting up MockOAuth2Server...")
             server.start()
         }
 
         @AfterAll
         @JvmStatic
         fun after() {
+            logger.info("Tearing down MockOAuth2Server...")
             server.shutdown()
         }
     }
@@ -50,10 +51,8 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloCounter
         val response = client.get("/hello")
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals(helloCounterBeforeRequest, helloCounter)
     }
 
     @Test
@@ -65,13 +64,11 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloCounter
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = "unknown", subject = "testuser")
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals(helloCounterBeforeRequest, helloCounter)
     }
 
     @Test
@@ -83,13 +80,11 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloCounter
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(helloCounterBeforeRequest + 1, helloCounter)
     }
 
     @Test
@@ -101,7 +96,6 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloCounter
         val response = client.get("/hello") {
             val jwt = server.anyToken(
                 server.issuerUrl(ISSUER_ID),
@@ -110,7 +104,6 @@ class ApplicationTest {
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals(helloCounterBeforeRequest, helloCounter)
     }
 
     @Test
@@ -124,7 +117,6 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloCounter
         val response = client.get("/hello") {
             val jwt = server.anyToken(
                 server.issuerUrl(ISSUER_ID),
@@ -133,7 +125,6 @@ class ApplicationTest {
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(helloCounterBeforeRequest + 1, helloCounter)
     }
 
     @Test
@@ -145,13 +136,11 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloCounter
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
             header("Cookie", "$idTokenCookieName=${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(helloCounterBeforeRequest + 1, helloCounter)
     }
 
     @Test
@@ -163,13 +152,11 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloCounter
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser", expiry = -120)
             header("Cookie", "$idTokenCookieName=${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals(helloCounterBeforeRequest, helloCounter)
     }
 
     @Test
@@ -182,14 +169,12 @@ class ApplicationTest {
                 }
             }
 
-            val helloCounterBeforeRequest = helloCounter
             val response = client.get("/hello") {
                 val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser", expiry = 60)
                 header("Cookie", "$idTokenCookieName=${jwt.serialize()}")
             }
             assertEquals(HttpStatusCode.OK, response.status)
             assertEquals("true", response.headers["x-token-expires-soon"])
-            assertEquals(helloCounterBeforeRequest + 1, helloCounter)
         }
 
     @Test
@@ -222,13 +207,11 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloPersonCounter
         val response = client.get("/hello_person") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals(helloCounterBeforeRequest, helloPersonCounter)
     }
 
     @Test
@@ -240,7 +223,6 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloPersonCounter
         val response = client.get("/hello_person") {
             val jwt = server.issueToken(
                 issuerId = ISSUER_ID,
@@ -250,7 +232,6 @@ class ApplicationTest {
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(helloCounterBeforeRequest + 1, helloPersonCounter)
     }
 
 
@@ -263,11 +244,9 @@ class ApplicationTest {
             }
         }
 
-        val openHelloCounterBeforeRequest = openHelloCounter
         val response = client.get("/openhello") {
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(openHelloCounterBeforeRequest + 1, openHelloCounter)
     }
 
     @Test
@@ -279,13 +258,11 @@ class ApplicationTest {
             }
         }
 
-        val helloCounterBeforeRequest = helloCounter
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(helloCounterBeforeRequest + 1, helloCounter)
     }
 
 
@@ -300,7 +277,6 @@ class ApplicationTest {
             }
         }
 
-        val helloGroupCounterBeforeRequest = helloGroupCounter
         val response = client.get("/hello_group") {
             val jwt = server.issueToken(
                 issuerId = ISSUER_ID,
@@ -313,7 +289,6 @@ class ApplicationTest {
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals(helloGroupCounterBeforeRequest, helloGroupCounter)
     }
 
 
@@ -326,7 +301,6 @@ class ApplicationTest {
             }
         }
 
-        val helloGroupCounterBeforeRequest = helloGroupCounter
         val response = client.get("/hello_group") {
             val jwt = server.issueToken(
                 issuerId = ISSUER_ID,
@@ -338,7 +312,6 @@ class ApplicationTest {
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
-        assertEquals(helloGroupCounterBeforeRequest, helloGroupCounter)
     }
 
 
@@ -351,7 +324,6 @@ class ApplicationTest {
             }
         }
 
-        val helloGroupCounterBeforeRequest = helloGroupCounter
         val response = client.get("/hello_group") {
             val jwt = server.issueToken(
                 issuerId = ISSUER_ID,
@@ -364,7 +336,6 @@ class ApplicationTest {
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals(helloGroupCounterBeforeRequest + 1, helloGroupCounter)
     }
 
 
@@ -378,7 +349,6 @@ class ApplicationTest {
                 config = doConfig(hasCookieConfig = false)
             }
 
-            val helloGroupCounterBeforeRequest = helloGroupCounter
             val response = client.get("/hello_group") {
                 val jwt = server.issueToken(
                     issuerId = ISSUER_ID,
@@ -390,7 +360,6 @@ class ApplicationTest {
                 header("Authorization", "Bearer ${jwt.serialize()}")
             }
             assertEquals(HttpStatusCode.Unauthorized, response.status)
-            assertEquals(helloGroupCounterBeforeRequest, helloGroupCounter)
         }
 
     private fun doConfig(
