@@ -1,4 +1,4 @@
-package no.nav.security.token.support.ktor
+package no.nav.security.token.support.v2
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.any
@@ -12,8 +12,8 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
-import no.nav.security.token.support.ktor.inlineconfigtestapp.helloCounter
-import no.nav.security.token.support.ktor.inlineconfigtestapp.inlineConfiguredModule
+import no.nav.security.token.support.v2.inlineconfigtestapp.helloCounter
+import no.nav.security.token.support.v2.inlineconfigtestapp.inlineConfiguredModule
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -45,7 +45,8 @@ class InlineConfigTest {
             inlineConfiguredModule()
         }) {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer"))
+                val jwt =
+                    JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer"))
                 addHeader("Authorization", "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
@@ -94,7 +95,8 @@ class InlineConfigTest {
             inlineConfiguredModule()
         }) {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience"))
+                val jwt =
+                    JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience"))
                 addHeader("Authorization", "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
@@ -111,7 +113,8 @@ class InlineConfigTest {
             inlineConfiguredModule()
         }) {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience"))
+                val jwt =
+                    JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience"))
                 addHeader("Authorization", "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())

@@ -1,4 +1,4 @@
-package no.nav.security.token.support.ktor
+package no.nav.security.token.support.v2
 
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -6,11 +6,11 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.testApplication
 import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.token.support.ktor.testapp.helloCounter
-import no.nav.security.token.support.ktor.testapp.helloGroupCounter
-import no.nav.security.token.support.ktor.testapp.helloPersonCounter
-import no.nav.security.token.support.ktor.testapp.module
-import no.nav.security.token.support.ktor.testapp.openHelloCounter
+import no.nav.security.token.support.v2.testapp.helloCounter
+import no.nav.security.token.support.v2.testapp.helloGroupCounter
+import no.nav.security.token.support.v2.testapp.helloPersonCounter
+import no.nav.security.token.support.v2.testapp.module
+import no.nav.security.token.support.v2.testapp.openHelloCounter
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test

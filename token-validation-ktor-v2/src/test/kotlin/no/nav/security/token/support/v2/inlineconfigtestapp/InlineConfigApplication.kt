@@ -1,4 +1,4 @@
-package no.nav.security.token.support.ktor.inlineconfigtestapp
+package no.nav.security.token.support.v2.inlineconfigtestapp
 
 import io.ktor.http.ContentType
 import io.ktor.server.application.Application
@@ -9,9 +9,9 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import no.nav.security.token.support.ktor.IssuerConfig
-import no.nav.security.token.support.ktor.TokenSupportConfig
-import no.nav.security.token.support.ktor.tokenValidationSupport
+import no.nav.security.token.support.v2.IssuerConfig
+import no.nav.security.token.support.v2.TokenSupportConfig
+import no.nav.security.token.support.v2.tokenValidationSupport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 

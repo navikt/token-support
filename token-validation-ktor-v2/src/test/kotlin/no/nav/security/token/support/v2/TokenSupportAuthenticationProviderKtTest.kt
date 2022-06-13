@@ -1,4 +1,4 @@
-package no.nav.security.token.support.ktor
+package no.nav.security.token.support.v2
 
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe

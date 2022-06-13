@@ -1,4 +1,4 @@
-package no.nav.security.token.support.ktor
+package no.nav.security.token.support.v2
 
 
 import io.ktor.server.auth.UnauthorizedResponse

@@ -1,4 +1,4 @@
-package no.nav.security.token.support.ktor
+package no.nav.security.token.support.v2
 
 import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JOSEObjectType
@@ -26,7 +26,8 @@ object JwtTokenGenerator {
     @JvmOverloads
     fun createSignedJWT(subject: String?, expiryInMinutes: Long = EXPIRY): SignedJWT {
         val claimsSet = buildClaimSet(subject, ISS, AUD, ACR, MINUTES.toMillis(expiryInMinutes))
-        return createSignedJWT(JwkGenerator.defaultRSAKey,
+        return createSignedJWT(
+            JwkGenerator.defaultRSAKey,
                 claimsSet)
     }
 
