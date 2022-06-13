@@ -34,6 +34,7 @@
         <module>token-validation-jaxrs</module>
         <module>token-validation-spring-demo</module>
         <module>token-validation-ktor</module>
+        <module>token-validation-ktor-v2</module>
         <module>token-validation-ktor-demo</module>
         <module>token-client-spring</module>
         <module>token-client-spring-demo</module>
