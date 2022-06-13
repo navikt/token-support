@@ -1,14 +1,19 @@
 package no.nav.security.token.support.ktor
 
-import io.ktor.application.call
-import io.ktor.auth.*
-import io.ktor.config.ApplicationConfig
-import io.ktor.config.MapApplicationConfig
 import io.ktor.http.CookieEncoding
 import io.ktor.http.Headers
 import io.ktor.http.decodeCookieValue
-import io.ktor.request.RequestCookies
-import io.ktor.response.respond
+import io.ktor.server.auth.AuthenticationConfig
+import io.ktor.server.auth.AuthenticationContext
+import io.ktor.server.auth.AuthenticationFailedCause
+import io.ktor.server.auth.AuthenticationProvider
+import io.ktor.server.auth.DynamicProviderConfig
+import io.ktor.server.auth.Principal
+import io.ktor.server.auth.UnauthorizedResponse
+import io.ktor.server.config.ApplicationConfig
+import io.ktor.server.config.MapApplicationConfig
+import io.ktor.server.request.RequestCookies
+import io.ktor.server.response.respond
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
@@ -22,17 +27,20 @@ import java.net.URL
 
 data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
-@io.ktor.util.KtorExperimentalAPI
 private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::class.java.name)
 
-@io.ktor.util.KtorExperimentalAPI
-class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfig) : AuthenticationProvider(name) {
+class TokenSupportAuthenticationProvider(
+    applicationConfig: ApplicationConfig,
+    authenticationProviderConfig: Config,
+    private val requiredClaims: RequiredClaims? = null,
+    private val additionalValidation: ((TokenValidationContext) -> Boolean)? = null
+) : AuthenticationProvider(authenticationProviderConfig) {
     private val multiIssuerConfiguration: MultiIssuerConfiguration
     internal val jwtTokenValidationHandler: JwtTokenValidationHandler
 
     init {
         val issuerPropertiesMap: MutableMap<String, IssuerProperties> = hashMapOf()
-        for (issuerConfig in config.configList("no.nav.security.jwt.issuers")) {
+        for (issuerConfig in applicationConfig.configList("no.nav.security.jwt.issuers")) {
             issuerPropertiesMap[issuerConfig.property("issuer_name").getString()] = IssuerProperties(
                 URL(issuerConfig.property("discoveryurl").getString()),
                 issuerConfig.property("accepted_audience").getString().split(","),
@@ -46,19 +54,10 @@ class TokenSupportAuthenticationProvider(name: String?, config: ApplicationConfi
         jwtTokenValidationHandler = JwtTokenValidationHandler(multiIssuerConfiguration)
     }
 
-}
-
-@io.ktor.util.KtorExperimentalAPI
-fun Authentication.Configuration.tokenValidationSupport(
-    name: String? = null,
-    config: ApplicationConfig,
-    requiredClaims: RequiredClaims? = null,
-    additionalValidation: ((TokenValidationContext) -> Boolean)? = null
-) {
-    val provider = TokenSupportAuthenticationProvider(name, config)
-    provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
-        val tokenValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(
-            JwtTokenHttpRequest(call.request.cookies, call.request.headers)
+    override suspend fun onAuthenticate(context: AuthenticationContext) {
+        val applicationCall = context.call
+        val tokenValidationContext = jwtTokenValidationHandler.getValidatedTokens(
+            JwtTokenHttpRequest(applicationCall.request.cookies, applicationCall.request.headers)
         )
         try {
             if (tokenValidationContext.hasValidToken()) {
@@ -66,22 +65,38 @@ fun Authentication.Configuration.tokenValidationSupport(
                     RequiredClaimsHandler(InternalTokenValidationContextHolder(tokenValidationContext)).handleRequiredClaims(requiredClaims)
                 }
                 if (additionalValidation != null) {
-                    if (!additionalValidation(tokenValidationContext)) {
+                    if (!additionalValidation.invoke(tokenValidationContext)) {
                         throw AdditionalValidationReturnedFalse()
                     }
                 }
                 context.principal(TokenValidationContextPrincipal(tokenValidationContext))
-                return@intercept
             }
         } catch (e : Throwable) {
             val message = e.message ?: e.javaClass.simpleName
             log.trace("Token verification failed: {}", message)
         }
-        context.challenge("JWTAuthKey", AuthenticationFailedCause.InvalidCredentials) {
+        context.challenge(key = "JWTAuthKey", cause = AuthenticationFailedCause.InvalidCredentials) { authenticationProcedureChallenge, call ->
             call.respond(UnauthorizedResponse())
-            it.complete()
+            authenticationProcedureChallenge.complete()
         }
     }
+
+}
+
+fun AuthenticationConfig.tokenValidationSupport(
+    name: String? = null,
+    config: ApplicationConfig,
+    requiredClaims: RequiredClaims? = null,
+    additionalValidation: ((TokenValidationContext) -> Boolean)? = null
+) {
+    val authConfig = DynamicProviderConfig(name)
+    val provider = TokenSupportAuthenticationProvider(
+        applicationConfig = config,
+        authenticationProviderConfig = authConfig,
+        requiredClaims = requiredClaims,
+        additionalValidation = additionalValidation
+    )
+
     register(provider)
 }
 
@@ -90,7 +105,6 @@ data class RequiredClaims(val issuer:String, val claimMap:Array<String>, val com
 
 data class IssuerConfig(val name: String, val discoveryUrl : String, val acceptedAudience : List<String>, val cookieName: String? = null)
 
-@io.ktor.util.KtorExperimentalAPI
 class TokenSupportConfig(vararg issuers : IssuerConfig) : MapApplicationConfig(
     *(issuers.mapIndexed { index, issuerConfig -> listOf(
         "no.nav.security.jwt.issuers.$index.issuer_name" to issuerConfig.name,
@@ -131,7 +145,6 @@ internal data class NameValueCookie(@JvmField val name: String, @JvmField val va
 }
 
 internal data class JwtTokenHttpRequest(private val cookies : RequestCookies, private val headers : Headers) : HttpRequest {
-    @io.ktor.util.KtorExperimentalAPI
     override fun getCookies() =
         cookies.rawCookies.map { NameValueCookie(it.key, decodeCookieValue(it.value, CookieEncoding.URI_ENCODING)) }.toTypedArray()
     override fun getHeader(name: String) = headers[name]

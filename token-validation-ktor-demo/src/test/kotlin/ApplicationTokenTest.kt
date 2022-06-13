@@ -3,8 +3,8 @@ package com.example
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import io.ktor.application.Application
-import io.ktor.config.MapApplicationConfig
+import io.ktor.server.application.Application
+import io.ktor.server.config.MapApplicationConfig
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest

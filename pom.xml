@@ -238,9 +238,9 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}}</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>token-validation-spring-boot-webflux-security</artifactId>
-                <version>${project.version}}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
