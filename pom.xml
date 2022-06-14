@@ -61,7 +61,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>1.7.0</kotlin.version>
         <mock-oauth2-server.version>0.4.8</mock-oauth2-server.version>
-        <groovy.version>3.0.10</groovy.version>
+        <groovy.version>3.0.11</groovy.version>
         <logback.version>1.2.11</logback.version>
         <nimbus.jose.jwt.version>9.23</nimbus.jose.jwt.version>
         <kotest.version>5.3.1</kotest.version>
