@@ -54,18 +54,13 @@ public class MockOAuth2ServerAutoConfiguration {
 
     @PostConstruct
     void start() {
-        try {
-            int port = properties.getPort();
-            if (port > 0) {
-                log.debug("starting mock oauth2 server on port " + port);
-                mockOAuth2Server.start(port);
-            } else {
-                throw new RuntimeException("could not find " + "mock-oauth2-server.port" + " in environment. cannot " +
-                    "start server.");
-            }
-        } catch (IOException e) {
-            log.error("could not register and start MockOAuth2Server");
-            throw new RuntimeException(e);
+        int port = properties.getPort();
+        if (port > 0) {
+            log.debug("starting mock oauth2 server on port " + port);
+            mockOAuth2Server.start(port);
+        } else {
+            throw new RuntimeException("could not find " + "mock-oauth2-server.port" + " in environment. cannot " +
+                "start server.");
         }
     }
 
