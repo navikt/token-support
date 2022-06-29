@@ -10,7 +10,7 @@
     <name>token-validation-ktor-v2</name>
 
     <properties>
-        <ktor.version>2.0.2</ktor.version>
+        <ktor.version>2.0.3</ktor.version>
     </properties>
 
     <dependencies>
