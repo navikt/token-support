@@ -8,12 +8,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
+import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 
 public class IssuerProperties {
     @NotNull
     private URL discoveryUrl;
     private List<String> acceptedAudience;
     private String cookieName;
+    private String headerName;
     private URL proxyUrl;
     private boolean usePlaintextForHttps = false;
     private Validation validation = new Validation(Collections.emptyList());
@@ -33,6 +35,12 @@ public class IssuerProperties {
         this.cookieName = cookieName;
     }
 
+    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName, String headerName) {
+        this(discoveryUrl, acceptedAudience);
+        this.cookieName = cookieName;
+        this.headerName = headerName;
+    }
+
     public IssuerProperties(URL discoveryUrl, Validation validation) {
         this(discoveryUrl);
         this.validation = validation;
@@ -48,9 +56,10 @@ public class IssuerProperties {
         this.jwksCache = jwksCache;
     }
 
-    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName, Validation validation, JwksCache jwksCache) {
+    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName, String headerName, Validation validation, JwksCache jwksCache) {
         this(discoveryUrl, acceptedAudience);
         this.cookieName = cookieName;
+        this.headerName = headerName;
         this.validation = validation;
         this.jwksCache = jwksCache;
     }
@@ -68,6 +77,14 @@ public class IssuerProperties {
 
     public String getCookieName() {
         return this.cookieName;
+    }
+
+    public String getHeaderName() {
+        if (this.headerName != null && !this.headerName.isEmpty()) {
+            return this.headerName;
+        } else {
+            return AUTHORIZATION_HEADER;
+        }
     }
 
     public URL getProxyUrl() {
@@ -98,6 +115,10 @@ public class IssuerProperties {
         this.cookieName = cookieName;
     }
 
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
     public void setProxyUrl(URL proxyUrl) {
         this.proxyUrl = proxyUrl;
     }
@@ -116,7 +137,7 @@ public class IssuerProperties {
 
     @Override
     public String toString() {
-        return "IssuerProperties(discoveryUrl=" + this.getDiscoveryUrl() + ", acceptedAudience=" + this.getAcceptedAudience() + ", cookieName=" + this.getCookieName() + ", proxyUrl=" + this.getProxyUrl() + ", usePlaintextForHttps=" + this.isUsePlaintextForHttps() + ", validation=" + this.getValidation() + ", jwksCache=" + this.getJwksCache() + ")";
+        return "IssuerProperties(discoveryUrl=" + this.getDiscoveryUrl() + ", acceptedAudience=" + this.getAcceptedAudience() + ", cookieName=" + this.getCookieName() + ", headerName=" + this.getHeaderName() + ", proxyUrl=" + this.getProxyUrl() + ", usePlaintextForHttps=" + this.isUsePlaintextForHttps() + ", validation=" + this.getValidation() + ", jwksCache=" + this.getJwksCache() + ")";
     }
 
     public static class Validation {

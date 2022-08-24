@@ -1,5 +1,6 @@
 package no.nav.security.token.support.core.validation;
 
+import no.nav.security.token.support.core.configuration.IssuerConfiguration;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.http.HttpRequest;
 import no.nav.security.token.support.core.jwt.JwtToken;
@@ -8,12 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 public class JwtTokenRetriever {
 
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenRetriever.class);
-
-    private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER = "Bearer";
 
     static List<JwtToken> retrieveUnvalidatedTokens(MultiIssuerConfiguration config, HttpRequest request) {
@@ -26,8 +26,12 @@ public class JwtTokenRetriever {
     private static List<JwtToken> getTokensFromHeader(MultiIssuerConfiguration config, HttpRequest request) {
         try {
             LOG.debug("Checking authorization header for tokens");
-            var authorization = request.getHeader(AUTHORIZATION_HEADER);
-            if (authorization != null) {
+
+            var issuers = config.getIssuers();
+            Optional<IssuerConfiguration> issuer = issuers.values().stream().filter(it -> request.getHeader(it.getHeaderName()) != null).findFirst();
+
+            if (issuer.isPresent()) {
+                var authorization = request.getHeader(issuer.get().getHeaderName());
                 String[] headerValues = authorization.split(",");
                 return extractBearerTokens(headerValues)
                     .stream()
