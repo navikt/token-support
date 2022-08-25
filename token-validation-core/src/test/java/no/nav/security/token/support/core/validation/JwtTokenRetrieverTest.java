@@ -45,6 +45,17 @@ class JwtTokenRetrieverTest {
     }
 
     @Test
+    void testRetrieveTokensInHeader2() throws URISyntaxException, MalformedURLException {
+        MultiIssuerConfiguration config = new MultiIssuerConfiguration(
+            createIssuerPropertiesMap("issuer1", "cookie1", "TokenXAuthorization"),
+            new NoopResourceRetriever()
+        );
+        String issuer1Token = createJWT("issuer1");
+        when(request.getHeader("TokenXAuthorization")).thenReturn("Bearer " + issuer1Token);
+        assertEquals("issuer1", JwtTokenRetriever.retrieveUnvalidatedTokens(config, request).get(0).getIssuer());
+    }
+
+    @Test
     void testRetrieveTokensInHeaderIssuerNotConfigured() throws URISyntaxException, MalformedURLException {
         MultiIssuerConfiguration config = new MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
                 new NoopResourceRetriever());
@@ -91,6 +102,21 @@ class JwtTokenRetrieverTest {
         Map<String, IssuerProperties> issuerPropertiesMap = new HashMap<>();
         issuerPropertiesMap.put(issuer,
                 new IssuerProperties(new URI("https://" + issuer).toURL(), Collections.singletonList("aud1"), cookieName));
+        return issuerPropertiesMap;
+    }
+
+    private Map<String, IssuerProperties> createIssuerPropertiesMap(String issuer, String cookieName, String headerName)
+        throws URISyntaxException, MalformedURLException {
+        Map<String, IssuerProperties> issuerPropertiesMap = new HashMap<>();
+        issuerPropertiesMap.put(
+            issuer,
+            new IssuerProperties(
+                new URI("https://" + issuer).toURL(),
+                Collections.singletonList("aud1"),
+                cookieName,
+                headerName
+            )
+        );
         return issuerPropertiesMap;
     }
 
