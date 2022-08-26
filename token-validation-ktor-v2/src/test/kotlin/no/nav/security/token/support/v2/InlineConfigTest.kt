@@ -8,16 +8,18 @@ import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.nimbusds.jwt.JWTClaimsSet
-import io.ktor.http.HttpMethod
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.withTestApplication
+import io.ktor.server.testing.testApplication
 import no.nav.security.token.support.v2.inlineconfigtestapp.helloCounter
 import no.nav.security.token.support.v2.inlineconfigtestapp.inlineConfiguredModule
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.util.*
+import no.nav.security.token.support.v2.InlineConfigTest.Companion.server
 import kotlin.test.assertEquals
 
 class InlineConfigTest {
@@ -40,67 +42,76 @@ class InlineConfigTest {
     @Test
     fun inlineconfig_withJWTWithUnknownIssuerShouldGive_401_Unauthorized_andHelloCounterIsNOTIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
-            stubOIDCProvider()
-            inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
+        testApplication {
+            this.application {
+                stubOIDCProvider()
+                inlineConfiguredModule()
+            }
+
+            val response = client.get("/inlineconfig") {
                 val jwt =
                     JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer"))
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
-            }.apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertEquals(helloCounterBeforeRequest, helloCounter)
+                header("Authorization", "Bearer ${jwt.serialize()}")
             }
+
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            assertEquals(helloCounterBeforeRequest, helloCounter)
+
         }
     }
 
     @Test
     fun inlineconfig_withoutValidJWTinHeaderShouldGive_401_andHelloCounterIsNotIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
-            stubOIDCProvider()
-            inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
-            }.apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertEquals(helloCounterBeforeRequest, helloCounter)
+        testApplication {
+            this.application {
+                stubOIDCProvider()
+                inlineConfiguredModule()
             }
+
+            val response = client.get("/inlineconfig")
+
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            assertEquals(helloCounterBeforeRequest, helloCounter)
+
         }
     }
 
     @Test
     fun inlineconfig_withValidJWTinHeaderShouldGive_200_OK_andHelloCounterIsIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
-            stubOIDCProvider()
-            inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt = JwtTokenGenerator.createSignedJWT("testuser")
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
-            }.apply {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals(helloCounterBeforeRequest + 1, helloCounter)
+        testApplication {
+            this.application {
+                stubOIDCProvider()
+                inlineConfiguredModule()
             }
+
+             val response = client.get("/inlineconfig") {
+                 val jwt = JwtTokenGenerator.createSignedJWT("testuser")
+                 header("Authorization", "Bearer ${jwt.serialize()}")
+             }
+                assertEquals(HttpStatusCode.OK, response.status)
+                assertEquals(helloCounterBeforeRequest + 1, helloCounter)
         }
     }
 
     @Test
     fun inlineconfig_JWTwithAnotherValidAudienceShouldGive_200_OK_andHelloCounterIsIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
+        testApplication {
+            this.application {
             stubOIDCProvider()
             inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt =
-                    JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience"))
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
-            }.apply {
-                assertEquals(HttpStatusCode.OK, response.status())
+            }
+             val response = client.get("/inlineconfig") {
+                 val jwt =
+                     JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience"))
+                 header(HttpHeaders.Authorization, "Bearer ${jwt.serialize()}")
+             }
+
+                assertEquals(HttpStatusCode.OK, response.status)
                 assertEquals(helloCounterBeforeRequest + 1, helloCounter)
+
             }
         }
     }
@@ -108,18 +119,19 @@ class InlineConfigTest {
     @Test
     fun inlineconfig_JWTwithUnknownAudienceShouldGive_401_andHelloCounterIsNotIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
-            stubOIDCProvider()
-            inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
+        testApplication {
+            this.application {
+                stubOIDCProvider()
+                inlineConfiguredModule()
+            }
+            val response = client.get("/inlineconfig") {
                 val jwt =
                     JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience"))
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
-            }.apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertEquals(helloCounterBeforeRequest, helloCounter)
+                header(HttpHeaders.Authorization, "Bearer ${jwt.serialize()}")
             }
+
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            assertEquals(helloCounterBeforeRequest, helloCounter)
         }
     }
 
@@ -157,5 +169,3 @@ class InlineConfigTest {
         }
         return builder.build()
     }
-
-}
