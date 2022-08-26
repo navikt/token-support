@@ -36,9 +36,9 @@ jobs:
         run: |
           export GPG_TTY=$(tty) && echo "$GPG_KEYS" | gpg --fast-import --batch
           echo "-- Setting new release version ${NEW_VERSION} --"
-          mvn -B versions:set -DnewVersion="${NEW_VERSION}" -DgenerateBackupPoms=false
+          ./mvnw -B versions:set -DnewVersion="${NEW_VERSION}" -DgenerateBackupPoms=false
           echo "-- Build, test and deploy release to Sonatype --"
-          mvn -B --settings .github/settings.xml clean deploy -Prelease,deploy-to-sonatype -Dmaven.wagon.http.pool=false
+          ./mvnw -B --settings .github/settings.xml clean deploy -Prelease,deploy-to-sonatype -Dmaven.wagon.http.pool=false
 
     #  - name: Publish artifact to GPR
     #    env:
@@ -49,4 +49,4 @@ jobs:
     #    run: |
     #      git config user.email "actions@github.com"
     #      git config user.name "GitHub Actions release"
-    #     mvn  --settings .github/settings.xml -Pgithub --batch-mode -Dmaven.main.skip=true -Dmaven.test.skip=true  deploy
+    #    ./mvnw  --settings .github/settings.xml -Pgithub --batch-mode -Dmaven.main.skip=true -Dmaven.test.skip=true  deploy

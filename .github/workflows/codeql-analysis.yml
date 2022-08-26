@@ -39,7 +39,7 @@ jobs:
             ${{ runner.os }}-maven-cache-
       - name: Compile for CodeQL scan
         run: |
-          mvn compile -B
+          ./mvnw compile -B
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
