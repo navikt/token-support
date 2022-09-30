@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class JwtTokenHandlerInterceptor(attrs: AnnotationAttributes?, private val h: JwtTokenAnnotationHandler) : HandlerInterceptor {
+open class JwtTokenHandlerInterceptor(attrs: AnnotationAttributes?, private val h: JwtTokenAnnotationHandler) : HandlerInterceptor {
     private val log = LoggerFactory.getLogger(JwtTokenHandlerInterceptor::class.java)
     private val handlerFlags: MutableMap<Any, Boolean> = ConcurrentHashMap()
     private val ignoreConfig = attrs?.getStringArray("ignore") ?: arrayOfNulls(0) ?: arrayOfNulls(0)
