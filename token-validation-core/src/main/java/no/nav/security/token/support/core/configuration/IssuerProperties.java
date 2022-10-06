@@ -147,7 +147,7 @@ public class IssuerProperties {
             this.optionalClaims = Optional.ofNullable(optionalClaims).orElse(List.of());
         }
 
-        public Boolean isConfigured() {
+        public boolean isConfigured() {
             return !optionalClaims.isEmpty();
         }
 

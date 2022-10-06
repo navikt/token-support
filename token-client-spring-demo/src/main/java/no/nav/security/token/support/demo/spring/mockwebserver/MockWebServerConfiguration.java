@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;
@@ -28,18 +26,22 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 @Configuration
 public class MockWebServerConfiguration {
 
-    private static final String TOKEN_RESPONSE_TEMPLATE = "{\n" +
-        "    \"token_type\": \"Bearer\",\n" +
-        "    \"scope\": \"$scope\",\n" +
-        "    \"expires_at\": $expires_at,\n" +
-        "    \"ext_expires_in\": $ext_expires_in,\n" +
-        "    \"expires_in\": $expires_in,\n" +
-        "    \"access_token\": \"$access_token\"\n" +
-        "}\n";
+    private static final String TOKEN_RESPONSE_TEMPLATE = """
+        {
+          "token_type": "Bearer",
+          "scope": "$scope",
+          "expires_at": $expires_at",
+          "ext_expires_in": $ext_expires_in",
+          "expires_in": $expires_in",
+          "access_token": "$access_token"
+        }
+        """;
 
-    private static final String DEFAULT_JSON_RESPONSE = "{\n" +
-        "    \"ping\": \"pong\"\n" +
-        "}\n";
+    private static final String DEFAULT_JSON_RESPONSE = """
+        {
+          "ping": "pong"
+        }
+        """;
 
     private static final String TOKEN_ENDPOINT_URI = "/oauth2/v2.0/token";
     private static final Logger log = LoggerFactory.getLogger(MockWebServerConfiguration.class);
@@ -67,7 +69,7 @@ public class MockWebServerConfiguration {
         String body = request.getBody().readUtf8();
         if (isTokenRequest(request)) {
             Map<String, String> formParams = formParameters(body);
-            log.info("form parameters decoded:" + formParams);
+            log.info("form parameters decoded: {}",formParams);
             return tokenResponse(formParams);
         } else {
             return new MockResponse()

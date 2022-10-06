@@ -62,6 +62,7 @@ public class JwtTokenExpiryFilterTest {
         JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(mock(TokenValidationContextHolder.class),
             EXPIRY_THRESHOLD);
         jwtTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);
+        verify(servletResponse, never()).setHeader(JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER, "true");
     }
 
     private void setupMocks(LocalDateTime expiry) {

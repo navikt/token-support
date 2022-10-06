@@ -15,6 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 public class JwtTokenValidatorFactory {
 
+    private JwtTokenValidatorFactory() {
+
+    }
+
     public static JwtTokenValidator tokenValidator(
         IssuerProperties issuerProperties,
         AuthorizationServerMetadata metadata,

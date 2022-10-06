@@ -13,6 +13,10 @@ import java.util.Optional;
 import java.util.stream.Stream;
 public class JwtTokenRetriever {
 
+    private JwtTokenRetriever() {
+
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenRetriever.class);
     private static final String BEARER = "Bearer";
 

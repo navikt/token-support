@@ -119,7 +119,7 @@ public class JwtTokenAnnotationHandler {
     }
 
     protected boolean containsRequiredClaims(JwtToken jwtToken, boolean combineWithOr, String... claims) {
-        LOG.debug("choose matching logic based on combineWithOr=" + combineWithOr);
+        LOG.debug("choose matching logic based on combineWithOr={}",combineWithOr);
         return combineWithOr ? containsAnyClaim(jwtToken, claims)
                 : containsAllClaims(jwtToken, claims);
     }

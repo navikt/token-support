@@ -15,15 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ClientPropertiesTest {
 
     private final String wellKnownJson =
-        "{\n" +
-            "  \"issuer\" : \"https://someissuer\",\n" +
-            "  \"token_endpoint\" : \"https://someissuer/token\",\n" +
-            "  \"jwks_uri\" : \"https://someissuer/jwks\",\n" +
-            "  \"grant_types_supported\" : [ \"urn:ietf:params:oauth:grant-type:token-exchange\" ],\n" +
-            "  \"token_endpoint_auth_methods_supported\" : [ \"private_key_jwt\" ],\n" +
-            "  \"token_endpoint_auth_signing_alg_values_supported\" : [ \"RS256\" ],\n" +
-            "  \"subject_types_supported\" : [ \"public\" ]\n" +
-            "}";
+        """
+          {
+            "issuer" : "https://someissuer",
+            "token_endpoint" : "https://someissuer/token",
+            "jwks_uri" : "https://someissuer/jwks",
+            "grant_types_supported" : [ "urn:ietf:params:oauth:grant-type:token-exchange" ],
+            "token_endpoint_auth_methods_supported" : [ "private_key_jwt" ],
+            "token_endpoint_auth_signing_alg_values_supported" : [ "RS256" ],
+            "subject_types_supported" : [ "public" ]
+          }
+          """;
+
 
     private static ClientProperties clientPropertiesFromWellKnown(URI wellKnownUrl) {
         return new ClientProperties(
@@ -82,7 +85,7 @@ class ClientPropertiesTest {
         withMockServer(
             s -> {
                 s.enqueue(jsonResponse(wellKnownJson));
-                clientPropertiesFromWellKnown(s.url("/well-known").uri());
+                assertNotNull(clientPropertiesFromWellKnown(s.url("/well-known").uri()).getTokenEndpointUrl());
             }
         );
     }

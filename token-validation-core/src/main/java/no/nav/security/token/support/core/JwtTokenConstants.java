@@ -5,7 +5,6 @@ public class JwtTokenConstants {
     private JwtTokenConstants() {
 
     }
-    // TODO make private?
     public static final String COOKIE_NAME = "%s-idtoken";
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String EXPIRY_THRESHOLD_ENV_PROPERTY = "no.nav.security.jwt.expirythreshold";
