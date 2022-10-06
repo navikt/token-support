@@ -1,19 +1,19 @@
 package no.nav.security.token.support.v2
 
 
-import io.ktor.server.auth.UnauthorizedResponse
 import io.ktor.http.CookieEncoding
 import io.ktor.http.Headers
 import io.ktor.http.decodeCookieValue
-import io.ktor.server.request.RequestCookies
-import io.ktor.server.response.respond
 import io.ktor.server.auth.AuthenticationConfig
 import io.ktor.server.auth.AuthenticationContext
 import io.ktor.server.auth.AuthenticationFailedCause
 import io.ktor.server.auth.AuthenticationProvider
 import io.ktor.server.auth.Principal
+import io.ktor.server.auth.UnauthorizedResponse
 import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.config.MapApplicationConfig
+import io.ktor.server.request.RequestCookies
+import io.ktor.server.response.respond
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever

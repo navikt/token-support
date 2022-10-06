@@ -1,21 +1,15 @@
 package no.nav.security.token.support.spring.integrationtest
 
-import com.nimbusds.jose.jwk.JWKSet
-import com.nimbusds.jose.jwk.JWKSet.*
+import com.nimbusds.jose.jwk.JWKSet.parse
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.RSAKey.Builder
 import com.nimbusds.jose.util.IOUtils
-import java.io.File
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.nio.charset.StandardCharsets.*
+import java.nio.charset.StandardCharsets.UTF_8
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.NoSuchAlgorithmException
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.text.ParseException
-
 
 object JwkGenerator {
     const val DEFAULT_KEYID = "localhost-signer"

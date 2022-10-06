@@ -1,13 +1,12 @@
 package no.nav.security.token.support.jaxrs;
 
+import jakarta.inject.Inject;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.client.ClientRequestFilter;
 import no.nav.security.token.support.core.JwtTokenConstants;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.client.ClientRequestFilter;
 
 import static java.util.Collections.singletonList;
 

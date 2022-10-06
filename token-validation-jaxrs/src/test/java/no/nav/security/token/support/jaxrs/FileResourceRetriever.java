@@ -1,14 +1,13 @@
 package no.nav.security.token.support.jaxrs;
 
+import com.nimbusds.jose.util.IOUtils;
+import com.nimbusds.jose.util.Resource;
+import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-
-import com.nimbusds.jose.util.IOUtils;
-import com.nimbusds.jose.util.Resource;
-
-import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 
  class FileResourceRetriever extends ProxyAwareResourceRetriever {
 

@@ -8,9 +8,9 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import jakarta.validation.constraints.NotNull;
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.sql.Date;
 import java.time.Instant;

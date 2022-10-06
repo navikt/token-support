@@ -14,11 +14,13 @@ import no.nav.security.token.support.ktor.testapp.module
 import no.nav.security.token.support.ktor.testapp.openHelloCounter
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
+@Disabled
 class ApplicationTest {
 
     companion object {

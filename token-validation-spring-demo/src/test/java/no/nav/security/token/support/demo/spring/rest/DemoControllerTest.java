@@ -2,6 +2,7 @@ package no.nav.security.token.support.demo.spring.rest;
 
 import com.nimbusds.jose.JOSEObjectType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import jakarta.servlet.Filter;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
 import no.nav.security.token.support.demo.spring.DemoApplication;
@@ -16,7 +17,6 @@ import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.Filter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

@@ -1,5 +1,7 @@
 package no.nav.security.token.support.spring.test;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.OAuth2Config;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
@@ -8,16 +10,12 @@ import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetrie
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.io.IOException;
 import java.util.Set;
 
 @Configuration
@@ -70,7 +68,6 @@ public class MockOAuth2ServerAutoConfiguration {
     }
 }
 
-@ConstructorBinding
 @ConfigurationProperties(MockOAuth2ServerProperties.PREFIX)
 class MockOAuth2ServerProperties {
 
