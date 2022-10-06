@@ -5,7 +5,7 @@ import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.filter.JwtTokenValidationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -22,7 +22,7 @@ import static org.hamcrest.core.Is.is;
 @ActiveProfiles("protected")
 @DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Config.class)
-public class ClientFilterTest {
+class ClientFilterTest {
 
     @LocalServerPort
     private int port;
@@ -37,14 +37,11 @@ public class ClientFilterTest {
     }
 
     @Test
-    public void that_unprotected_returns_ok_with_valid_token() throws ParseException {
+    void that_unprotected_returns_ok_with_valid_token() throws ParseException {
 
         String token = JwtTokenGenerator.createSignedJWT("12345678911").serialize();
-
         addTokenToContextHolder(token);
-
         String returnedToken = request().get().readEntity(String.class);
-
         assertThat(returnedToken, is(equalTo(token)));
     }
 

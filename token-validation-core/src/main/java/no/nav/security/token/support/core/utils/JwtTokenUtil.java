@@ -8,6 +8,9 @@ import java.util.Optional;
 
 public class JwtTokenUtil {
 
+    private JwtTokenUtil() {
+    }
+
     public static boolean contextHasValidToken(TokenValidationContextHolder tokenValidationContextHolder){
         return tokenValidationContext(tokenValidationContextHolder)
             .map(TokenValidationContext::hasValidToken)
