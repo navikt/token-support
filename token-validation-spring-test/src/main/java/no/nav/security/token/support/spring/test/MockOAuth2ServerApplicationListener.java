@@ -9,8 +9,9 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
-import org.springframework.util.SocketUtils;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -22,20 +23,18 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
     static final String PROPERTY_PREFIX = MockOAuth2ServerProperties.PREFIX;
     private static final String PORT_PROPERTY = PROPERTY_PREFIX + ".port";
     private static final String RANDOM_PORT_PROPERTY = PROPERTY_PREFIX + ".random-port";
-    private static final int MIN_PORT = 10000;
-    private static final int MAX_PORT = 12000;
 
     @Override
-    public void onApplicationEvent(ApplicationPreparedEvent event) {
+    public void onApplicationEvent(ApplicationPreparedEvent     event) {
         log.debug("received ApplicationPreparedEvent, register random port with environment if not set.");
         registerPort(event);
     }
 
-    private void registerPort(ApplicationPreparedEvent event) {
+    private void registerPort(ApplicationPreparedEvent event)  {
         ConfigurableEnvironment environment = event.getApplicationContext().getEnvironment();
         Integer httpPortProperty = environment.getProperty(PORT_PROPERTY, Integer.class);
         if (isRandomPort(httpPortProperty)) {
-            int port = SocketUtils.findAvailableTcpPort(MIN_PORT, MAX_PORT);
+            int port = findAvailableTcpPort();
             MutablePropertySources propertySources = environment.getPropertySources();
             addPropertySource(propertySources);
             Map<String, Object> source =
@@ -47,6 +46,16 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
             log.debug("port provided explicitly from annotation ({}), nothing to register.", httpPortProperty);
         }
     }
+
+    private int findAvailableTcpPort()  {
+            try (ServerSocket serverSocket = new ServerSocket(0)) {
+                return serverSocket.getLocalPort();
+            }
+            catch (IOException e) {
+                throw new IllegalStateException("Fant ikke random port å starte på",e);
+            }
+    }
+
 
     private boolean isRandomPort(Integer httpPortProperty) {
         return httpPortProperty == null || httpPortProperty <= 0;

@@ -28,9 +28,8 @@ class EnableMockOAuth2ServerRandomStaticPortTest {
     private String discoveryUrl;
 
     @Test
-    public void serverStartsOnStaticPortAndIsUpdatedInEnv() {
+     void serverStartsOnStaticPortAndIsUpdatedInEnv() {
         assertThat(server.baseUrl().port()).isEqualTo(1234);
-        assertThat(server.wellKnownUrl("test").toString()).isEqualTo(discoveryUrl);
+        assertThat(server.wellKnownUrl("test")).hasToString(discoveryUrl);
     }
 }
-
