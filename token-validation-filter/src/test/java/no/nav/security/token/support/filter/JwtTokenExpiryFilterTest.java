@@ -26,7 +26,7 @@ import java.util.Date;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtTokenExpiryFilterTest {
+ class JwtTokenExpiryFilterTest {
 
     @Mock
     private HttpServletRequest servletRequest;
@@ -38,7 +38,7 @@ public class JwtTokenExpiryFilterTest {
     private static final long EXPIRY_THRESHOLD = 1;
 
     @Test
-    public void tokenExpiresBeforeThreshold() throws IOException, ServletException {
+     void tokenExpiresBeforeThreshold() throws IOException, ServletException {
         setupMocks(LocalDateTime.now().plusMinutes(2));
 
         JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(tokenValidationContextHolder,
@@ -48,7 +48,7 @@ public class JwtTokenExpiryFilterTest {
     }
 
     @Test
-    public void tokenExpiresAfterThreshold() throws IOException, ServletException {
+     void tokenExpiresAfterThreshold() throws IOException, ServletException {
         setupMocks(LocalDateTime.now().plusMinutes(3));
 
         JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(tokenValidationContextHolder,
@@ -58,7 +58,7 @@ public class JwtTokenExpiryFilterTest {
     }
 
     @Test
-    public void noValidToken() throws IOException, ServletException {
+     void noValidToken() throws IOException, ServletException {
         JwtTokenExpiryFilter jwtTokenExpiryFilter = new JwtTokenExpiryFilter(mock(TokenValidationContextHolder.class),
             EXPIRY_THRESHOLD);
         jwtTokenExpiryFilter.doFilter(servletRequest, servletResponse, filterChain);

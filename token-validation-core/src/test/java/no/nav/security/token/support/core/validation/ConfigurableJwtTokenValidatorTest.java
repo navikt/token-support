@@ -12,19 +12,19 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConfigurableJwtTokenValidatorTest extends AbstractJwtValidatorTest {
+ class ConfigurableJwtTokenValidatorTest extends AbstractJwtValidatorTest {
 
     private static final String ISSUER = "https://issuer";
 
     @Test
-    public void assertValidToken() throws JwtTokenValidatorException {
+     void assertValidToken() throws JwtTokenValidatorException {
         JwtTokenValidator validator = tokenValidator(ISSUER, List.of("aud", "sub"));
         JWT token = createSignedJWT(ISSUER, null, null);
         validator.assertValidToken(token.serialize());
     }
 
     @Test
-    public void testAssertUnexpectedIssuer() throws JwtTokenValidatorException {
+     void testAssertUnexpectedIssuer() throws JwtTokenValidatorException {
         String otherIssuer = "https://differentfromtoken";
         JwtTokenValidator validator = tokenValidator(otherIssuer, Collections.emptyList());
         JWT token = createSignedJWT(ISSUER, null, null);

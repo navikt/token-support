@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IssuerConfigurationTest {
 
@@ -77,8 +78,8 @@ class IssuerConfigurationTest {
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
-        assertThat(!issuerProperties.getJwksCache().isConfigured()).isTrue();
-        assertThat(issuerProperties.getValidation().isConfigured()).isTrue();
+        assertTrue(!issuerProperties.getJwksCache().isConfigured());
+        assertTrue(issuerProperties.getValidation().isConfigured());
     }
 
     @Test
@@ -99,7 +100,7 @@ class IssuerConfigurationTest {
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
-        assertThat(issuerProperties.getJwksCache().isConfigured()).isTrue();
-        assertThat(issuerProperties.getValidation().isConfigured()).isTrue();
+        assertTrue(issuerProperties.getJwksCache().isConfigured());
+        assertTrue(issuerProperties.getValidation().isConfigured());
     }
 }

@@ -18,7 +18,7 @@ import static org.hamcrest.core.Is.is;
 @ActiveProfiles("protected")
 @DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Config.class)
-public class ServerFilterProtectedMethodTest {
+class ServerFilterProtectedMethodTest {
 
     @LocalServerPort
     private int port;
@@ -38,58 +38,44 @@ public class ServerFilterProtectedMethodTest {
     }
 
     @Test
-    public void that_unprotected_returns_ok_with_valid_token() {
-
+     void that_unprotected_returns_ok_with_valid_token() {
         Response response = requestWithValidToken("unprotected").get();
-
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
-    public void that_protected_returns_200_with_valid_token() {
-
+     void that_protected_returns_200_with_valid_token() {
         Response response = requestWithValidToken("protected").get();
-
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
-    public void that_protected_with_claims_returns_200_with_valid_token() {
-
+     void that_protected_with_claims_returns_200_with_valid_token() {
         Response response = requestWithValidToken("protected/with/claims").get();
-
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
-    public void that_unprotected_returns_200_without_token() {
-
+     void that_unprotected_returns_200_without_token() {
         Response response = requestWithoutToken("unprotected").get();
-
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
-    public void that_protected_returns_401_without_token() {
-
+     void that_protected_returns_401_without_token() {
         Response response = requestWithoutToken("protected").get();
-
         assertThat(response.getStatus(), is(equalTo(401)));
     }
 
     @Test
-    public void that_protected_with_claims_returns_401_without_token() {
-
+     void that_protected_with_claims_returns_401_without_token() {
         Response response = requestWithoutToken("protected/with/claims").get();
-
         assertThat(response.getStatus(), is(equalTo(401)));
     }
 
     @Test
-    public void that_protected_with_claims_returns_403_with_invalid_claims() {
-
+     void that_protected_with_claims_returns_403_with_invalid_claims() {
         Response response = requestWithValidToken("protected/with/claims/unknown").get();
-
         assertThat(response.getStatus(), is(equalTo(403)));
     }
 
