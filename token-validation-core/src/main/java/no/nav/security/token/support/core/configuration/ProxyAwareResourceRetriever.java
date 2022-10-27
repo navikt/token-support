@@ -59,7 +59,7 @@ public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
             LOG.trace("Connecting to {} via proxy {}",urlToOpen,getProxy());
             return (HttpURLConnection)urlToOpen.openConnection(getProxy());
         }
-        LOG.info("Connecting to {} without proxy",urlToOpen);
+        LOG.trace("Connecting to {} without proxy",urlToOpen);
         return (HttpURLConnection)urlToOpen.openConnection();
     }
 
