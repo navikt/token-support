@@ -45,6 +45,7 @@ class OAuth2ClientConfiguration : ImportAware {
         }
 
     @Bean
+    @ConditionalOnMissingBean(OAuth2HttpClient::class)
     fun oAuth2HttpClient(b: RestTemplateBuilder) = DefaultOAuth2HttpClient(b.build())
 
     @Bean
