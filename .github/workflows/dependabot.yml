@@ -1,6 +1,6 @@
 version: 2
 registries:
-  boot-cluster-conditionals :
+  token-support :
     type: maven-repository
     url: https://maven.pkg.github.com/navikt/token-support
     username: x-access-token
