@@ -11,7 +11,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
@@ -24,7 +24,7 @@ public class Config {
 
     @Bean
     ServletWebServerFactory servletWebServerFactory() {
-        return new JettyServletWebServerFactory(0);
+        return new TomcatServletWebServerFactory(0);
     }
 
     @Bean
