@@ -54,20 +54,20 @@
         <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
         <spring-boot.version>3.0.0</spring-boot.version>
-        <oauth2-oidc-sdk.version>9.43.1</oauth2-oidc-sdk.version>
+        <oauth2-oidc-sdk.version>10.1</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <rest-assured.version>5.2.0</rest-assured.version>
+        <rest-assured.version>5.3.0</rest-assured.version>
         <mockwebserver.version>4.10.0</mockwebserver.version>
-        <caffeine.version>3.1.1</caffeine.version>
+        <caffeine.version>3.1.2</caffeine.version>
         <okhttp3.version>4.10.0</okhttp3.version>
         <ktor.version>1.6.8</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.version>1.7.20</kotlin.version>
-        <mock-oauth2-server.version>0.5.4</mock-oauth2-server.version>
+        <kotlin.version>1.7.21</kotlin.version>
+        <mock-oauth2-server.version>0.5.6</mock-oauth2-server.version>
         <groovy.version>3.0.13</groovy.version>
         <logback.version>1.2.11</logback.version>
-        <nimbus.jose.jwt.version>9.25.4</nimbus.jose.jwt.version>
-        <kotest.version>5.5.0</kotest.version>
+        <nimbus.jose.jwt.version>9.25.6</nimbus.jose.jwt.version>
+        <kotest.version>5.5.4</kotest.version>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
     </properties>
 
