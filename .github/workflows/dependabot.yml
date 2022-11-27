@@ -2,7 +2,7 @@ version: 2
 registries:
   boot-cluster-conditionals :
     type: maven-repository
-    url: https://maven.pkg.github.com/navikt/boot-cluster-conditionals
+    url: https://maven.pkg.github.com/navikt/token-support
     username: x-access-token
     password: ${{ secrets.DEPENDABOT }}   
 updates:
@@ -14,7 +14,7 @@ updates:
 - package-ecosystem: maven
   directory: "/"
   registries:
-     - boot-cluster-conditionals
+     - token-support
   schedule:
     interval: daily
   open-pull-requests-limit: 10
