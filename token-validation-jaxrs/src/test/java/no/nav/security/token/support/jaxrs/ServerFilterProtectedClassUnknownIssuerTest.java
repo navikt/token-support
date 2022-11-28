@@ -3,13 +3,13 @@ package no.nav.security.token.support.jaxrs;
 import no.nav.security.token.support.core.JwtTokenConstants;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.core.Response;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,26 +33,19 @@ public class ServerFilterProtectedClassUnknownIssuerTest {
 
     @Test
     public void that_unprotected_returns_ok_with_invalid_token() {
-
         Response response = requestWithInvalidClaimsToken("class/unprotected").get();
-
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
     public void that_protected_returns_200_with_any_token() {
-
         Response response = requestWithInvalidClaimsToken("class/protected").get();
-
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
     public void that_protected_with_claims_returns_401_with_invalid_token() {
-
         Response response = requestWithInvalidClaimsToken("class/protected/with/claims").get();
-
         assertThat(response.getStatus(), is(equalTo(401)));
     }
-
 }

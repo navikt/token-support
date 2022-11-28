@@ -1,6 +1,7 @@
 package no.nav.security.token.support.core.configuration;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;

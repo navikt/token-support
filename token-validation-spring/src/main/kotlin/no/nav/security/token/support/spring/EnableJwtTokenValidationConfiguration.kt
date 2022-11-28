@@ -1,5 +1,9 @@
 package no.nav.security.token.support.spring
 
+import jakarta.servlet.DispatcherType.ASYNC
+import jakarta.servlet.DispatcherType.FORWARD
+import jakarta.servlet.DispatcherType.REQUEST
+import jakarta.servlet.Filter
 import no.nav.security.token.support.core.JwtTokenConstants.BEARER_TOKEN_DONT_PROPAGATE_ENV_PROPERTY
 import no.nav.security.token.support.core.JwtTokenConstants.EXPIRY_THRESHOLD_ENV_PROPERTY
 import no.nav.security.token.support.core.JwtTokenConstants.TOKEN_VALIDATION_FILTER_ORDER_PROPERTY
@@ -30,12 +34,7 @@ import org.springframework.web.context.request.RequestContextListener
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import java.net.URL
-import java.util.EnumSet
-import javax.servlet.DispatcherType.ASYNC
-import javax.servlet.DispatcherType.FORWARD
-import javax.servlet.DispatcherType.REQUEST
-import javax.servlet.Filter
-
+import java.util.*
 
 @Configuration
 @EnableConfigurationProperties(MultiIssuerProperties::class)

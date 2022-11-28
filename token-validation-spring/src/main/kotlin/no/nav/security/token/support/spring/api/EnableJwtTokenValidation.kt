@@ -3,8 +3,7 @@ package no.nav.security.token.support.spring.api
 import no.nav.security.token.support.spring.EnableJwtTokenValidationConfiguration
 import org.springframework.context.annotation.Import
 import java.lang.annotation.Inherited
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy.RUNTIME
+import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
 import kotlin.annotation.AnnotationTarget.CLASS
 

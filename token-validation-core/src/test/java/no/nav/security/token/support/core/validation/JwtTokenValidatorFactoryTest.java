@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
- import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
@@ -22,7 +22,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.nimbusds.jose.jwk.source.DefaultJWKSetCache.*;
+import static com.nimbusds.jose.jwk.source.DefaultJWKSetCache.DEFAULT_LIFESPAN_MINUTES;
+import static com.nimbusds.jose.jwk.source.DefaultJWKSetCache.DEFAULT_REFRESH_TIME_MINUTES;
 import static no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

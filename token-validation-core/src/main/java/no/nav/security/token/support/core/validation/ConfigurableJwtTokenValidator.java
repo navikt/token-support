@@ -11,6 +11,7 @@ import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;

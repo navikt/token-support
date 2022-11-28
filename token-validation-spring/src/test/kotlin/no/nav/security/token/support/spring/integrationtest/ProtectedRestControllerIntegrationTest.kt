@@ -7,6 +7,7 @@ import com.nimbusds.jwt.PlainJWT
 import com.nimbusds.oauth2.sdk.TokenRequest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.webAppContextSetup
+import jakarta.servlet.Filter
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.OAuth2TokenCallback
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
@@ -40,8 +41,6 @@ import org.springframework.test.web.servlet.setup.MockMvcConfigurer
 import org.springframework.web.context.WebApplicationContext
 import java.util.*
 import java.util.concurrent.TimeUnit.MINUTES
-import javax.servlet.Filter
-
 
 private const val PROP = "no.nav.security.jwt.dont-propagate-bearertoken"
 

@@ -2,9 +2,9 @@ package no.nav.security.token.support.client.core;
 
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
+import jakarta.validation.constraints.NotNull;
 import no.nav.security.token.support.client.core.jwk.JwkFactory;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;

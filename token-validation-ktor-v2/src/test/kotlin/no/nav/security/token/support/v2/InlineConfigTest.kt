@@ -16,10 +16,12 @@ import no.nav.security.token.support.v2.inlineconfigtestapp.helloCounter
 import no.nav.security.token.support.v2.inlineconfigtestapp.inlineConfiguredModule
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 
+@Disabled
 class InlineConfigTest {
 
     companion object {
