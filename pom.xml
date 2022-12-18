@@ -63,7 +63,7 @@
         <ktor.version>1.6.8</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>1.7.22</kotlin.version>
-        <mock-oauth2-server.version>0.5.6</mock-oauth2-server.version>
+        <mock-oauth2-server.version>0.5.7</mock-oauth2-server.version>
         <groovy.version>3.0.13</groovy.version>
         <logback.version>1.2.11</logback.version>
         <nimbus.jose.jwt.version>9.25.6</nimbus.jose.jwt.version>
