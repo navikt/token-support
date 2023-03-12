@@ -89,7 +89,7 @@ class EnableJwtTokenValidationConfiguration (private val env: Environment) : Web
                 setDispatcherTypes(EnumSet.of(REQUEST, FORWARD, ASYNC))
             }
     
-    private fun controllerInterceptor()  = JwtTokenHandlerInterceptor(attrs,SpringJwtTokenAnnotationHandler(SpringTokenValidationContextHolder(),env))
+    private fun controllerInterceptor()  = JwtTokenHandlerInterceptor(attrs,SpringJwtTokenAnnotationHandler(SpringTokenValidationContextHolder()))
 
     private fun configuredProxy() = env.getProperty(env.getProperty("http.proxy.parametername", "http.proxy"),URL::class.java)?.apply {
             if (env.getProperty("nais.cluster.name","local").contains("gcp")) {
