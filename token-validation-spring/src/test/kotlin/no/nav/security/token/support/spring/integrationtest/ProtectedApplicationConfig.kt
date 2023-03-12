@@ -23,9 +23,8 @@ class ProtectedApplicationConfig {
 
     @Bean
     @Throws(IOException::class)
-    fun mockOAuth2Server(): MockOAuth2Server {
-        val mockOAuth2Server = MockOAuth2Server()
-        mockOAuth2Server.start(1111)
-        return mockOAuth2Server
-    }
+    fun mockOAuth2Server() =
+        MockOAuth2Server().apply {
+            start(1111)
+        }
 }

@@ -48,8 +48,16 @@ internal class JwtTokenHandlerInterceptorTest {
     @Test
     fun methodIsUnprotectedAccessShouldBeAllowed() = assertTrue(interceptor.preHandle(request, response, handlerMethod(UnprotectedClass(), "test")))
 
+
     @Test
     fun methodShouldBeProtected() {
+        val handlerMethod = handlerMethod(ProtectedClass(), "test")
+        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        setupValidOidcContext()
+        assertTrue(interceptor.preHandle(request, response, handlerMethod))
+    }
+    @Test
+    fun methodExcludedShouldNotThrow() {
         val handlerMethod = handlerMethod(ProtectedClass(), "test")
         assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()

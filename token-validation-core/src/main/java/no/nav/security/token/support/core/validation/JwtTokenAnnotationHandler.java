@@ -26,7 +26,7 @@ public class JwtTokenAnnotationHandler {
 
     private static final List<Class<? extends Annotation>> SUPPORTED_ANNOTATIONS = List.of(RequiredIssuers.class, ProtectedWithClaims.class,
             Protected.class, Unprotected.class);
-    private static final Logger LOG = LoggerFactory.getLogger(JwtTokenAnnotationHandler.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(JwtTokenAnnotationHandler.class);
     private final TokenValidationContextHolder tokenValidationContextHolder;
 
     public JwtTokenAnnotationHandler(TokenValidationContextHolder tokenValidationContextHolder) {
@@ -39,7 +39,7 @@ public class JwtTokenAnnotationHandler {
                 .orElseThrow(() -> new AnnotationRequiredException(m));
     }
 
-    private boolean assertValidAnnotation(Annotation a) {
+    protected boolean assertValidAnnotation(Annotation a) {
         if (a instanceof Unprotected) {
             LOG.debug("annotation is of type={}, no token validation performed.", Unprotected.class.getSimpleName());
             return true;

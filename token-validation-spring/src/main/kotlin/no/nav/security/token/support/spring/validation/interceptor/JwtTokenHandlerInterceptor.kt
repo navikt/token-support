@@ -43,12 +43,12 @@ open class JwtTokenHandlerInterceptor(attrs: AnnotationAttributes?, private val 
         val fullName = o.javaClass.name
         ignoreConfig.forEach { ignore ->
             if (fullName.startsWith(ignore)) {
-                log.info("Adding $fullName to OIDC validation ignore list")
+                log.trace("Adding $fullName to OIDC validation ignore list")
                 handlerFlags[o] = true
                 return true
             }
         }
-        log.info("Adding $fullName to OIDC validation interceptor list")
+        log.trace("Adding $fullName to OIDC validation interceptor list")
         handlerFlags[o] = false
         return false
     }
