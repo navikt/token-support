@@ -10,7 +10,7 @@
     <name>token-validation-spring</name>
 
     <properties>
-        <condtionals.version>5.0.3</condtionals.version>
+        <condtionals.version>5.0.2</condtionals.version>
         <kotlin.version>1.8.10</kotlin.version>
     </properties>
     <dependencies>
