@@ -1,12 +1,14 @@
 package no.nav.security.token.support.spring.integrationtest
 
+import no.nav.boot.conditionals.Cluster.*
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.security.token.support.core.api.RequiredIssuers
 import no.nav.security.token.support.core.api.Unprotected
 import no.nav.security.token.support.spring.ProtectedRestController
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.ISSUER_SHORTNAME
 import org.springframework.web.bind.annotation.GetMapping
 
-@ProtectedRestController(issuer = AProtectedRestController.ISSUER_SHORTNAME)
+@ProtectedRestController(issuer = ISSUER_SHORTNAME, excludedClusters = [LOCAL])
 class AProtectedRestController {
     @GetMapping(PROTECTED)
     fun protectedMethod() = "protected"
@@ -39,8 +41,8 @@ class AProtectedRestController {
 
     companion object {
         const val ISSUER_SHORTNAME = "knownissuer"
-        private const val ISSUER_SHORTNAME2 = "knownissuer2"
-        private const val ISSUER_SHORTNAME3 = "knownissuer3"
+        const val ISSUER_SHORTNAME2 = "knownissuer2"
+        const val ISSUER_SHORTNAME3 = "knownissuer3"
         const val UNPROTECTED = "/unprotected"
         const val PROTECTED = "/protected"
         const val PROTECTED_WITH_CLAIMS = "/protected/withclaims"

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
 import kotlin.annotation.AnnotationTarget.CLASS
+import no.nav.boot.conditionals.Cluster
 
 @RestController
 @MustBeDocumented
@@ -19,7 +20,8 @@ import kotlin.annotation.AnnotationTarget.CLASS
 annotation class ProtectedRestController(@get: AliasFor(annotation = ProtectedWithClaims::class, attribute = "issuer") val issuer: String,
                                          @get: AliasFor(annotation = ProtectedWithClaims::class, attribute = "claimMap") val claimMap: Array<String> = ["acr=Level4"],
                                          @get: AliasFor(annotation = RequestMapping::class, attribute = "value") val value:  Array<String> = ["/"],
-                                         @get: AliasFor(annotation = RequestMapping::class, attribute = "produces") val produces: Array<String> = [APPLICATION_JSON_VALUE])
+                                         @get: AliasFor(annotation = RequestMapping::class, attribute = "produces") val produces: Array<String> = [APPLICATION_JSON_VALUE],
+                                         val excludedClusters: Array<Cluster> = [])
 
 @RestController
 @MustBeDocumented

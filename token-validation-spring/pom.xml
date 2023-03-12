@@ -10,11 +10,15 @@
     <name>token-validation-spring</name>
 
     <properties>
+        <condtionals.version>5.0.3</condtionals.version>
         <kotlin.version>1.8.10</kotlin.version>
     </properties>
-
-
     <dependencies>
+        <dependency>
+            <groupId>no.nav.boot</groupId>
+            <artifactId>boot-conditionals</artifactId>
+            <version>${condtionals.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
