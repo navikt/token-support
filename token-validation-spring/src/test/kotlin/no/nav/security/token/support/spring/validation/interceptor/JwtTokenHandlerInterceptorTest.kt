@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.server.ResponseStatusException
 import java.util.concurrent.ConcurrentHashMap
+import no.nav.security.token.support.core.utils.Cluster
 
 internal class JwtTokenHandlerInterceptorTest {
     private val contextHolder  = createContextHolder()
@@ -84,10 +85,29 @@ internal class JwtTokenHandlerInterceptorTest {
     }
 
     @Test
+    fun excludedMethodShouldBeOK() {
+        val handlerMethod = handlerMethod(ProtectedClassProtectedWithClaimsMethod(), "protectedExcludedMethod")
+        assertTrue(interceptor.preHandle(request, response, handlerMethod))
+    }
+
+    @Test
     fun methodShouldBeProtectedOnClassProtectedWithClaims() {
         val handlerMethod = handlerMethod(ProtectedWithClaimsClassProtectedMethod(), "protectedMethod")
         assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
+        assertTrue(interceptor.preHandle(request, response, handlerMethod))
+    }
+    @Test
+    fun methodShouldBeProtectedOnClassProtectedWithClaimsButExcluded() {
+        val handlerMethod = handlerMethod(ProtectedWithClaimsCButExcludedClassProtectedMethod(), "protectedMethod")
+        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        setupValidOidcContext()
+        assertTrue(interceptor.preHandle(request, response, handlerMethod))
+    }
+
+    @Test
+    fun methodShouldBeExcludedOnClassProtectedWithClaimsButExcluded() {
+        val handlerMethod = handlerMethod(ProtectedWithClaimsCButExcludedClassProtectedMethod(), "protectedWithClaimsMethod")
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
 
@@ -175,6 +195,9 @@ internal class JwtTokenHandlerInterceptorTest {
         @ProtectedWithClaims(issuer = "issuer1")
         fun protectedMethod() {
         }
+        @ProtectedWithClaims(issuer = "issuer1", excludedClusters = [Cluster.LOCAL])
+        fun protectedExcludedMethod() {
+        }
 
         @Unprotected
         fun unprotectedMethod() {
@@ -185,6 +208,18 @@ internal class JwtTokenHandlerInterceptorTest {
 
     @ProtectedWithClaims(issuer = "issuer1")
     private inner class ProtectedWithClaimsClassProtectedMethod {
+        @Protected
+        fun protectedMethod() {
+        }
+
+        @Unprotected
+        fun unprotectedMethod() {
+        }
+
+        fun protectedWithClaimsMethod() {}
+    }
+    @ProtectedWithClaims(issuer = "issuer1",excludedClusters = [Cluster.LOCAL])
+    private inner class ProtectedWithClaimsCButExcludedClassProtectedMethod {
         @Protected
         fun protectedMethod() {
         }

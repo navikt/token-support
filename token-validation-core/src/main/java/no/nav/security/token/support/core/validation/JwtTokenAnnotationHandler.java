@@ -9,6 +9,7 @@ import no.nav.security.token.support.core.exceptions.AnnotationRequiredException
 import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException;
 import no.nav.security.token.support.core.jwt.JwtToken;
+import no.nav.security.token.support.core.utils.Cluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static no.nav.security.token.support.core.utils.Cluster.*;
 import static no.nav.security.token.support.core.utils.JwtTokenUtil.contextHasValidToken;
 import static no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken;
 
@@ -39,7 +41,7 @@ public class JwtTokenAnnotationHandler {
                 .orElseThrow(() -> new AnnotationRequiredException(m));
     }
 
-    protected boolean assertValidAnnotation(Annotation a) {
+    private boolean assertValidAnnotation(Annotation a) {
         if (a instanceof Unprotected) {
             LOG.debug("annotation is of type={}, no token validation performed.", Unprotected.class.getSimpleName());
             return true;
@@ -66,11 +68,16 @@ public class JwtTokenAnnotationHandler {
     }
 
     private boolean handleProtectedWithClaims(ProtectedWithClaims a) {
+        if (!isProd() && Arrays.stream(a.excludedClusters()).toList().contains(currentCluster())) {
+            LOG.info("Excluding current cluster {} from validation", currentCluster());
+            return true;
+        }
         LOG.debug("Annotation is of type={}, do token validation and claim checking.", ProtectedWithClaims.class.getSimpleName());
         var jwtToken = getJwtToken(a.issuer(), tokenValidationContextHolder);
         if (jwtToken.isEmpty()) {
             throw new JwtTokenMissingException();
         }
+
         if (!handleProtectedWithClaimsAnnotation(a, jwtToken.get())) {
             throw new JwtTokenInvalidClaimException(a);
         }

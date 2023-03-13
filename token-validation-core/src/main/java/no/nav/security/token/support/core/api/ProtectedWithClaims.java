@@ -1,11 +1,14 @@
 package no.nav.security.token.support.core.api;
 
+import no.nav.security.token.support.core.utils.Cluster;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 
 @Retention(RUNTIME)
 @Target({ TYPE, METHOD })
@@ -19,6 +22,9 @@ public @interface ProtectedWithClaims {
 	 * @return array containing claims as key=value
 	 */
 	String[] claimMap() default {};
+
+	Cluster[] excludedClusters() default {};
+
 
 	/**
 	 * How to check for the presence of claims,
