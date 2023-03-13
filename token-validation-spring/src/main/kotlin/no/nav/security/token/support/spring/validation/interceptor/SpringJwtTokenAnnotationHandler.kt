@@ -2,10 +2,8 @@ package no.nav.security.token.support.spring.validation.interceptor
 
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
-import no.nav.boot.conditionals.Cluster.Companion.currentCluster
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
-import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation
 
 class SpringJwtTokenAnnotationHandler(holder: TokenValidationContextHolder?) : JwtTokenAnnotationHandler(holder) {
@@ -14,18 +12,4 @@ class SpringJwtTokenAnnotationHandler(holder: TokenValidationContextHolder?) : J
 
     private fun findAnnotation(e: AnnotatedElement, types: List<Class<out Annotation>>) =
         types.firstNotNullOfOrNull { t: Class<out Annotation> -> findMergedAnnotation(e, t) }
-
-    override fun assertValidAnnotation(a: Annotation): Boolean =
-        when(a) {
-            is ProtectedRestController -> {
-               if (currentCluster() in a.excludedClusters) {
-                   LOG.info("${a.javaClass.simpleName} excludes token validation in ${currentCluster()}")
-                   true
-               }
-               else {
-                   super.assertValidAnnotation(a)
-               }
-            }
-            else -> super.assertValidAnnotation(a)
-        }
 }
