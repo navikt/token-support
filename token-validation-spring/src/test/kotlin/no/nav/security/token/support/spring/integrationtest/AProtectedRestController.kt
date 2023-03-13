@@ -8,7 +8,7 @@ import no.nav.security.token.support.spring.ProtectedRestController
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.ISSUER_SHORTNAME
 import org.springframework.web.bind.annotation.GetMapping
 
-@ProtectedRestController(issuer = ISSUER_SHORTNAME, excludedClusters = [LOCAL])
+@ProtectedRestController(issuer = ISSUER_SHORTNAME)
 class AProtectedRestController {
     @GetMapping(PROTECTED)
     fun protectedMethod() = "protected"

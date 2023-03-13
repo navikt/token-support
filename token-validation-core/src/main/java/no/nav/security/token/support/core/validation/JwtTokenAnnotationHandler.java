@@ -68,15 +68,16 @@ public class JwtTokenAnnotationHandler {
     }
 
     private boolean handleProtectedWithClaims(ProtectedWithClaims a) {
+        if (!isProd() && Arrays.stream(a.excludedClusters()).toList().contains(currentCluster())) {
+            LOG.info("Excluding current cluster {} from validation", currentCluster());
+            return true;
+        }
         LOG.debug("Annotation is of type={}, do token validation and claim checking.", ProtectedWithClaims.class.getSimpleName());
         var jwtToken = getJwtToken(a.issuer(), tokenValidationContextHolder);
         if (jwtToken.isEmpty()) {
             throw new JwtTokenMissingException();
         }
-        if (!isProd() && Arrays.stream(a.excludedClusters()).toList().contains(currentCluster())) {
-            LOG.debug("Excluding current cluster {} from validation", currentCluster());
-            return true;
-        }
+
         if (!handleProtectedWithClaimsAnnotation(a, jwtToken.get())) {
             throw new JwtTokenInvalidClaimException(a);
         }
