@@ -1,6 +1,5 @@
 package no.nav.security.token.support.spring.integrationtest
 
-import no.nav.boot.conditionals.Cluster.*
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.security.token.support.core.api.RequiredIssuers
 import no.nav.security.token.support.core.api.Unprotected
