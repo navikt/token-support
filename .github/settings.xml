@@ -22,17 +22,15 @@
                 <gpg.keyname>${env.GPG_KEYNAME}</gpg.keyname>
                 <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
             </properties>
-            <repositories>
-                <repository>
-                    <id>github</id>
-                    <name>GitHub</name>
-                    <url>https://maven.pkg.github.com/navikt/boot-cluster-conditionals/</url>
-                </repository>
-            </repositories>
         </profile>
         <profile>
             <id>github</id>
             <repositories>
+                    <repository>
+                        <id>github</id>
+                        <name>GitHub</name>
+                        <url>https://maven.pkg.github.com/navikt/boot-cluster-conditionals/</url>
+                    </repository>
                 <repository>
                     <id>central</id>
                     <url>https://repo1.maven.org/maven2</url>
