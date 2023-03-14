@@ -61,7 +61,7 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
                 return audienceValidatorMap.get(aud);
             }
         }
-        LOG.warn("Could not find validator for token audience {}", tokenAud);
+        LOG.warn("Could not find validator for token audience {} among {}", tokenAud, audienceValidatorMap);
         throw new JwtTokenValidatorException(
             "Could not find appropriate validator to validate token. check your config.");
     }
