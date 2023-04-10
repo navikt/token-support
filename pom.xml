@@ -42,6 +42,7 @@
         <module>token-client-core</module>
     </modules>
     <properties>
+        <logback.version>1.4.6</logback.version>
         <kotlin-coroutines.version>1.6.2</kotlin-coroutines.version>
         <doclint>none</doclint>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -52,7 +53,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
-        <spring-boot.version>3.0.4</spring-boot.version>
+        <spring-boot.version>3.0.5</spring-boot.version>
         <oauth2-oidc-sdk.version>10.7.1</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <rest-assured.version>5.3.0</rest-assured.version>
@@ -64,7 +65,6 @@
         <kotlin.version>1.8.10</kotlin.version>
         <mock-oauth2-server.version>0.5.8</mock-oauth2-server.version>
         <groovy.version>3.0.13</groovy.version>
-        <logback.version>1.4.6</logback.version>
         <nimbus.jose.jwt.version>9.31</nimbus.jose.jwt.version>
         <kotest.version>5.5.4</kotest.version>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
@@ -395,6 +395,11 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
