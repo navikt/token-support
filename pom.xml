@@ -66,7 +66,7 @@
         <mock-oauth2-server.version>0.5.8</mock-oauth2-server.version>
         <groovy.version>3.0.17</groovy.version>
         <nimbus.jose.jwt.version>9.31</nimbus.jose.jwt.version>
-        <kotest.version>5.6.0</kotest.version>
+        <kotest.version>5.6.1</kotest.version>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
     </properties>
 
