@@ -25,6 +25,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      -   name: Submit Dependency Snapshot
+          uses: advanced-security/maven-dependency-submission-action@v3
+          with:
+            settings-file: .github/settings.xml
+
       - name: Build with Maven
         env:
           GITHUB_USERNAME: x-access-token
