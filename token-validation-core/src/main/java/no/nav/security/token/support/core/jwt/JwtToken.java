@@ -5,6 +5,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 
 import java.text.ParseException;
+import java.util.Objects;
 
 public class JwtToken {
 
@@ -14,10 +15,10 @@ public class JwtToken {
 
     public JwtToken(String encodedToken) {
         try {
-            this.encodedToken = encodedToken;
+            this.encodedToken = Objects.requireNonNull(encodedToken);
             this.jwt = JWTParser.parse(encodedToken);
             this.jwtTokenClaims = new JwtTokenClaims(getJwtClaimsSet());
-        } catch (ParseException e) {
+        } catch (ParseException | NullPointerException e) {
             throw new RuntimeException(e);
         }
     }
