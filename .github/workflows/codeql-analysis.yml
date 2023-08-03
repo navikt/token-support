@@ -45,7 +45,7 @@ jobs:
                 id: kompiler
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                run: ./mvnw --settings .github/.m2/settings.xml  -Drevision=${TAG} package
+                run: ./mvnw --settings .github/settings.xml  -Drevision=${TAG} package
 
             -   name: Perform CodeQL Analysis
                 uses: github/codeql-action/analyze@v2
