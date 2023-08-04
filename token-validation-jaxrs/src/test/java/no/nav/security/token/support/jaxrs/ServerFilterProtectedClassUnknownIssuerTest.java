@@ -18,7 +18,7 @@ import static org.hamcrest.core.Is.is;
 @ActiveProfiles("invalid")
 @DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Config.class)
-public class ServerFilterProtectedClassUnknownIssuerTest {
+class ServerFilterProtectedClassUnknownIssuerTest {
 
     @LocalServerPort
     private int port;
@@ -32,19 +32,19 @@ public class ServerFilterProtectedClassUnknownIssuerTest {
     }
 
     @Test
-    public void that_unprotected_returns_ok_with_invalid_token() {
+    void that_unprotected_returns_ok_with_invalid_token() {
         Response response = requestWithInvalidClaimsToken("class/unprotected").get();
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
-    public void that_protected_returns_200_with_any_token() {
+    void that_protected_returns_200_with_any_token() {
         Response response = requestWithInvalidClaimsToken("class/protected").get();
         assertThat(response.getStatus(), is(equalTo(200)));
     }
 
     @Test
-    public void that_protected_with_claims_returns_401_with_invalid_token() {
+    void that_protected_with_claims_returns_401_with_invalid_token() {
         Response response = requestWithInvalidClaimsToken("class/protected/with/claims").get();
         assertThat(response.getStatus(), is(equalTo(401)));
     }

@@ -10,10 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TokenValidationContextTest {
+ class TokenValidationContextTest {
 
     @Test
-    public void getFirstValidToken() {
+     void getFirstValidToken() {
 
         Map<String, JwtToken> map = new ConcurrentHashMap<>();
         TokenValidationContext tokenValidationContext = new TokenValidationContext(map);

@@ -9,7 +9,6 @@ import no.nav.security.token.support.core.exceptions.AnnotationRequiredException
 import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException;
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException;
 import no.nav.security.token.support.core.jwt.JwtToken;
-import no.nav.security.token.support.core.utils.Cluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

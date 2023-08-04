@@ -14,8 +14,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-public class DefaultJwtTokenValidatorTest extends AbstractJwtValidatorTest {
+ class DefaultJwtTokenValidatorTest extends AbstractJwtValidatorTest {
 
     private static final String ISSUER = "https://issuer";
     private static final String SUB = "foobar";
