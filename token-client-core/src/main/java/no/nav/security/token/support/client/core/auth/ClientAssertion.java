@@ -12,8 +12,8 @@ import jakarta.validation.constraints.NotNull;
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties;
 
 import java.net.URI;
-import java.sql.Date;
 import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 public class ClientAssertion {

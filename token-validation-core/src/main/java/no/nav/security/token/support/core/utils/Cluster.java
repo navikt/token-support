@@ -3,7 +3,6 @@ package no.nav.security.token.support.core.utils;
 import java.util.Objects;
 
 import static java.lang.System.*;
-import static no.nav.security.token.support.core.utils.EnvUtil.*;
 import static no.nav.security.token.support.core.utils.EnvUtil.NAIS_CLUSTER_NAME;
 
 public enum Cluster {

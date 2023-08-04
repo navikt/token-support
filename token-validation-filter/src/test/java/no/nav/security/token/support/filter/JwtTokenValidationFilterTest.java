@@ -213,7 +213,7 @@ class JwtTokenValidationFilterTest {
         }
     }
 
-    class MockResourceRetriever extends ProxyAwareResourceRetriever {
+    static class MockResourceRetriever extends ProxyAwareResourceRetriever {
 
         final String[] mockedIssuers;
         final Map<String, RSAKey> keys = new HashMap<>();
