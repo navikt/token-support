@@ -25,13 +25,13 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
     private static final String RANDOM_PORT_PROPERTY = PROPERTY_PREFIX + ".random-port";
 
     @Override
-    public void onApplicationEvent(ApplicationPreparedEvent     event) {
+    public void onApplicationEvent(ApplicationPreparedEvent event) {
         log.debug("received ApplicationPreparedEvent, register random port with environment if not set.");
         registerPort(event);
     }
 
     private void registerPort(ApplicationPreparedEvent event)  {
-        ConfigurableEnvironment environment = event.getApplicationContext().getEnvironment();
+        var environment = event.getApplicationContext().getEnvironment();
         Integer httpPortProperty = environment.getProperty(PORT_PROPERTY, Integer.class);
         if (isRandomPort(httpPortProperty)) {
             int port = findAvailableTcpPort();
@@ -41,7 +41,7 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
                 ((MapPropertySource) Objects.requireNonNull(propertySources.get(PROPERTY_PREFIX))).getSource();
             source.put(PORT_PROPERTY, port);
             source.put(RANDOM_PORT_PROPERTY, true);
-            log.debug("Registered property source for dynamic http port=" + port);
+            log.debug("Registered property source for dynamic http port={}", port);
         } else {
             log.debug("port provided explicitly from annotation ({}), nothing to register.", httpPortProperty);
         }
