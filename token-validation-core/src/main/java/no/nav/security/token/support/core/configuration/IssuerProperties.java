@@ -1,17 +1,17 @@
 package no.nav.security.token.support.core.configuration;
 
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
-import static java.util.Objects.requireNonNull;
 import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 
 public class IssuerProperties {
+    private static final Logger LOG = LoggerFactory.getLogger(IssuerProperties.class);
+
     @NotNull
     private URL discoveryUrl;
     private List<String> acceptedAudience;
@@ -19,107 +19,116 @@ public class IssuerProperties {
     private String headerName;
     private URL proxyUrl;
     private boolean usePlaintextForHttps = false;
-    private Validation validation = new Validation(Collections.emptyList());
-    private JwksCache jwksCache = new JwksCache(null, null);
+    private Validation validation = Validation.EMPTY;
+    private JwksCache jwksCache = JwksCache.EMPTY;
 
     public IssuerProperties(URL discoveryUrl) {
-        this.discoveryUrl = discoveryUrl;
+        this(discoveryUrl, List.of());
     }
 
     public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience) {
-        this.discoveryUrl = requireNonNull(discoveryUrl);
-        this.acceptedAudience = acceptedAudience;
+        this(discoveryUrl,acceptedAudience,null);
     }
 
     public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName) {
-        this(discoveryUrl, acceptedAudience);
-        this.cookieName = cookieName;
+        this(discoveryUrl, acceptedAudience,cookieName,null);
     }
 
     public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName, String headerName) {
-        this(discoveryUrl, acceptedAudience);
-        this.cookieName = cookieName;
-        this.headerName = headerName;
+        this(discoveryUrl, acceptedAudience,cookieName,headerName,Validation.EMPTY,JwksCache.EMPTY);
     }
 
     public IssuerProperties(URL discoveryUrl, Validation validation) {
-        this(discoveryUrl);
-        this.validation = validation;
+        this(discoveryUrl,validation,new JwksCache(null, null));
     }
 
     public IssuerProperties(URL discoveryUrl, JwksCache jwksCache) {
-        this(discoveryUrl);
-        this.jwksCache = jwksCache;
+        this(discoveryUrl, List.of(),null,null,Validation.EMPTY,jwksCache);
     }
 
     public IssuerProperties(URL discoveryUrl, Validation validation, JwksCache jwksCache) {
-        this(discoveryUrl, validation);
-        this.jwksCache = jwksCache;
+        this(discoveryUrl, List.of(),null,null,validation,jwksCache);
     }
 
     public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName, String headerName, Validation validation, JwksCache jwksCache) {
-        this(discoveryUrl, acceptedAudience);
-        this.cookieName = cookieName;
+        this.discoveryUrl = Objects.requireNonNull(discoveryUrl, "Discovery URL must be set");
+        this.acceptedAudience = Optional.ofNullable(acceptedAudience).orElse(List.of());
+        this.cookieName = cookieName(cookieName);
         this.headerName = headerName;
         this.validation = validation;
         this.jwksCache = jwksCache;
     }
 
+    private
+    String cookieName(String cookieName) {
+        if (cookieName != null) LOG.warn("Cookie-support will be discontinued in future versions, please consider changing yur configuration now");
+        return cookieName;
+    }
+
+    /**
+     *
+     */
+    @Deprecated(since = "3.1.2",forRemoval = true)
     public IssuerProperties() {
     }
 
     public @NotNull URL getDiscoveryUrl() {
-        return this.discoveryUrl;
+        return discoveryUrl;
     }
 
     public List<String> getAcceptedAudience() {
-        return this.acceptedAudience;
+        return acceptedAudience;
     }
 
     public String getCookieName() {
-        return this.cookieName;
+        return cookieName;
     }
 
     public String getHeaderName() {
-        if (this.headerName != null && !this.headerName.isEmpty()) {
-            return this.headerName;
+        if (headerName != null && !headerName.isEmpty()) {
+            return headerName;
         } else {
             return AUTHORIZATION_HEADER;
         }
     }
 
     public URL getProxyUrl() {
-        return this.proxyUrl;
+        return proxyUrl;
     }
 
     public boolean isUsePlaintextForHttps() {
-        return this.usePlaintextForHttps;
+        return usePlaintextForHttps;
     }
 
     public Validation getValidation() {
-        return this.validation;
+        return validation;
     }
 
     public JwksCache getJwksCache() {
-        return this.jwksCache;
+        return jwksCache;
     }
 
+    @Deprecated(since = "3.1.2",forRemoval = true)
     public void setDiscoveryUrl(@NotNull URL discoveryUrl) {
         this.discoveryUrl = discoveryUrl;
     }
 
+    @Deprecated(since = "3.1.2",forRemoval = true)
     public void setAcceptedAudience(List<String> acceptedAudience) {
         this.acceptedAudience = acceptedAudience;
     }
 
+    @Deprecated(since = "3.1.2",forRemoval = true)
     public void setCookieName(String cookieName) {
         this.cookieName = cookieName;
     }
 
+    @Deprecated(since = "3.1.2",forRemoval = true)
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
     }
 
+    @Deprecated(since = "3.1.2",forRemoval = true)
     public void setProxyUrl(URL proxyUrl) {
         this.proxyUrl = proxyUrl;
     }
@@ -128,10 +137,12 @@ public class IssuerProperties {
         this.usePlaintextForHttps = usePlaintextForHttps;
     }
 
+    @Deprecated(since = "3.1.2",forRemoval = true)
     public void setValidation(Validation validation) {
         this.validation = validation;
     }
 
+    @Deprecated(since = "3.1.2",forRemoval = true)
     public void setJwksCache(JwksCache jwksCache) {
         this.jwksCache = jwksCache;
     }
@@ -142,6 +153,8 @@ public class IssuerProperties {
     }
 
     public static class Validation {
+
+        public static Validation EMPTY = new Validation(List.of());
         private List<String> optionalClaims;
 
         public Validation(List<String> optionalClaims) {
@@ -180,12 +193,14 @@ public class IssuerProperties {
     }
 
     public static class JwksCache {
+
+        public static final JwksCache EMPTY = new JwksCache(null, null);
         private Long lifespan;
         private Long refreshTime;
 
         public JwksCache(Long lifespan, Long refreshTime) {
-            this.lifespan = Optional.ofNullable(lifespan).orElse(null);
-            this.refreshTime = Optional.ofNullable(refreshTime).orElse(null);
+            this.lifespan = lifespan;
+            this.refreshTime = refreshTime;
         }
 
         public Boolean isConfigured() {
