@@ -42,7 +42,7 @@
         <module>token-client-core</module>
     </modules>
     <properties>
-        <logback.version>1.4.11</logback.version>
+        <logback.version>1.4.8</logback.version>
         <kotlin-coroutines.version>1.6.2</kotlin-coroutines.version>
         <doclint>none</doclint>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
