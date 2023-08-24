@@ -4,6 +4,7 @@ import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.IssuerMockWebServer;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
 import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
+import no.nav.security.token.support.core.validation.DefaultConfigurableJwtValidator;
 import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IssuerConfigurationTest {
@@ -38,7 +40,7 @@ class IssuerConfigurationTest {
             "issuer1", new IssuerProperties(issuerMockWebServer.getDiscoveryUrl(), List.of("audience1")), new ProxyAwareResourceRetriever());
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator()).isInstanceOf(DefaultJwtTokenValidator.class);
+        assertThat(config.getTokenValidator()).isInstanceOf(DefaultConfigurableJwtValidator.class);
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
@@ -74,11 +76,11 @@ class IssuerConfigurationTest {
         );
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator()).isInstanceOf(ConfigurableJwtTokenValidator.class);
+        assertThat(config.getTokenValidator()).isInstanceOf(DefaultConfigurableJwtValidator.class);
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
-        assertTrue(!issuerProperties.getJwksCache().isConfigured());
+        assertFalse(issuerProperties.getJwksCache().isConfigured());
         assertTrue(issuerProperties.getValidation().isConfigured());
     }
 
@@ -96,7 +98,7 @@ class IssuerConfigurationTest {
         );
         assertThat(config.getMetaData()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
-        assertThat(config.getTokenValidator()).isInstanceOf(ConfigurableJwtTokenValidator.class);
+        assertThat(config.getTokenValidator()).isInstanceOf(DefaultConfigurableJwtValidator.class);
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
