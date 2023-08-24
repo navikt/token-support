@@ -16,11 +16,16 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 abstract class AbstractJwtValidatorTest {
 
+    protected static final String DEFAULT_ISSUER = "https://issuer";
+    protected static final String DEFAULT_SUBJECT = "foobar";
     private static final String KEYID = "myKeyId";
     private final RSAKey rsaJwk = setupKeys(KEYID);
 
@@ -37,35 +42,51 @@ abstract class AbstractJwtValidatorTest {
         }
     }
 
+    protected String token(String audience) {
+        return token(Collections.singletonList(audience));
+    }
+
+    protected String token(List<String> audience) {
+        return token(defaultClaims().audience(audience).build());
+    }
+
+    protected String token(JWTClaimsSet claims) {
+        return createSignedJWT(claims).serialize();
+    }
+
     protected SignedJWT createSignedJWT(String issuer, String audience, String sub) {
+        return createSignedJWT(defaultClaims()
+            .issuer(issuer)
+            .audience(audience)
+            .subject(sub)
+            .build()
+        );
+    }
+
+    protected JWTClaimsSet.Builder defaultClaims() {
+        var now = new Date();
+        var expiry = new Date(now.getTime() + TimeUnit.HOURS.toMillis(1));
+        return new JWTClaimsSet.Builder()
+            .issuer(DEFAULT_ISSUER)
+            .subject(DEFAULT_SUBJECT)
+            .jwtID(UUID.randomUUID().toString())
+            .notBeforeTime(now)
+            .issueTime(now)
+            .expirationTime(expiry);
+    }
+
+    private SignedJWT createSignedJWT(JWTClaimsSet claimsSet) {
         try {
-            JWTClaimsSet claimsSet = setClaims(issuer, audience, sub);
-            JWSHeader.Builder header = new JWSHeader.Builder(JWSAlgorithm.RS256)
+            var header = new JWSHeader.Builder(JWSAlgorithm.RS256)
                 .keyID(rsaJwk.getKeyID())
                 .type(JOSEObjectType.JWT);
-
-            SignedJWT signedJWT = new SignedJWT(header.build(), claimsSet);
-            JWSSigner signer = new RSASSASigner(rsaJwk.toPrivateKey());
+            var signedJWT = new SignedJWT(header.build(), claimsSet);
+            var signer = new RSASSASigner(rsaJwk.toPrivateKey());
             signedJWT.sign(signer);
             return signedJWT;
         } catch (JOSEException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private JWTClaimsSet setClaims(String issuer, String audience, String sub) {
-        Date now = new Date();
-        return sub != null ? new JWTClaimsSet.Builder()
-            .subject(sub)
-            .issuer(issuer)
-            .audience(audience)
-            .jwtID(UUID.randomUUID().toString()).notBeforeTime(now).issueTime(now)
-            .expirationTime(new Date(now.getTime() + 3600)).build()
-            : new JWTClaimsSet.Builder()
-            .issuer(issuer)
-            .audience(audience)
-            .jwtID(UUID.randomUUID().toString()).notBeforeTime(now).issueTime(now)
-            .expirationTime(new Date(now.getTime() + 3600)).build();
     }
 
     class MockResourceRetriever extends ProxyAwareResourceRetriever {
