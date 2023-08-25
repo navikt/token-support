@@ -42,7 +42,15 @@ import java.util.stream.Collectors;
  *
  * <p>Specifying optional claims will <i>remove</i> any matching claims from the default set of required claims.</p>
  *
- * <p>An <i>empty</i> list of accepted audiences alone does <i>not</i> remove the audience ("aud") claim from the default set of required claims; the claim must be explicitly specified as optional.</p>
+ * <p>Audience validation is only skipped if the claim is explicitly configured as an optional claim, and the list of accepted audiences is empty / not configured.
+ *
+ * <p>If the audience claim is explicitly configured as an optional claim and the list of accepted audience is non-empty, the following rules apply:
+ * <ul>
+ *     <li>If the audience claim is present (non-empty) in the JWT, it will be matched against the list of accepted audiences.</li>
+ *     <li>If the audience claim is not present, the audience match and existence checks are skipped - since it is an optional claim.</li>
+ * </ul>
+ *
+ * <p>An <i>empty</i> list of accepted audiences alone does <i>not</i> remove the audience ("aud") claim from the default set of required claims; the claim must explicitly be specified as optional.</p>
  */
 public class DefaultConfigurableJwtValidator implements JwtTokenValidator {
     private static final List<String> DEFAULT_REQUIRED_CLAIMS = List.of(
