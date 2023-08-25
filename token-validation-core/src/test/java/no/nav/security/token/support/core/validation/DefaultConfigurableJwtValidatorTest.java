@@ -32,7 +32,35 @@ public class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTes
     @Test
     void happyPathWithOptionalClaims() throws JwtTokenValidatorException {
         var acceptedAudiences = Collections.singletonList("aud1");
-        var optionalClaims = List.of(JWTClaimNames.SUBJECT, JWTClaimNames.AUDIENCE);
+        var optionalClaims = List.of(JWTClaimNames.SUBJECT);
+        var validator = tokenValidator(acceptedAudiences, optionalClaims);
+
+        validator.assertValidToken(token("aud1"));
+        validator.assertValidToken(token(defaultClaims()
+            .audience("aud1")
+            .subject(null)
+            .build())
+        );
+    }
+
+    @Test
+    void optionalAudienceWithAcceptedAudiencesOnlyDisablesAudienceExistenceCheck() throws JwtTokenValidatorException {
+        var acceptedAudiences = Collections.singletonList("aud1");
+        var optionalClaims = List.of(JWTClaimNames.AUDIENCE);
+        var validator = tokenValidator(acceptedAudiences, optionalClaims);
+
+        validator.assertValidToken(token("aud1"));
+        assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token("not-aud1")), "should reject invalid audience");
+        validator.assertValidToken(token(Collections.emptyList()));
+        validator.assertValidToken(token(defaultClaims().build()));
+        validator.assertValidToken(token(defaultClaims().audience((String) null).build()));
+        validator.assertValidToken(token(defaultClaims().audience(Collections.emptyList()).build()));
+    }
+
+    @Test
+    void optionalAudienceWithNoAcceptedAudiencesDisablesAudienceValidation() throws JwtTokenValidatorException {
+        var acceptedAudiences = Collections.<String>emptyList();
+        var optionalClaims = List.of(JWTClaimNames.AUDIENCE);
         var validator = tokenValidator(acceptedAudiences, optionalClaims);
 
         validator.assertValidToken(token("aud1"));
@@ -40,8 +68,7 @@ public class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTes
         validator.assertValidToken(token(Collections.emptyList()));
         validator.assertValidToken(token(defaultClaims().build()));
         validator.assertValidToken(token(defaultClaims().audience((String) null).build()));
-        validator.assertValidToken(token(defaultClaims().audience(Collections.emptyList()).subject(null).build()));
-        validator.assertValidToken(token(defaultClaims().subject(null).build()));
+        validator.assertValidToken(token(defaultClaims().audience(Collections.emptyList()).build()));
     }
 
     @Test

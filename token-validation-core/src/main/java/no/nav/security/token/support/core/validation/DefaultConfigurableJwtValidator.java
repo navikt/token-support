@@ -10,6 +10,7 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -96,11 +97,20 @@ public class DefaultConfigurableJwtValidator implements JwtTokenValidator {
     }
 
     private static Set<String> acceptedAudiences(List<String> acceptedAudiences, List<String> optionalClaims) {
-        if (optionalClaims.contains(JWTClaimNames.AUDIENCE)) {
-            // Make DefaultJWTClaimsVerifier skip the entire audience check (i.e. both match and existence checks)
+        if (!optionalClaims.contains(JWTClaimNames.AUDIENCE)) {
+            return new HashSet<>(acceptedAudiences);
+        }
+
+        if (acceptedAudiences.isEmpty()) {
+            // Effectively skips all audience existence and matching checks
             return null;
         }
-        return new HashSet<>(acceptedAudiences);
+
+        // Otherwise, add null to instruct DefaultJwtClaimsVerifier to validate against audience if present in the JWT,
+        // but don't require existence of the claim for all JWTs.
+        var acceptedAudiencesCopy = new ArrayList<>(acceptedAudiences);
+        acceptedAudiencesCopy.add(null);
+        return new HashSet<>(acceptedAudiencesCopy);
     }
 
     private static <T> Set<T> difference(List<T> first, List<T> second) {
