@@ -23,6 +23,7 @@ public class DefaultJwtClaimsVerifier<C extends SecurityContext> extends Default
         super(acceptedAudience, exactMatchClaims, requiredClaims, prohibitedClaims);
     }
 
+    @Override
     public void verify(final JWTClaimsSet claimsSet, final C context) throws BadJWTException {
         super.verify(claimsSet, context);
 

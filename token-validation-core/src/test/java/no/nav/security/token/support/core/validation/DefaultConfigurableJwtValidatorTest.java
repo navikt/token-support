@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
+class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
     private final URL jwksUrl = new URL("https://someurl");
     private final JWKSource<SecurityContext> jwkSource = JWKSourceBuilder.create(jwksUrl, new MockResourceRetriever()).build();
 
