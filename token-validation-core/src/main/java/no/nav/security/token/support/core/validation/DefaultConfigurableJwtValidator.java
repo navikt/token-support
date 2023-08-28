@@ -110,7 +110,7 @@ public class DefaultConfigurableJwtValidator implements JwtTokenValidator {
         }
 
         if (acceptedAudiences.isEmpty()) {
-            // Effectively skips all audience existence and matching checks
+            // Must be null to effectively skip all audience existence and matching checks
             return null;
         }
 
