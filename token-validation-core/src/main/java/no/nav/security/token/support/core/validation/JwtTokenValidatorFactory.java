@@ -1,7 +1,7 @@
 package no.nav.security.token.support.core.validation;
 
-import com.nimbusds.jose.jwk.source.DefaultJWKSetCache;
-import com.nimbusds.jose.jwk.source.RemoteJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jose.util.ResourceRetriever;
 import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
@@ -10,8 +10,6 @@ import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableExcepti
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
-
 
 public class JwtTokenValidatorFactory {
 
@@ -24,48 +22,41 @@ public class JwtTokenValidatorFactory {
         AuthorizationServerMetadata metadata,
         ResourceRetriever resourceRetriever
     ) {
-        var remoteJWKSet = remoteJwkSet(
+        return tokenValidator(issuerProperties, metadata, jwkSource(
             issuerProperties,
             getJWKsUrl(metadata),
             resourceRetriever
-        );
-        return tokenValidator(issuerProperties, metadata, remoteJWKSet);
+        ));
     }
 
     public static JwtTokenValidator tokenValidator(
         IssuerProperties issuerProperties,
         AuthorizationServerMetadata metadata,
-        RemoteJWKSet<SecurityContext> remoteJWKSet
+        JWKSource<SecurityContext> remoteJWKSet
     ) {
-        if (issuerProperties.getValidation().isConfigured()) {
-            return new ConfigurableJwtTokenValidator(
-                metadata.getIssuer().getValue(),
-                issuerProperties.getValidation().getOptionalClaims(),
-                remoteJWKSet
-            );
-        }
-        return new DefaultJwtTokenValidator(
+        return new DefaultConfigurableJwtValidator(
             metadata.getIssuer().getValue(),
             issuerProperties.getAcceptedAudience(),
+            issuerProperties.getValidation().getOptionalClaims(),
             remoteJWKSet
         );
     }
 
-    private static RemoteJWKSet<SecurityContext> remoteJwkSet(
+    private static JWKSource<SecurityContext> jwkSource(
         IssuerProperties issuerProperties,
         URL jwksUrl,
         ResourceRetriever resourceRetriever
     ) {
-        return issuerProperties.getJwksCache().isConfigured() ?
-            new RemoteJWKSet<>(
-                jwksUrl,
-                resourceRetriever,
-                new DefaultJWKSetCache(
-                    issuerProperties.getJwksCache().getLifespan(),
-                    issuerProperties.getJwksCache().getRefreshTime(),
-                    TimeUnit.MINUTES
-                )
-            ) : new RemoteJWKSet<>(jwksUrl, resourceRetriever);
+        var jwkSource = JWKSourceBuilder.create(jwksUrl, resourceRetriever);
+
+        if (issuerProperties.getJwksCache().isConfigured()) {
+            jwkSource.cache(
+                issuerProperties.getJwksCache().getLifespanMillis(),
+                issuerProperties.getJwksCache().getRefreshTimeMillis()
+            );
+        }
+
+        return jwkSource.build();
     }
 
     private static URL getJWKsUrl(AuthorizationServerMetadata metaData) {

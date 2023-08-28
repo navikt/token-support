@@ -16,6 +16,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Configurable JwtTokenValidator. Allows for optional claims, does not validate audience.
+ *
+ * @deprecated <p>Use {@link DefaultConfigurableJwtValidator} instead.
+ */
+@Deprecated(since = "3.1.3", forRemoval = true)
 public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
     private final String issuer;
@@ -54,7 +60,7 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
 
     private void verify(String tokenString, JWTClaimsSetVerifier<SecurityContext> jwtClaimsSetVerifier, JWSVerificationKeySelector<SecurityContext> keySelector) {
         try {
-            var  jwtProcessor = new DefaultJWTProcessor<>();
+            var jwtProcessor = new DefaultJWTProcessor<>();
             jwtProcessor.setJWSKeySelector(keySelector);
             jwtProcessor.setJWTClaimsSetVerifier(jwtClaimsSetVerifier);
             var token = parse(tokenString);
@@ -76,9 +82,5 @@ public class ConfigurableJwtTokenValidator implements JwtTokenValidator {
         } catch (Throwable t) {
             throw new JwtTokenValidatorException("Token verification failed: " + t.getMessage(), t);
         }
-    }
-
-    protected RemoteJWKSet<SecurityContext> getRemoteJWKSet() {
-        return this.remoteJWKSet;
     }
 }

@@ -20,6 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * "Default" JwtTokenValidator. JWT must have claims that fulfill the OpenID Connect id_token requirements.
+ *
+ * @deprecated <p>Use {@link DefaultConfigurableJwtValidator} instead.
+ */
+@Deprecated(since = "3.1.3", forRemoval = true)
 public class DefaultJwtTokenValidator implements JwtTokenValidator {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJwtTokenValidator.class);
     private static final JWSAlgorithm JWS_ALG = JWSAlgorithm.RS256;
@@ -93,9 +99,5 @@ public class DefaultJwtTokenValidator implements JwtTokenValidator {
             map.put(aud, createValidator(issuer, aud));
         }
         return map;
-    }
-
-    protected RemoteJWKSet<SecurityContext> getRemoteJWKSet() {
-        return this.remoteJWKSet;
     }
 }

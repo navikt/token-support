@@ -183,7 +183,7 @@ fun ApplicationConfig.asIssuerProps(): Map<String, IssuerProperties> = this.conf
     .associate { issuerConfig ->
         issuerConfig.property("issuer_name").getString() to IssuerProperties(
             URL(issuerConfig.property("discoveryurl").getString()),
-            issuerConfig.property("accepted_audience").getString().split(","),
+            issuerConfig.propertyOrNull("accepted_audience")?.getString()?.split(","),
             issuerConfig.propertyOrNull("cookie_name")?.getString(),
             issuerConfig.propertyOrNull("header_name")?.getString(),
             IssuerProperties.Validation(issuerConfig.propertyOrNull("validation.optional_claims")?.getString()?.split(",") ?: emptyList()),

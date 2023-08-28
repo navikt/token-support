@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 
@@ -211,8 +212,16 @@ public class IssuerProperties {
             return this.lifespan;
         }
 
+        public Long getLifespanMillis() {
+            return TimeUnit.MINUTES.toMillis(this.lifespan);
+        }
+
         public Long getRefreshTime() {
             return this.refreshTime;
+        }
+
+        public Long getRefreshTimeMillis() {
+            return TimeUnit.MINUTES.toMillis(this.refreshTime);
         }
 
         public void setLifespan(Long lifespan) {
