@@ -87,12 +87,12 @@ public class DefaultConfigurableJwtValidator implements JwtTokenValidator {
             PROHIBITED_CLAIMS
         );
 
-        var jwtProcessor = new DefaultJWTProcessor<>();
-        jwtProcessor.setJWSKeySelector(keySelector);
-        jwtProcessor.setJWTClaimsSetVerifier(claimsVerifier);
+        var processor = new DefaultJWTProcessor<>();
+        processor.setJWSKeySelector(keySelector);
+        processor.setJWTClaimsSetVerifier(claimsVerifier);
 
         this.jwkSource = jwkSource;
-        this.jwtProcessor = jwtProcessor;
+        this.jwtProcessor = processor;
     }
 
     @Override
