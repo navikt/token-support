@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.HandlerInterceptor
 import java.util.concurrent.ConcurrentHashMap
 
-open class JwtTokenHandlerInterceptor(attrs: AnnotationAttributes?, private val h: JwtTokenAnnotationHandler) : HandlerInterceptor {
+ class JwtTokenHandlerInterceptor(attrs: AnnotationAttributes?, private val h: JwtTokenAnnotationHandler) : HandlerInterceptor {
     private val log = LoggerFactory.getLogger(JwtTokenHandlerInterceptor::class.java)
     private val handlerFlags: MutableMap<Any, Boolean> = ConcurrentHashMap()
     private val ignoreConfig = attrs?.getStringArray("ignore") ?: arrayOfNulls(0) ?: arrayOfNulls(0)
