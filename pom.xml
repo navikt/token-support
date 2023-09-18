@@ -336,7 +336,12 @@
                 <version>${rest-assured.version}</version>
                 <scope>test</scope>
             </dependency>
-
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>spring-commons</artifactId>
+                <version>${rest-assured.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
