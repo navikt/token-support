@@ -35,7 +35,7 @@ public class MockOAuth2ServerAutoConfiguration {
                 null,
                 null,
                 new OAuth2TokenProvider(),
-                    Set.of((OAuth2TokenCallback) new DefaultOAuth2TokenCallback())
+                    Set.of(new DefaultOAuth2TokenCallback())
             )
         );
     }
