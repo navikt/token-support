@@ -260,21 +260,6 @@ class OAuth2AccessTokenServiceTest {
     }
 
     private static OAuth2AccessTokenResponse accessTokenResponse(String assertion, int expiresIn) {
-        return new OAuth2AccessTokenResponse() {
-            @Override
-            public String getAccessToken() {
-                return assertion;
-            }
-
-            @Override
-            public int getExpiresAt() {
-                return Math.toIntExact((Instant.now().plusSeconds(expiresIn).getEpochSecond()));
-            }
-
-            @Override
-            public int getExpiresIn() {
-                return expiresIn;
-            }
-        };
+        return new OAuth2AccessTokenResponse(assertion,Math.toIntExact(Instant.now().plusSeconds(expiresIn).getEpochSecond()),expiresIn);
     }
 }

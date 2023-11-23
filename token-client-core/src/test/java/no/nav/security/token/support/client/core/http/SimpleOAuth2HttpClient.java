@@ -2,6 +2,7 @@ package no.nav.security.token.support.client.core.http;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,14 +16,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.*;
+
 public class SimpleOAuth2HttpClient implements OAuth2HttpClient {
 
     private static final Logger log = LoggerFactory.getLogger(SimpleOAuth2HttpClient.class);
     private final ObjectMapper objectMapper;
 
     public SimpleOAuth2HttpClient() {
-        this.objectMapper = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        this.objectMapper = new ObjectMapper().registerModule(new KotlinModule.Builder().build())
+            .configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
 
