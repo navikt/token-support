@@ -21,7 +21,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
         val clientProperties = grantRequest?.clientProperties ?: throw OAuth2ClientException("ClientProperties cannot be null")
         return try {
             val formParameters = createDefaultFormParameters(grantRequest)
-            formParameters.putAll(formParameters(grantRequest)!!)
+            formParameters.putAll(formParameters(grantRequest))
             val oAuth2HttpRequest = OAuth2HttpRequest.builder()
                 .tokenEndpointUrl(clientProperties.tokenEndpointUrl)
                 .oAuth2HttpHeaders(OAuth2HttpHeaders.of(tokenRequestHeaders(clientProperties)))
@@ -43,7 +43,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
         headers["Content-Type"] = listOf(CONTENT_TYPE_FORM_URL_ENCODED)
         val auth = clientProperties.authentication
         if (CLIENT_SECRET_BASIC == auth.clientAuthMethod) {
-            headers["Authorization"] = listOf("Basic " + basicAuth(auth.clientId, auth.clientSecret))
+            headers["Authorization"] = listOf("Basic " + basicAuth(auth.clientId, auth.clientSecret!!))
         }
         return headers
     }
@@ -64,7 +64,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
         val auth = clientProperties.authentication
         if (CLIENT_SECRET_POST == auth.clientAuthMethod) {
             formParameters[OAuth2ParameterNames.CLIENT_ID] = auth.clientId
-            formParameters[OAuth2ParameterNames.CLIENT_SECRET] = auth.clientSecret
+            formParameters[OAuth2ParameterNames.CLIENT_SECRET] = auth.clientSecret!!
         }
         else if (PRIVATE_KEY_JWT == auth.clientAuthMethod) {
             val clientAssertion = ClientAssertion(clientProperties.tokenEndpointUrl, auth)

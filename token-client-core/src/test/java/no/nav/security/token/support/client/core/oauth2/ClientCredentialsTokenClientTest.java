@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_POST;
+import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
 import static no.nav.security.token.support.client.core.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -85,10 +87,8 @@ class ClientCredentialsTokenClientTest {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
         ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS)
             .toBuilder()
-            .authentication(ClientAuthenticationProperties.builder()
-                .clientId("client")
+            .authentication(ClientAuthenticationProperties.builder("client",CLIENT_SECRET_POST)
                 .clientSecret("secret")
-                .clientAuthMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .build())
             .build();
 
@@ -108,9 +108,7 @@ class ClientCredentialsTokenClientTest {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
         ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS)
             .toBuilder()
-            .authentication(ClientAuthenticationProperties.builder()
-                .clientId("client")
-                .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+            .authentication(ClientAuthenticationProperties.builder("client",PRIVATE_KEY_JWT)
                 .clientJwk("src/test/resources/jwk.json")
                 .build())
             .build();

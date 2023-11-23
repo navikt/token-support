@@ -19,6 +19,8 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
+import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("WeakerAccess")
@@ -32,9 +34,7 @@ public class TestUtils {
             .grantType(oAuth2GrantType)
             .scope(List.of("scope1", "scope2"))
             .tokenEndpointUrl(URI.create(tokenEndpointUrl))
-            .authentication(ClientAuthenticationProperties.builder()
-                .clientAuthMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .clientId("client1")
+            .authentication(ClientAuthenticationProperties.builder("client1",CLIENT_SECRET_BASIC)
                 .clientSecret("clientSecret1")
                 .build())
             .build();
@@ -48,9 +48,7 @@ public class TestUtils {
         return ClientProperties.builder()
             .grantType(oAuth2GrantType)
             .tokenEndpointUrl(URI.create(tokenEndpointUrl))
-            .authentication(ClientAuthenticationProperties.builder()
-                .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
-                .clientId("client1")
+            .authentication(ClientAuthenticationProperties.builder("client1",PRIVATE_KEY_JWT)
                 .clientJwk(clientPrivateKey)
                 .build())
             .tokenExchange(ClientProperties.TokenExchangeProperties.builder()

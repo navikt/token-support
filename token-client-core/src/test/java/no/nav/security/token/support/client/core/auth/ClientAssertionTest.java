@@ -17,17 +17,17 @@ import java.net.URI;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Objects;
 
+import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ClientAssertionTest {
 
     @Test
     void testCreateAssertion() throws ParseException, JOSEException {
-        ClientAuthenticationProperties clientAuth = ClientAuthenticationProperties.builder()
+        ClientAuthenticationProperties clientAuth = ClientAuthenticationProperties.builder("client1",PRIVATE_KEY_JWT)
             .clientJwk("src/test/resources/jwk.json")
-            .clientId("client1")
-            .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
             .build();
 
         ClientProperties clientProperties = ClientProperties.builder()
@@ -49,12 +49,12 @@ class ClientAssertionTest {
         assertThat(clientAssertion.assertion()).isNotNull();
 
         SignedJWT signedJWT = SignedJWT.parse(assertion);
-        String keyId = clientProperties.getAuthentication().getClientRsaKey().getKeyID();
+        String keyId = Objects.requireNonNull(clientProperties.getAuthentication().getClientRsaKey()).getKeyID();
         assertThat(signedJWT.getHeader().getKeyID()).isEqualTo(keyId);
         assertThat(signedJWT.getHeader().getType()).isEqualTo(JOSEObjectType.JWT);
         assertThat(signedJWT.getHeader().getAlgorithm()).isEqualTo(JWSAlgorithm.RS256);
 
-        JWSVerifier verifier = new RSASSAVerifier(clientAuth.getClientRsaKey());
+        JWSVerifier verifier = new RSASSAVerifier(Objects.requireNonNull(clientAuth.getClientRsaKey()));
         assertThat(signedJWT.verify(verifier)).isTrue();
 
         JWTClaimsSet claims = signedJWT.getJWTClaimsSet();

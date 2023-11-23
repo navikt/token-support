@@ -4,24 +4,11 @@ package no.nav.security.token.support.client.core;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import org.junit.jupiter.api.Test;
 
+import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.NONE;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ClientAuthenticationPropertiesTest {
-
-    @Test
-    void validAuthenticationProperties() {
-        assertNotNull(new ClientAuthenticationProperties(
-            "client",
-            null,
-            "secret",
-            null));
-        assertNotNull(new ClientAuthenticationProperties(
-            "client",
-            ClientAuthenticationMethod.CLIENT_SECRET_POST,
-            "secret",
-            null));
-    }
 
     @Test
     void invalidAuthenticationProperties() {
@@ -32,11 +19,10 @@ class ClientAuthenticationPropertiesTest {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> instanceWith(ClientAuthenticationMethod.CLIENT_SECRET_JWT));
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> instanceWith(ClientAuthenticationMethod.NONE));
+            .isThrownBy(() -> instanceWith(NONE));
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> ClientAuthenticationProperties.builder()
-                .clientAuthMethod(ClientAuthenticationMethod.NONE)
+            .isThrownBy(() -> ClientAuthenticationProperties.builder("client1", NONE)
                 .build());
     }
 

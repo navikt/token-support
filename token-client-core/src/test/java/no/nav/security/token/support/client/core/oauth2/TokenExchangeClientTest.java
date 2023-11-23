@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
 import static no.nav.security.token.support.client.core.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -58,9 +59,7 @@ class TokenExchangeClientTest {
             "src/test/resources/jwk.json"
         )
             .toBuilder()
-            .authentication(ClientAuthenticationProperties.builder()
-                .clientId("client")
-                .clientAuthMethod(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+            .authentication(ClientAuthenticationProperties.builder("client",PRIVATE_KEY_JWT)
                 .clientJwk("src/test/resources/jwk.json")
                 .build())
             .build();
