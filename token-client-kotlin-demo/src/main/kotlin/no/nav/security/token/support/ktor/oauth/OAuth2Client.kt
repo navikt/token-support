@@ -124,7 +124,7 @@ internal suspend fun HttpClient.tokenRequest(
         if (clientAuthProperties.clientAuthMethod == ClientAuthenticationMethod.CLIENT_SECRET_BASIC) {
             header(
                 "Authorization",
-                "Basic ${basicAuth(clientAuthProperties.clientId, clientAuthProperties.clientSecret)}"
+                "Basic ${basicAuth(clientAuthProperties.clientId,  clientAuthProperties.clientSecret)}"
             )
         }
     }

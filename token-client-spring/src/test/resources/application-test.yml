@@ -34,6 +34,7 @@ no.nav.security.jwt.client:
       authentication:
         client-id: testclient
         client-secret: testsecret
+        client-auth-method: client_secret_basic
 
     example1-clientcredentials3:
       token-endpoint-url: http://tokens.no

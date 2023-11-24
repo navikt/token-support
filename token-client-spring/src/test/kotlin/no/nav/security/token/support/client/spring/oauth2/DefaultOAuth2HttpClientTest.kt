@@ -55,14 +55,14 @@ internal class DefaultOAuth2HttpClientTest {
     }
 
     companion object {
-        private const val TOKEN_RESPONSE = "{\n" +
-                "    \"token_type\": \"Bearer\",\n" +
-                "    \"scope\": \"scope1 scope2\",\n" +
-                "    \"expires_at\": 1568141495,\n" +
-                "    \"ext_expires_in\": 3599,\n" +
-                "    \"expires_in\": 3599,\n" +
-                "    \"access_token\": \"<base64URL>\",\n" +
-                "    \"refresh_token\": \"<base64URL>\"\n" +
-                "}\n"
+        private const val TOKEN_RESPONSE = """{
+            "token_type": "Bearer",
+            "scope": "scope1 scope2",
+            "expires_at": 1568141495,
+            "ext_expires_in": 3599,
+            "expires_in": 3599,
+            "access_token": "<base64URL>",
+            "refresh_token": "<base64URL>"
+       }"""
     }
 }

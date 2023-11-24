@@ -1,13 +1,10 @@
 package no.nav.security.token.support.client.core.oauth2
 
 import com.github.benmanes.caffeine.cache.Cache
-import java.util.Arrays
-import java.util.Optional
 import java.util.function.Function
 import org.slf4j.LoggerFactory
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.OAuth2GrantType
 import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.CLIENT_CREDENTIALS
 import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.JWT_BEARER
 import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.TOKEN_EXCHANGE
@@ -23,80 +20,47 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
 
 
 
-    fun getAccessToken(clientProperties : ClientProperties?) : OAuth2AccessTokenResponse? {
-        if (clientProperties == null) {
-            throw OAuth2ClientException("ClientProperties cannot be null")
-        }
+    fun getAccessToken(clientProperties : ClientProperties) : OAuth2AccessTokenResponse? {
         log.debug("Getting access_token for grant={}", clientProperties.grantType)
-        return if (isGrantType(clientProperties, JWT_BEARER)) {
-            executeOnBehalfOf(clientProperties)
-        }
-        else if (isGrantType(clientProperties, CLIENT_CREDENTIALS)) {
-            executeClientCredentials(clientProperties)
-        }
-        else if (isGrantType(clientProperties, TOKEN_EXCHANGE)) {
-            executeTokenExchange(clientProperties)
-        }
-        else {
-            throw OAuth2ClientException(String.format("invalid grant-type=%s from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types (%s)",
-                clientProperties.grantType.value(), SUPPORTED_GRANT_TYPES))
+        return when (clientProperties.grantType) {
+            JWT_BEARER -> executeOnBehalfOf(clientProperties)
+            CLIENT_CREDENTIALS -> executeClientCredentials(clientProperties)
+            TOKEN_EXCHANGE -> executeTokenExchange(clientProperties)
+            else -> throw OAuth2ClientException("invalid grant-type=${clientProperties.grantType.value()} from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types ($SUPPORTED_GRANT_TYPES)")
         }
     }
 
-    private fun executeOnBehalfOf(clientProperties : ClientProperties) : OAuth2AccessTokenResponse? =
+    private fun executeOnBehalfOf(clientProperties : ClientProperties) =
         getFromCacheIfEnabled(onBehalfOfGrantRequest(clientProperties), onBehalfOfGrantCache, onBehalfOfTokenClient::getTokenResponse)
 
-    private fun executeTokenExchange(clientProperties : ClientProperties) : OAuth2AccessTokenResponse? =
+    private fun executeTokenExchange(clientProperties : ClientProperties) =
         getFromCacheIfEnabled(tokenExchangeGrantRequest(clientProperties), exchangeGrantCache, tokenExchangeClient::getTokenResponse)
 
-    private fun executeClientCredentials(clientProperties : ClientProperties) : OAuth2AccessTokenResponse? =
-        getFromCacheIfEnabled(ClientCredentialsGrantRequest(clientProperties),
-            clientCredentialsGrantCache,
-            clientCredentialsTokenClient::getTokenResponse)
+    private fun executeClientCredentials(clientProperties : ClientProperties) =
+        getFromCacheIfEnabled(ClientCredentialsGrantRequest(clientProperties), clientCredentialsGrantCache, clientCredentialsTokenClient::getTokenResponse)
 
-    private fun isGrantType(clientProperties : ClientProperties,
-                            grantType : OAuth2GrantType) : Boolean {
-        return Optional.ofNullable(clientProperties)
-            .filter { client : ClientProperties -> client.grantType == grantType }
-            .isPresent
-    }
-
-    private fun tokenExchangeGrantRequest(clientProperties : ClientProperties) : TokenExchangeGrantRequest =
+    private fun tokenExchangeGrantRequest(clientProperties : ClientProperties) =
         TokenExchangeGrantRequest(clientProperties, tokenResolver.token()
             .orElseThrow {
-                OAuth2ClientException("no authenticated jwt token found in validation context, " +
-                    "cannot do token exchange")
+                OAuth2ClientException("no authenticated jwt token found in validation context, cannot do token exchange")
             })
 
-    private fun onBehalfOfGrantRequest(clientProperties : ClientProperties) : OnBehalfOfGrantRequest =
+    private fun onBehalfOfGrantRequest(clientProperties : ClientProperties) =
         OnBehalfOfGrantRequest(clientProperties, tokenResolver.token()
             .orElseThrow {
-                OAuth2ClientException("no authenticated jwt token found in validation context, " +
-                    "cannot do on-behalf-of")
+                OAuth2ClientException("no authenticated jwt token found in validation context, cannot do on-behalf-of")
             })
 
-    override fun toString() : String {
-        return javaClass.getSimpleName() + " [" +
-            "                            clientCredentialsGrantCache=" + clientCredentialsGrantCache +
-            ",                             onBehalfOfGrantCache=" + onBehalfOfGrantCache +
-            ",                             tokenExchangeClient=" + tokenExchangeClient +
-            ",                             tokenResolver=" + tokenResolver +
-            ",                             onBehalfOfTokenClient=" + onBehalfOfTokenClient +
-            ",                             clientCredentialsTokenClient=" + clientCredentialsTokenClient +
-            ",                             exchangeGrantCache=" + exchangeGrantCache +
-            "]"
-    }
-
+    override fun toString() =
+        "${javaClass.getSimpleName()} [clientCredentialsGrantCache=$clientCredentialsGrantCache,  onBehalfOfGrantCache=$onBehalfOfGrantCache, tokenExchangeClient=$tokenExchangeClient, tokenResolver=$tokenResolver, onBehalfOfTokenClient=$onBehalfOfTokenClient, clientCredentialsTokenClient=$clientCredentialsTokenClient, exchangeGrantCache=$exchangeGrantCache]"
     companion object {
 
         private val SUPPORTED_GRANT_TYPES = listOf(JWT_BEARER, CLIENT_CREDENTIALS, TOKEN_EXCHANGE
                                                          )
         private val log = LoggerFactory.getLogger(OAuth2AccessTokenService::class.java)
-        private fun <T : AbstractOAuth2GrantRequest?> getFromCacheIfEnabled(
-            grantRequest : T,
-            cache : Cache<T, OAuth2AccessTokenResponse>?,
-            accessTokenResponseClient : Function<T, OAuth2AccessTokenResponse?>) : OAuth2AccessTokenResponse? {
-            return if (cache != null) {
+        private fun <T : AbstractOAuth2GrantRequest?> getFromCacheIfEnabled(grantRequest : T, cache : Cache<T, OAuth2AccessTokenResponse>?,
+                                                                            accessTokenResponseClient : Function<T, OAuth2AccessTokenResponse?>) =
+            if (cache != null) {
                 log.debug("cache is enabled so attempt to get from cache or update cache if not present.")
                 cache[grantRequest, accessTokenResponseClient]
             }
@@ -104,6 +68,5 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
                 log.debug("cache is not set, invoke client directly")
                 accessTokenResponseClient.apply(grantRequest)
             }
-        }
     }
 }

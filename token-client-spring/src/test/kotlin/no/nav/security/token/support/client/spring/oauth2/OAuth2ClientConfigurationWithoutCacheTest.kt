@@ -27,8 +27,8 @@ internal class OAuth2ClientConfigurationWithoutCacheTest {
 
     @Autowired
     private lateinit var oAuth2AccessTokenService: OAuth2AccessTokenService
-    private  var onBehalfOfCache: Cache<OnBehalfOfGrantRequest?, OAuth2AccessTokenResponse>? = null
-    private  var  clientCredentialsCache: Cache<ClientCredentialsGrantRequest?, OAuth2AccessTokenResponse>? = null
+    private   var onBehalfOfCache: Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse>? = null
+    private   var  clientCredentialsCache: Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse>? = null
     @BeforeEach
     fun before() {
         onBehalfOfCache = oAuth2AccessTokenService.onBehalfOfGrantCache

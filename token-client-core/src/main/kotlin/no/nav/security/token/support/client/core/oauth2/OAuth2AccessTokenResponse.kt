@@ -1,6 +1,6 @@
 package no.nav.security.token.support.client.core.oauth2
 
- class OAuth2AccessTokenResponse @JvmOverloads constructor( var accessToken : String? = null,  var expiresAt : Int? = null,  var expiresIn : Int, private var additionalParameters : Map<String, Any> = emptyMap()) {
+ class OAuth2AccessTokenResponse @JvmOverloads constructor(var accessToken : String? = null,  var expiresAt : Int? = null,  var expiresIn : Int, private var additionalParameters : Map<String, Any> = emptyMap()) {
 
     companion object {
        @JvmStatic
