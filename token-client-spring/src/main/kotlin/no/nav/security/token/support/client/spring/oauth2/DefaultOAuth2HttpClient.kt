@@ -17,21 +17,23 @@ import org.springframework.web.client.RestOperations
 
     override fun post(req: OAuth2HttpRequest) =
          try {
-            restOperations.exchange(convert(req), OAuth2AccessTokenResponse::class.java).body
+             convert(req)?.let { restOperations.exchange(it, OAuth2AccessTokenResponse::class.java).body }
         } catch (e: HttpStatusCodeException) {
             throw OAuth2ClientException("Received $e.statusCode from tokenendpoint $req.tokenEndpointUrl with responsebody $e.responseBodyAsString", e)
         }
 
     private fun convert(req: OAuth2HttpRequest) =
          with(req) {
-             RequestEntity(
+             tokenEndpointUrl?.let {
+                 RequestEntity(
                      LinkedMultiValueMap<String, String>().apply { setAll(formParameters) },
                      headers(this),
                      POST,
-                     tokenEndpointUrl)
+                     it)
+             }
          }
 
-    private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { putAll(req.oAuth2HttpHeaders.headers()) }
+    private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { req.oAuth2HttpHeaders?.let { putAll(it.headers()) } }
 
     override fun toString() = "$javaClass.simpleName  [restTemplate=$restOperations]"
 }
