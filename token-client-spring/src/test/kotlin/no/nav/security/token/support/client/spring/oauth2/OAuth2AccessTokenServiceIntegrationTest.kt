@@ -98,9 +98,9 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             Assertions.assertThat(body).contains("requested_token_use=on_behalf_of")
             Assertions.assertThat(body).contains("assertion=" + assertionResolver.token().orElse(null))
             Assertions.assertThat(response).isNotNull
-            Assertions.assertThat(response.accessToken).isNotBlank
-            Assertions.assertThat(response.expiresAt).isGreaterThan(0)
-            Assertions.assertThat(response.expiresIn).isGreaterThan(0)
+            Assertions.assertThat(response?.accessToken).isNotBlank
+            Assertions.assertThat(response?.expiresAt).isGreaterThan(0)
+            Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
     @get:Throws(InterruptedException::class)
@@ -127,9 +127,9 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
                             StandardCharsets.UTF_8))
             Assertions.assertThat(body).contains("subject_token=" + assertionResolver.token().orElse(null))
             Assertions.assertThat(response).isNotNull
-            Assertions.assertThat(response.accessToken).isNotBlank
-            Assertions.assertThat(response.expiresAt).isGreaterThan(0)
-            Assertions.assertThat(response.expiresIn).isGreaterThan(0)
+            Assertions.assertThat(response?.accessToken).isNotBlank
+            Assertions.assertThat(response?.expiresAt).isGreaterThan(0)
+            Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
     @get:Throws(InterruptedException::class)
@@ -164,9 +164,9 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             Assertions.assertThat(body).doesNotContain("requested_token_use=on_behalf_of")
             Assertions.assertThat(body).doesNotContain("assertion=")
             Assertions.assertThat(response).isNotNull
-            Assertions.assertThat(response.accessToken).isNotBlank
-            Assertions.assertThat(response.expiresAt).isGreaterThan(0)
-            Assertions.assertThat(response.expiresIn).isGreaterThan(0)
+            Assertions.assertThat(response?.accessToken).isNotBlank
+            Assertions.assertThat(response?.expiresAt).isGreaterThan(0)
+            Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
     companion object {

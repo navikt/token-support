@@ -17,7 +17,7 @@ import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 
 abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> internal constructor(private val oAuth2HttpClient : OAuth2HttpClient) {
 
-    fun getTokenResponse(grantRequest : T) : OAuth2AccessTokenResponse {
+    fun getTokenResponse(grantRequest : T) : OAuth2AccessTokenResponse? {
         val clientProperties = grantRequest?.clientProperties ?: throw OAuth2ClientException("ClientProperties cannot be null")
         return try {
             val formParameters = createDefaultFormParameters(grantRequest)

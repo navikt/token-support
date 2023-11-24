@@ -13,7 +13,7 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
                                                  val grantType: OAuth2GrantType,
                                                  val scope: List<String> = emptyList(),
                                                  val authentication: ClientAuthenticationProperties,
-                                                 private val resourceUrl: URI? = null,
+                                                 val resourceUrl: URI? = null,
                                                  val tokenExchange: TokenExchangeProperties? = null) {
 
 

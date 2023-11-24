@@ -23,7 +23,7 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
 
 
 
-    fun getAccessToken(clientProperties : ClientProperties?) : OAuth2AccessTokenResponse {
+    fun getAccessToken(clientProperties : ClientProperties?) : OAuth2AccessTokenResponse? {
         if (clientProperties == null) {
             throw OAuth2ClientException("ClientProperties cannot be null")
         }
@@ -43,13 +43,13 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
         }
     }
 
-    private fun executeOnBehalfOf(clientProperties : ClientProperties) : OAuth2AccessTokenResponse =
+    private fun executeOnBehalfOf(clientProperties : ClientProperties) : OAuth2AccessTokenResponse? =
         getFromCacheIfEnabled(onBehalfOfGrantRequest(clientProperties), onBehalfOfGrantCache, onBehalfOfTokenClient::getTokenResponse)
 
-    private fun executeTokenExchange(clientProperties : ClientProperties) : OAuth2AccessTokenResponse =
+    private fun executeTokenExchange(clientProperties : ClientProperties) : OAuth2AccessTokenResponse? =
         getFromCacheIfEnabled(tokenExchangeGrantRequest(clientProperties), exchangeGrantCache, tokenExchangeClient::getTokenResponse)
 
-    private fun executeClientCredentials(clientProperties : ClientProperties) : OAuth2AccessTokenResponse =
+    private fun executeClientCredentials(clientProperties : ClientProperties) : OAuth2AccessTokenResponse? =
         getFromCacheIfEnabled(ClientCredentialsGrantRequest(clientProperties),
             clientCredentialsGrantCache,
             clientCredentialsTokenClient::getTokenResponse)
@@ -95,7 +95,7 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
         private fun <T : AbstractOAuth2GrantRequest?> getFromCacheIfEnabled(
             grantRequest : T,
             cache : Cache<T, OAuth2AccessTokenResponse>?,
-            accessTokenResponseClient : Function<T, OAuth2AccessTokenResponse>) : OAuth2AccessTokenResponse {
+            accessTokenResponseClient : Function<T, OAuth2AccessTokenResponse?>) : OAuth2AccessTokenResponse? {
             return if (cache != null) {
                 log.debug("cache is enabled so attempt to get from cache or update cache if not present.")
                 cache[grantRequest, accessTokenResponseClient]

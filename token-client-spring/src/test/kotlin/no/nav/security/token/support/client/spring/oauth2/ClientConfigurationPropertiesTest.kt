@@ -44,7 +44,7 @@ internal class ClientConfigurationPropertiesTest {
         assertThat(clientConfigurationProperties.registration).isNotNull
         val clientProperties = clientConfigurationProperties.registration["example1-token-exchange1"]
         assertThat(clientProperties).isNotNull
-        assertThat(clientProperties!!.tokenExchange.audience).isNotBlank
+        assertThat(clientProperties!!.tokenExchange?.audience).isNotBlank
     }
 
     @Test
@@ -67,8 +67,8 @@ internal class ClientConfigurationPropertiesTest {
     fun testDifferentClientPropsShouldNOTBeEqualAndShouldMakeSurroundingRequestsUnequalToo() {
         val props = clientConfigurationProperties.registration
         assertThat(props.size).isGreaterThan(1)
-        val p1 = props.get("example1-onbehalfof")
-        val p2 = props.get("example1-onbehalfof2")
+        val p1 = props["example1-onbehalfof"]!!
+        val p2 = props["example1-onbehalfof2"]!!
         assertThat(p1 == p2).isFalse
         val assertion = "123"
         val r1 = OnBehalfOfGrantRequest(p1, assertion)
