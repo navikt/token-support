@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Objects;
 
 import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
+import static no.nav.security.token.support.client.core.OAuth2GrantType.CLIENT_CREDENTIALS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ClientAssertionTest {
@@ -30,17 +31,15 @@ class ClientAssertionTest {
             .clientJwk("src/test/resources/jwk.json")
             .build();
 
-        ClientProperties clientProperties = ClientProperties.builder()
-            .grantType(OAuth2GrantType.CLIENT_CREDENTIALS)
+        ClientProperties clientProperties = ClientProperties.builder(CLIENT_CREDENTIALS,clientAuth)
             .tokenEndpointUrl(URI.create("http://token"))
-            .authentication(clientAuth)
             .build();
 
         Instant now = Instant.now();
 
         ClientAssertion clientAssertion = new ClientAssertion(
-            clientProperties.getTokenEndpointUrl(),
-            clientProperties.getAuthentication());
+                clientProperties.getTokenEndpointUrl(),
+                clientProperties.getAuthentication());
 
         assertThat(clientAssertion).isNotNull();
         assertThat(clientAssertion.assertionType()).isEqualTo("urn:ietf:params:oauth:client-assertion-type:jwt-bearer");

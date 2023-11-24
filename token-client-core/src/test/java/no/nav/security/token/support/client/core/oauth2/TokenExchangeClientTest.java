@@ -10,8 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.URI;
 
 import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
+import static no.nav.security.token.support.client.core.ClientProperties.builder;
+import static no.nav.security.token.support.client.core.OAuth2GrantType.TOKEN_EXCHANGE;
 import static no.nav.security.token.support.client.core.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -53,9 +56,9 @@ class TokenExchangeClientTest {
     @Test
     void getTokenResponseWithPrivateKeyJwtAndExchangeProperties() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        ClientProperties clientProperties = tokenExchangeClientProperties(
+      /*  ClientProperties clientProperties = tokenExchangeClientProperties(
             tokenEndpointUrl,
-            OAuth2GrantType.TOKEN_EXCHANGE,
+            TOKEN_EXCHANGE,
             "src/test/resources/jwk.json"
         )
             .toBuilder()
@@ -63,6 +66,12 @@ class TokenExchangeClientTest {
                 .clientJwk("src/test/resources/jwk.json")
                 .build())
             .build();
+*/
+        var clientProperties = builder(TOKEN_EXCHANGE,ClientAuthenticationProperties.builder("client1",PRIVATE_KEY_JWT)
+                .clientJwk("src/test/resources/jwk.json")
+                .build())
+                .tokenEndpointUrl(URI.create(tokenEndpointUrl))
+                .tokenExchange(new ClientProperties.TokenExchangeProperties("audience")).build();
 
         OAuth2AccessTokenResponse response =
             tokenExchangeClient.getTokenResponse(new TokenExchangeGrantRequest(clientProperties, subjectToken));
@@ -80,7 +89,7 @@ class TokenExchangeClientTest {
         assertThatExceptionOfType(OAuth2ClientException.class)
             .isThrownBy(() -> tokenExchangeClient.getTokenResponse(new TokenExchangeGrantRequest(clientProperties(
                 tokenEndpointUrl,
-                OAuth2GrantType.TOKEN_EXCHANGE
+                TOKEN_EXCHANGE
             ), subjectToken)));
     }
 
@@ -103,8 +112,8 @@ class TokenExchangeClientTest {
     }
 
     private void assertThatRequestBodyContainsTokenExchangeFormParameters(String formParameters) {
-        assertThat(formParameters).contains(OAuth2ParameterNames.GRANT_TYPE + "=" + encodeValue(OAuth2GrantType.TOKEN_EXCHANGE.value()));
-        assertThat(formParameters).contains(OAuth2ParameterNames.AUDIENCE + "=" + "audience1");
+        assertThat(formParameters).contains(OAuth2ParameterNames.GRANT_TYPE + "=" + encodeValue(TOKEN_EXCHANGE.value()));
+        assertThat(formParameters).contains(OAuth2ParameterNames.AUDIENCE + "=" + "audience");
         assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN_TYPE + "=" + encodeValue("urn:ietf:params:oauth:token-type:jwt"));
         assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN + "=" + subjectToken);
     }

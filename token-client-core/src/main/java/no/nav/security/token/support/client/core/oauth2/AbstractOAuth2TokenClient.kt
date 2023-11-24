@@ -67,7 +67,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
             formParameters[OAuth2ParameterNames.CLIENT_SECRET] = auth.clientSecret!!
         }
         else if (PRIVATE_KEY_JWT == auth.clientAuthMethod) {
-            val clientAssertion = ClientAssertion(clientProperties.tokenEndpointUrl, auth)
+            val clientAssertion = ClientAssertion(clientProperties.tokenEndpointUrl!!, auth)
             formParameters[OAuth2ParameterNames.CLIENT_ID] = auth.clientId
             formParameters[OAuth2ParameterNames.CLIENT_ASSERTION_TYPE] = clientAssertion.assertionType()
             formParameters[OAuth2ParameterNames.CLIENT_ASSERTION] = clientAssertion.assertion()

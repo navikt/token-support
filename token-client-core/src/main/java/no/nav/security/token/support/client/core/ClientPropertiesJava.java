@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class ClientProperties {
+public class ClientPropertiesJava {
 
     private static final List<OAuth2GrantType> GRANT_TYPES = List.of(
         OAuth2GrantType.JWT_BEARER,
@@ -35,13 +35,14 @@ public class ClientProperties {
     private AuthorizationServerMetadata authorizationServerMetadata;
     private ResourceRetriever resourceRetriever;
 
-    public ClientProperties(URI tokenEndpointUrl,
-                            URI wellKnownUrl,
-                            @NotNull OAuth2GrantType grantType,
-                            List<String> scope,
-                            @NotNull ClientAuthenticationProperties authentication,
-                            URI resourceUrl,
-                            TokenExchangeProperties tokenExchange
+    public
+    ClientPropertiesJava(URI tokenEndpointUrl,
+                         URI wellKnownUrl,
+                         @NotNull OAuth2GrantType grantType,
+                         List<String> scope,
+                         @NotNull ClientAuthenticationProperties authentication,
+                         URI resourceUrl,
+                         TokenExchangeProperties tokenExchange
     ) {
         this.wellKnownUrl = wellKnownUrl;
 
@@ -128,7 +129,7 @@ public class ClientProperties {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ClientProperties that = (ClientProperties) o;
+        ClientPropertiesJava that = (ClientPropertiesJava) o;
         return Objects.equals(tokenEndpointUrl, that.tokenEndpointUrl) &&
             Objects.equals(grantType, that.grantType) &&
             Objects.equals(scope, that.scope) &&
@@ -283,8 +284,9 @@ public class ClientProperties {
             return this;
         }
 
-        public ClientProperties build() {
-            return new ClientProperties(tokenEndpointUrl, wellKnownUrl, grantType, scope, authentication, resourceUrl, tokenExchange);
+        public
+        ClientPropertiesJava build() {
+            return new ClientPropertiesJava(tokenEndpointUrl, wellKnownUrl, grantType, scope, authentication, resourceUrl, tokenExchange);
         }
 
         @Override

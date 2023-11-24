@@ -94,7 +94,7 @@ class OAuth2AccessTokenServiceTest {
     }
 
     private static ClientProperties exchangeProperties() {
-        return exchangeProperties("audience1");
+        return exchangeProperties("audience");
     }
 
     @Test
@@ -234,9 +234,7 @@ class OAuth2AccessTokenServiceTest {
         return clientProperties("http://token", OAuth2GrantType.TOKEN_EXCHANGE)
             .toBuilder()
             .tokenExchange(
-                ClientProperties.TokenExchangeProperties.builder()
-                    .audience(audience)
-                    .build())
+                new ClientProperties.TokenExchangeProperties(audience))
             .build();
     }
 

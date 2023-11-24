@@ -13,9 +13,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.List;
 
 import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_POST;
 import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
+import static no.nav.security.token.support.client.core.OAuth2GrantType.CLIENT_CREDENTIALS;
 import static no.nav.security.token.support.client.core.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -55,7 +58,7 @@ class ClientCredentialsTokenClientTest {
     @Test
     void getTokenResponseWithDefaultClientAuthMethod() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS);
+        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, CLIENT_CREDENTIALS);
         OAuth2AccessTokenResponse response =
             client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
         RecordedRequest recordedRequest = this.server.takeRequest();
@@ -70,7 +73,7 @@ class ClientCredentialsTokenClientTest {
     @Test
     void getTokenResponseWithClientSecretBasic() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS);
+        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, CLIENT_CREDENTIALS);
         OAuth2AccessTokenResponse response =
             client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
         RecordedRequest recordedRequest = this.server.takeRequest();
@@ -85,12 +88,16 @@ class ClientCredentialsTokenClientTest {
     @Test
     void getTokenResponseWithClientSecretPost() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS)
+      /*  ClientProperties clientProperties = clientProperties(tokenEndpointUrl, CLIENT_CREDENTIALS)
             .toBuilder()
             .authentication(ClientAuthenticationProperties.builder("client",CLIENT_SECRET_POST)
                 .clientSecret("secret")
                 .build())
-            .build();
+            .build();*/
+        var clientProperties  = ClientProperties.builder(CLIENT_CREDENTIALS,ClientAuthenticationProperties.builder("client",CLIENT_SECRET_POST).clientSecret("secret").build())
+                .tokenEndpointUrl(URI.create(tokenEndpointUrl))
+                .scope(List.of("scope1", "scope2"))
+                .build();
 
         OAuth2AccessTokenResponse response =
             client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
@@ -106,12 +113,20 @@ class ClientCredentialsTokenClientTest {
     @Test
     void getTokenResponseWithPrivateKeyJwt() throws InterruptedException {
         this.server.enqueue(jsonResponse(TOKEN_RESPONSE));
-        ClientProperties clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS)
+    /*    ClientProperties clientProperties = clientProperties(tokenEndpointUrl, CLIENT_CREDENTIALS)
             .toBuilder()
             .authentication(ClientAuthenticationProperties.builder("client",PRIVATE_KEY_JWT)
                 .clientJwk("src/test/resources/jwk.json")
                 .build())
             .build();
+*/
+        var clientProperties  = ClientProperties.builder(CLIENT_CREDENTIALS,ClientAuthenticationProperties.builder("client",PRIVATE_KEY_JWT)
+                        .clientSecret("secret")
+                        .clientJwk("src/test/resources/jwk.json")
+                        .build())
+                .tokenEndpointUrl(URI.create(tokenEndpointUrl))
+                .scope(List.of("scope1", "scope2"))
+                .build();
 
         OAuth2AccessTokenResponse response =
             client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties));
@@ -129,7 +144,7 @@ class ClientCredentialsTokenClientTest {
         assertThatExceptionOfType(OAuth2ClientException.class)
             .isThrownBy(() -> client.getTokenResponse(new ClientCredentialsGrantRequest(clientProperties(
                 tokenEndpointUrl,
-                OAuth2GrantType.CLIENT_CREDENTIALS
+                CLIENT_CREDENTIALS
             ))));
     }
 

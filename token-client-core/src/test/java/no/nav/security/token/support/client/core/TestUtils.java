@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 
 import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
 import static com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT;
+import static no.nav.security.token.support.client.core.ClientProperties.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("WeakerAccess")
@@ -30,13 +31,11 @@ public class TestUtils {
     public static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
 
     public static ClientProperties clientProperties(String tokenEndpointUrl, OAuth2GrantType oAuth2GrantType) {
-        return ClientProperties.builder()
-            .grantType(oAuth2GrantType)
+        return builder(oAuth2GrantType,ClientAuthenticationProperties.builder("client1",CLIENT_SECRET_BASIC)
+                        .clientSecret("clientSecret1")
+                        .build())
             .scope(List.of("scope1", "scope2"))
             .tokenEndpointUrl(URI.create(tokenEndpointUrl))
-            .authentication(ClientAuthenticationProperties.builder("client1",CLIENT_SECRET_BASIC)
-                .clientSecret("clientSecret1")
-                .build())
             .build();
     }
 
@@ -45,15 +44,11 @@ public class TestUtils {
         OAuth2GrantType oAuth2GrantType,
         String clientPrivateKey
     ) {
-        return ClientProperties.builder()
-            .grantType(oAuth2GrantType)
+        return builder(oAuth2GrantType,ClientAuthenticationProperties.builder("client1",PRIVATE_KEY_JWT)
+                        .clientJwk(clientPrivateKey)
+                        .build())
             .tokenEndpointUrl(URI.create(tokenEndpointUrl))
-            .authentication(ClientAuthenticationProperties.builder("client1",PRIVATE_KEY_JWT)
-                .clientJwk(clientPrivateKey)
-                .build())
-            .tokenExchange(ClientProperties.TokenExchangeProperties.builder()
-                .audience("audience1")
-                .build())
+            .tokenExchange(new TokenExchangeProperties("audience"))
             .build();
     }
 
