@@ -28,12 +28,12 @@ internal class OAuth2ClientConfigurationWithCacheTest {
 
     @Autowired
     private lateinit var oAuth2AccessTokenService: OAuth2AccessTokenService
-    private lateinit var onBehalfOfCache: Cache<OnBehalfOfGrantRequest?, OAuth2AccessTokenResponse>
-    private lateinit var clientCredentialsCache: Cache<ClientCredentialsGrantRequest?, OAuth2AccessTokenResponse>
+    private lateinit var onBehalfOfCache: Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse>
+    private lateinit var clientCredentialsCache: Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse>
     @BeforeEach
     fun before() {
-        onBehalfOfCache = oAuth2AccessTokenService.onBehalfOfGrantCache
-        clientCredentialsCache = oAuth2AccessTokenService.clientCredentialsGrantCache
+        onBehalfOfCache = oAuth2AccessTokenService.onBehalfOfGrantCache!!
+        clientCredentialsCache = oAuth2AccessTokenService.clientCredentialsGrantCache!!
     }
 
     @Test
