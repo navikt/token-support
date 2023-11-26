@@ -31,7 +31,7 @@ import org.springframework.web.client.RestOperations
                      tokenEndpointUrl!!)
          }
 
-    private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { req.oAuth2HttpHeaders?.let { putAll(it.headers()) } }
+    private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { req.oAuth2HttpHeaders?.let { putAll(it.headers) } }
 
     override fun toString() = "$javaClass.simpleName  [restTemplate=$restOperations]"
 }

@@ -11,15 +11,14 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import java.io.IOException
 import java.net.URI
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
+import no.nav.security.token.support.client.spring.oauth2.TestUtils.jsonResponse
 
 internal class DefaultOAuth2HttpClientTest {
     private lateinit var server: MockWebServer
     private var tokenEndpointUrl: URI? = null
     private lateinit var client: DefaultOAuth2HttpClient
     @BeforeEach
-    @Throws(IOException::class)
     fun setup() {
-        MockitoAnnotations.openMocks(this)
         server = MockWebServer()
         server.start()
         tokenEndpointUrl = server.url("/oauth2/token").toUri()
@@ -27,15 +26,13 @@ internal class DefaultOAuth2HttpClientTest {
     }
 
     @AfterEach
-    @Throws(IOException::class)
     fun teardown() {
         server.shutdown()
     }
 
     @Test
-    @Throws(InterruptedException::class)
     fun testPostAllHeadersAndFormParametersShouldBePresent() {
-        server.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
+        server.enqueue(jsonResponse(TOKEN_RESPONSE))
         val request = OAuth2HttpRequest.builder()
             .tokenEndpointUrl(tokenEndpointUrl)
             .formParameter("param1", "value1")

@@ -17,7 +17,7 @@ internal class OAuth2HttpHeadersTest {
         val httpHeadersFromOf = of(Map.of("header1", listOf("header1value1",
             "header1value2")))
         Assertions.assertThat(httpHeadersFromBuilder).isEqualTo(httpHeadersFromOf)
-        Assertions.assertThat(httpHeadersFromBuilder.headers()).hasSize(1)
-        Assertions.assertThat(httpHeadersFromBuilder.headers()).isEqualTo(httpHeadersFromOf.headers())
+        Assertions.assertThat(httpHeadersFromBuilder.headers).hasSize(1)
+        Assertions.assertThat(httpHeadersFromBuilder.headers).isEqualTo(httpHeadersFromOf.headers)
     }
 }

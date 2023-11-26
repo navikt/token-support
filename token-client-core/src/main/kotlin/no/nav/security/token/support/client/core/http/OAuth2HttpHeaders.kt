@@ -6,9 +6,6 @@ import java.util.TreeMap
 
 class OAuth2HttpHeaders private constructor(val headers : Map<String, List<String>>) {
 
-
-    fun headers()= headers
-
     override fun equals(other : Any?) : Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
@@ -22,11 +19,12 @@ class OAuth2HttpHeaders private constructor(val headers : Map<String, List<Strin
 
     class Builder(private val headers : TreeMap<String, MutableList<String>> =  TreeMap(CASE_INSENSITIVE_ORDER)) {
 
-        fun header(name : String, value : String) : Builder {
-            headers.computeIfAbsent(name) { ArrayList(1) }
-                .add(value)
-            return this
-        }
+        fun header(name : String, value : String) =
+            this.also {
+                headers.computeIfAbsent(name) { ArrayList(1) }
+                    .add(value)
+            }
+
         fun build() = of(headers)
     }
 

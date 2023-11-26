@@ -31,7 +31,7 @@ class SimpleOAuth2HttpClient : OAuth2HttpClient {
         return try {
             val requestBuilder = HttpRequest.newBuilder()
             oAuth2HttpRequest.oAuth2HttpHeaders!!
-                .headers().forEach { (key : String?, value : List<String?>) ->
+                .headers.forEach { (key : String?, value : List<String?>) ->
                     value.forEach(
                         Consumer { v : String? -> requestBuilder.header(key, v) })
                 }
