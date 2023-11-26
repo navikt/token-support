@@ -34,7 +34,7 @@ data class OAuth2CacheConfig(
                 currentTime: Long
             ): Long {
                 val seconds =
-                    if (response.expiresIn > skewInSeconds) response.expiresIn - skewInSeconds else response.expiresIn
+                    if (response.expiresIn!! > skewInSeconds) response.expiresIn!! - skewInSeconds else response.expiresIn!!
                         .toLong()
                 return TimeUnit.SECONDS.toNanos(seconds)
             }

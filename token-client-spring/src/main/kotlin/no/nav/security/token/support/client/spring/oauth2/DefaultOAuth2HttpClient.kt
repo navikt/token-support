@@ -15,22 +15,20 @@ import org.springframework.web.client.RestOperations
     constructor(builder: RestTemplateBuilder) :this(builder.build())
 
 
-    override fun post(req: OAuth2HttpRequest) =
+    override fun post(oAuth2HttpRequest: OAuth2HttpRequest) =
          try {
-             convert(req)?.let { restOperations.exchange(it, OAuth2AccessTokenResponse::class.java).body }
+             restOperations.exchange(convert(oAuth2HttpRequest), OAuth2AccessTokenResponse::class.java).body
         } catch (e: HttpStatusCodeException) {
-            throw OAuth2ClientException("Received $e.statusCode from tokenendpoint $req.tokenEndpointUrl with responsebody $e.responseBodyAsString", e)
+            throw OAuth2ClientException("Received $e.statusCode from tokenendpoint $oAuth2HttpRequest.tokenEndpointUrl with responsebody $e.responseBodyAsString", e)
         }
 
     private fun convert(req: OAuth2HttpRequest) =
          with(req) {
-             tokenEndpointUrl?.let {
                  RequestEntity(
                      LinkedMultiValueMap<String, String>().apply { setAll(formParameters) },
                      headers(this),
                      POST,
-                     it)
-             }
+                     tokenEndpointUrl!!)
          }
 
     private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { req.oAuth2HttpHeaders?.let { putAll(it.headers()) } }

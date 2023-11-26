@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations
 import org.springframework.boot.web.client.RestTemplateBuilder
 import java.io.IOException
 import java.net.URI
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 
 internal class DefaultOAuth2HttpClientTest {
     private lateinit var server: MockWebServer
