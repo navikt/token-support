@@ -40,7 +40,7 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
         private fun endpointUrlFromMetadata(wellKnown: URI?) =
             runCatching {
                 wellKnown?.let { AuthorizationServerMetadata.parse(DefaultResourceRetriever().retrieveResource(wellKnown.toURL()).content).tokenEndpointURI }
-                    ?: throw OAuth2ClientException("Well.known url cannot be null, please check your configuration")
+                    ?: throw OAuth2ClientException("Well known url cannot be null, please check your configuration")
             }.getOrElse {
                 when(it) {
                     is ParseException-> throw OAuth2ClientException("Unable to parse response from $wellKnown", it)
