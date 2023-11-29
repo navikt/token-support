@@ -49,7 +49,7 @@
                 <configuration>
                     <compilerArgs>
                         <arg>-parameters</arg>
-                    </compilerArgs
+                    </compilerArgs>
                 </configuration>
                 <executions>
                     <execution>
