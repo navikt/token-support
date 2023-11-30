@@ -78,16 +78,16 @@ internal class ApplicationTest {
     ) {
         (environment.config as MapApplicationConfig).apply {
             val prefix = "no.nav.security.jwt"
-            put("${prefix}.issuers.size", "1")
-            put("${prefix}.issuers.0.issuer_name", issuerId)
-            put("${prefix}.issuers.0.discoveryurl", "${server.wellKnownUrl(issuerId)}")
-            put("${prefix}.issuers.0.accepted_audience", acceptedAudience)
-            put("${prefix}.client.registration.clients.size", "1")
-            put("${prefix}.client.registration.clients.0.client_name", "issuer1")
-            put("${prefix}.client.registration.clients.0.well_known_url", "${server.wellKnownUrl(issuerId)}")
-            put("${prefix}.client.registration.clients.0.authentication.client_id", "client1")
-            put("${prefix}.client.registration.clients.0.authentication.client_auth_method", "private_key_jwt")
-            put("${prefix}.client.registration.clients.0.authentication.client_jwk", jwk)
+            put("$prefix.issuers.size", "1")
+            put("$prefix.issuers.0.issuer_name", issuerId)
+            put("$prefix.issuers.0.discoveryurl", "${server.wellKnownUrl(issuerId)}")
+            put("$prefix.issuers.0.accepted_audience", acceptedAudience)
+            put("$prefix.client.registration.clients.size", "1")
+            put("$prefix.client.registration.clients.0.client_name", "issuer1")
+            put("$prefix.client.registration.clients.0.well_known_url", "${server.wellKnownUrl(issuerId)}")
+            put("$prefix.client.registration.clients.0.authentication.client_id", "client1")
+            put("$prefix.client.registration.clients.0.authentication.client_auth_method", "private_key_jwt")
+            put("$prefix.client.registration.clients.0.authentication.client_jwk", jwk)
         }
     }
 

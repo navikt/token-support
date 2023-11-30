@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
@@ -21,9 +22,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
-@SpringBootTest(classes = DemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = DemoApplication.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @EnableMockOAuth2Server
 class DemoControllerTest {
@@ -35,15 +38,15 @@ class DemoControllerTest {
 
     @BeforeEach
     void initialiseRestAssuredMockMvcWebApplicationContext() {
-        Collection<Filter> filterCollection = webApplicationContext.getBeansOfType(Filter.class).values();
-        Filter[] filters = filterCollection.toArray(new Filter[0]);
-        MockMvcConfigurer mockMvcConfigurer = new MockMvcConfigurer() {
+        var filterCollection = webApplicationContext.getBeansOfType(Filter.class).values();
+        var filters = filterCollection.toArray(new Filter[0]);
+        var mockMvcConfigurer = new MockMvcConfigurer() {
             @Override
             public void afterConfigurerAdded(ConfigurableMockMvcBuilder<?> builder) {
                 builder.addFilters(filters);
             }
         };
-        RestAssuredMockMvc.webAppContextSetup(webApplicationContext, mockMvcConfigurer);
+        webAppContextSetup(webApplicationContext, mockMvcConfigurer);
     }
 
     @Test
