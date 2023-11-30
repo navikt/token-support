@@ -32,7 +32,7 @@ internal class OAuth2ClientIntegrationTest {
 
     // TODO: fix test on github actions
     @Test
-    @Disabled("fails on github actions, but runs fine in Idea and mvn locally, maybe something with clock/time")
+   @Disabled("fails on github actions, but runs fine in Idea and mvn locally, maybe something with clock/time")
     fun `token request should return cached response on second request with same request`() {
         withMockOAuth2Server {
             this.enqueueCallback(
