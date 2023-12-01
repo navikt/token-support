@@ -88,19 +88,19 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             val auth = clientProperties.authentication
             Assertions.assertThat(usernamePwd).isEqualTo(auth.clientId + ":" + auth.clientSecret)
             Assertions.assertThat(body).contains(
-                    "grant_type=" + URLEncoder.encode(
-                            OAuth2GrantType.JWT_BEARER.value,
-                            StandardCharsets.UTF_8))
+                "grant_type=" + URLEncoder.encode(
+                    OAuth2GrantType.JWT_BEARER.value,
+                    StandardCharsets.UTF_8))
             Assertions.assertThat(body).contains(
-                    "scope=" + URLEncoder.encode(
-                            java.lang.String.join(" ", clientProperties.scope),
-                            StandardCharsets.UTF_8))
+                "scope=" + URLEncoder.encode(
+                    java.lang.String.join(" ", clientProperties.scope),
+                    StandardCharsets.UTF_8))
             Assertions.assertThat(body).contains("requested_token_use=on_behalf_of")
             Assertions.assertThat(body).contains("assertion=" + assertionResolver.token().orElse(null))
             Assertions.assertThat(response).isNotNull
-            Assertions.assertThat(response.accessToken).isNotBlank
-            Assertions.assertThat(response.expiresAt).isGreaterThan(0)
-            Assertions.assertThat(response.expiresIn).isGreaterThan(0)
+            Assertions.assertThat(response?.accessToken).isNotBlank
+            Assertions.assertThat(response?.expiresAt).isGreaterThan(0)
+            Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
     @get:Throws(InterruptedException::class)
@@ -108,7 +108,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
     val accessTokenUsingTokenExhange: Unit
         get() {
             var clientProperties = clientConfigurationProperties.registration["example1-token" +
-                    "-exchange1"]
+                "-exchange1"]
             Assertions.assertThat(clientProperties).isNotNull
             clientProperties = clientProperties!!.toBuilder()
                 .tokenEndpointUrl(tokenEndpointUrl)
@@ -122,14 +122,14 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             val body = request.body.readUtf8()
             Assertions.assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
             Assertions.assertThat(body).contains(
-                    "grant_type=" + URLEncoder.encode(
-                            OAuth2GrantType.TOKEN_EXCHANGE.value,
-                            StandardCharsets.UTF_8))
+                "grant_type=" + URLEncoder.encode(
+                    OAuth2GrantType.TOKEN_EXCHANGE.value,
+                    StandardCharsets.UTF_8))
             Assertions.assertThat(body).contains("subject_token=" + assertionResolver.token().orElse(null))
             Assertions.assertThat(response).isNotNull
-            Assertions.assertThat(response.accessToken).isNotBlank
-            Assertions.assertThat(response.expiresAt).isGreaterThan(0)
-            Assertions.assertThat(response.expiresIn).isGreaterThan(0)
+            Assertions.assertThat(response?.accessToken).isNotBlank
+            Assertions.assertThat(response?.expiresAt).isGreaterThan(0)
+            Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
     @get:Throws(InterruptedException::class)
@@ -158,38 +158,38 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             Assertions.assertThat(usernamePwd).isEqualTo(auth.clientId + ":" + auth.clientSecret)
             Assertions.assertThat(body).contains("grant_type=client_credentials")
             Assertions.assertThat(body).contains(
-                    "scope=" + URLEncoder.encode(
-                            java.lang.String.join(" ", clientProperties.scope),
-                            StandardCharsets.UTF_8))
+                "scope=" + URLEncoder.encode(
+                    java.lang.String.join(" ", clientProperties.scope),
+                    StandardCharsets.UTF_8))
             Assertions.assertThat(body).doesNotContain("requested_token_use=on_behalf_of")
             Assertions.assertThat(body).doesNotContain("assertion=")
             Assertions.assertThat(response).isNotNull
-            Assertions.assertThat(response.accessToken).isNotBlank
-            Assertions.assertThat(response.expiresAt).isGreaterThan(0)
-            Assertions.assertThat(response.expiresIn).isGreaterThan(0)
+            Assertions.assertThat(response?.accessToken).isNotBlank
+            Assertions.assertThat(response?.expiresAt).isGreaterThan(0)
+            Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
     companion object {
         private const val TOKEN_RESPONSE = "{\n" +
-                "    \"token_type\": \"Bearer\",\n" +
-                "    \"scope\": \"scope1 scope2\",\n" +
-                "    \"expires_at\": 1568141495,\n" +
-                "    \"ext_expires_in\": 3599,\n" +
-                "    \"expires_in\": 3599,\n" +
-                "    \"access_token\": \"<base64URL>\",\n" +
-                "    \"refresh_token\": \"<base64URL>\"\n" +
-                "}\n"
+            "    \"token_type\": \"Bearer\",\n" +
+            "    \"scope\": \"scope1 scope2\",\n" +
+            "    \"expires_at\": 1568141495,\n" +
+            "    \"ext_expires_in\": 3599,\n" +
+            "    \"expires_in\": 3599,\n" +
+            "    \"access_token\": \"<base64URL>\",\n" +
+            "    \"refresh_token\": \"<base64URL>\"\n" +
+            "}\n"
         private val log = LoggerFactory.getLogger(OAuth2AccessTokenServiceIntegrationTest::class.java)
         private fun tokenValidationContext(sub: String): TokenValidationContext {
             val expiry = LocalDateTime.now().atZone(ZoneId.systemDefault()).plusSeconds(60).toInstant()
             val jwt: JWT = PlainJWT(
-                    Builder()
-                        .subject(sub)
-                        .audience("thisapi")
-                        .issuer("someIssuer")
-                        .expirationTime(Date.from(expiry))
-                        .claim("jti", UUID.randomUUID().toString())
-                        .build())
+                Builder()
+                    .subject(sub)
+                    .audience("thisapi")
+                    .issuer("someIssuer")
+                    .expirationTime(Date.from(expiry))
+                    .claim("jti", UUID.randomUUID().toString())
+                    .build())
             val map: MutableMap<String, JwtToken> = HashMap()
             map["issuer1"] = JwtToken(jwt.serialize())
             return TokenValidationContext(map)

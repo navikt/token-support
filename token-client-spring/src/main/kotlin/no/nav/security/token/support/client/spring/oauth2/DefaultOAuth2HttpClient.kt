@@ -28,10 +28,10 @@ import org.springframework.web.client.RestOperations
                      LinkedMultiValueMap<String, String>().apply { setAll(formParameters) },
                      headers(this),
                      POST,
-                     tokenEndpointUrl)
+                     tokenEndpointUrl!!)
          }
 
-    private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { putAll(req.oAuth2HttpHeaders.headers()) }
+     private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { req.oAuth2HttpHeaders?.let { putAll(it.headers) } }
 
     override fun toString() = "$javaClass.simpleName  [restTemplate=$restOperations]"
 }

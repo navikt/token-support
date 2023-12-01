@@ -124,7 +124,7 @@ internal suspend fun HttpClient.tokenRequest(
         if (clientAuthProperties.clientAuthMethod == ClientAuthenticationMethod.CLIENT_SECRET_BASIC) {
             header(
                 "Authorization",
-                "Basic ${basicAuth(clientAuthProperties.clientId, clientAuthProperties.clientSecret)}"
+                "Basic ${basicAuth(clientAuthProperties.clientId, clientAuthProperties.clientSecret!!)}"
             )
         }
     }
@@ -136,7 +136,7 @@ private fun ParametersBuilder.appendClientAuthParams(
     when (clientAuthProperties.clientAuthMethod) {
         ClientAuthenticationMethod.CLIENT_SECRET_POST -> {
             append(OAuth2ParameterNames.CLIENT_ID, clientAuthProperties.clientId)
-            append(OAuth2ParameterNames.CLIENT_SECRET, clientAuthProperties.clientSecret)
+            append(OAuth2ParameterNames.CLIENT_SECRET, clientAuthProperties.clientSecret!!)
         }
         ClientAuthenticationMethod.PRIVATE_KEY_JWT -> {
             val clientAssertion = ClientAssertion(URI.create(tokenEndpointUrl), clientAuthProperties)
