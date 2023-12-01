@@ -7,11 +7,11 @@ import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.TOKEN
 class TokenExchangeGrantRequest(clientProperties : ClientProperties, val subjectToken : String) : AbstractOAuth2GrantRequest(TOKEN_EXCHANGE,
     clientProperties) {
 
-    override fun equals(o : Any?) : Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-        if (!super.equals(o)) return false
-        val that = o as TokenExchangeGrantRequest
+    override fun equals(other : Any?) : Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        if (!super.equals(other)) return false
+        val that = other as TokenExchangeGrantRequest
         return subjectToken == that.subjectToken
     }
 
