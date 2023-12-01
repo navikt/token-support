@@ -18,6 +18,7 @@ import no.nav.security.token.support.core.api.Unprotected;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 @Path("local")
 public class TestTokenGeneratorResource {
@@ -63,7 +64,7 @@ public class TestTokenGeneratorResource {
         SignedJWT token = JwtTokenGenerator.createSignedJWT(subject);
         return Response.status(redirect == null ? Response.Status.OK : Response.Status.FOUND)
             .location(redirect == null ? null : URI.create(redirect))
-            .cookie(new NewCookie(cookieName, token.serialize(), "/", "localhost", "", -1, false))
+            .cookie(new NewCookie.Builder(cookieName).value(token.serialize()).path("/").domain("localhost").maxAge(-1).secure(false).build())
             .build();
     }
 
@@ -72,7 +73,7 @@ public class TestTokenGeneratorResource {
     @Path("/jwks")
     public String jwks() throws IOException {
         return IOUtils.readInputStreamToString(
-            getClass().getResourceAsStream(JwkGenerator.DEFAULT_JWKSET_FILE),
+                Objects.requireNonNull(getClass().getResourceAsStream(JwkGenerator.DEFAULT_JWKSET_FILE)),
             Charset.defaultCharset());
     }
 
@@ -87,7 +88,7 @@ public class TestTokenGeneratorResource {
     @GET
     @Path("/metadata")
     public String metadata() throws IOException {
-        return IOUtils.readInputStreamToString(getClass().getResourceAsStream("/metadata.json"),
+        return IOUtils.readInputStreamToString(Objects.requireNonNull(getClass().getResourceAsStream("/metadata.json")),
             Charset.defaultCharset());
     }
 

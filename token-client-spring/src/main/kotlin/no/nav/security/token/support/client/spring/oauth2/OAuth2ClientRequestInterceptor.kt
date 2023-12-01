@@ -22,10 +22,10 @@ import org.springframework.http.client.ClientHttpResponse
 class OAuth2ClientRequestInterceptor(private val properties: ClientConfigurationProperties,
                                      private val service: OAuth2AccessTokenService,
                                      private val matcher: ClientConfigurationPropertiesMatcher) : ClientHttpRequestInterceptor {
-        override fun intercept(req: HttpRequest, body: ByteArray, execution: ClientHttpRequestExecution): ClientHttpResponse {
-            matcher.findProperties(properties, req.uri).orElse(null)
-                ?.let { req.headers.setBearerAuth(service.getAccessToken(it).accessToken) }
-            return execution.execute(req, body)
+    override fun intercept(req: HttpRequest, body: ByteArray, execution: ClientHttpRequestExecution): ClientHttpResponse {
+        matcher.findProperties(properties, req.uri).orElse(null)
+            ?.let { service.getAccessToken(it)?.accessToken?.let { it1 -> req.headers.setBearerAuth(it1) } }
+        return execution.execute(req, body)
     }
 
     override fun toString() = "$javaClass.simpleName  [properties=$properties, service=$service, matcher=$matcher]"
