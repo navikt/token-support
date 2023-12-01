@@ -25,7 +25,7 @@ internal class OnBehalfOfTokenClientTest {
     @BeforeEach
     @Throws(IOException::class)
     fun setup() {
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
         server = MockWebServer()
         server!!.start()
         tokenEndpointUrl = server!!.url(TOKEN_ENDPOINT).toString()

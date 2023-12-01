@@ -1,5 +1,6 @@
 package no.nav.security.token.support.core.validation;
 
+import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jwt.JWT;
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
@@ -36,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
             return new ConfigurableJwtTokenValidator(
                 issuer,
                 optionalClaims,
-                new RemoteJWKSet<>(URI.create("https://someurl").toURL(), new MockResourceRetriever())
-            );
+                  //  JWKSourceBuilder.create(URI.create("https://someurl").toURL(),new MockResourceRetriever()).build());
+                new RemoteJWKSet<>(URI.create("https://someurl").toURL(), new MockResourceRetriever()));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

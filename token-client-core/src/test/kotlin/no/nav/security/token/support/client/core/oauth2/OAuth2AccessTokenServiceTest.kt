@@ -49,7 +49,7 @@ internal class OAuth2AccessTokenServiceTest {
 
     @BeforeEach
     fun setup() {
-       MockitoAnnotations.initMocks(this)
+       MockitoAnnotations.openMocks(this)
         val oboCache = accessTokenResponseCache<OnBehalfOfGrantRequest>(10, 1)
         val clientCredentialsCache = accessTokenResponseCache<ClientCredentialsGrantRequest>(10, 1)
         val exchangeTokenCache = accessTokenResponseCache<TokenExchangeGrantRequest>(10, 1)
