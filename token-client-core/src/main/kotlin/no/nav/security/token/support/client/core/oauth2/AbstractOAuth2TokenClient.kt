@@ -1,6 +1,6 @@
 package no.nav.security.token.support.client.core.oauth2
 
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
+import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
 import java.lang.String.*
 import java.nio.charset.StandardCharsets
@@ -8,7 +8,6 @@ import java.util.Base64
 import java.util.Optional
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.OAuth2GrantType
 import no.nav.security.token.support.client.core.OAuth2ParameterNames
 import no.nav.security.token.support.client.core.auth.ClientAssertion
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
@@ -51,8 +50,8 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
     fun createDefaultFormParameters(grantRequest : T) : MutableMap<String, String> {
         val clientProperties = grantRequest?.clientProperties ?: throw OAuth2ClientException("ClientProperties cannot be null")
         val formParameters : MutableMap<String, String> = LinkedHashMap(clientAuthenticationFormParameters(grantRequest))
-        formParameters[OAuth2ParameterNames.GRANT_TYPE] = grantRequest.grantType.value()
-        if (clientProperties.grantType != OAuth2GrantType.TOKEN_EXCHANGE) {
+        formParameters[OAuth2ParameterNames.GRANT_TYPE] = grantRequest.grantType.value
+        if (clientProperties.grantType != GrantType.TOKEN_EXCHANGE) {
             formParameters[OAuth2ParameterNames.SCOPE] = join(" ", clientProperties.scope)
         }
         return formParameters

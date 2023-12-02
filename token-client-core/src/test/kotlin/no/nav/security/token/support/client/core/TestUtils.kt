@@ -3,6 +3,7 @@ package no.nav.security.token.support.client.core
 import com.nimbusds.jwt.JWT
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
+import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import java.io.IOException
 import java.io.UnsupportedEncodingException
@@ -29,7 +30,7 @@ object TestUtils {
     const val CONTENT_TYPE_FORM_URL_ENCODED = "application/x-www-form-urlencoded;charset=UTF-8"
     const val CONTENT_TYPE_JSON = "application/json;charset=UTF-8"
     @JvmStatic
-    fun clientProperties(tokenEndpointUrl : String?, oAuth2GrantType : OAuth2GrantType?) : ClientProperties {
+    fun clientProperties(tokenEndpointUrl : String?, oAuth2GrantType : GrantType?) : ClientProperties {
         return builder(oAuth2GrantType!!, builder("client1", ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .clientSecret("clientSecret1")
             .build())
@@ -40,7 +41,7 @@ object TestUtils {
 
     fun tokenExchangeClientProperties(
         tokenEndpointUrl : String?,
-        oAuth2GrantType : OAuth2GrantType?,
+        oAuth2GrantType : GrantType?,
         clientPrivateKey : String?
                                      ) : ClientProperties {
         return builder(oAuth2GrantType!!, builder("client1", ClientAuthenticationMethod.PRIVATE_KEY_JWT)

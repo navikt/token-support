@@ -1,5 +1,6 @@
 package no.nav.security.token.support.client.core.oauth2
 
+import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import java.io.IOException
 import java.net.URI
@@ -13,7 +14,6 @@ import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.OAuth2GrantType
 import no.nav.security.token.support.client.core.OAuth2ParameterNames
 import no.nav.security.token.support.client.core.TestUtils.assertPostMethodAndJsonHeaders
 import no.nav.security.token.support.client.core.TestUtils.clientProperties
@@ -58,7 +58,7 @@ internal class TokenExchangeClientTest {
                 .build())
             .build();
 */
-            val clientProperties = builder(OAuth2GrantType.TOKEN_EXCHANGE, builder("client1", ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+            val clientProperties = builder(GrantType.TOKEN_EXCHANGE, builder("client1", ClientAuthenticationMethod.PRIVATE_KEY_JWT)
                 .clientJwk("src/test/resources/jwk.json")
                 .build())
                 .tokenEndpointUrl(URI.create(tokenEndpointUrl))
@@ -79,13 +79,13 @@ internal class TokenExchangeClientTest {
                 .isThrownBy {
                     tokenExchangeClient!!.getTokenResponse(TokenExchangeGrantRequest(clientProperties(
                         tokenEndpointUrl,
-                        OAuth2GrantType.TOKEN_EXCHANGE
+                        GrantType.TOKEN_EXCHANGE
                                                                                                      ), subjectToken!!))
                 }
         }
 
     private fun assertThatRequestBodyContainsTokenExchangeFormParameters(formParameters : String) {
-        Assertions.assertThat(formParameters).contains(OAuth2ParameterNames.GRANT_TYPE + "=" + encodeValue(OAuth2GrantType.TOKEN_EXCHANGE.value()))
+        Assertions.assertThat(formParameters).contains(OAuth2ParameterNames.GRANT_TYPE + "=" + encodeValue(GrantType.TOKEN_EXCHANGE.value))
         Assertions.assertThat(formParameters).contains(OAuth2ParameterNames.AUDIENCE + "=" + "audience")
         Assertions.assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN_TYPE + "=" + encodeValue("urn:ietf:params:oauth:token-type:jwt"))
         Assertions.assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN + "=" + subjectToken)

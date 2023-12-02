@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jwt.SignedJWT
+import com.nimbusds.oauth2.sdk.GrantType
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -24,7 +25,6 @@ import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.token.support.client.core.OAuth2GrantType
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.ktor.oauth.ClientConfig
 
@@ -67,7 +67,7 @@ fun Application.module() {
             call.respond(
                 HttpStatusCode.OK,
                 DemoTokenResponse(
-                    OAuth2GrantType.CLIENT_CREDENTIALS.value,
+                    GrantType.CLIENT_CREDENTIALS.value,
                     oAuth2Response
                 )
             )
@@ -79,7 +79,7 @@ fun Application.module() {
                 call.respond(
                     HttpStatusCode.OK,
                     DemoTokenResponse(
-                        OAuth2GrantType.JWT_BEARER.value,
+                        GrantType.JWT_BEARER.value,
                         oAuth2Response
                     )
                 )
@@ -90,7 +90,7 @@ fun Application.module() {
                 call.respond(
                     HttpStatusCode.OK,
                     DemoTokenResponse(
-                        OAuth2GrantType.TOKEN_EXCHANGE.value,
+                        GrantType.TOKEN_EXCHANGE.value,
                         oAuth2Response
                     )
                 )

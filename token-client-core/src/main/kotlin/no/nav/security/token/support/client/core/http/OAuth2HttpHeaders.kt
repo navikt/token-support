@@ -19,11 +19,7 @@ class OAuth2HttpHeaders (val headers : Map<String, List<String>>) {
 
     class Builder(private val headers : TreeMap<String, MutableList<String>> =  TreeMap(CASE_INSENSITIVE_ORDER)) {
 
-        fun header(name : String, value : String) =
-            this.also {
-                headers.computeIfAbsent(name) { ArrayList(1) }
-                    .add(value)
-            }
+        fun header(name : String, value : String) = this.also { headers.computeIfAbsent(name) { ArrayList(1) }.add(value) }
 
         fun build() = of(headers)
     }

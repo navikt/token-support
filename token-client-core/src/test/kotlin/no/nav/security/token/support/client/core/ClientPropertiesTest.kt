@@ -1,5 +1,6 @@
 package no.nav.security.token.support.client.core
 
+import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import java.io.IOException
 import java.net.URI
@@ -28,15 +29,9 @@ internal class ClientPropertiesTest {
 
     @Test
     fun validGrantTypes() {
-        Assertions.assertNotNull(clientPropertiesFromGrantType(OAuth2GrantType.JWT_BEARER))
-        Assertions.assertNotNull(clientPropertiesFromGrantType(OAuth2GrantType.CLIENT_CREDENTIALS))
-        Assertions.assertNotNull(clientPropertiesFromGrantType(OAuth2GrantType.TOKEN_EXCHANGE))
-    }
-
-    @Test
-    fun invalidGrantTypes() {
-        org.assertj.core.api.Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java)
-            .isThrownBy { clientPropertiesFromGrantType(OAuth2GrantType("somegrantNotSupported")) }
+        Assertions.assertNotNull(clientPropertiesFromGrantType(GrantType.JWT_BEARER))
+        Assertions.assertNotNull(clientPropertiesFromGrantType(GrantType.CLIENT_CREDENTIALS))
+        Assertions.assertNotNull(clientPropertiesFromGrantType(GrantType.TOKEN_EXCHANGE))
     }
 
     @Test
@@ -63,7 +58,7 @@ internal class ClientPropertiesTest {
             return ClientProperties(
                 null,
                 wellKnownUrl,
-                OAuth2GrantType.CLIENT_CREDENTIALS, listOf("scope1", "scope2"),
+                GrantType.CLIENT_CREDENTIALS, listOf("scope1", "scope2"),
                 clientAuth(),
                 null,
                 tokenExchange()
@@ -85,7 +80,7 @@ internal class ClientPropertiesTest {
                                           )
         }
 
-        private fun clientPropertiesFromGrantType(grantType : OAuth2GrantType) : ClientProperties {
+        private fun clientPropertiesFromGrantType(grantType : GrantType) : ClientProperties {
             return ClientProperties(
                 URI.create("http://token"),
                 null,

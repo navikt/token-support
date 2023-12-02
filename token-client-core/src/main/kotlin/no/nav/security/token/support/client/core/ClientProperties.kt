@@ -1,16 +1,14 @@
 package no.nav.security.token.support.client.core;
 
 import com.nimbusds.jose.util.DefaultResourceRetriever;
+import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.ParseException
 import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata
 import java.io.IOException
-import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.CLIENT_CREDENTIALS
-import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.JWT_BEARER
-import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.TOKEN_EXCHANGE
 import java.net.URI
 class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = null,
                                                  private val wellKnownUrl: URI? = null,
-                                                 val grantType: OAuth2GrantType,
+                                                 val grantType: GrantType,
                                                  val scope: List<String> = emptyList(),
                                                  val authentication: ClientAuthenticationProperties,
                                                  val resourceUrl: URI? = null,
@@ -32,15 +30,15 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
             .tokenExchange(tokenExchange)
 
     companion object {
-        private val GRANT_TYPES = listOf(JWT_BEARER, CLIENT_CREDENTIALS, TOKEN_EXCHANGE)
+        private val GRANT_TYPES = listOf(GrantType.JWT_BEARER, GrantType.CLIENT_CREDENTIALS, GrantType.TOKEN_EXCHANGE)
 
        @JvmStatic
-        fun builder(grantType: OAuth2GrantType, authentication: ClientAuthenticationProperties) = ClientPropertiesBuilder(grantType, authentication)
+        fun builder(grantType: GrantType, authentication: ClientAuthenticationProperties) = ClientPropertiesBuilder(grantType, authentication)
 
         private fun endpointUrlFromMetadata(wellKnown: URI?) =
             runCatching {
                 wellKnown?.let { AuthorizationServerMetadata.parse(DefaultResourceRetriever().retrieveResource(wellKnown.toURL()).content).tokenEndpointURI }
-                    ?: throw OAuth2ClientException("Well known url cannot be null, please check your configuration")
+                    ?: throw OAuth2ClientException("Well knowcn url cannot be null, please check your configuration")
             }.getOrElse {
                 when(it) {
                     is ParseException-> throw OAuth2ClientException("Unable to parse response from $wellKnown", it)
@@ -51,7 +49,7 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
             }
     }
 
-    class ClientPropertiesBuilder @JvmOverloads constructor(private val grantType: OAuth2GrantType, val authentication: ClientAuthenticationProperties,
+    class ClientPropertiesBuilder @JvmOverloads constructor(private val grantType: GrantType, val authentication: ClientAuthenticationProperties,
                                                             private var tokenEndpointUrl: URI? = null,
                                                             private var wellKnownUrl: URI? = null,
                                                             private var scope: List<String> = emptyList(),
