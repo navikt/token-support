@@ -1,6 +1,5 @@
 package no.nav.security.token.support.client.core.auth
 
-import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JOSEObjectType.*
 import com.nimbusds.jose.JWSAlgorithm.*
 import com.nimbusds.jose.JWSHeader
@@ -9,8 +8,8 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.SignedJWT
+import com.nimbusds.oauth2.sdk.auth.JWTAuthentication.*
 import java.net.URI
-import java.time.Instant
 import java.time.Instant.*
 import java.util.Date
 import java.util.UUID
@@ -32,7 +31,7 @@ class ClientAssertion(private val tokenEndpointUrl : URI, private val clientId :
                 .build()).serialize()
         }
 
-    fun assertionType() = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+    fun assertionType() = CLIENT_ASSERTION_TYPE
 
     private fun createSignedJWT(rsaJwk : RSAKey, claimsSet : JWTClaimsSet) =
 

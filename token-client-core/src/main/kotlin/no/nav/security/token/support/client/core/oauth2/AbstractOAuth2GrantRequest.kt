@@ -1,10 +1,10 @@
 package no.nav.security.token.support.client.core.oauth2
 
+import com.nimbusds.oauth2.sdk.GrantType
 import java.util.Objects
 import no.nav.security.token.support.client.core.ClientProperties
-import no.nav.security.token.support.client.core.OAuth2GrantType
 
-abstract class AbstractOAuth2GrantRequest(val grantType : OAuth2GrantType, val clientProperties : ClientProperties) {
+abstract class AbstractOAuth2GrantRequest(val grantType : GrantType, val clientProperties : ClientProperties) {
 
     override fun equals(other : Any?) : Boolean {
         if (this === other) return true

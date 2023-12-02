@@ -2,6 +2,7 @@ package no.nav.security.token.support.client.core.oauth2
 
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
+import com.nimbusds.oauth2.sdk.GrantType
 import java.time.Instant
 import java.time.LocalDateTime.*
 import java.time.ZoneId.*
@@ -23,9 +24,6 @@ import org.mockito.MockitoAnnotations
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 import no.nav.security.token.support.client.core.OAuth2CacheFactory.accessTokenResponseCache
 import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.OAuth2GrantType
-import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.CLIENT_CREDENTIALS
-import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.TOKEN_EXCHANGE
 import no.nav.security.token.support.client.core.TestUtils.clientProperties
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 
@@ -208,18 +206,18 @@ internal class OAuth2AccessTokenServiceTest {
         private fun clientCredentialsProperties() = clientCredentialsProperties("scope1", "scope2")
 
         private fun clientCredentialsProperties(vararg scope : String) =
-            clientProperties("http://token", CLIENT_CREDENTIALS)
+            clientProperties("http://token", GrantType.CLIENT_CREDENTIALS)
                 .toBuilder()
                 .scope(Arrays.asList(*scope))
                 .build()
 
         private fun exchangeProperties(audience : String = "audience") =
-            clientProperties("http://token", TOKEN_EXCHANGE)
+            clientProperties("http://token", GrantType.TOKEN_EXCHANGE)
                 .toBuilder()
                 .tokenExchange(TokenExchangeProperties(audience))
                 .build()
 
-        private fun onBehalfOfProperties() = clientProperties("http://token", OAuth2GrantType.JWT_BEARER)
+        private fun onBehalfOfProperties() = clientProperties("http://token", GrantType.JWT_BEARER)
 
         private fun accessTokenResponse(assertion : String, expiresIn : Int) =
             OAuth2AccessTokenResponse(assertion, Math.toIntExact(Instant.now().plusSeconds(expiresIn.toLong()).epochSecond), expiresIn)

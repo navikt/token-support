@@ -1,10 +1,10 @@
 package no.nav.security.token.support.client.core.oauth2
 
+import com.nimbusds.oauth2.sdk.GrantType
 import java.util.Objects
 import no.nav.security.token.support.client.core.ClientProperties
-import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.TOKEN_EXCHANGE
 
-class TokenExchangeGrantRequest(clientProperties : ClientProperties, val subjectToken : String) : AbstractOAuth2GrantRequest(TOKEN_EXCHANGE,
+class TokenExchangeGrantRequest(clientProperties : ClientProperties, val subjectToken : String) : AbstractOAuth2GrantRequest(GrantType.TOKEN_EXCHANGE,
     clientProperties) {
 
     override fun equals(other : Any?) : Boolean {

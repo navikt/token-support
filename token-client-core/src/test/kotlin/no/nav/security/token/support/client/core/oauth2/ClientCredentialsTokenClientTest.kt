@@ -1,5 +1,6 @@
 package no.nav.security.token.support.client.core.oauth2
 
+import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import java.io.IOException
 import java.net.URI
@@ -13,7 +14,6 @@ import no.nav.security.token.support.client.core.ClientAuthenticationProperties.
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
 import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.OAuth2GrantType
 import no.nav.security.token.support.client.core.TestUtils.assertPostMethodAndJsonHeaders
 import no.nav.security.token.support.client.core.TestUtils.clientProperties
 import no.nav.security.token.support.client.core.TestUtils.decodeBasicAuth
@@ -44,7 +44,7 @@ internal class ClientCredentialsTokenClientTest {
     @Test
     fun tokenResponseWithDefaultClientAuthMethod()  {
             server!!.enqueue(jsonResponse(TOKEN_RESPONSE))
-            val clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS)
+            val clientProperties = clientProperties(tokenEndpointUrl, GrantType.CLIENT_CREDENTIALS)
             val response = client!!.getTokenResponse(ClientCredentialsGrantRequest(clientProperties))
             val recordedRequest = server!!.takeRequest()
             assertPostMethodAndJsonHeaders(recordedRequest)
@@ -57,7 +57,7 @@ internal class ClientCredentialsTokenClientTest {
     @Test
     fun  tokenResponseWithClientSecretBasic() {
             server!!.enqueue(jsonResponse(TOKEN_RESPONSE))
-            val clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.CLIENT_CREDENTIALS)
+            val clientProperties = clientProperties(tokenEndpointUrl, GrantType.CLIENT_CREDENTIALS)
             val response = client!!.getTokenResponse(ClientCredentialsGrantRequest(clientProperties))
             val recordedRequest = server!!.takeRequest()
             assertPostMethodAndJsonHeaders(recordedRequest)
@@ -76,7 +76,7 @@ internal class ClientCredentialsTokenClientTest {
                 .clientSecret("secret")
                 .build())
             .build();*/
-            val clientProperties = builder(OAuth2GrantType.CLIENT_CREDENTIALS, builder("client", ClientAuthenticationMethod.CLIENT_SECRET_POST)
+            val clientProperties = builder(GrantType.CLIENT_CREDENTIALS, builder("client", ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .clientSecret("secret").build())
                 .tokenEndpointUrl(URI.create(tokenEndpointUrl))
                 .scope(listOf("scope1", "scope2"))
@@ -101,7 +101,7 @@ internal class ClientCredentialsTokenClientTest {
                 .build())
             .build();
 */
-            val clientProperties = builder(OAuth2GrantType.CLIENT_CREDENTIALS, builder("client", ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+            val clientProperties = builder(GrantType.CLIENT_CREDENTIALS, builder("client", ClientAuthenticationMethod.PRIVATE_KEY_JWT)
                 .clientSecret("secret")
                 .clientJwk("src/test/resources/jwk.json")
                 .build())
@@ -124,7 +124,7 @@ internal class ClientCredentialsTokenClientTest {
                 .isThrownBy {
                     client!!.getTokenResponse(ClientCredentialsGrantRequest(clientProperties(
                         tokenEndpointUrl,
-                        OAuth2GrantType.CLIENT_CREDENTIALS
+                        GrantType.CLIENT_CREDENTIALS
                                                                                             )))
                 }
         }

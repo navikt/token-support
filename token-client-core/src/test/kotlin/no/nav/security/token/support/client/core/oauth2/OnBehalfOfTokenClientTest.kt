@@ -1,5 +1,6 @@
 package no.nav.security.token.support.client.core.oauth2
 
+import com.nimbusds.oauth2.sdk.GrantType
 import java.io.IOException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.MockitoAnnotations
 import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.OAuth2GrantType
 import no.nav.security.token.support.client.core.TestUtils.assertPostMethodAndJsonHeaders
 import no.nav.security.token.support.client.core.TestUtils.clientProperties
 import no.nav.security.token.support.client.core.TestUtils.jsonResponse
@@ -42,13 +42,13 @@ internal class OnBehalfOfTokenClientTest {
     fun tokenResponse()  {
             server!!.enqueue(jsonResponse(TOKEN_RESPONSE))
             val assertion = jwt("sub1").serialize()
-            val clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.JWT_BEARER)
+            val clientProperties = clientProperties(tokenEndpointUrl, GrantType.JWT_BEARER)
             val oAuth2OnBehalfOfGrantRequest = OnBehalfOfGrantRequest(clientProperties, assertion)
             val response = onBehalfOfTokenResponseClient!!.getTokenResponse(oAuth2OnBehalfOfGrantRequest)
             val recordedRequest = server!!.takeRequest()
             assertPostMethodAndJsonHeaders(recordedRequest)
             val formParameters = recordedRequest.body.readUtf8()
-            Assertions.assertThat(formParameters).contains("grant_type=" + URLEncoder.encode(OAuth2GrantType.JWT_BEARER.value(),
+            Assertions.assertThat(formParameters).contains("grant_type=" + URLEncoder.encode(GrantType.JWT_BEARER.value,
                 StandardCharsets.UTF_8))
                 .contains("scope=scope1+scope2")
                 .contains("requested_token_use=on_behalf_of")
@@ -63,7 +63,7 @@ internal class OnBehalfOfTokenClientTest {
     fun  tokenResponseWithError() {
             server!!.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400))
             val assertion = jwt("sub1").serialize()
-            val clientProperties = clientProperties(tokenEndpointUrl, OAuth2GrantType.JWT_BEARER)
+            val clientProperties = clientProperties(tokenEndpointUrl, GrantType.JWT_BEARER)
             val oAuth2OnBehalfOfGrantRequest = OnBehalfOfGrantRequest(clientProperties, assertion)
             Assertions.assertThatExceptionOfType(OAuth2ClientException::class.java)
                 .isThrownBy { onBehalfOfTokenResponseClient!!.getTokenResponse(oAuth2OnBehalfOfGrantRequest) }

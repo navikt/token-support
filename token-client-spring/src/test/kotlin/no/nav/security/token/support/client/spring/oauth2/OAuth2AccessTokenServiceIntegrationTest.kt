@@ -3,7 +3,7 @@ package no.nav.security.token.support.client.spring.oauth2
 import com.nimbusds.jwt.JWT
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
-import no.nav.security.token.support.client.core.OAuth2GrantType
+import com.nimbusds.oauth2.sdk.GrantType
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -61,10 +61,8 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
         server!!.shutdown()
     }
 
-    @get:Throws(InterruptedException::class)
-    @get:Test
-    val accessTokenOnBehalfOf: Unit
-        get() {
+    @Test
+    fun accessTokenOnBehalfOf() {
             var clientProperties = clientConfigurationProperties.registration["example1-onbehalfof"]
             Assertions.assertThat(clientProperties).isNotNull
             clientProperties = clientProperties!!.toBuilder()
@@ -89,7 +87,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             Assertions.assertThat(usernamePwd).isEqualTo(auth.clientId + ":" + auth.clientSecret)
             Assertions.assertThat(body).contains(
                 "grant_type=" + URLEncoder.encode(
-                    OAuth2GrantType.JWT_BEARER.value,
+                    GrantType.JWT_BEARER.value,
                     StandardCharsets.UTF_8))
             Assertions.assertThat(body).contains(
                 "scope=" + URLEncoder.encode(
@@ -103,10 +101,8 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
-    @get:Throws(InterruptedException::class)
-    @get:Test
-    val accessTokenUsingTokenExhange: Unit
-        get() {
+    @Test
+    fun accessTokenUsingTokenExhange() {
             var clientProperties = clientConfigurationProperties.registration["example1-token" +
                 "-exchange1"]
             Assertions.assertThat(clientProperties).isNotNull
@@ -123,7 +119,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             Assertions.assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
             Assertions.assertThat(body).contains(
                 "grant_type=" + URLEncoder.encode(
-                    OAuth2GrantType.TOKEN_EXCHANGE.value,
+                    GrantType.TOKEN_EXCHANGE.value,
                     StandardCharsets.UTF_8))
             Assertions.assertThat(body).contains("subject_token=" + assertionResolver.token().orElse(null))
             Assertions.assertThat(response).isNotNull
@@ -132,10 +128,8 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
-    @get:Throws(InterruptedException::class)
-    @get:Test
-    val accessTokenClientCredentials: Unit
-        get() {
+    @Test
+    fun accessTokenClientCredentials() {
             var clientProperties = clientConfigurationProperties.registration["example1-clientcredentials1"]
             Assertions.assertThat(clientProperties).isNotNull
             clientProperties = clientProperties!!.toBuilder()

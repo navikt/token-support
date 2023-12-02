@@ -1,16 +1,17 @@
 package no.nav.security.token.support.client.core.jwk
 
 import com.nimbusds.jose.jwk.JWKSet
+import com.nimbusds.jose.jwk.JWKSet.*
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.RSAKey.Builder
-import com.nimbusds.jose.util.Base64URL.*
+import com.nimbusds.jose.jwk.RSAKey.parse
+import com.nimbusds.jose.util.Base64URL.encode
 import java.io.InputStream
-import java.nio.charset.StandardCharsets.*
-import java.nio.file.Files
-import java.nio.file.Path
+import java.nio.charset.StandardCharsets.UTF_8
+import java.nio.file.Files.readString
+import java.nio.file.Path.of
 import java.security.KeyStore
-import java.security.MessageDigest.*
-import java.security.NoSuchAlgorithmException
+import java.security.MessageDigest.getInstance
 import org.slf4j.LoggerFactory
 
 object JwkFactory {
@@ -19,17 +20,17 @@ object JwkFactory {
     @JvmStatic
     fun fromJsonFile(filePath : String) =
         runCatching {
-            LOG.debug("Attempting to read jwk from path: {}", Path.of(filePath).toAbsolutePath())
-            fromJson(Files.readString(Path.of(filePath), UTF_8))
+            LOG.debug("Attempting to read JWK from path: {}", of(filePath).toAbsolutePath())
+            fromJson(readString(of(filePath), UTF_8))
         }.getOrElse {
             throw JwkInvalidException(it)
         }
 
 
     @JvmStatic
-    fun fromJson(jsonJwk : String) =
+    fun fromJson(jwk : String) =
         runCatching {
-            RSAKey.parse(jsonJwk)
+            parse(jwk)
         }.getOrElse {
             throw JwkInvalidException(it)
         }
@@ -48,7 +49,7 @@ object JwkFactory {
             KeyStore.getInstance("JKS").run {
                 with(password.toCharArray()) {
                     load(keyStoreFile, this)
-                    JWKSet.load(this@run) { this }
+                    load(this@run) { this }
                 }
             }
         }.getOrElse {

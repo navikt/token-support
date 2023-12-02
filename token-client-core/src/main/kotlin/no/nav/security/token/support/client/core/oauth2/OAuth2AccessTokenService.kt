@@ -1,13 +1,13 @@
 package no.nav.security.token.support.client.core.oauth2
 
 import com.github.benmanes.caffeine.cache.Cache
+import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
+import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
+import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import java.util.function.Function
 import org.slf4j.LoggerFactory
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.CLIENT_CREDENTIALS
-import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.JWT_BEARER
-import no.nav.security.token.support.client.core.OAuth2GrantType.Companion.TOKEN_EXCHANGE
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 
 class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolver : JwtBearerTokenResolver,
@@ -21,12 +21,12 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
 
 
     fun getAccessToken(clientProperties : ClientProperties) : OAuth2AccessTokenResponse? {
-        log.debug("Getting access_token for grant={}", clientProperties.grantType)
+        log.trace("Getting access_token for grant={}", clientProperties.grantType)
         return when (clientProperties.grantType) {
             JWT_BEARER -> executeOnBehalfOf(clientProperties)
             CLIENT_CREDENTIALS -> executeClientCredentials(clientProperties)
             TOKEN_EXCHANGE -> executeTokenExchange(clientProperties)
-            else -> throw OAuth2ClientException("invalid grant-type=${clientProperties.grantType.value()} from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types ($SUPPORTED_GRANT_TYPES)")
+            else -> throw OAuth2ClientException("invalid grant-type=${clientProperties.grantType.value} from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types ($SUPPORTED_GRANT_TYPES)")
         }
     }
 
