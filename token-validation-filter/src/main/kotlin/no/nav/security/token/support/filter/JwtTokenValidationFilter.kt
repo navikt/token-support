@@ -12,7 +12,7 @@ import no.nav.security.token.support.core.http.HttpRequest
 import no.nav.security.token.support.core.http.HttpRequest.NameValue
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 
-class JwtTokenValidationFilter(private val jwtTokenValidationHandler : JwtTokenValidationHandler, private val contextHolder : TokenValidationContextHolder) : Filter {
+open class JwtTokenValidationFilter(private val jwtTokenValidationHandler : JwtTokenValidationHandler, private val contextHolder : TokenValidationContextHolder) : Filter {
 
     override fun destroy() {}
 
