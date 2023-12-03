@@ -64,7 +64,7 @@ class EnableJwtTokenValidationConfiguration (private val env: Environment) : Web
     fun requestContextListener() = RequestContextListener()
 
     @Bean
-    fun tokenValidationFilter(config: MultiIssuerConfiguration?, h: TokenValidationContextHolder?) = JwtTokenValidationFilter(JwtTokenValidationHandler(config), h)
+    fun tokenValidationFilter(config: MultiIssuerConfiguration?, h: TokenValidationContextHolder) = JwtTokenValidationFilter(JwtTokenValidationHandler(config), h)
 
     @Bean
     @ConditionalOnProperty(EXPIRY_THRESHOLD_ENV_PROPERTY)

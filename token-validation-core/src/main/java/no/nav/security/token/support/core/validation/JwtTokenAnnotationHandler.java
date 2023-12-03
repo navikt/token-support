@@ -118,7 +118,7 @@ public class JwtTokenAnnotationHandler {
     }
 
     protected boolean handleProtectedWithClaims(String issuer, String[] requiredClaims, boolean combineWithOr, JwtToken jwtToken) {
-        if (Objects.nonNull(issuer) && issuer.length() > 0) {
+        if (Objects.nonNull(issuer) && !issuer.isEmpty()) {
             return containsRequiredClaims(jwtToken, combineWithOr, requiredClaims);
         }
         return true;
