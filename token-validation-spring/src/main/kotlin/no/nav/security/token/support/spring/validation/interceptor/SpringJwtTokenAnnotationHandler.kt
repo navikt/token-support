@@ -11,5 +11,5 @@ class SpringJwtTokenAnnotationHandler(holder: TokenValidationContextHolder?) : J
         findAnnotation(m, types) ?: findAnnotation(m.declaringClass, types)
 
     private fun findAnnotation(e: AnnotatedElement, types: List<Class<out Annotation>>) =
-        types.firstNotNullOfOrNull { t: Class<out Annotation> -> findMergedAnnotation(e, t) }
+        types.firstNotNullOfOrNull { findMergedAnnotation(e, it) }
 }
