@@ -2,7 +2,6 @@ package no.nav.security.token.support.ktor
 
 import io.ktor.application.ApplicationCall
 import io.ktor.response.header
-import no.nav.security.token.support.core.JwtTokenConstants
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.jwt.JwtTokenClaims
 import org.slf4j.LoggerFactory
@@ -10,6 +9,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.*
+import no.nav.security.token.support.core.JwtTokenConstants
 
 class JwtTokenExpiryThresholdHandler(private val expiryThreshold: Int) {
 

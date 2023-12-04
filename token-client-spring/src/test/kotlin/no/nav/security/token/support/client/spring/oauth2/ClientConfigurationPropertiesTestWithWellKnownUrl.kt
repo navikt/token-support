@@ -3,7 +3,6 @@ package no.nav.security.token.support.client.spring.oauth2
 
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesTestWithWellKnownUrl.RandomPortInitializer
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -19,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.support.TestPropertySourceUtils
 import java.io.IOException
 import java.util.function.Supplier
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestTemplateAutoConfiguration::class])
 @ContextConfiguration(initializers = [RandomPortInitializer::class])

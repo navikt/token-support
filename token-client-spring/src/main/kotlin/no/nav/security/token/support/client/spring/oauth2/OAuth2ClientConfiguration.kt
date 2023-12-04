@@ -8,7 +8,6 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
 import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
@@ -21,6 +20,7 @@ import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.core.annotation.AnnotationAttributes.fromMap
 import org.springframework.core.type.AnnotationMetadata
 import java.util.*
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @EnableConfigurationProperties(ClientConfigurationProperties::class)
 @Configuration

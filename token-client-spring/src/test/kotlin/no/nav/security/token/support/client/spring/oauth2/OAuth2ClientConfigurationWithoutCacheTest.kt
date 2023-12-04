@@ -5,7 +5,6 @@ import no.nav.security.token.support.client.core.oauth2.ClientCredentialsGrantRe
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,6 +16,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ActiveProfiles
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [ConfigurationWithCacheEnabledFalse::class])
 @ActiveProfiles("test")

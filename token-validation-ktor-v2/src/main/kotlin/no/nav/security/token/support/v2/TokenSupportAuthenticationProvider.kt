@@ -18,15 +18,15 @@ import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.core.context.TokenValidationContext
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
-import no.nav.security.token.support.core.http.HttpRequest
 import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import org.slf4j.LoggerFactory
 import java.net.URL
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import no.nav.security.token.support.core.http.HttpRequest
 
 data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 

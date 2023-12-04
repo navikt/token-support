@@ -8,7 +8,6 @@ import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.core.context.TokenValidationContext
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.jwt.JwtToken
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions
@@ -29,6 +28,7 @@ import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [ConfigurationWithCacheEnabledTrue::class])
 @ActiveProfiles("test")

@@ -2,7 +2,6 @@ package no.nav.security.token.support.client.spring.oauth2
 
 
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import java.net.URI
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestTemplateAutoConfiguration::class])
 @ActiveProfiles("test-withresourceurl")

@@ -1,13 +1,13 @@
 package no.nav.security.token.support.spring.validation.interceptor
 
-import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.http.client.ClientHttpResponse
 import java.io.IOException
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 class BearerTokenClientHttpRequestInterceptor(private val holder: TokenValidationContextHolder) : ClientHttpRequestInterceptor {
     private val log = LoggerFactory.getLogger(BearerTokenClientHttpRequestInterceptor::class.java)

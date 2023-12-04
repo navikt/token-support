@@ -7,7 +7,6 @@ import no.nav.security.token.support.core.api.Protected
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.security.token.support.core.api.Unprotected
 import no.nav.security.token.support.core.context.TokenValidationContext
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.jwt.JwtToken
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -21,6 +20,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.server.ResponseStatusException
 import java.util.concurrent.ConcurrentHashMap
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.utils.Cluster
 
 internal class JwtTokenHandlerInterceptorTest {
@@ -41,10 +41,11 @@ internal class JwtTokenHandlerInterceptorTest {
 
 
     @Test
-    fun notAnnotatedShouldThrowException() =
+    fun notAnnotatedShouldThrowException() {
         assertThatExceptionOfType(ResponseStatusException::class.java).isThrownBy {
             interceptor.preHandle(request, response, handlerMethod(NotAnnotatedClass(), "test"))
         }.withMessageContaining(NOT_IMPLEMENTED.toString())
+    }
 
     @Test
     fun methodIsUnprotectedAccessShouldBeAllowed() = assertTrue(interceptor.preHandle(request, response, handlerMethod(UnprotectedClass(), "test")))
