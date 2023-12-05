@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory
 import java.net.URL
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.http.HttpRequest
+import no.nav.security.token.support.core.http.HttpRequest.NameValue
 
 data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
@@ -170,14 +171,13 @@ internal class RequiredClaimsHandler(private val tokenValidationContextHolder: T
     }
 }
 
-internal data class NameValueCookie(@JvmField val name: String, @JvmField val value: String) : HttpRequest.NameValue {
+internal data class NameValueCookie(@JvmField val name: String, @JvmField val value: String) : NameValue {
     override fun getName(): String = name
     override fun getValue(): String = value
 }
 
-internal data class JwtTokenHttpRequest(private val cookies: RequestCookies, private val headers: Headers) :
-    HttpRequest {
-    override fun getCookies() =
+internal data class JwtTokenHttpRequest(private val cookies: RequestCookies, private val headers: Headers) : HttpRequest {
+    override fun getCookies() : Array<NameValue> =
         cookies.rawCookies.map {
             NameValueCookie(
                 it.key,

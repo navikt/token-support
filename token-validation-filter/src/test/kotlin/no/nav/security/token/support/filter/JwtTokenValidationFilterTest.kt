@@ -31,12 +31,15 @@ import java.security.interfaces.RSAPublicKey
 import java.util.Arrays
 import java.util.Date
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import no.nav.security.token.support.core.JwtTokenConstants
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
@@ -66,11 +69,11 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-        Mockito.`when`(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie(IDTOKENCOOKIENAME, jwt)))
+        `when`(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie(IDTOKENCOOKIENAME, jwt)))
         filter.doFilter(servletRequest, servletResponse!!,
             mockFilterchainAsserting(issuername, "foobar", ctxHolder, filterCallCounter))
 
-        Assertions.assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
+        assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
     }
 
     @Test
@@ -86,12 +89,12 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-        Mockito.`when`(servletRequest!!.cookies).thenReturn(null)
-        Mockito.`when`(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt")
+        `when`(servletRequest!!.cookies).thenReturn(null)
+        `when`(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt")
         filter.doFilter(servletRequest, servletResponse!!,
             mockFilterchainAsserting(anotherIssuer, "foobar", ctxHolder, filterCallCounter))
 
-        Assertions.assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
+        assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
     }
 
     @Test
@@ -111,39 +114,39 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-        Mockito.`when`(servletRequest!!.cookies).thenReturn(null)
-        Mockito.`when`(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt1,Bearer $jwt2")
+        `when`(servletRequest!!.cookies).thenReturn(null)
+        `when`(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt1,Bearer $jwt2")
         filter.doFilter(servletRequest, servletResponse!!,
             mockFilterchainAsserting(arrayOf(issuer1, anotherIssuer), arrayOf("foobar", "foobar"), ctxHolder, filterCallCounter))
 
-        Assertions.assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
+        assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
     }
 
     @Test
     fun testRequestConverterShouldHandleWhenCookiesAreNULL() {
-        Mockito.`when`(servletRequest!!.cookies).thenReturn(null)
-        Mockito.`when`(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn(null)
+        `when`(servletRequest!!.cookies).thenReturn(null)
+        `when`(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn(null)
 
         val req = fromHttpServletRequest(servletRequest)
-        Assertions.assertNull(req.cookies)
-        Assertions.assertNull(req.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER))
+        assertNull(req.getCookies())
+        assertNull(req.getHeader(AUTHORIZATION_HEADER))
     }
 
     @Test
     fun testRequestConverterShouldConvertCorrectly() {
-        Mockito.`when`(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie("IDTOKEN", "THETOKEN")))
-        Mockito.`when`(servletRequest.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA")
+        `when`(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie("IDTOKEN", "THETOKEN")))
+        `when`(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA")
 
         val req = fromHttpServletRequest(servletRequest)
-        Assertions.assertEquals("JSESSIONID", req.cookies[0].name)
-        Assertions.assertEquals("ABCDEF", req.cookies[0].value)
-        Assertions.assertEquals("IDTOKEN", req.cookies[1].name)
-        Assertions.assertEquals("THETOKEN", req.cookies[1].value)
-        Assertions.assertEquals("Bearer eyAAA", req.getHeader(JwtTokenConstants.AUTHORIZATION_HEADER))
+        req.getCookies()?.get(0)?.getName()
+        assertEquals("JSESSIONID", req.getCookies()?.first()?.getName())
+        assertEquals("ABCDEF", req.getCookies()?.first()?.getValue())
+        assertEquals("IDTOKEN", req.getCookies()?.get(1)?.getName())
+        assertEquals("THETOKEN", req.getCookies()?.get(1)?.getValue())
+        assertEquals("Bearer eyAAA", req.getHeader(AUTHORIZATION_HEADER))
     }
 
-    private fun mockFilterchainAsserting(issuer : String, subject : String, ctxHolder : TokenValidationContextHolder,
-                                         filterCallCounter : IntArray) : FilterChain {
+    private fun mockFilterchainAsserting(issuer : String, subject : String, ctxHolder : TokenValidationContextHolder, filterCallCounter : IntArray) : FilterChain {
         return mockFilterchainAsserting(arrayOf(issuer), arrayOf(subject), ctxHolder, filterCallCounter)
     }
 
@@ -153,11 +156,11 @@ internal class JwtTokenValidationFilterTest {
             // TokenValidationContext is nulled after filter-call, so we check it here:
             filterCallCounter[0]++
             val ctx = ctxHolder.tokenValidationContext
-            Assertions.assertTrue(ctx.hasValidToken())
-            Assertions.assertEquals(issuers.size, ctx.issuers.size)
+            assertTrue(ctx.hasValidToken())
+            assertEquals(issuers.size, ctx.issuers.size)
             for (i in issuers.indices) {
-                Assertions.assertTrue(ctx.hasTokenFor(issuers[i]))
-                Assertions.assertEquals(subjects[i], ctx.getClaims(issuers[i]).getStringClaim("sub"))
+                assertTrue(ctx.hasTokenFor(issuers[i]))
+                assertEquals(subjects[i], ctx.getClaims(issuers[i]).getStringClaim("sub"))
             }
         }
     }
