@@ -115,10 +115,6 @@ public class MockWebServerConfiguration {
     }
 
     private String decode(String value) {
-        try {
-            return URLDecoder.decode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        return URLDecoder.decode(value, StandardCharsets.UTF_8);
     }
 }

@@ -55,7 +55,7 @@ class TokenSupportAuthenticationProvider(
         jwtTokenExpiryThresholdHandler = JwtTokenExpiryThresholdHandler(expiryThreshold)
     }
 
-    class ProviderConfiguration internal constructor(name: String?) : AuthenticationProvider.Config(name)
+    class ProviderConfiguration internal constructor(name: String?) : Config(name)
 
     override suspend fun onAuthenticate(context: AuthenticationContext) {
         val applicationCall = context.call

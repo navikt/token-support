@@ -9,12 +9,12 @@ data class OAuth2GrantType(@JvmField val value : String) {
     companion object {
        @JvmField
        @Deprecated("Use GrantType.JWT_BEARER from nimbus instead")
-       val JWT_BEARER = OAuth2GrantType(GrantType.JWT_BEARER.value)
+       val JWT_BEARER = GrantType(GrantType.JWT_BEARER.value)
         @JvmField
         @Deprecated("Use GrantType.CLIENT_CREDENTIALS from nimbus instead")
-        val CLIENT_CREDENTIALS = OAuth2GrantType(GrantType.CLIENT_CREDENTIALS.value)
+        val CLIENT_CREDENTIALS = GrantType(GrantType.CLIENT_CREDENTIALS.value)
         @JvmField
         @Deprecated("Use GrantType.TOKEN_EXCHANGE from nimbus instead")
-        val TOKEN_EXCHANGE = OAuth2GrantType(GrantType.TOKEN_EXCHANGE.value)
+        val TOKEN_EXCHANGE = GrantType(GrantType.TOKEN_EXCHANGE.value)
     }
 }

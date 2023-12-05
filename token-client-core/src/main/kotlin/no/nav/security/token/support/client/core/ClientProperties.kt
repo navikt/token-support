@@ -1,6 +1,6 @@
-package no.nav.security.token.support.client.core;
+package no.nav.security.token.support.client.core
 
-import com.nimbusds.jose.util.DefaultResourceRetriever;
+import com.nimbusds.jose.util.DefaultResourceRetriever
 import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.ParseException
 import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata

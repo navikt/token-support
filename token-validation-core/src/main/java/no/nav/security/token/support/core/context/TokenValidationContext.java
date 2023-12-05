@@ -24,7 +24,8 @@ public class TokenValidationContext {
         return issuerShortNameValidatedTokenMap.values().stream().findFirst();
     }
 
-    public JwtToken getJwtToken(String issuerName) {
+    public
+    JwtToken getJwtToken(String issuerName) {
         return jwtToken(issuerName).orElse(null);
     }
 
