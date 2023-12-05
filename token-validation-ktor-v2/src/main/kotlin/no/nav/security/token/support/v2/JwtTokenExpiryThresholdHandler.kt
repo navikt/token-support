@@ -31,7 +31,7 @@ class JwtTokenExpiryThresholdHandler(private val expiryThreshold: Int) {
     }
 
     private fun tokenExpiresBeforeThreshold(jwtTokenClaims: JwtTokenClaims): Boolean {
-        val expiryDate = jwtTokenClaims["exp"] as Date
+        val expiryDate = jwtTokenClaims.get("exp") as Date
         val expiry = LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault())
         val minutesUntilExpiry = LocalDateTime.now().until(expiry, ChronoUnit.MINUTES)
         log.debug("Checking token at time {} with expirationTime {} for how many minutes until expiry: {}",

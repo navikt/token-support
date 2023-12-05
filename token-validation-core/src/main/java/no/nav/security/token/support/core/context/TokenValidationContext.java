@@ -36,7 +36,8 @@ public class TokenValidationContext {
             '}';
     }
 
-    public JwtTokenClaims getClaims(String issuerName) {
+    public
+    JwtTokenClaims getClaims(String issuerName) {
         return jwtToken(issuerName)
             .map(JwtToken::getJwtTokenClaims)
             .orElse(null);
