@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MultiIssuerConfigurationTest {
@@ -45,8 +46,8 @@ class MultiIssuerConfigurationTest {
 
     @Test
     void getIssuerConfigurationWithProxy() {
-        IssuerProperties issuerProperties = new IssuerProperties(discoveryUrl, List.of("audience1"));
-        issuerProperties.setProxyUrl(proxyUrl);
+        IssuerProperties issuerProperties = new IssuerProperties(discoveryUrl, List.of("audience1"),null,AUTHORIZATION_HEADER, IssuerProperties.Validation.EMPTY, IssuerProperties.JwksCache.EMPTY_CACHE, proxyUrl);
+        //issuerProperties.setProxyUrl(proxyUrl);
         String issuerName = "issuer1";
         MultiIssuerConfiguration multiIssuerConfiguration =
             new MultiIssuerConfiguration(Map.of(issuerName, issuerProperties));

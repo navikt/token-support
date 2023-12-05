@@ -26,6 +26,10 @@ import java.util.concurrent.TimeUnit;
 
 import static com.nimbusds.jose.jwk.source.JWKSourceBuilder.DEFAULT_CACHE_REFRESH_TIMEOUT;
 import static com.nimbusds.jose.jwk.source.JWKSourceBuilder.DEFAULT_CACHE_TIME_TO_LIVE;
+import static java.util.Collections.emptyList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -47,10 +51,7 @@ class JwtTokenValidatorFactoryTest {
 
     @BeforeEach
     void setup() {
-        issuerProperties = new IssuerProperties(
-            url,
-            List.of("aud1")
-        );
+        issuerProperties = new IssuerProperties(url, List.of("aud1"));
         when(metadata.getJWKSetURI()).thenReturn(URI.create("http://someurl"));
         when(metadata.getIssuer()).thenReturn(new Issuer("myissuer"));
     }
@@ -67,16 +68,16 @@ class JwtTokenValidatorFactoryTest {
         assertThat(basedSource.getJWKSetSource()).isInstanceOf(RefreshAheadCachingJWKSetSource.class);
 
         var cache = ((RefreshAheadCachingJWKSetSource<?>) basedSource.getJWKSetSource());
-        assertThat(cache.getTimeToLive()).isEqualTo(DEFAULT_CACHE_TIME_TO_LIVE);
-        assertThat(cache.getCacheRefreshTimeout()).isEqualTo(DEFAULT_CACHE_REFRESH_TIMEOUT);
+        assertThat(cache.getTimeToLive()).isEqualTo(MINUTES.toMillis(15));
+        assertThat(cache.getCacheRefreshTimeout()).isEqualTo(MINUTES.toMillis(5));
     }
 
     @Test
     void createTokenValidatorWithOptionalClaim() {
         issuerProperties = new IssuerProperties(
-            url,
+            url,emptyList(),null,AUTHORIZATION_HEADER,
             new IssuerProperties.Validation(List.of("optionalclaim")),
-            IssuerProperties.JwksCache.EMPTY
+            IssuerProperties.JwksCache.EMPTY_CACHE
         );
         var validatorWithDefaultCache = tokenValidator(issuerProperties, metadata, resourceRetriever);
         assertThat(validatorWithDefaultCache).isInstanceOf(DefaultConfigurableJwtValidator.class);
@@ -86,7 +87,7 @@ class JwtTokenValidatorFactoryTest {
     void createTokenValidatorWithCustomJwksCache() {
         var jwksCacheProperties = new IssuerProperties.JwksCache(5L, 1L);
         issuerProperties = new IssuerProperties(
-            url,
+            url,emptyList(),null,AUTHORIZATION_HEADER,
             new IssuerProperties.Validation(List.of("optionalclaim")),
             jwksCacheProperties
         );
@@ -108,7 +109,7 @@ class JwtTokenValidatorFactoryTest {
     @Test
     void createTokenValidatorWithProvidedJwkSource() {
         var jwkSource = JWKSourceBuilder.create(url)
-            .cache(TimeUnit.MINUTES.toMillis(5), TimeUnit.MINUTES.toMillis(1))
+            .cache(MINUTES.toMillis(5), MINUTES.toMillis(1))
             .build();
         var jwtTokenValidator = tokenValidator(issuerProperties, metadata, jwkSource);
         assertThat(getJwkSource(jwtTokenValidator)).isEqualTo(jwkSource);

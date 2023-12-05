@@ -7,6 +7,7 @@ import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.http.HttpRequest
 import no.nav.security.token.support.core.http.HttpRequest.NameValue
@@ -28,12 +29,12 @@ open class JwtTokenValidationFilter(private val jwtTokenValidationHandler : JwtT
     override fun init(filterConfig : FilterConfig) {}
 
     private fun doTokenValidation(request : HttpServletRequest, response : HttpServletResponse, chain : FilterChain) {
-        contextHolder.tokenValidationContext = jwtTokenValidationHandler.getValidatedTokens(fromHttpServletRequest(request))
+        contextHolder.setTokenValidationContext(jwtTokenValidationHandler.getValidatedTokens(fromHttpServletRequest(request)))
         try {
             chain.doFilter(request, response)
         }
         finally {
-            contextHolder.tokenValidationContext = null
+            contextHolder.setTokenValidationContext(null)
         }
     }
 

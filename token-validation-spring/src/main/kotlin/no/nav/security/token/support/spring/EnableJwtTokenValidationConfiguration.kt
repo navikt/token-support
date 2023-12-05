@@ -68,7 +68,7 @@ class EnableJwtTokenValidationConfiguration (private val env: Environment) : Web
 
     @Bean
     @ConditionalOnProperty(EXPIRY_THRESHOLD_ENV_PROPERTY)
-    fun expiryFilter(h: TokenValidationContextHolder,@Value("\${$EXPIRY_THRESHOLD_ENV_PROPERTY}") threshold: Long) = JwtTokenExpiryFilter(h,threshold)
+    fun expiryFilter(h: TokenValidationContextHolder, @Value("\${$EXPIRY_THRESHOLD_ENV_PROPERTY}") threshold: Long) = JwtTokenExpiryFilter(h,threshold)
 
     @Bean
     @ConditionalOnProperty(BEARER_TOKEN_DONT_PROPAGATE_ENV_PROPERTY, matchIfMissing = true)

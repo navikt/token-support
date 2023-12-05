@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 
-public class IssuerProperties {
+public class IssuerProperties1 {
     private static final Logger LOG = LoggerFactory.getLogger(IssuerProperties.class);
 
     @NotNull
@@ -23,35 +23,35 @@ public class IssuerProperties {
     private Validation validation = Validation.EMPTY;
     private JwksCache jwksCache = JwksCache.EMPTY;
 
-    public IssuerProperties(URL discoveryUrl) {
+    public IssuerProperties1(URL discoveryUrl) {
         this(discoveryUrl, List.of());
     }
 
-    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience) {
+    public IssuerProperties1(URL discoveryUrl, List<String> acceptedAudience) {
         this(discoveryUrl,acceptedAudience,null);
     }
 
-    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName) {
+    public IssuerProperties1(URL discoveryUrl, List<String> acceptedAudience, String cookieName) {
         this(discoveryUrl, acceptedAudience,cookieName,null);
     }
 
-    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName, String headerName) {
+    public IssuerProperties1(URL discoveryUrl, List<String> acceptedAudience, String cookieName, String headerName) {
         this(discoveryUrl, acceptedAudience,cookieName,headerName,Validation.EMPTY,JwksCache.EMPTY);
     }
 
-    public IssuerProperties(URL discoveryUrl, Validation validation) {
+    public IssuerProperties1(URL discoveryUrl, Validation validation) {
         this(discoveryUrl,validation,new JwksCache(null, null));
     }
 
-    public IssuerProperties(URL discoveryUrl, JwksCache jwksCache) {
+    public IssuerProperties1(URL discoveryUrl, JwksCache jwksCache) {
         this(discoveryUrl, List.of(),null,null,Validation.EMPTY,jwksCache);
     }
 
-    public IssuerProperties(URL discoveryUrl, Validation validation, JwksCache jwksCache) {
+    public IssuerProperties1(URL discoveryUrl, Validation validation, JwksCache jwksCache) {
         this(discoveryUrl, List.of(),null,null,validation,jwksCache);
     }
 
-    public IssuerProperties(URL discoveryUrl, List<String> acceptedAudience, String cookieName, String headerName, Validation validation, JwksCache jwksCache) {
+    public IssuerProperties1(URL discoveryUrl, List<String> acceptedAudience, String cookieName, String headerName, Validation validation, JwksCache jwksCache) {
         this.discoveryUrl = Objects.requireNonNull(discoveryUrl, "Discovery URL must be set");
         this.acceptedAudience = Optional.ofNullable(acceptedAudience).orElse(List.of());
         this.cookieName = cookieName(cookieName);
@@ -70,7 +70,7 @@ public class IssuerProperties {
      *
      */
     @Deprecated(since = "3.1.2",forRemoval = true)
-    public IssuerProperties() {
+    public IssuerProperties1() {
     }
 
     public @NotNull URL getDiscoveryUrl() {

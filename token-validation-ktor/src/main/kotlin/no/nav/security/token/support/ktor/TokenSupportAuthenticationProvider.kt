@@ -7,7 +7,6 @@ import io.ktor.auth.AuthenticationPipeline
 import io.ktor.auth.AuthenticationProvider
 import io.ktor.auth.Principal
 import io.ktor.auth.UnauthorizedResponse
-import io.ktor.client.utils.EmptyContent.headers
 import io.ktor.config.ApplicationConfig
 import io.ktor.config.MapApplicationConfig
 import io.ktor.http.CookieEncoding
@@ -26,6 +25,7 @@ import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import org.slf4j.LoggerFactory
 import java.net.URL
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.http.HttpRequest
 import no.nav.security.token.support.core.http.HttpRequest.NameValue
@@ -184,9 +184,9 @@ fun ApplicationConfig.asIssuerProps(): Map<String, IssuerProperties> = this.conf
     .associate { issuerConfig ->
         issuerConfig.property("issuer_name").getString() to IssuerProperties(
             URL(issuerConfig.property("discoveryurl").getString()),
-            issuerConfig.propertyOrNull("accepted_audience")?.getString()?.split(","),
+            issuerConfig.propertyOrNull("accepted_audience")?.getString()?.split(",") ?: emptyList(),
             issuerConfig.propertyOrNull("cookie_name")?.getString(),
-            issuerConfig.propertyOrNull("header_name")?.getString(),
+            issuerConfig.propertyOrNull("header_name")?.getString() ?: AUTHORIZATION_HEADER,
             IssuerProperties.Validation(issuerConfig.propertyOrNull("validation.optional_claims")?.getString()?.split(",") ?: emptyList()),
             IssuerProperties.JwksCache(
                 issuerConfig.propertyOrNull("jwks_cache.lifespan")?.getString()?.toLong(),

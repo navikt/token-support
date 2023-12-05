@@ -51,8 +51,8 @@ public class MultiIssuerConfiguration {
     }
 
     private IssuerConfiguration createIssuerConfiguration(String shortName, IssuerProperties issuerProperties) {
-        if (issuerProperties.isUsePlaintextForHttps() || issuerProperties.getProxyUrl() != null){
-            var resourceRetrieverWithProxy = new ProxyAwareResourceRetriever(issuerProperties.getProxyUrl(), issuerProperties.isUsePlaintextForHttps());
+        if (issuerProperties.getUsePlaintextForHttps() || issuerProperties.getProxyUrl() != null){
+            var resourceRetrieverWithProxy = new ProxyAwareResourceRetriever(issuerProperties.getProxyUrl(), issuerProperties.getUsePlaintextForHttps());
             return new IssuerConfiguration(shortName, issuerProperties, resourceRetrieverWithProxy);
         }
         return new IssuerConfiguration(shortName, issuerProperties, resourceRetriever);

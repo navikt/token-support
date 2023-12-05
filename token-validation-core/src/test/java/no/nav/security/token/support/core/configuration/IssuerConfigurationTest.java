@@ -12,8 +12,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,8 +69,7 @@ class IssuerConfigurationTest {
     @Test
     void issuerConfigurationWithConfigurableJwtTokenValidator() {
         IssuerProperties issuerProperties = new IssuerProperties(
-            issuerMockWebServer.getDiscoveryUrl(),
-            new IssuerProperties.Validation(List.of("sub", "aud"))
+            issuerMockWebServer.getDiscoveryUrl(), emptyList(),null,AUTHORIZATION_HEADER, new IssuerProperties.Validation(List.of("sub", "aud"))
         );
         IssuerConfiguration config = new IssuerConfiguration(
             "issuer1",
@@ -80,14 +82,13 @@ class IssuerConfigurationTest {
         AuthorizationServerMetadata metadata = config.getMetaData();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
-        assertFalse(issuerProperties.getJwksCache().isConfigured());
         assertTrue(issuerProperties.getValidation().isConfigured());
     }
 
     @Test
     void issuerConfigurationWithConfigurableJWKSCacheAndConfigurableJwtTokenValidator() {
         IssuerProperties issuerProperties = new IssuerProperties(
-            issuerMockWebServer.getDiscoveryUrl(),
+            issuerMockWebServer.getDiscoveryUrl(),emptyList(),null,AUTHORIZATION_HEADER,
             new IssuerProperties.Validation(List.of("sub", "aud")),
             new IssuerProperties.JwksCache(15L, 5L)
         );

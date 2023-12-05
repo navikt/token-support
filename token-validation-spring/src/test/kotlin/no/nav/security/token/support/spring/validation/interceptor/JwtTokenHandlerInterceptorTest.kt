@@ -152,7 +152,7 @@ internal class JwtTokenHandlerInterceptorTest {
     }
 
     private fun setupValidOidcContext() {
-        contextHolder.tokenValidationContext = createOidcValidationContext("issuer1", createJwtToken("aclaim", "value"))
+        contextHolder.setTokenValidationContext(createOidcValidationContext("issuer1", createJwtToken("aclaim", "value")))
     }
 
     private inner class IgnoreClass {
@@ -305,8 +305,8 @@ internal class JwtTokenHandlerInterceptorTest {
                     return validationContext
                 }
 
-                override fun setTokenValidationContext(tokenValidationContext: TokenValidationContext) {
-                    validationContext = tokenValidationContext
+                override fun setTokenValidationContext(tokenValidationContext: TokenValidationContext?) {
+                    validationContext = tokenValidationContext?: TokenValidationContext(emptyMap())
                 }
             }
         }

@@ -30,15 +30,12 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.Arrays
 import java.util.Date
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
-import no.nav.security.token.support.core.JwtTokenConstants
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
@@ -155,7 +152,7 @@ internal class JwtTokenValidationFilterTest {
         return FilterChain { servletRequest : ServletRequest?, servletResponse : ServletResponse? ->
             // TokenValidationContext is nulled after filter-call, so we check it here:
             filterCallCounter[0]++
-            val ctx = ctxHolder.tokenValidationContext
+            val ctx = ctxHolder.getTokenValidationContext()
             assertTrue(ctx.hasValidToken())
             assertEquals(issuers.size, ctx.issuers.size)
             for (i in issuers.indices) {
