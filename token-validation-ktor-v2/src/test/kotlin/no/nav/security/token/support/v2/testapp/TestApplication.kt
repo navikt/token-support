@@ -30,9 +30,9 @@ fun Application.module() {
         tokenValidationSupport("validGroup", config = config,
             additionalValidation = {
                 val claims = it.getClaims(acceptedIssuer)
-                val groups = claims?.getAsList("groups")
+                val groups = claims.getAsList("groups")
                 val hasGroup = groups != null && groups.contains("THEGROUP")
-                val hasIdentRequiredForAuditLog = claims?.getStringClaim("NAVident") != null
+                val hasIdentRequiredForAuditLog = claims.getStringClaim("NAVident") != null
                 hasGroup && hasIdentRequiredForAuditLog
             })
     }

@@ -65,6 +65,11 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-validation-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

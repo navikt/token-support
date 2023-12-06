@@ -201,8 +201,8 @@ fun ApplicationConfig.asIssuerProps(): Map<String, IssuerProperties> = this.conf
                 issuerConfig.propertyOrNull("validation.optional_claims")?.getString()?.split(",") ?: emptyList()
             ),
             IssuerProperties.JwksCache(
-                issuerConfig.propertyOrNull("jwks_cache.lifespan")?.getString()?.toLong(),
-                issuerConfig.propertyOrNull("jwks_cache.refreshtime")?.getString()?.toLong()
+                issuerConfig.propertyOrNull("jwks_cache.lifespan")?.getString()?.toLong() ?: 15,
+                issuerConfig.propertyOrNull("jwks_cache.refreshtime")?.getString()?.toLong() ?: 5
             )
         )
     }

@@ -74,8 +74,7 @@ class IssuerProperties @JvmOverloads constructor(val discoveryUrl : URL,
 
         companion object {
 
-            @JvmField
-            val EMPTY_CACHE  = JwksCache(15, 5)
+            @JvmField val EMPTY_CACHE  = JwksCache(15, 5)
         }
     }
 }

@@ -1,22 +1,28 @@
 package no.nav.security.token.support.jaxrs;
 
-import no.nav.security.token.support.core.config.MultiIssuerProperties;
+import jakarta.validation.Valid;
+import no.nav.security.token.support.core.configuration.IssuerProperties;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 import no.nav.security.token.support.filter.JwtTokenValidationFilter;
 import no.nav.security.token.support.jaxrs.rest.*;
 import no.nav.security.token.support.jaxrs.servlet.JaxrsJwtTokenValidationFilter;
+import no.nav.security.token.support.spring.MultiIssuerProperties;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextListener;
+
+import java.util.Map;
 
 @SpringBootConfiguration
 @EnableConfigurationProperties(MultiIssuerProperties.class)
@@ -44,6 +50,23 @@ public class Config {
         return new FilterRegistrationBean<>(new JaxrsJwtTokenValidationFilter(config));
     }
 
+    @ConfigurationProperties("no.nav.security.jwt")
+    private static  class MultiIssuerProperties {
+         private final Map<String, IssuerProperties> issuer;
+
+         public MultiIssuerProperties(Map<String, IssuerProperties> issuer) {
+             this.issuer = issuer;
+
+         }
+         public Map<String, IssuerProperties> getIssuer() {
+             return issuer;
+         }
+     }
+
+     @Bean
+     public MultiIssuerProperties multiIssuerProperties(Map<String, IssuerProperties> properties) {
+         return new MultiIssuerProperties(properties);
+     }
     @Bean
     public MultiIssuerConfiguration multiIssuerConfiguration(MultiIssuerProperties issuerProperties) {
         return new MultiIssuerConfiguration(issuerProperties.getIssuer(),
