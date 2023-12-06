@@ -23,7 +23,7 @@ class MultiIssuerConfiguration @JvmOverloads constructor(private val issuerPrope
             issuerShortNames.add(shortName)
             val config = createIssuerConfiguration(shortName, value)
             issuers[shortName] = config
-            issuers[config.metaData.issuer.toString()] = config
+            issuers[config.metadata.issuer.toString()] = config
         }
     }
 

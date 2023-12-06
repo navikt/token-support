@@ -41,10 +41,10 @@ class IssuerConfigurationTest {
     void issuerConfigurationWithMetadataFromDiscoveryUrl() {
         IssuerConfiguration config = new IssuerConfiguration(
             "issuer1", new IssuerProperties(issuerMockWebServer.getDiscoveryUrl(), List.of("audience1")), new ProxyAwareResourceRetriever());
-        assertThat(config.getMetaData()).isNotNull();
+        assertThat(config.getMetadata()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
         assertThat(config.getTokenValidator()).isInstanceOf(DefaultConfigurableJwtValidator.class);
-        AuthorizationServerMetadata metadata = config.getMetaData();
+        AuthorizationServerMetadata metadata = config.getMetadata();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
     }
@@ -76,10 +76,10 @@ class IssuerConfigurationTest {
             issuerProperties,
             new ProxyAwareResourceRetriever()
         );
-        assertThat(config.getMetaData()).isNotNull();
+        assertThat(config.getMetadata()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
         assertThat(config.getTokenValidator()).isInstanceOf(DefaultConfigurableJwtValidator.class);
-        AuthorizationServerMetadata metadata = config.getMetaData();
+        AuthorizationServerMetadata metadata = config.getMetadata();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
         assertTrue(issuerProperties.getValidation().isConfigured());
@@ -97,10 +97,10 @@ class IssuerConfigurationTest {
             issuerProperties,
             new ProxyAwareResourceRetriever()
         );
-        assertThat(config.getMetaData()).isNotNull();
+        assertThat(config.getMetadata()).isNotNull();
         assertThat(config.getTokenValidator()).isNotNull();
         assertThat(config.getTokenValidator()).isInstanceOf(DefaultConfigurableJwtValidator.class);
-        AuthorizationServerMetadata metadata = config.getMetaData();
+        AuthorizationServerMetadata metadata = config.getMetadata();
         assertThat(metadata.getIssuer()).isNotNull();
         assertThat(metadata.getJWKSetURI().toString()).isNotNull();
         assertTrue(issuerProperties.getJwksCache().isConfigured());
