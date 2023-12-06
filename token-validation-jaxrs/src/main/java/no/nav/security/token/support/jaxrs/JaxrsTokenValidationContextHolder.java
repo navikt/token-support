@@ -2,6 +2,7 @@ package no.nav.security.token.support.jaxrs;
 
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
+import org.jetbrains.annotations.NotNull;
 
 public class JaxrsTokenValidationContextHolder implements TokenValidationContextHolder {
 
@@ -15,7 +16,7 @@ public class JaxrsTokenValidationContextHolder implements TokenValidationContext
 
     private static final ThreadLocal<TokenValidationContext> validationContextHolder = new ThreadLocal<>();
 
-    @Override
+    @NotNull @Override
     public TokenValidationContext getTokenValidationContext() {
         return validationContextHolder.get();
     }

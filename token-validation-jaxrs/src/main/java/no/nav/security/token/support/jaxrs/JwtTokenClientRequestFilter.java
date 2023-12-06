@@ -22,7 +22,7 @@ public class JwtTokenClientRequestFilter implements ClientRequestFilter {
 
         TokenValidationContext context = JaxrsTokenValidationContextHolder.getHolder().getTokenValidationContext();
 
-        if(context != null && context.hasValidToken()) {
+        if(context.hasValidToken()) {
             LOG.debug("adding tokens to Authorization header");
             StringBuilder headerValue = new StringBuilder();
             context.getIssuers().forEach(issuer -> {
