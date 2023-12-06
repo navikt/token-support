@@ -80,7 +80,7 @@ public class DefaultConfigurableJwtValidator implements JwtTokenValidator {
             JWSAlgorithm.RS256,
             jwkSource
         );
-        var claimsVerifier = new DefaultJwtClaimsVerifier<>(
+        var claimsVerifier = new DefaultJwtClaimsVerifier<SecurityContext>(
             acceptedAudiences(acceptedAudiences, optionalClaims),
             exactMatchClaims,
             requiredClaims,
