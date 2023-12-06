@@ -3,16 +3,13 @@ package no.nav.security.token.support.core.configuration;
 import com.nimbusds.oauth2.sdk.as.AuthorizationServerMetadata;
 import no.nav.security.token.support.core.IssuerMockWebServer;
 import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException;
-import no.nav.security.token.support.core.validation.ConfigurableJwtTokenValidator;
 import no.nav.security.token.support.core.validation.DefaultConfigurableJwtValidator;
-import no.nav.security.token.support.core.validation.DefaultJwtTokenValidator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
