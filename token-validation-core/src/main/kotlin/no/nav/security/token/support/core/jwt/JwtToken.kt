@@ -2,17 +2,19 @@ package no.nav.security.token.support.core.jwt
 
 import com.nimbusds.jwt.JWT
 import com.nimbusds.jwt.JWTParser
+import kotlin.DeprecationLevel.*
 
-open class JwtToken(private val encodedToken : String, protected val jwt : JWT, val jwtTokenClaims : JwtTokenClaims) {
+open class JwtToken(val encodedToken : String, protected val jwt : JWT, val jwtTokenClaims : JwtTokenClaims) {
     constructor(encodedToken : String) : this(encodedToken, JWTParser.parse(encodedToken), JwtTokenClaims(JWTParser.parse(encodedToken).jwtClaimsSet))
 
-    fun getJwtClaimsSet() = jwt.jwtClaimsSet
+    val jwtClaimsSet = jwt.jwtClaimsSet
 
-    fun getSubject()  = jwtTokenClaims.subject
+    val subject  = jwtTokenClaims.subject
 
-    fun getIssuer() = jwtTokenClaims.issuer
+    val issuer = jwtTokenClaims.issuer
 
-    fun getTokenAsString() = encodedToken
+    @Deprecated("Use getEncodedToken instead", ReplaceWith("getEncodedToken()"), WARNING)
+    val tokenAsString = encodedToken
 
     fun containsClaim(name : String, value : String)  = jwtTokenClaims.containsClaim(name, value)
 

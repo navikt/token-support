@@ -14,7 +14,7 @@ public class TokenResource {
     @Path("token")
     public Response getToken() {
         return Response.ok()
-                .entity(JaxrsTokenValidationContextHolder.getHolder().getTokenValidationContext().getJwtToken("protected").getTokenAsString())
+                .entity(JaxrsTokenValidationContextHolder.getHolder().getTokenValidationContext().getJwtToken("protected").getEncodedToken())
                 .build();
     }
 }

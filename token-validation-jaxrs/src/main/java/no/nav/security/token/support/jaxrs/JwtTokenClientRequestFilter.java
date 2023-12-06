@@ -27,7 +27,7 @@ public class JwtTokenClientRequestFilter implements ClientRequestFilter {
             StringBuilder headerValue = new StringBuilder();
             context.getIssuers().forEach(issuer -> {
                 LOG.debug("adding token for issuer {}", issuer);
-                headerValue.append("Bearer ").append(context.getJwtToken(issuer).getTokenAsString());
+                headerValue.append("Bearer ").append(context.getJwtToken(issuer).getEncodedToken());
             });
             requestContext.getHeaders().put(JwtTokenConstants.AUTHORIZATION_HEADER, singletonList(headerValue.toString()));
         } else {

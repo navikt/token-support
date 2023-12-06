@@ -22,7 +22,7 @@ class BearerTokenClientHttpRequestInterceptor(private val holder: TokenValidatio
                     log.debug("Adding tokens to Authorization header")
                     req.headers.add(
                             AUTHORIZATION_HEADER,
-                            issuers.joinToString { "Bearer " + getJwtToken(it)?.getTokenAsString() })
+                            issuers.joinToString { "Bearer " + getJwtToken(it)?.encodedToken })
                 }
             } ?: log.debug("no tokens found, nothing added to request")
         return execution.execute(req, body)

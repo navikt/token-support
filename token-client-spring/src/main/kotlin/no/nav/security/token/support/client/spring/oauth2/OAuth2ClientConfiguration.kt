@@ -52,7 +52,7 @@ class OAuth2ClientConfiguration : ImportAware {
     @ConditionalOnClass(TokenValidationContextHolder::class)
     fun jwtBearerTokenResolver(h: TokenValidationContextHolder) =
         JwtBearerTokenResolver {
-            h.getTokenValidationContext().firstValidToken.map { it.getTokenAsString() } ?: Optional.empty()
+            h.getTokenValidationContext().firstValidToken.map { it.encodedToken } ?: Optional.empty()
         }
 
     @Bean

@@ -10,6 +10,7 @@ import no.nav.security.token.support.core.utils.Cluster
 @Retention(RUNTIME)
 @Target(CLASS, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @Protected
+@MustBeDocumented
 annotation class ProtectedWithClaims(val issuer : String,
                                      /**
                                       * Required claims in token in key=value format.
