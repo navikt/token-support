@@ -11,26 +11,29 @@ import java.util.Optional;
 
 import static java.net.Proxy.Type.HTTP;
 
-public class ProxyAwareResourceRetriever1 extends DefaultResourceRetriever {
+public class ProxyAwareResourceRetriever extends DefaultResourceRetriever {
 
     public static final int DEFAULT_HTTP_CONNECT_TIMEOUT = 21050;
     public static final int DEFAULT_HTTP_READ_TIMEOUT = 30000;
     public static final int DEFAULT_HTTP_SIZE_LIMIT = 50 * 1024;
     private static final Logger LOG = LoggerFactory.getLogger(ProxyAwareResourceRetriever.class);
     private final boolean usePlainTextForHttps;
-    public ProxyAwareResourceRetriever1() {
+    public
+    ProxyAwareResourceRetriever() {
         this(null);
     }
 
-    public ProxyAwareResourceRetriever1(URL proxyUrl) {
+    public
+    ProxyAwareResourceRetriever(URL proxyUrl) {
         this(proxyUrl, false);
     }
 
-    public ProxyAwareResourceRetriever1(URL proxyUrl, boolean usePlainTextForHttps) {
+    public
+    ProxyAwareResourceRetriever(URL proxyUrl, boolean usePlainTextForHttps) {
         this(proxyUrl, usePlainTextForHttps, DEFAULT_HTTP_CONNECT_TIMEOUT, DEFAULT_HTTP_READ_TIMEOUT, DEFAULT_HTTP_SIZE_LIMIT);
     }
 
-    ProxyAwareResourceRetriever1(URL proxyUrl, boolean usePlainTextForHttps, int connectTimeout, int readTimeout, int sizeLimit) {
+    ProxyAwareResourceRetriever(URL proxyUrl, boolean usePlainTextForHttps, int connectTimeout, int readTimeout, int sizeLimit) {
         super(connectTimeout, readTimeout, sizeLimit);
         this.usePlainTextForHttps = usePlainTextForHttps;
         setProxy(proxyFrom(proxyUrl));

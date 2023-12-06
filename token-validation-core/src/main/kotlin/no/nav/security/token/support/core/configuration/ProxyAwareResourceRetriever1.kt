@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
 import java.net.ProxySelector
 import java.net.URL
 
-open class ProxyAwareResourceRetriever (proxyUrl : URL?, private val usePlainTextForHttps : Boolean,
+open class ProxyAwareResourceRetriever1 (proxyUrl : URL?, private val usePlainTextForHttps : Boolean,
                                         connectTimeout : Int,
                                         readTimeout : Int,
                                         sizeLimit : Int) : DefaultResourceRetriever(connectTimeout, readTimeout, sizeLimit) {

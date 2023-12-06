@@ -1,5 +1,6 @@
 package no.nav.security.token.support.spring
 
+import com.nimbusds.jose.util.ResourceRetriever
 import jakarta.servlet.DispatcherType.ASYNC
 import jakarta.servlet.DispatcherType.FORWARD
 import jakarta.servlet.DispatcherType.REQUEST
@@ -55,7 +56,7 @@ class EnableJwtTokenValidationConfiguration (private val env: Environment) : Web
     fun oidcResourceRetriever() = ProxyAwareResourceRetriever(configuredProxy(), env.getProperty("https.plaintext", Boolean::class.java, false))
 
     @Bean
-    fun multiIssuerConfiguration(issuerProperties: MultiIssuerProperties, resourceRetriever: ProxyAwareResourceRetriever?) = MultiIssuerConfiguration(issuerProperties.issuer, resourceRetriever)
+    fun multiIssuerConfiguration(issuerProperties: MultiIssuerProperties, resourceRetriever: ResourceRetriever) = MultiIssuerConfiguration(issuerProperties.issuer, resourceRetriever)
 
     @Bean
     fun oidcRequestContextHolder() = SpringTokenValidationContextHolder()
