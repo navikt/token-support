@@ -29,7 +29,7 @@ public class JwtTokenRetriever {
 
     private static List<JwtToken> getTokensFromHeader(MultiIssuerConfiguration config, HttpRequest request) {
         try {
-            LOG.debug("Checking authorization header for tokens");
+            LOG.debug("Checking authorization header for tokens using config " + config);
 
             var issuers = config.getIssuers();
             Optional<IssuerConfiguration> issuer = issuers.values().stream().filter(it -> request.getHeader(it.getHeaderName()) != null).findFirst();
