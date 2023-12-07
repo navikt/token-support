@@ -99,7 +99,7 @@ open class JwtTokenAnnotationHandler(private val tokenValidationContextHolder : 
         return handleProtectedWithClaims(a.issuer, a.claimMap, a.combineWithOr, jwtToken)
     }
 
-    protected fun handleProtectedWithClaims(issuer : String, requiredClaims : Array<String>, combineWithOr : Boolean, jwtToken : JwtToken) : Boolean {
+    fun handleProtectedWithClaims(issuer : String, requiredClaims : Array<String>, combineWithOr : Boolean, jwtToken : JwtToken) : Boolean {
         if (issuer.isNotEmpty()) {
             return containsRequiredClaims(jwtToken, combineWithOr, *requiredClaims)
         }
