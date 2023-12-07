@@ -17,14 +17,12 @@ class BearerTokenClientHttpRequestInterceptor(private val holder: TokenValidatio
     override fun intercept(req: HttpRequest,
                            body: ByteArray,
                            execution: ClientHttpRequestExecution): ClientHttpResponse {
-            holder.getTokenValidationContext()?.apply {
-                if (hasValidToken()) {
-                    log.debug("Adding tokens to Authorization header")
-                    req.headers.add(
-                            AUTHORIZATION_HEADER,
-                            issuers.joinToString { "Bearer " + getJwtToken(it)?.encodedToken })
-                }
-            } ?: log.debug("no tokens found, nothing added to request")
+        holder.getTokenValidationContext().apply {
+            if (hasValidToken()) {
+                log.debug("Adding tokens to Authorization header")
+                req.headers.add(AUTHORIZATION_HEADER, issuers.joinToString { "Bearer " + getJwtToken(it)?.encodedToken })
+            }
+        }
         return execution.execute(req, body)
     }
 }
