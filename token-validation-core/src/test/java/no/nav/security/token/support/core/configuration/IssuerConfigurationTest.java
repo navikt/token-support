@@ -16,7 +16,6 @@ import static java.util.Collections.emptyList;
 import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IssuerConfigurationTest {

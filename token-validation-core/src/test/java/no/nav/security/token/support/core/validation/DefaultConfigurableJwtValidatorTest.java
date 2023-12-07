@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.Collections.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
@@ -25,13 +26,13 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
 
     @Test
     void happyPath() throws JwtTokenValidatorException {
-        var validator = tokenValidator(Collections.singletonList("aud1"));
+        var validator = tokenValidator(singletonList("aud1"));
         validator.assertValidToken(token("aud1"));
     }
 
     @Test
     void happyPathWithOptionalClaims() throws JwtTokenValidatorException {
-        var acceptedAudiences = Collections.singletonList("aud1");
+        var acceptedAudiences = singletonList("aud1");
         var optionalClaims = List.of(JWTClaimNames.SUBJECT);
         var validator = tokenValidator(acceptedAudiences, optionalClaims);
 
@@ -45,7 +46,7 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
 
     @Test
     void missingRequiredClaims() throws JwtTokenValidatorException {
-        var aud = Collections.singletonList("aud1");
+        var aud = singletonList("aud1");
         var validator = tokenValidator(aud);
 
         assertThrows(JwtTokenValidatorException.class, () -> {
@@ -66,7 +67,7 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
 
         assertThrows(JwtTokenValidatorException.class, () -> {
             var claims = defaultClaims()
-                .audience(Collections.emptyList())
+                .audience(emptyList())
                 .build();
             validator.assertValidToken(token(claims));
         }, "missing default required audience claim");
@@ -90,7 +91,7 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
 
     @Test
     void atLeastOneAudienceMustMatch() throws JwtTokenValidatorException {
-        var validator = tokenValidator(Collections.singletonList("aud1"));
+        var validator = tokenValidator(singletonList("aud1"));
         validator.assertValidToken(token("aud1"));
         validator.assertValidToken(token(List.of("aud1", "aud2")));
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token(List.of("aud2", "aud3"))), "at least one audience must match accepted audiences");
@@ -111,22 +112,22 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
         var acceptedAudiences = Collections.<String>emptyList();
         var validator = tokenValidator(acceptedAudiences);
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token("aud1")), "unknown audience should be rejected");
-        assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token(Collections.emptyList())), "missing required audience claim");
+        assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token(emptyList())), "missing required audience claim");
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token((String) null)), "missing required audience claim");
     }
 
     @Test
     void optionalAudienceWithAcceptedAudiencesOnlyDisablesAudienceExistenceCheck() throws JwtTokenValidatorException {
-        var acceptedAudiences = Collections.singletonList("aud1");
+        var acceptedAudiences = singletonList("aud1");
         var optionalClaims = List.of(JWTClaimNames.AUDIENCE);
         var validator = tokenValidator(acceptedAudiences, optionalClaims);
 
         validator.assertValidToken(token("aud1"));
         assertThrows(JwtTokenValidatorException.class, () -> validator.assertValidToken(token("not-aud1")), "should reject invalid audience");
-        validator.assertValidToken(token(Collections.emptyList()));
+        validator.assertValidToken(token(emptyList()));
         validator.assertValidToken(token(defaultClaims().build()));
         validator.assertValidToken(token(defaultClaims().audience((String) null).build()));
-        validator.assertValidToken(token(defaultClaims().audience(Collections.emptyList()).build()));
+        validator.assertValidToken(token(defaultClaims().audience(emptyList()).build()));
     }
 
     @Test
@@ -137,15 +138,15 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
 
         validator.assertValidToken(token("aud1"));
         validator.assertValidToken(token("not-aud1"));
-        validator.assertValidToken(token(Collections.emptyList()));
+        validator.assertValidToken(token(emptyList()));
         validator.assertValidToken(token(defaultClaims().build()));
         validator.assertValidToken(token(defaultClaims().audience((String) null).build()));
-        validator.assertValidToken(token(defaultClaims().audience(Collections.emptyList()).build()));
+        validator.assertValidToken(token(defaultClaims().audience(emptyList()).build()));
     }
 
     @Test
     void issuerMismatch() throws JwtTokenValidatorException {
-        var aud = Collections.singletonList("aud1");
+        var aud = singletonList("aud1");
         var validator = tokenValidator(aud);
         assertThrows(JwtTokenValidatorException.class, () -> {
             var token = token(defaultClaims()
@@ -158,7 +159,7 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
 
     @Test
     void missingNbfShouldNotFail() throws JwtTokenValidatorException {
-        var acceptedAudiences = Collections.singletonList("aud1");
+        var acceptedAudiences = singletonList("aud1");
         var validator = tokenValidator(acceptedAudiences);
         var token = token(defaultClaims()
             .audience(acceptedAudiences)
@@ -169,7 +170,7 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
 
     @Test
     void expBeforeNowShouldFail() throws JwtTokenValidatorException {
-        var acceptedAudiences = Collections.singletonList("aud1");
+        var acceptedAudiences = singletonList("aud1");
         var validator = tokenValidator(acceptedAudiences);
         var now = new Date();
         var beforeNow = new Date(now.getTime() - maxClockSkewMillis());
@@ -182,7 +183,7 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
 
     @Test
     void iatAfterNowShouldFail() throws JwtTokenValidatorException {
-        var acceptedAudiences = Collections.singletonList("aud1");
+        var acceptedAudiences = singletonList("aud1");
         var validator = tokenValidator(acceptedAudiences);
         var now = new Date();
         var afterNow = new Date(now.getTime() + maxClockSkewMillis());
@@ -195,7 +196,7 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
 
     @Test
     void nbfAfterNowShouldFail() throws JwtTokenValidatorException {
-        var acceptedAudiences = Collections.singletonList("aud1");
+        var acceptedAudiences = singletonList("aud1");
         var validator = tokenValidator(acceptedAudiences);
         var now = new Date();
         var afterNow = new Date(now.getTime() + maxClockSkewMillis());
@@ -207,7 +208,7 @@ class DefaultConfigurableJwtValidatorTest extends AbstractJwtValidatorTest {
     }
 
     private JwtTokenValidator tokenValidator(List<String> acceptedAudiences) {
-        return new DefaultConfigurableJwtValidator(DEFAULT_ISSUER, acceptedAudiences, jwkSource);
+        return new DefaultConfigurableJwtValidator(DEFAULT_ISSUER, acceptedAudiences, emptyList(),jwkSource);
     }
 
     private JwtTokenValidator tokenValidator(List<String> acceptedAudiences, List<String> optionalClaims) {

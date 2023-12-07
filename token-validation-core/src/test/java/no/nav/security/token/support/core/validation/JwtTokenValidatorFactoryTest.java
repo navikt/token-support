@@ -22,12 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static com.nimbusds.jose.jwk.source.JWKSourceBuilder.DEFAULT_CACHE_REFRESH_TIMEOUT;
-import static com.nimbusds.jose.jwk.source.JWKSourceBuilder.DEFAULT_CACHE_TIME_TO_LIVE;
 import static java.util.Collections.emptyList;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator;
