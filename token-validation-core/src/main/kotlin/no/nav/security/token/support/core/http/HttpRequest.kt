@@ -5,7 +5,7 @@ package no.nav.security.token.support.core.http
  */
 interface HttpRequest {
     fun getHeader(headerName: String): String?
-    fun getCookies(): Array<NameValue>?
+    fun getCookies(): Array<out NameValue>?
 
     interface NameValue {
         fun getName(): String

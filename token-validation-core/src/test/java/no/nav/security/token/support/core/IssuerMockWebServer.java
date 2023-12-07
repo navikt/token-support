@@ -7,6 +7,7 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import okio.BufferedSink;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class IssuerMockWebServer {
         this.discoveryUrl = this.server.url(DISCOVERY_PATH).url();
         this.server.setDispatcher(new Dispatcher() {
             @Override
-            public MockResponse dispatch(RecordedRequest request) {
+            public MockResponse dispatch(@NotNull RecordedRequest request) {
                 log.debug("received request on url={} with headers={}", request.getRequestUrl(), request.getHeaders());
                 log.debug("comparing path in request '{}' with '{}'", request.getRequestUrl().encodedPath(),
                     DISCOVERY_PATH);
