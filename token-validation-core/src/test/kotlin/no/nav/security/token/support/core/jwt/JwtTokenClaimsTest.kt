@@ -1,4 +1,4 @@
-package jwt
+package no.nav.security.token.support.core.jwt
 
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT

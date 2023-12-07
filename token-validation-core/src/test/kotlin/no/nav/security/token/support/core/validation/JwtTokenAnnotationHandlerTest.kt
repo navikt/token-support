@@ -1,4 +1,4 @@
-package validation
+package no.nav.security.token.support.core.validation
 
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.jwt.JwtToken
-import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 
 internal class JwtTokenAnnotationHandlerTest {
 

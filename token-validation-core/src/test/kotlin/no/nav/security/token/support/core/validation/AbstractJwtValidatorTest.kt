@@ -1,4 +1,4 @@
-package validation
+package no.nav.security.token.support.core.validation
 
 import com.nimbusds.jose.JOSEException
 import com.nimbusds.jose.JOSEObjectType

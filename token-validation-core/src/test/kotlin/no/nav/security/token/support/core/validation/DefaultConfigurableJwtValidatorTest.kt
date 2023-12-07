@@ -1,4 +1,4 @@
-package validation
+package no.nav.security.token.support.core.validation
 
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.jwk.source.JWKSourceBuilder
@@ -8,11 +8,9 @@ import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier.*
 import java.net.URL
 import java.util.Date
 import java.util.concurrent.TimeUnit.SECONDS
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException
-import no.nav.security.token.support.core.validation.DefaultConfigurableJwtValidator
 
 internal class DefaultConfigurableJwtValidatorTest : AbstractJwtValidatorTest() {
 

@@ -1,4 +1,4 @@
-package validation
+package no.nav.security.token.support.core.validation
 
 import com.nimbusds.jose.jwk.source.JWKSetBasedJWKSource
 import com.nimbusds.jose.jwk.source.JWKSource
@@ -11,7 +11,6 @@ import com.nimbusds.oauth2.sdk.id.Issuer
 import java.net.URI
 import java.net.URL
 import java.util.concurrent.TimeUnit.MINUTES
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,8 +24,6 @@ import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.IssuerProperties.JwksCache
 import no.nav.security.token.support.core.configuration.IssuerProperties.Validation
-import no.nav.security.token.support.core.validation.DefaultConfigurableJwtValidator
-import no.nav.security.token.support.core.validation.JwtTokenValidator
 import no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator
 
 @ExtendWith(MockitoExtension::class)
