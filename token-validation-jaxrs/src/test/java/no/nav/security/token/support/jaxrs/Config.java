@@ -1,6 +1,5 @@
 package no.nav.security.token.support.jaxrs;
 
-import jakarta.validation.Valid;
 import no.nav.security.token.support.core.configuration.IssuerProperties;
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration;
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
@@ -19,7 +18,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextListener;
 
 import java.util.Map;
@@ -79,7 +77,8 @@ public class Config {
     }
 
     @Bean
-    public ProxyAwareResourceRetriever oidcResourceRetriever() {
+    public
+    ProxyAwareResourceRetriever oidcResourceRetriever() {
         return new ProxyAwareResourceRetriever();
     }
 

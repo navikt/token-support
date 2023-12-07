@@ -5,7 +5,6 @@ import jakarta.annotation.PreDestroy;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.OAuth2Config;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
-import no.nav.security.mock.oauth2.token.OAuth2TokenCallback;
 import no.nav.security.mock.oauth2.token.OAuth2TokenProvider;
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever;
 import org.slf4j.Logger;

@@ -6,7 +6,6 @@ import jakarta.servlet.DispatcherType.FORWARD
 import jakarta.servlet.DispatcherType.REQUEST
 import jakarta.servlet.Filter
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
-import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import no.nav.security.token.support.filter.JwtTokenExpiryFilter
 import no.nav.security.token.support.filter.JwtTokenValidationFilter
@@ -35,6 +34,7 @@ import java.util.*
 import no.nav.security.token.support.core.JwtTokenConstants.BEARER_TOKEN_DONT_PROPAGATE_ENV_PROPERTY
 import no.nav.security.token.support.core.JwtTokenConstants.EXPIRY_THRESHOLD_ENV_PROPERTY
 import no.nav.security.token.support.core.JwtTokenConstants.TOKEN_VALIDATION_FILTER_ORDER_PROPERTY
+import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @Configuration

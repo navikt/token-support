@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory
 import java.net.ProxySelector
 import java.net.URL
 
-open class ProxyAwareResourceRetriever1 (proxyUrl : URL?, private val usePlainTextForHttps : Boolean,
-                                        connectTimeout : Int,
-                                        readTimeout : Int,
-                                        sizeLimit : Int) : DefaultResourceRetriever(connectTimeout, readTimeout, sizeLimit) {
+open class ProxyAwareResourceRetriever(proxyUrl : URL?, private val usePlainTextForHttps : Boolean,
+                                       connectTimeout : Int,
+                                       readTimeout : Int,
+                                       sizeLimit : Int) : DefaultResourceRetriever(connectTimeout, readTimeout, sizeLimit) {
 
     @JvmOverloads
     constructor(proxyUrl : URL? = null, usePlainTextForHttps : Boolean = false) : this(proxyUrl, usePlainTextForHttps, DEFAULT_HTTP_CONNECT_TIMEOUT, DEFAULT_HTTP_READ_TIMEOUT, DEFAULT_HTTP_SIZE_LIMIT)
@@ -55,11 +55,20 @@ open class ProxyAwareResourceRetriever1 (proxyUrl : URL?, private val usePlainTe
         return urlToOpen.openConnection() as HttpURLConnection
     }
 
-    fun shouldProxy(url : URL) = proxy != null && !isNoProxy(url)
+    fun shouldProxy(url : URL) = proxy.type() != DIRECT && !isNoProxy(url)
     private fun proxyFrom(uri : URL?) = uri?.let { Proxy(HTTP, InetSocketAddress(it.host, it.port)) } ?: NO_PROXY
-    private fun isNoProxy(uri: URL) = ProxySelector.getDefault().select(uri.toURI()).any { it.type() == DIRECT }.also {
-        val n = if (it) "NOT " else ""
-        LOG.trace("{} using proxy for {} since it is {}covered by the NO_PROXY setting", n, uri, n)
+    private fun isNoProxy(url: URL): Boolean {
+        val noProxy = System.getenv("NO_PROXY")
+        val isNoProxy = noProxy?.split(",")
+            ?.any("$url"::contains) ?: false
+
+        if (noProxy != null && isNoProxy) {
+            LOG.trace("Not using proxy for $url since it is covered by the NO_PROXY setting $noProxy")
+        } else {
+            LOG.trace("Using proxy for $url since it is not covered by the NO_PROXY setting $noProxy")
+        }
+
+        return isNoProxy
     }
 
     companion object {
