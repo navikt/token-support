@@ -52,21 +52,19 @@ import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException
  */
 class DefaultConfigurableJwtValidator(issuer : String, acceptedAudiences : List<String>, optionalClaims : List<String>, val jwkSource : JWKSource<SecurityContext>) : JwtTokenValidator {
 
-    private val requiredClaims = difference(DEFAULT_REQUIRED_CLAIMS, optionalClaims)
-    private val exactMatchClaims = Builder().issuer(issuer).build()
-    private val keySelector = JWSVerificationKeySelector(RS256, jwkSource)
-    private val claimsVerifier = DefaultJwtClaimsVerifier<SecurityContext>(acceptedAudiences(acceptedAudiences, optionalClaims), exactMatchClaims, requiredClaims, PROHIBITED_CLAIMS)
     private val jwtProcessor = DefaultJWTProcessor<SecurityContext>().apply {
-        jwsKeySelector = keySelector
-        setJWTClaimsSetVerifier(claimsVerifier)
+        jwsKeySelector = JWSVerificationKeySelector(RS256, jwkSource)
+        setJWTClaimsSetVerifier(DefaultJwtClaimsVerifier(acceptedAudiences(acceptedAudiences, optionalClaims),
+            Builder().issuer(issuer).build(),
+            difference(DEFAULT_REQUIRED_CLAIMS, optionalClaims),
+            PROHIBITED_CLAIMS))
     }
 
-    @Throws(JwtTokenValidatorException::class)
     override fun assertValidToken(tokenString : String) {
         runCatching {
             jwtProcessor.process(tokenString, null)
         }.getOrElse {
-            throw JwtTokenValidatorException("Token validation failed: " + it.message, cause =  it)
+            throw JwtTokenValidatorException("Token validation failed: ${it.message}", cause =  it)
         }
     }
 
@@ -74,22 +72,12 @@ class DefaultConfigurableJwtValidator(issuer : String, acceptedAudiences : List<
 
         private val DEFAULT_REQUIRED_CLAIMS  = listOf(AUDIENCE, EXPIRATION_TIME, ISSUED_AT, ISSUER, SUBJECT)
         private val PROHIBITED_CLAIMS = emptySet<String>()
-        private fun acceptedAudiences(acceptedAudiences : List<String>, optionalClaims : List<String>) : Set<String>? {
-            if (!optionalClaims.contains(AUDIENCE)) {
-                return HashSet(acceptedAudiences)
+        private fun acceptedAudiences(acceptedAudiences: List<String>, optionalClaims: List<String>) =
+             when {
+                AUDIENCE !in optionalClaims -> acceptedAudiences.toSet()
+                acceptedAudiences.isEmpty() ->  null
+                else -> acceptedAudiences.plus(null as String?).toSet()
             }
-
-            if (acceptedAudiences.isEmpty()) {
-                // Must be null to effectively skip all audience existence and matching checks
-                return null
-            }
-
-            // Otherwise, add null to instruct DefaultJwtClaimsVerifier to validate against audience if present in the JWT,
-            // but don't require existence of the claim for all JWTs.
-            val acceptedAudiencesCopy = ArrayList(acceptedAudiences)
-            acceptedAudiencesCopy.add(null)
-            return HashSet(acceptedAudiencesCopy)
-        }
 
         private fun <T> difference(first: List<T>, second: List<T>) = first.asSequence().filterNot { it in second }.toSet()
     }

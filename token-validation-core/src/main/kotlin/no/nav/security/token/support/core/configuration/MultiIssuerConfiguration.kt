@@ -3,8 +3,8 @@ package no.nav.security.token.support.core.configuration
 import com.nimbusds.jose.util.ResourceRetriever
 import java.util.Optional
 
-class MultiIssuerConfiguration @JvmOverloads constructor(private val issuerPropertiesMap : Map<String, IssuerProperties>,
-                                                         val resourceRetriever : ResourceRetriever = ProxyAwareResourceRetriever()) {
+class MultiIssuerConfiguration @JvmOverloads constructor(private val properties : Map<String, IssuerProperties>,
+                                                         val retriever : ResourceRetriever = ProxyAwareResourceRetriever()) {
 
     private val issuerShortNames : MutableList<String> = ArrayList()
 
@@ -13,29 +13,25 @@ class MultiIssuerConfiguration @JvmOverloads constructor(private val issuerPrope
     init {
         loadIssuerConfigurations()
     }
-
     fun getIssuer(name : String) = Optional.ofNullable(issuers[name])
 
     fun getIssuerShortNames() = issuerShortNames
 
-    private fun loadIssuerConfigurations() {
-        issuerPropertiesMap.forEach { (shortName, value) ->
-            issuerShortNames.add(shortName)
-            val config = createIssuerConfiguration(shortName, value)
-            issuers[shortName] = config
-            issuers[config.metadata.issuer.toString()] = config
+    private fun loadIssuerConfigurations() =
+        properties.forEach { (shortName, p) ->
+             createIssuerConfiguration(shortName, p).run {
+                issuerShortNames.add(shortName)
+                issuers[shortName] = this
+                issuers[metadata.issuer.toString()] = this
+            }
         }
-    }
 
-    private fun createIssuerConfiguration(shortName : String, p : IssuerProperties) : IssuerConfiguration {
+    private fun createIssuerConfiguration(shortName : String, p : IssuerProperties) =
         if (p.usePlaintextForHttps || p.proxyUrl != null) {
-            return IssuerConfiguration(shortName, p, ProxyAwareResourceRetriever(p.proxyUrl, p.usePlaintextForHttps))
+            IssuerConfiguration(shortName, p, ProxyAwareResourceRetriever(p.proxyUrl, p.usePlaintextForHttps))
         }
-        return IssuerConfiguration(shortName, p, resourceRetriever)
-    }
+        else IssuerConfiguration(shortName, p, retriever)
 
-    override fun toString() : String {
-        return (javaClass.simpleName + " [issuerShortNames=" + issuerShortNames + ", resourceRetriever="
-            + resourceRetriever + ", issuers=" + issuers + ", issuerPropertiesMap=" + issuerPropertiesMap + "]")
-    }
+    override fun toString() = (javaClass.simpleName + " [issuerShortNames=" + issuerShortNames + ", resourceRetriever="
+        + retriever + ", issuers=" + issuers + ", issuerPropertiesMap=" + properties + "]")
 }

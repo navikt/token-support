@@ -5,13 +5,13 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Proxy
-import java.net.Proxy.*
-import java.net.Proxy.Type.*
+import java.net.Proxy.NO_PROXY
+import java.net.Proxy.Type.DIRECT
+import java.net.Proxy.Type.HTTP
 import java.net.URISyntaxException
+import java.net.URL
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.net.ProxySelector
-import java.net.URL
 
 open class ProxyAwareResourceRetriever(proxyUrl : URL?, private val usePlainTextForHttps : Boolean,
                                        connectTimeout : Int,
@@ -25,9 +25,7 @@ open class ProxyAwareResourceRetriever(proxyUrl : URL?, private val usePlainText
         super.setProxy(proxyFrom(proxyUrl))
     }
 
-    private val LOG : Logger = LoggerFactory.getLogger(ProxyAwareResourceRetriever::class.java)
 
-    @Throws(IOException::class)
     fun urlWithPlainTextForHttps(url : URL) : URL {
         try {
             if (!url.toURI().scheme.equals("https")) {
@@ -44,7 +42,6 @@ open class ProxyAwareResourceRetriever(proxyUrl : URL?, private val usePlainText
         }
     }
 
-    @Throws(IOException::class)
     override fun openHTTPConnection(url : URL) : HttpURLConnection {
         val urlToOpen  = if (usePlainTextForHttps) urlWithPlainTextForHttps(url) else url
         if (shouldProxy(url)) {
@@ -63,15 +60,16 @@ open class ProxyAwareResourceRetriever(proxyUrl : URL?, private val usePlainText
             ?.any("$url"::contains) ?: false
 
         if (noProxy != null && isNoProxy) {
-            LOG.trace("Not using proxy for $url since it is covered by the NO_PROXY setting $noProxy")
+            LOG.trace("Not using proxy for {} since it is covered by the NO_PROXY setting {}", url, noProxy)
         } else {
-            LOG.trace("Using proxy for $url since it is not covered by the NO_PROXY setting $noProxy")
+            LOG.trace("Using proxy for {} since it is not covered by the NO_PROXY setting {}", url, noProxy)
         }
 
         return isNoProxy
     }
 
     companion object {
+        private val LOG : Logger = LoggerFactory.getLogger(ProxyAwareResourceRetriever::class.java)
         const val DEFAULT_HTTP_CONNECT_TIMEOUT : Int = 21050
         const val DEFAULT_HTTP_READ_TIMEOUT : Int = 30000
         const val DEFAULT_HTTP_SIZE_LIMIT : Int = 50 * 1024

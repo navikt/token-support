@@ -1,8 +1,7 @@
 package no.nav.security.token.support.core.validation
 
-import com.nimbusds.jwt.JWTClaimsSet.Builder
+import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.PlainJWT
-import java.util.Arrays
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import no.nav.security.token.support.core.context.TokenValidationContext
@@ -14,17 +13,16 @@ internal class JwtTokenAnnotationHandlerTest {
     private val annotationHandler : JwtTokenAnnotationHandler
 
     init {
-        val validationContextMap : MutableMap<String, JwtToken> = HashMap()
-        validationContextMap["issuer1"] = T1
-        validationContextMap["issuer2"] = T2
-        validationContextMap["issuer3"] = T3
-        validationContextMap["issuer4"] = T4
+        val validationContextMap  = HashMap<String, JwtToken>().apply {
+            put("issuer1", T1)
+            put("issuer2", T2)
+            put("issuer3", T3)
+            put("issuer4", T4)        }
 
-        val tokenValidationContextHolder = object : TokenValidationContextHolder {
+        annotationHandler = JwtTokenAnnotationHandler(object : TokenValidationContextHolder {
             override fun getTokenValidationContext() = TokenValidationContext(validationContextMap)
             override fun setTokenValidationContext(tokenValidationContext : TokenValidationContext?) {}
-        }
-        this.annotationHandler = JwtTokenAnnotationHandler(tokenValidationContextHolder)
+        })
     }
 
     @Test
@@ -73,18 +71,18 @@ internal class JwtTokenAnnotationHandlerTest {
         private val T3 = jwtToken("https://three", "acr=Level1")
         private val T4 = jwtToken("https://four", "acr=Level3", "foo=bar")
 
-        private fun jwtToken(issuer : String, vararg claims : String) : JwtToken {
-            val builder = Builder()
+        private fun jwtToken(issuer: String, vararg claims: String): JwtToken {
+            val builder = JWTClaimsSet.Builder()
                 .issuer(issuer)
                 .subject("subject")
-            Arrays.stream(claims).map { c : String ->
-                c.split("=".toRegex()).dropLastWhile { it.isEmpty() }
-                    .toTypedArray()
-            }.forEach { pair : Array<String> ->
-                builder.claim(pair[0], pair[1])
+
+            claims.forEach {
+                val parts = it.split("=")
+                if (parts.size == 2) {
+                    builder.claim(parts[0], parts[1])
+                }
             }
-            val plainJWT = PlainJWT(builder.build())
-            return JwtToken(plainJWT.serialize())
+            return JwtToken(PlainJWT(builder.build()).serialize())
         }
     }
 }

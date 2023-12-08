@@ -1,8 +1,6 @@
 package no.nav.security.token.support.core.validation
 
 import java.lang.reflect.Method
-import java.util.Arrays
-import java.util.Objects
 import java.util.Optional
 import kotlin.reflect.KClass
 import org.slf4j.Logger
@@ -23,88 +21,65 @@ import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
 
 open class JwtTokenAnnotationHandler(private val tokenValidationContextHolder : TokenValidationContextHolder) {
 
-    @Throws(AnnotationRequiredException::class)
-    fun assertValidAnnotation(m : Method) : Boolean {
-        return Optional.ofNullable(getAnnotation(m, SUPPORTED_ANNOTATIONS))
-            .map { a : Annotation -> this.assertValidAnnotation(a) }
-            .orElseThrow { AnnotationRequiredException(m) }
-    }
+    fun assertValidAnnotation(m: Method) =
+        getAnnotation(m, SUPPORTED_ANNOTATIONS)?.let { assertValidAnnotation(it) } ?: throw AnnotationRequiredException(m)
 
-    private fun assertValidAnnotation(a : Annotation) : Boolean {
-        if (a is Unprotected) {
-            LOG.debug("annotation is of type={}, no token validation performed.", Unprotected::class.java.simpleName)
-            return true
+    private fun assertValidAnnotation(a: Annotation) =
+        when (a) {
+            is Unprotected -> true.also { LOG.debug("Annotation is of type={}, no token validation performed.", Unprotected::class.java.simpleName) }
+            is RequiredIssuers -> handleRequiredIssuers(a)
+            is ProtectedWithClaims -> handleProtectedWithClaims(a)
+            is Protected -> handleProtected()
+            else -> false.also { LOG.debug("Annotation is unknown, type={}, no token validation performed. but possible bug so throw exception", a.annotationClass) }
         }
-        if (a is RequiredIssuers) {
-            return handleRequiredIssuers(a)
-        }
-        if (a is ProtectedWithClaims) {
-            return handleProtectedWithClaims(a)
-        }
-        if (a is Protected) {
-            return handleProtected()
-        }
-        LOG.debug("Annotation is unknown,  type={}, no token validation performed. but possible bug so throw exception", a.annotationClass)
-        return false
-    }
 
-    private fun handleProtected() : Boolean {
-        LOG.debug("Annotation is of type={}, check if context has valid token.", Protected::class.simpleName)
+
+    private fun handleProtected()=
         if (contextHasValidToken(tokenValidationContextHolder)) {
-            return true
+            true.also { LOG.debug("Annotation is of type Protected, context has valid token.") }
         }
-        throw JwtTokenMissingException()
-    }
+        else throw JwtTokenMissingException()
 
     private fun handleProtectedWithClaims(a : ProtectedWithClaims) : Boolean {
-        if (!isProd && Arrays.stream(a.excludedClusters).toList().contains(currentCluster())) {
+        if (!isProd && a.excludedClusters.contains(currentCluster())) {
             LOG.info("Excluding current cluster {} from validation", currentCluster())
             return true
         }
         LOG.debug("Annotation is of type={}, do token validation and claim checking.", ProtectedWithClaims::class.simpleName)
-        val jwtToken = getJwtToken(a.issuer, tokenValidationContextHolder)
-        if (jwtToken.isEmpty) {
-            throw JwtTokenMissingException()
+        getJwtToken(a.issuer, tokenValidationContextHolder).run {
+            if (isEmpty) {
+                throw JwtTokenMissingException()
+            }
+            if (!handleProtectedWithClaimsAnnotation(a, get())) {
+                throw JwtTokenInvalidClaimException(a)
+            }
+            return true
         }
-
-        if (!handleProtectedWithClaimsAnnotation(a, jwtToken.get())) {
-            throw JwtTokenInvalidClaimException(a)
-        }
-        return true
     }
 
-    private fun handleRequiredIssuers(a : RequiredIssuers) : Boolean {
-        var hasToken = false
-        for (sub in a.value) {
+    private fun handleRequiredIssuers(a: RequiredIssuers): Boolean {
+        val hasToken = a.value.any { sub ->
             val jwtToken = getJwtToken(sub.issuer, tokenValidationContextHolder)
-            if (jwtToken.isEmpty) {
-                continue
-            }
-            if (handleProtectedWithClaimsAnnotation(sub, jwtToken.get())) {
-                return true
-            }
-            hasToken = true
+            jwtToken.isPresent && handleProtectedWithClaimsAnnotation(sub, jwtToken.get())
         }
-        if (!hasToken) {
-            throw JwtTokenMissingException(a)
+        return when {
+            hasToken -> true
+            a.value.all { getJwtToken(it.issuer, tokenValidationContextHolder).isEmpty } -> throw JwtTokenMissingException(a)
+            else -> throw JwtTokenInvalidClaimException(a)
         }
-        throw JwtTokenInvalidClaimException(a)
     }
+
 
     protected open fun getAnnotation(method : Method, types : List<KClass<out Annotation>>) =
-        Optional.ofNullable(findAnnotation(types, *method.annotations))
-            .orElseGet { findAnnotation(types, *method.declaringClass.annotations) }
+        findAnnotation(types, *method.annotations) ?: findAnnotation(types, *method.declaringClass.annotations)
 
-    protected fun handleProtectedWithClaimsAnnotation(a : ProtectedWithClaims, jwtToken : JwtToken) : Boolean {
-        return handleProtectedWithClaims(a.issuer, a.claimMap, a.combineWithOr, jwtToken)
-    }
+    protected fun handleProtectedWithClaimsAnnotation(a : ProtectedWithClaims, jwtToken : JwtToken) = handleProtectedWithClaims(a.issuer, a.claimMap, a.combineWithOr, jwtToken)
 
-    fun handleProtectedWithClaims(issuer : String, requiredClaims : Array<String>, combineWithOr : Boolean, jwtToken : JwtToken) : Boolean {
+    fun handleProtectedWithClaims(issuer : String, requiredClaims : Array<String>, combineWithOr : Boolean, jwtToken : JwtToken) =
         if (issuer.isNotEmpty()) {
-            return containsRequiredClaims(jwtToken, combineWithOr, *requiredClaims)
+            containsRequiredClaims(jwtToken, combineWithOr, *requiredClaims)
         }
-        return true
-    }
+        else true
 
     protected fun containsRequiredClaims(jwtToken : JwtToken, combineWithOr : Boolean, vararg claims : String) : Boolean {
         LOG.debug("choose matching logic based on combineWithOr={}", combineWithOr)
@@ -112,30 +87,28 @@ open class JwtTokenAnnotationHandler(private val tokenValidationContextHolder : 
         else containsAllClaims(jwtToken, *claims)
     }
 
-    private fun containsAllClaims(jwtToken: JwtToken, vararg claims: String): Boolean {
+    private fun containsAllClaims(jwtToken: JwtToken, vararg claims: String) =
         if (claims.isNotEmpty()) {
-            return claims.asSequence()
+            claims.asSequence()
                 .map { it.split("=", limit = 2) }
                 .filter { it.size == 2 }
                 .all { (key, value) -> jwtToken.containsClaim(key.trim(), value.trim()) }
         }
-        return true
-    }
+        else true
 
-    private fun containsAnyClaim(jwtToken: JwtToken, vararg claims: String): Boolean {
+    private fun containsAnyClaim(jwtToken: JwtToken, vararg claims: String) =
         if (claims.isNotEmpty()) {
-            return claims.asSequence()
+            claims.asSequence()
                 .map { it.split("=", limit = 2) }
                 .filter { it.size == 2 }
                 .any { (key, value) -> jwtToken.containsClaim(key.trim(), value.trim()) }
         }
-        LOG.debug("no claims listed, so claim checking is ok.")
-        return true
-    }
+        else true.also { LOG.debug("no claims listed, so claim checking is ok.") }
 
     companion object {
 
-        private val SUPPORTED_ANNOTATIONS = listOf(RequiredIssuers::class, ProtectedWithClaims::class, Protected::class, Unprotected::class)
+        @JvmField
+        val SUPPORTED_ANNOTATIONS = listOf(RequiredIssuers::class, ProtectedWithClaims::class, Protected::class, Unprotected::class)
         protected val LOG : Logger = LoggerFactory.getLogger(JwtTokenAnnotationHandler::class.java)
         private fun findAnnotation(types : List<KClass<out Annotation>>, vararg annotations : Annotation) = annotations.firstOrNull { a -> types.contains(a.annotationClass) }
     }

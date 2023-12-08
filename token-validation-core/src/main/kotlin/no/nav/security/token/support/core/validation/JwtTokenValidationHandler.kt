@@ -2,6 +2,7 @@ package no.nav.security.token.support.core.validation
 
 import java.util.AbstractMap.SimpleImmutableEntry
 import java.util.concurrent.ConcurrentHashMap
+import jdk.incubator.vector.VectorOperators.LOG
 import kotlin.collections.Map.Entry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,7 +13,6 @@ import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException
 import no.nav.security.token.support.core.http.HttpRequest
 import no.nav.security.token.support.core.jwt.JwtToken
 import no.nav.security.token.support.core.validation.JwtTokenRetriever.retrieveUnvalidatedTokens
-import no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator
 
 class JwtTokenValidationHandler(private val config : MultiIssuerConfiguration) {
 
@@ -28,35 +28,25 @@ class JwtTokenValidationHandler(private val config : MultiIssuerConfiguration) {
             }
         }
 
-    private fun validate(jwtToken : JwtToken) : Entry<String, JwtToken>? {
-       with(jwtToken) {
-           try {
-               LOG.debug("Check if token with issuer={} is present in config", issuer)
-               if (config.getIssuer(issuer).isPresent) {
-                   val issuerShortName = issuerConfiguration(issuer).name
-                   LOG.debug("Found token from trusted issuer={} with shortName={} in request", issuer, issuerShortName)
-                   tokenValidator(jwtToken).assertValidToken(encodedToken)
-                   LOG.debug("Validated token from issuer[{}]", issuer)
-                   return SimpleImmutableEntry(issuerShortName, this)
-               }
-               return null.also {
-                   LOG.info("Found token from unknown issuer[{}], skipping validation.", issuer)
-               }
-           }
-           catch (e : JwtTokenValidatorException) {
-               return null.also {
-                   LOG.info("Found invalid token for issuer [{}, expires at {}], message:{} ",issuer, e.expiryDate, e.message)
-               }
-           }
-       }
-
-
-    }
+    private fun validate(jwtToken: JwtToken): Entry<String, JwtToken>? =
+        with(jwtToken) {
+            try {
+                LOG.debug("Check if token with issuer={} is present in config", issuer)
+                config.issuers[issuer]?.let {
+                    val issuerShortName = issuerConfiguration(issuer).name
+                    LOG.debug("Found token from trusted issuer={} with shortName={} in request", issuer, issuerShortName)
+                    tokenValidator(jwtToken).assertValidToken(encodedToken)
+                    LOG.debug("Validated token from issuer[{}]", issuer)
+                    SimpleImmutableEntry(issuerShortName, this)
+                } ?: null.also { LOG.debug("Found token from unknown issuer[{}], skipping validation.", issuer) }
+            } catch (e: JwtTokenValidatorException) {
+                null.also { LOG.info("Found invalid token for issuer [{}, expires at {}], message:{} ", issuer, e.expiryDate, e.message) }
+            }
+        }
 
     private fun tokenValidator(jwtToken : JwtToken) = issuerConfiguration(jwtToken.issuer).tokenValidator
 
-    private fun issuerConfiguration(issuer : String) = config.getIssuer(issuer)
-        .orElseThrow { IssuerConfigurationException("Could not find IssuerConfiguration for issuer $issuer") }
+    private fun issuerConfiguration(issuer : String) = config.issuers[issuer] ?: throw IssuerConfigurationException("Could not find IssuerConfiguration for issuer $issuer")
 
     companion object {
         private val LOG : Logger = LoggerFactory.getLogger(JwtTokenValidationHandler::class.java)

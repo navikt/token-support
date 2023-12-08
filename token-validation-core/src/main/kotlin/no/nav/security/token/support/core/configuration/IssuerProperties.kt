@@ -1,7 +1,5 @@
 package no.nav.security.token.support.core.configuration
 
-import com.nimbusds.jose.jwk.source.JWKSourceBuilder
-import com.nimbusds.jose.jwk.source.JWKSourceBuilder.*
 import jakarta.validation.Validation
 import java.net.URL
 import java.util.Objects
@@ -27,9 +25,7 @@ class IssuerProperties @JvmOverloads constructor(val discoveryUrl : URL,
         if (cookieName != null) LOG.warn("Cookie-support will be discontinued in future versions, please consider changing your configuration now")
     }
 
-    override fun toString() : String {
-        return "IssuerProperties(discoveryUrl=" + this.discoveryUrl + ", acceptedAudience=" + this.acceptedAudience + ", cookieName=" + this.cookieName + ", headerName=" + this.headerName + ", proxyUrl=" + this.proxyUrl + ", usePlaintextForHttps=" + this.usePlaintextForHttps + ", validation=" + this.validation + ", jwksCache=" + this.jwksCache + ")"
-    }
+    override fun toString() = "IssuerProperties(discoveryUrl=" + this.discoveryUrl + ", acceptedAudience=" + this.acceptedAudience + ", cookieName=" + this.cookieName + ", headerName=" + this.headerName + ", proxyUrl=" + this.proxyUrl + ", usePlaintextForHttps=" + this.usePlaintextForHttps + ", validation=" + this.validation + ", jwksCache=" + this.jwksCache + ")"
 
     class Validation(val optionalClaims : List<String> = emptyList()) {
 

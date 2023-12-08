@@ -3,29 +3,27 @@ package no.nav.security.token.support.core.context
 import java.util.Optional
 import no.nav.security.token.support.core.jwt.JwtToken
 
-class TokenValidationContext(private val issuerShortNameValidatedTokenMap : Map<String, JwtToken>) {
+class TokenValidationContext(private val vaidatedTokens : Map<String, JwtToken>) {
 
     fun getJwtTokenAsOptional(issuerName : String) = jwtToken(issuerName)?.let { Optional.of(it) } ?: Optional.empty()
 
-    val firstValidToken get() = issuerShortNameValidatedTokenMap.values.firstOrNull()?.let { Optional.of(it) } ?: Optional.empty()
+    val firstValidToken get() = vaidatedTokens.values.firstOrNull()?.let { Optional.of(it) } ?: Optional.empty()
     fun getJwtToken(issuerName : String) = jwtToken(issuerName)
 
-    override fun toString() = "TokenValidationContext{issuers=${issuerShortNameValidatedTokenMap.keys}}"
+    fun getClaims(issuerName : String) = jwtToken(issuerName)?.jwtTokenClaims ?: throw IllegalArgumentException("No token found for issuer $issuerName")
 
-    fun getClaims(issuerName : String) = jwtToken(issuerName)?.jwtTokenClaims ?: throw IllegalArgumentException("no token found for issuer $issuerName")
+    val anyValidClaims get() =
+        Optional.ofNullable(vaidatedTokens.values
+            .map(JwtToken::jwtTokenClaims)
+            .firstOrNull())
 
-    val anyValidClaims get() = issuerShortNameValidatedTokenMap.values
-        .map { it.jwtTokenClaims }
-        .firstOrNull()?.let {
-            Optional.of(it)
-        } ?: Optional.empty()
-
-    fun hasValidToken()  = issuerShortNameValidatedTokenMap.isNotEmpty()
+    fun hasValidToken()  = vaidatedTokens.isNotEmpty()
 
     fun hasTokenFor(issuerName : String) = getJwtToken(issuerName) != null
+    val issuers get() = vaidatedTokens.keys.toList()
 
-    val issuers get() = issuerShortNameValidatedTokenMap.keys.toList()
+    private fun jwtToken(issuerName: String) = vaidatedTokens[issuerName]
 
-    private fun jwtToken(issuerName: String) = issuerShortNameValidatedTokenMap[issuerName]
+    override fun toString() = "TokenValidationContext{issuers=${vaidatedTokens.keys}}"
 
 }

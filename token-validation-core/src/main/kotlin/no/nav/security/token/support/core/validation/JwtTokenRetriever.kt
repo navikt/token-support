@@ -17,14 +17,13 @@ object JwtTokenRetriever {
         getTokensFromHeader(config, request) + getTokensFromCookies(config, request)
 
     private fun getTokensFromHeader(config: MultiIssuerConfiguration, request: HttpRequest): List<JwtToken> = try {
-        LOG.debug("Checking authorization header for tokens using config $config")
+        LOG.debug("Checking authorization header for tokens using config {}", config)
         val issuer = config.issuers.values.firstOrNull { request.getHeader(it.headerName) != null }.let { Optional.ofNullable(it) }
         if (issuer.isPresent) {
-            val authorization = request.getHeader(issuer.get().headerName)
-            val headerValues = authorization?.split(",")?.toTypedArray() ?: emptyArray()
-            extractBearerTokens(*headerValues)
+            val headerValues = request.getHeader(issuer.get().headerName)?.split(",") ?: emptyList()
+            extractBearerTokens(headerValues)
                 .map(::JwtToken)
-                .filter { config.getIssuer(it.issuer).isPresent }
+                .filterNot { config.issuers[it.issuer] == null }
         } else {
             emptyList<JwtToken>().also { LOG.debug("No tokens found in authorization header")  }
         }
@@ -50,7 +49,7 @@ object JwtTokenRetriever {
             cookieName.equals(it.cookieName, ignoreCase = true)
         }
 
-    private fun extractBearerTokens(vararg headerValues: String) =
+    private fun extractBearerTokens(headerValues: List<String>) =
         headerValues
         .map { it.split(" ") }
         .filter { it.size == 2 && it[0].equals(BEARER, ignoreCase = true) }

@@ -1,8 +1,6 @@
 package no.nav.security.token.support.core.jwt
 
 import com.nimbusds.jwt.JWTClaimsSet
-import java.text.ParseException
-import java.util.Date
 
 class JwtTokenClaims(private val claimSet : JWTClaimsSet) {
 

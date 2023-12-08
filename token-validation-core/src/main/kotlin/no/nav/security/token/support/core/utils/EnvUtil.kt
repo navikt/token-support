@@ -9,19 +9,23 @@ object EnvUtil {
     const val TEST = "test"
     const val DEV = "dev"
     const val PROD = "prod"
-    @JvmField
-    val DEV_GCP = join(DEV, GCP)
-    @JvmField
-    val PROD_GCP = join(PROD, GCP)
-    @JvmField
-    val PROD_SBS = join(PROD, SBS)
-    @JvmField
-    val DEV_SBS = join(DEV, SBS)
-    @JvmField
-    val PROD_FSS = join(PROD, FSS)
-    @JvmField
-    val DEV_FSS = join(DEV, FSS)
-    const val NAIS_CLUSTER_NAME = "NAIS_CLUSTER_NAME"
 
-    private fun join(env : String, cluster : String) = "$env-$cluster"
+    @JvmField
+    val DEV_GCP = "$DEV-$GCP"
+
+    @JvmField
+    val PROD_GCP = "$PROD-$GCP"
+
+    @JvmField
+    val PROD_SBS = "$PROD-$SBS"
+
+    @JvmField
+    val DEV_SBS = "$DEV-$SBS"
+
+    @JvmField
+    val PROD_FSS = "$PROD-$FSS"
+
+    @JvmField
+    val DEV_FSS = "$DEV-$FSS"
+    const val NAIS_CLUSTER_NAME = "NAIS_CLUSTER_NAME"
 }

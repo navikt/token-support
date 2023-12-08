@@ -5,10 +5,8 @@ import com.nimbusds.jose.jwk.source.JWKSourceBuilder
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jose.util.ResourceRetriever
 import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata
-import java.net.MalformedURLException
 import java.net.URL
 import no.nav.security.token.support.core.configuration.IssuerProperties
-import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException
 
 object JwtTokenValidatorFactory {
 

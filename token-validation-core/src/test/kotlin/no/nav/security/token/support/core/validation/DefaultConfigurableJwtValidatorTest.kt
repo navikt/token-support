@@ -15,7 +15,7 @@ import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException
 internal class DefaultConfigurableJwtValidatorTest : AbstractJwtValidatorTest() {
 
     private val jwksUrl = URL("https://someurl")
-    private val jwkSource : JWKSource<SecurityContext> = JWKSourceBuilder.create<SecurityContext>(jwksUrl, MockResourceRetriever()).build()
+    private val jwkSource  = JWKSourceBuilder.create<SecurityContext>(jwksUrl, MockResourceRetriever()).build()
 
     @Test
     fun happyPath() {
