@@ -7,14 +7,13 @@ import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableExcepti
 import no.nav.security.token.support.core.validation.JwtTokenValidator
 import no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator
 
-open class IssuerConfiguration(val name : String, properties : IssuerProperties, retriever : ResourceRetriever?) {
+open class IssuerConfiguration(val name : String, properties : IssuerProperties, val resourceRetriever : ResourceRetriever = ProxyAwareResourceRetriever()) {
 
     val metadata : AuthorizationServerMetadata
     val acceptedAudience  = properties.acceptedAudience
     val cookieName = properties.cookieName
     val headerName = properties.headerName
     val tokenValidator : JwtTokenValidator
-    val resourceRetriever = retriever ?: ProxyAwareResourceRetriever()
 
     init {
         this.metadata = providerMetadata(resourceRetriever, properties.discoveryUrl)
@@ -25,7 +24,7 @@ open class IssuerConfiguration(val name : String, properties : IssuerProperties,
 
     companion object {
 
-        protected fun providerMetadata(retriever : ResourceRetriever, url : URL) =
+        private fun providerMetadata(retriever : ResourceRetriever, url : URL) =
             runCatching {
                 AuthorizationServerMetadata.parse(retriever.retrieveResource(url).content)
             }.getOrElse {
