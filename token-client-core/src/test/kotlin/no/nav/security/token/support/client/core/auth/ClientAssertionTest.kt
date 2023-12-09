@@ -6,14 +6,14 @@ import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSVerifier
 import com.nimbusds.jose.crypto.RSASSAVerifier
 import com.nimbusds.jwt.SignedJWT
-import com.nimbusds.oauth2.sdk.GrantType
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
+import com.nimbusds.oauth2.sdk.GrantType.*
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
+import com.nimbusds.oauth2.sdk.auth.JWTAuthentication
 import java.net.URI
 import java.text.ParseException
 import java.time.Instant
 import java.util.Date
 import java.util.Objects
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
@@ -24,18 +24,17 @@ internal class ClientAssertionTest {
     @Test
     @Throws(ParseException::class, JOSEException::class)
     fun testCreateAssertion() {
-        val clientAuth = builder("client1", ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+        val clientAuth = builder("client1", PRIVATE_KEY_JWT)
             .clientJwk("src/test/resources/jwk.json")
             .build()
-        val clientProperties = builder(GrantType.CLIENT_CREDENTIALS, clientAuth)
+        val clientProperties = builder(CLIENT_CREDENTIALS, clientAuth)
             .tokenEndpointUrl(URI.create("http://token"))
             .build()
         val now = Instant.now()
         val clientAssertion = ClientAssertion(
-            clientProperties.tokenEndpointUrl!!,
+            clientProperties.tokenEndpointUrl,
             clientProperties.authentication)
         assertThat(clientAssertion).isNotNull()
-        assertThat(clientAssertion.assertionType()).isEqualTo("urn:ietf:params:oauth:client-assertion-type:jwt-bearer")
         val assertion = clientAssertion.assertion()
         assertThat(clientAssertion.assertion()).isNotNull()
         val signedJWT = SignedJWT.parse(assertion)

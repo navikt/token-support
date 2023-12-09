@@ -70,12 +70,6 @@ internal class ClientCredentialsTokenClientTest {
     @Test
     fun  tokenResponseWithClientSecretPost(){
             server!!.enqueue(jsonResponse(TOKEN_RESPONSE))
-            /*  ClientProperties clientProperties = clientProperties(tokenEndpointUrl, CLIENT_CREDENTIALS)
-            .toBuilder()
-            .authentication(ClientAuthenticationProperties.builder("client",CLIENT_SECRET_POST)
-                .clientSecret("secret")
-                .build())
-            .build();*/
             val clientProperties = builder(GrantType.CLIENT_CREDENTIALS, builder("client", ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .clientSecret("secret").build())
                 .tokenEndpointUrl(URI.create(tokenEndpointUrl))

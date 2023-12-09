@@ -55,8 +55,7 @@ class DefaultConfigurableJwtValidator(issuer : String, acceptedAudiences : List<
     private val jwtProcessor = DefaultJWTProcessor<SecurityContext>().apply {
         jwsKeySelector = JWSVerificationKeySelector(RS256, jwkSource)
         setJWTClaimsSetVerifier(DefaultJwtClaimsVerifier(acceptedAudiences(acceptedAudiences, optionalClaims),
-            Builder().issuer(issuer).build(),
-            difference(DEFAULT_REQUIRED_CLAIMS, optionalClaims),
+            Builder().issuer(issuer).build(), difference(DEFAULT_REQUIRED_CLAIMS, optionalClaims),
             PROHIBITED_CLAIMS))
     }
 

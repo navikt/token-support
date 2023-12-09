@@ -22,10 +22,10 @@ class IssuerProperties @JvmOverloads constructor(val discoveryUrl : URL,
     private val LOG : Logger = LoggerFactory.getLogger(IssuerProperties::class.java)
 
     init {
-        if (cookieName != null) LOG.warn("Cookie-support will be discontinued in future versions, please consider changing your configuration now")
+        cookieName?.let { LOG.warn("Cookie-support will be discontinued in future versions, please consider changing your configuration now") }
     }
 
-    override fun toString() = "IssuerProperties(discoveryUrl=" + this.discoveryUrl + ", acceptedAudience=" + this.acceptedAudience + ", cookieName=" + this.cookieName + ", headerName=" + this.headerName + ", proxyUrl=" + this.proxyUrl + ", usePlaintextForHttps=" + this.usePlaintextForHttps + ", validation=" + this.validation + ", jwksCache=" + this.jwksCache + ")"
+    override fun toString() = "IssuerProperties(discoveryUrl=$discoveryUrl, acceptedAudience=$acceptedAudience, cookieName=$cookieName, headerName=$headerName, proxyUrl=$proxyUrl, usePlaintextForHttps=$usePlaintextForHttps, validation=$validation, jwksCache=$jwksCache)"
 
     class Validation(val optionalClaims : List<String> = emptyList()) {
 
@@ -40,7 +40,7 @@ class IssuerProperties @JvmOverloads constructor(val discoveryUrl : URL,
 
         override fun hashCode() = Objects.hash(optionalClaims)
 
-        override fun toString() = "IssuerProperties.Validation(optionalClaims=" + this.optionalClaims + ")"
+        override fun toString() = "IssuerProperties.Validation(optionalClaims=$optionalClaims)"
 
         companion object {
 
@@ -66,7 +66,7 @@ class IssuerProperties @JvmOverloads constructor(val discoveryUrl : URL,
 
         override fun hashCode() = Objects.hash(lifespan, refreshTime)
 
-        override fun toString() = javaClass.simpleName + " [lifespan=" + lifespan + ",refreshTime=" + refreshTime + "]"
+        override fun toString() = "${javaClass.simpleName} [lifespan=$lifespan,refreshTime=$refreshTime]"
 
         companion object {
 

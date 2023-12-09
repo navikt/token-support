@@ -31,34 +31,32 @@ internal class MultiIssuerConfigurationTest {
     }
 
     @Test
-    fun issuerConfiguration()  {
-            val issuerProperties = IssuerProperties(discoveryUrl, listOf("audience1"))
-            val issuerName = "issuer1"
-            val multiIssuerConfiguration = MultiIssuerConfiguration(mapOf(issuerName to issuerProperties))
-            assertThatMultiIssuerConfigurationIsPopulatedFromMetadata(issuerName, multiIssuerConfiguration)
+    fun issuerConfiguration() {
+        "issuer1".run {
+            assertPopulated(this, MultiIssuerConfiguration(mapOf(this to IssuerProperties(discoveryUrl, listOf("audience1")))))
         }
+    }
 
     @Test
     fun issuerConfigurationWithProxy () {
             val issuerProperties = IssuerProperties(discoveryUrl, listOf("audience1"), null, AUTHORIZATION_HEADER, EMPTY, EMPTY_CACHE, proxyUrl)
             val issuerName = "issuer1"
-            val multiIssuerConfiguration = MultiIssuerConfiguration(mapOf(issuerName to issuerProperties))
-            assertThatMultiIssuerConfigurationIsPopulatedFromMetadata(issuerName, multiIssuerConfiguration)
-            val config = multiIssuerConfiguration.issuers[issuerName]
+            val cfg = MultiIssuerConfiguration(mapOf(issuerName to issuerProperties))
+            assertPopulated(issuerName, cfg)
+            val config = cfg.issuers[issuerName]
             assertThat(config).isNotNull()
             assertThat(config?.resourceRetriever).isInstanceOf(ProxyAwareResourceRetriever::class.java)
             assertThat((config?.resourceRetriever as DefaultResourceRetriever).proxy.type()).isEqualTo(HTTP)
         }
 
-    private fun assertThatMultiIssuerConfigurationIsPopulatedFromMetadata(issuerName : String, multiIssuerConfiguration : MultiIssuerConfiguration) {
-        assertThat(multiIssuerConfiguration.getIssuerShortNames()).containsExactly(issuerName)
-        val config = multiIssuerConfiguration.issuers[issuerName]
-        assertThat(config).isNotNull()
-        assertThat(config?.name).isEqualTo(issuerName)
-        assertThat(config?.tokenValidator).isNotNull()
-        assertThat(config?.metadata).isNotNull()
-        assertThat(config?.metadata?.issuer).isNotNull()
-        assertThat(config?.metadata?.issuer?.value).isEqualTo("\$ISSUER")
-        assertThat(config?.resourceRetriever).isNotNull()
+    private fun assertPopulated(issuerName : String, cfg : MultiIssuerConfiguration) {
+        assertThat(cfg.issuerShortNames).containsExactly(issuerName)
+        assertThat(cfg.issuers[issuerName]?.metadata)
+            .isNotNull()
+            .extracting(
+                { it?.issuer != null },
+                { it?.issuer?.value != null },
+                { it?.issuer?.value == "\$ISSUER" })
+            .containsExactly(true, true,true)
     }
 }

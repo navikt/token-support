@@ -15,7 +15,7 @@ class OAuth2HttpHeaders (val headers : Map<String, List<String>>) {
 
     override fun hashCode() = Objects.hash(headers)
 
-    override fun toString() = javaClass.getSimpleName() + " [headers=" + headers + "]"
+    override fun toString() = "${javaClass.getSimpleName()} [headers=$headers]"
 
     class Builder(private val headers : TreeMap<String, MutableList<String>> =  TreeMap(CASE_INSENSITIVE_ORDER)) {
 

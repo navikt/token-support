@@ -1,10 +1,13 @@
 package no.nav.security.token.support.client.core
 
+import com.nimbusds.common.contenttype.ContentType
+import com.nimbusds.common.contenttype.ContentType.*
 import com.nimbusds.jwt.JWT
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
 import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
 import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.URI
@@ -21,17 +24,15 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.*
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 
 object TestUtils {
-
-    const val CONTENT_TYPE_FORM_URL_ENCODED = "application/x-www-form-urlencoded;charset=UTF-8"
-    const val CONTENT_TYPE_JSON = "application/json;charset=UTF-8"
     @JvmStatic
     fun clientProperties(tokenEndpointUrl : String?, oAuth2GrantType : GrantType?) : ClientProperties {
-        return builder(oAuth2GrantType!!, builder("client1", ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+        return builder(oAuth2GrantType!!, builder("client1", CLIENT_SECRET_BASIC)
             .clientSecret("clientSecret1")
             .build())
             .scope(listOf("scope1", "scope2"))
@@ -44,7 +45,7 @@ object TestUtils {
         oAuth2GrantType : GrantType?,
         clientPrivateKey : String?
                                      ) : ClientProperties {
-        return builder(oAuth2GrantType!!, builder("client1", ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+        return builder(oAuth2GrantType!!, builder("client1", PRIVATE_KEY_JWT)
             .clientJwk(clientPrivateKey!!)
             .build())
             .tokenEndpointUrl(URI.create(tokenEndpointUrl))
@@ -70,9 +71,9 @@ object TestUtils {
 
     @JvmStatic
     fun assertPostMethodAndJsonHeaders(recordedRequest : RecordedRequest) {
-        Assertions.assertThat(recordedRequest.method).isEqualTo("POST")
-        Assertions.assertThat(recordedRequest.getHeader("Accept")).isEqualTo(CONTENT_TYPE_JSON)
-        Assertions.assertThat(recordedRequest.getHeader("Content-Type")).isEqualTo(CONTENT_TYPE_FORM_URL_ENCODED)
+        assertThat(recordedRequest.method).isEqualTo("POST")
+        assertThat(recordedRequest.getHeader("Accept")).isEqualTo("$APPLICATION_JSON")
+        assertThat(recordedRequest.getHeader("Content-Type")).isEqualTo("$APPLICATION_URLENCODED")
     }
 
     @JvmStatic

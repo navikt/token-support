@@ -57,19 +57,16 @@ object JwkFactory {
         }
 
 
-    private fun getX509CertSHA1Thumbprint(rsaKey : RSAKey) : String? {
-        return runCatching {
-            rsaKey.parsedX509CertChain.stream()
-                .findFirst()
-                .orElse(null)?.let { createSHA1DigestBase64Url(it.encoded) }
-        }.getOrElse {
-            throw RuntimeException(it)
-        }
-    }
+    private fun getX509CertSHA1Thumbprint(rsaKey: RSAKey) =
+        runCatching {
+            rsaKey.parsedX509CertChain.firstOrNull()?.let { cert ->
+                createSHA1DigestBase64Url(cert.encoded)
+            }
+        }.getOrElse { throw RuntimeException(it) }
 
     private fun createSHA1DigestBase64Url(bytes : ByteArray) =
         runCatching {
-            encode(getInstance("SHA-1").digest(bytes)).toString()
+            "${encode(getInstance("SHA-1").digest(bytes))}"
         }.getOrElse {
             throw RuntimeException(it)
         }

@@ -20,6 +20,7 @@ import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.core.annotation.AnnotationAttributes.fromMap
 import org.springframework.core.type.AnnotationMetadata
 import java.util.*
+import org.springframework.web.client.RestClient
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @EnableConfigurationProperties(ClientConfigurationProperties::class)
@@ -46,7 +47,7 @@ class OAuth2ClientConfiguration : ImportAware {
 
     @Bean
     @ConditionalOnMissingBean(OAuth2HttpClient::class)
-    fun oAuth2HttpClient(b: RestTemplateBuilder) = DefaultOAuth2HttpClient(b.build())
+    fun oAuth2HttpClient() = DefaultOAuth2HttpClient(RestClient.create())
 
     @Bean
     @ConditionalOnClass(TokenValidationContextHolder::class)

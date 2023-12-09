@@ -1,7 +1,10 @@
 package no.nav.security.token.support.ktor.oauth
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonInclude.*
+import com.fasterxml.jackson.annotation.JsonInclude.Include.*
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.DeserializationFeature.*
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -24,8 +27,8 @@ internal class OAuth2ClientIntegrationTest {
     private val httpClient: HttpClient = HttpClient(CIO) {
         install(JsonFeature) {
             serializer = JacksonSerializer {
-                configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+                setSerializationInclusion(NON_NULL)
             }
         }
     }

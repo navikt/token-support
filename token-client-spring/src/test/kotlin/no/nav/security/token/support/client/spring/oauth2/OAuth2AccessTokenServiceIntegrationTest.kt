@@ -10,7 +10,6 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.jwt.JwtToken
 import okhttp3.mockwebserver.MockWebServer
-import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +27,7 @@ import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+import org.assertj.core.api.Assertions.*
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [ConfigurationWithCacheEnabledTrue::class])
@@ -37,46 +37,46 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
     private val tokenValidationContextHolder: TokenValidationContextHolder? = null
 
     @Autowired
-    private lateinit var  oAuth2AccessTokenService: OAuth2AccessTokenService
+    private lateinit var oAuth2AccessTokenService: OAuth2AccessTokenService
 
     @Autowired
     private lateinit var  clientConfigurationProperties: ClientConfigurationProperties
 
     @Autowired
     private lateinit var  assertionResolver: JwtBearerTokenResolver
-    private var server: MockWebServer? = null
-    private var tokenEndpointUrl: URI? = null
+    private lateinit var server: MockWebServer
+    private lateinit var tokenEndpointUrl: URI
     @BeforeEach
     @Throws(IOException::class)
     fun setup() {
         MockitoAnnotations.openMocks(this)
         server = MockWebServer()
-        server!!.start()
-        tokenEndpointUrl = server!!.url("/oauth2/token").toUri()
+        server.start()
+        tokenEndpointUrl = server.url("/oauth2/token").toUri()
     }
 
     @AfterEach
     @Throws(IOException::class)
     fun teardown() {
-        server!!.shutdown()
+        server.shutdown()
     }
 
     @Test
     fun accessTokenOnBehalfOf() {
             var clientProperties = clientConfigurationProperties.registration["example1-onbehalfof"]
-            Assertions.assertThat(clientProperties).isNotNull
+            assertThat(clientProperties).isNotNull
             clientProperties = clientProperties!!.toBuilder()
                 .tokenEndpointUrl(tokenEndpointUrl)
                 .build()
-            server!!.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
+            server.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
             Mockito.`when`(tokenValidationContextHolder!!.getTokenValidationContext())
                 .thenReturn(tokenValidationContext("sub1"))
             val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-            val request = server!!.takeRequest()
+            val request = server.takeRequest()
             val headers = request.headers
             val body = request.body.readUtf8()
-            Assertions.assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
-            Assertions.assertThat(headers["Authorization"]).isNotBlank
+            assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
+            assertThat(headers["Authorization"]).isNotBlank
             val usernamePwd = Optional.ofNullable(headers["Authorization"])
                 .map { s: String -> s.split("Basic ").toTypedArray() }
                 .filter { pair: Array<String> -> pair.size == 2 }
@@ -84,64 +84,64 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
                 .map { bytes: ByteArray? -> String(bytes!!, StandardCharsets.UTF_8) }
                 .orElse("")
             val auth = clientProperties.authentication
-            Assertions.assertThat(usernamePwd).isEqualTo(auth.clientId + ":" + auth.clientSecret)
-            Assertions.assertThat(body).contains(
+            assertThat(usernamePwd).isEqualTo(auth.clientId + ":" + auth.clientSecret)
+            assertThat(body).contains(
                 "grant_type=" + URLEncoder.encode(
                     GrantType.JWT_BEARER.value,
                     StandardCharsets.UTF_8))
-            Assertions.assertThat(body).contains(
+            assertThat(body).contains(
                 "scope=" + URLEncoder.encode(
                     java.lang.String.join(" ", clientProperties.scope),
                     StandardCharsets.UTF_8))
-            Assertions.assertThat(body).contains("requested_token_use=on_behalf_of")
-            Assertions.assertThat(body).contains("assertion=" + assertionResolver.token().orElse(null))
-            Assertions.assertThat(response).isNotNull
-            Assertions.assertThat(response?.accessToken).isNotBlank
-            Assertions.assertThat(response?.expiresAt).isGreaterThan(0)
-            Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
+            assertThat(body).contains("requested_token_use=on_behalf_of")
+            assertThat(body).contains("assertion=" + assertionResolver.token().orElse(null))
+            assertThat(response).isNotNull
+            assertThat(response?.accessToken).isNotBlank
+            assertThat(response?.expiresAt).isGreaterThan(0)
+            assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
     @Test
     fun accessTokenUsingTokenExhange() {
             var clientProperties = clientConfigurationProperties.registration["example1-token" +
                 "-exchange1"]
-            Assertions.assertThat(clientProperties).isNotNull
+            assertThat(clientProperties).isNotNull
             clientProperties = clientProperties!!.toBuilder()
                 .tokenEndpointUrl(tokenEndpointUrl)
                 .build()
-            server!!.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
+            server.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
             Mockito.`when`(tokenValidationContextHolder!!.getTokenValidationContext())
                 .thenReturn(tokenValidationContext("sub1"))
             val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-            val request = server!!.takeRequest()
+            val request = server.takeRequest()
             val headers = request.headers
             val body = request.body.readUtf8()
-            Assertions.assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
-            Assertions.assertThat(body).contains(
+            assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
+            assertThat(body).contains(
                 "grant_type=" + URLEncoder.encode(
                     GrantType.TOKEN_EXCHANGE.value,
                     StandardCharsets.UTF_8))
-            Assertions.assertThat(body).contains("subject_token=" + assertionResolver.token().orElse(null))
-            Assertions.assertThat(response).isNotNull
-            Assertions.assertThat(response?.accessToken).isNotBlank
-            Assertions.assertThat(response?.expiresAt).isGreaterThan(0)
-            Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
+            assertThat(body).contains("subject_token=" + assertionResolver.token().orElse(null))
+            assertThat(response).isNotNull
+            assertThat(response?.accessToken).isNotBlank
+            assertThat(response?.expiresAt).isGreaterThan(0)
+            assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
     @Test
     fun accessTokenClientCredentials() {
             var clientProperties = clientConfigurationProperties.registration["example1-clientcredentials1"]
-            Assertions.assertThat(clientProperties).isNotNull
+            assertThat(clientProperties).isNotNull
             clientProperties = clientProperties!!.toBuilder()
                 .tokenEndpointUrl(tokenEndpointUrl)
                 .build()
-            server!!.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
+            server.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
             val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-            val request = server!!.takeRequest()
+            val request = server.takeRequest()
             val headers = request.headers
             val body = request.body.readUtf8()
-            Assertions.assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
-            Assertions.assertThat(headers["Authorization"]).isNotBlank
+            assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
+            assertThat(headers["Authorization"]).isNotBlank
             val usernamePwd = Optional.ofNullable(headers["Authorization"])
                 .map { s: String -> s.split("Basic ").toTypedArray() }
                 .filter { pair: Array<String> -> pair.size == 2 }
@@ -149,18 +149,18 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
                 .map { bytes: ByteArray? -> String(bytes!!, StandardCharsets.UTF_8) }
                 .orElse("")
             val auth = clientProperties.authentication
-            Assertions.assertThat(usernamePwd).isEqualTo(auth.clientId + ":" + auth.clientSecret)
-            Assertions.assertThat(body).contains("grant_type=client_credentials")
-            Assertions.assertThat(body).contains(
+            assertThat(usernamePwd).isEqualTo(auth.clientId + ":" + auth.clientSecret)
+            assertThat(body).contains("grant_type=client_credentials")
+            assertThat(body).contains(
                 "scope=" + URLEncoder.encode(
                     java.lang.String.join(" ", clientProperties.scope),
                     StandardCharsets.UTF_8))
-            Assertions.assertThat(body).doesNotContain("requested_token_use=on_behalf_of")
-            Assertions.assertThat(body).doesNotContain("assertion=")
-            Assertions.assertThat(response).isNotNull
-            Assertions.assertThat(response?.accessToken).isNotBlank
-            Assertions.assertThat(response?.expiresAt).isGreaterThan(0)
-            Assertions.assertThat(response?.expiresIn).isGreaterThan(0)
+            assertThat(body).doesNotContain("requested_token_use=on_behalf_of")
+            assertThat(body).doesNotContain("assertion=")
+            assertThat(response).isNotNull
+            assertThat(response?.accessToken).isNotBlank
+            assertThat(response?.expiresAt).isGreaterThan(0)
+            assertThat(response?.expiresIn).isGreaterThan(0)
         }
 
     companion object {

@@ -1,14 +1,22 @@
 package no.nav.security.token.support.client.core.oauth2
 
-import com.nimbusds.oauth2.sdk.GrantType
+import com.nimbusds.common.contenttype.ContentType
+import com.nimbusds.common.contenttype.ContentType.APPLICATION_JSON
+import com.nimbusds.common.contenttype.ContentType.APPLICATION_URLENCODED
+import com.nimbusds.oauth2.sdk.GrantType.*
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
+import com.nimbusds.oauth2.sdk.auth.JWTAuthentication
 import java.lang.String.*
 import java.nio.charset.StandardCharsets
 import java.util.Base64
-import java.util.Optional
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.OAuth2ParameterNames
+import no.nav.security.token.support.client.core.OAuth2ParameterNames.CLIENT_ASSERTION
+import no.nav.security.token.support.client.core.OAuth2ParameterNames.CLIENT_ASSERTION_TYPE
+import no.nav.security.token.support.client.core.OAuth2ParameterNames.CLIENT_ID
+import no.nav.security.token.support.client.core.OAuth2ParameterNames.CLIENT_SECRET
+import no.nav.security.token.support.client.core.OAuth2ParameterNames.GRANT_TYPE
+import no.nav.security.token.support.client.core.OAuth2ParameterNames.SCOPE
 import no.nav.security.token.support.client.core.auth.ClientAssertion
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders
@@ -16,63 +24,66 @@ import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 
 abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> internal constructor(private val oAuth2HttpClient : OAuth2HttpClient) {
 
-    fun getTokenResponse(grantRequest : T) : OAuth2AccessTokenResponse? {
-        val clientProperties = grantRequest?.clientProperties ?: throw OAuth2ClientException("ClientProperties cannot be null")
-        return try {
-            val formParameters = createDefaultFormParameters(grantRequest)
-            formParameters.putAll(formParameters(grantRequest))
-            val oAuth2HttpRequest = OAuth2HttpRequest.builder()
-                .tokenEndpointUrl(clientProperties.tokenEndpointUrl)
-                .oAuth2HttpHeaders(OAuth2HttpHeaders.of(tokenRequestHeaders(clientProperties)))
-                .formParameters(formParameters)
-                .build()
-            oAuth2HttpClient.post(oAuth2HttpRequest)
-        }
-        catch (e : Exception) {
-            if (e !is OAuth2ClientException) {
-                throw OAuth2ClientException("received exception $e when invoking token endpoint=${clientProperties.tokenEndpointUrl}", e)
+    protected abstract fun formParameters(grantRequest : T) : Map<String, String>
+
+    fun getTokenResponse(grantRequest : T) =
+        grantRequest?.clientProperties?.let {
+            runCatching {
+                oAuth2HttpClient.post(OAuth2HttpRequest.builder(it.tokenEndpointUrl)
+                    .oAuth2HttpHeaders(OAuth2HttpHeaders.of(tokenRequestHeaders(it)))
+                    .formParameters(createDefaultFormParameters(grantRequest).apply {
+                        putAll(formParameters(grantRequest))
+                    })
+                    .build())
+            }.getOrElse {e ->
+                if (e !is OAuth2ClientException) {
+                    throw OAuth2ClientException("Received exception $e when invoking token endpoint=${it.tokenEndpointUrl}", e)
+                }
+                throw e
             }
-            throw e
         }
-    }
 
-    private fun tokenRequestHeaders(clientProperties : ClientProperties) : Map<String, List<String>> {
-        val headers = HashMap<String, List<String>>()
-        headers["Accept"] = listOf(CONTENT_TYPE_JSON)
-        headers["Content-Type"] = listOf(CONTENT_TYPE_FORM_URL_ENCODED)
-        val auth = clientProperties.authentication
-        if (CLIENT_SECRET_BASIC == auth.clientAuthMethod) {
-            headers["Authorization"] = listOf("Basic " + basicAuth(auth.clientId, auth.clientSecret!!))
+    private fun tokenRequestHeaders(clientProperties : ClientProperties) =
+        HashMap<String, List<String>>().apply {
+            put("Accept",listOf("$APPLICATION_JSON"))
+            put("Content-Type",listOf("$APPLICATION_URLENCODED"))
+            val auth = clientProperties.authentication
+            if (CLIENT_SECRET_BASIC == auth.clientAuthMethod) {
+                put("Authorization",listOf("Basic ${basicAuth(auth.clientId, auth.clientSecret!!)}"))
+            }
         }
-        return headers
-    }
 
-    fun createDefaultFormParameters(grantRequest : T) : MutableMap<String, String> {
-        val clientProperties = grantRequest?.clientProperties ?: throw OAuth2ClientException("ClientProperties cannot be null")
-        val formParameters : MutableMap<String, String> = LinkedHashMap(clientAuthenticationFormParameters(grantRequest))
-        formParameters[OAuth2ParameterNames.GRANT_TYPE] = grantRequest.grantType.value
-        if (clientProperties.grantType != GrantType.TOKEN_EXCHANGE) {
-            formParameters[OAuth2ParameterNames.SCOPE] = join(" ", clientProperties.scope)
-        }
-        return formParameters
-    }
+    private fun createDefaultFormParameters(grantRequest : T) =
+        grantRequest?.clientProperties?.let {
+            clientAuthenticationFormParameters(grantRequest).apply {
+                put(GRANT_TYPE,grantRequest.grantType.value)
+                if (it.grantType != TOKEN_EXCHANGE) {
+                    put(SCOPE,  join(" ", it.scope))
+                }
+            }
+        } ?: throw OAuth2ClientException("ClientProperties cannot be null")
 
-    private fun clientAuthenticationFormParameters(grantRequest : T) : Map<String, String> {
-        val clientProperties = grantRequest!!.clientProperties
-        val formParameters : MutableMap<String, String> = LinkedHashMap()
-        val auth = clientProperties.authentication
-        if (CLIENT_SECRET_POST == auth.clientAuthMethod) {
-            formParameters[OAuth2ParameterNames.CLIENT_ID] = auth.clientId
-            formParameters[OAuth2ParameterNames.CLIENT_SECRET] = auth.clientSecret!!
-        }
-        else if (PRIVATE_KEY_JWT == auth.clientAuthMethod) {
-            val clientAssertion = ClientAssertion(clientProperties.tokenEndpointUrl!!, auth)
-            formParameters[OAuth2ParameterNames.CLIENT_ID] = auth.clientId
-            formParameters[OAuth2ParameterNames.CLIENT_ASSERTION_TYPE] = clientAssertion.assertionType()
-            formParameters[OAuth2ParameterNames.CLIENT_ASSERTION] = clientAssertion.assertion()
-        }
-        return formParameters
-    }
+    private fun clientAuthenticationFormParameters(grantRequest : T) =
+         grantRequest?.clientProperties?.let {
+            with(it) {
+                when (authentication.clientAuthMethod) {
+                    CLIENT_SECRET_POST -> {
+                         LinkedHashMap<String, String>().apply {
+                            put(CLIENT_ID, authentication.clientId)
+                            put(CLIENT_SECRET, authentication.clientSecret!!)
+                        }
+                    }
+                    PRIVATE_KEY_JWT -> {
+                         LinkedHashMap<String, String>().apply {
+                            put(CLIENT_ID, authentication.clientId)
+                            put(CLIENT_ASSERTION_TYPE, JWTAuthentication.CLIENT_ASSERTION_TYPE)
+                            put(CLIENT_ASSERTION, ClientAssertion(tokenEndpointUrl, authentication).assertion())
+                        }
+                    }
+                    else ->  mutableMapOf()
+                }
+            }
+        } ?:  throw OAuth2ClientException("ClientProperties cannot be null")
 
     private fun basicAuth(username : String, password : String) : String {
         val charset = StandardCharsets.UTF_8
@@ -87,12 +98,6 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
         }
     }
 
-    protected abstract fun formParameters(grantRequest : T) : Map<String, String>
-    override fun toString() = javaClass.getSimpleName() + " [oAuth2HttpClient=" + oAuth2HttpClient + "]"
+    override fun toString() = "${javaClass.getSimpleName()} [oAuth2HttpClient=$oAuth2HttpClient]"
 
-    companion object {
-
-        private const val CONTENT_TYPE_FORM_URL_ENCODED = "application/x-www-form-urlencoded;charset=UTF-8"
-        private const val CONTENT_TYPE_JSON = "application/json;charset=UTF-8"
-    }
 }

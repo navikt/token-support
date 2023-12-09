@@ -47,7 +47,7 @@ fun Application.module() {
         // Only allow token that has a claim "scope" with space-separated value, where at least one scope must match
         tokenValidationSupport(name = "ValidScope", config = config, additionalValidation = { ctx ->
             val scopes = ctx.getClaims(acceptedIssuer)
-                ?.getStringClaim("scope")
+                .getStringClaim("scope")
                 ?.split(" ")
                 ?: emptyList()
 

@@ -31,8 +31,8 @@ internal class IssuerConfigurationTest {
 
     @Test
     fun issuerConfigurationWithMetadataFromDiscoveryUrl() {
-        val config = IssuerConfiguration("issuer1", IssuerProperties(issuerMockWebServer.discoveryUrl, listOf("audience1")), ProxyAwareResourceRetriever())
-        assertThat(config.metadata)
+        assertThat(IssuerConfiguration("issuer1", IssuerProperties(issuerMockWebServer.discoveryUrl, listOf("audience1")),
+            ProxyAwareResourceRetriever()).metadata)
             .extracting(
                 { it.issuer != null },
                 { it.jwkSetURI != null })
@@ -55,8 +55,7 @@ internal class IssuerConfigurationTest {
     @Test
     fun issuerConfigurationWithConfigurableJwtTokenValidator() {
         val p = IssuerProperties(issuerMockWebServer.discoveryUrl, emptyList(), null, AUTHORIZATION_HEADER, Validation(listOf("sub", "aud")))
-        val config = IssuerConfiguration("issuer1", p)
-        assertThat(config.metadata)
+        assertThat(IssuerConfiguration("issuer1", p).metadata)
             .extracting(
                 { it.issuer != null },
                 { it.jwkSetURI != null })
@@ -67,8 +66,7 @@ internal class IssuerConfigurationTest {
     @Test
     fun issuerConfigurationWithConfigurableJWKSCacheAndConfigurableJwtTokenValidator() {
         val p = IssuerProperties(issuerMockWebServer.discoveryUrl, emptyList(), null, AUTHORIZATION_HEADER, Validation(listOf("sub", "aud")), JwksCache(15L, 5L))
-        val config = IssuerConfiguration("issuer1", p)
-        assertThat(config.metadata)
+        assertThat(IssuerConfiguration("issuer1", p).metadata)
             .extracting(
                 { it.issuer != null },
                 { it.jwkSetURI != null })

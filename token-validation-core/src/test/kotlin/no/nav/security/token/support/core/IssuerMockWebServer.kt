@@ -117,32 +117,32 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
         private val log = LoggerFactory.getLogger(ProxyDispatcher::class.java)
 
 
-        override fun dispatch(recordedRequest: RecordedRequest): MockResponse {
+        override fun dispatch(request: RecordedRequest): MockResponse {
             val requestBuilder = Request.Builder()
                     .url(serverUrl)
-                    .headers(recordedRequest.headers)
+                    .headers(request.headers)
                     .removeHeader("Host")
 
-            if (recordedRequest.bodySize != 0L) {
-                requestBuilder.method(recordedRequest.method!!, object : RequestBody() {
+            if (request.bodySize != 0L) {
+                requestBuilder.method(request.method!!, object : RequestBody() {
                     override fun contentType(): MediaType? {
-                    return recordedRequest.getHeader("Content-Type")?.toMediaTypeOrNull()
+                    return request.getHeader("Content-Type")?.toMediaTypeOrNull()
                     }
 
                     @Throws(IOException::class)
                     override fun writeTo(sink: BufferedSink) {
-                        recordedRequest.body.clone().readAll(sink)
+                        request.body.clone().readAll(sink)
                     }
 
                     override fun contentLength(): Long {
-                        return recordedRequest.bodySize
+                        return request.bodySize
                     }
                 })
             }
-            val request = requestBuilder.build()
-            log.debug("created request to destination: {}", request)
+            val req = requestBuilder.build()
+            log.debug("created request to destination: {}", req)
             return try {
-                client.newCall(request).execute().use { response ->
+                client.newCall(req).execute().use { response ->
                         response.body?.let { body ->
                         MockResponse().apply {
                     headers = response.headers
