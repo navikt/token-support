@@ -42,7 +42,7 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
     private fun tokenExchangeGrantRequest(clientProperties : ClientProperties) =
         TokenExchangeGrantRequest(clientProperties, tokenResolver.token()
             .orElseThrow {
-                OAuth2ClientException("no authenticated jwt token found in validation context, cannot do token exchange")
+                OAuth2ClientException("No authenticated jwt token found in validation context, cannot do token exchange")
             })
 
     private fun onBehalfOfGrantRequest(clientProperties : ClientProperties) =

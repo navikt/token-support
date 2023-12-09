@@ -1,14 +1,14 @@
 package no.nav.security.token.support.client.core.oauth2
 
-import com.nimbusds.common.contenttype.ContentType
 import com.nimbusds.common.contenttype.ContentType.APPLICATION_JSON
 import com.nimbusds.common.contenttype.ContentType.APPLICATION_URLENCODED
 import com.nimbusds.oauth2.sdk.GrantType.*
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication
 import java.lang.String.*
-import java.nio.charset.StandardCharsets
+import java.nio.charset.StandardCharsets.*
 import java.util.Base64
+import java.util.Base64.*
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.CLIENT_ASSERTION
@@ -85,18 +85,15 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
             }
         } ?:  throw OAuth2ClientException("ClientProperties cannot be null")
 
-    private fun basicAuth(username : String, password : String) : String {
-        val charset = StandardCharsets.UTF_8
-        val encoder = charset.newEncoder()
-        return if (encoder.canEncode(username) && encoder.canEncode(password)) {
-            val credentialsString = "$username:$password"
-            val encodedBytes = Base64.getEncoder().encode(credentialsString.toByteArray(StandardCharsets.UTF_8))
-            String(encodedBytes, StandardCharsets.UTF_8)
+    private fun basicAuth(username : String, password : String) =
+        UTF_8.newEncoder().run {
+            if (canEncode(username) && canEncode(password)) {
+                getEncoder().encode("$username:$password".toByteArray(UTF_8)).toString()
+            }
+            else {
+                throw IllegalArgumentException("Username or password contains characters that cannot be encoded to ${UTF_8.displayName()}")
+            }
         }
-        else {
-            throw IllegalArgumentException("Username or password contains characters that cannot be encoded to " + charset.displayName())
-        }
-    }
 
     override fun toString() = "${javaClass.getSimpleName()} [oAuth2HttpClient=$oAuth2HttpClient]"
 

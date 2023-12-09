@@ -9,7 +9,7 @@ class OAuth2HttpRequest (val tokenEndpointUrl : URI?, val oAuth2HttpHeaders : OA
     class OAuth2HttpRequestBuilder @JvmOverloads constructor(private var tokenEndpointUrl: URI?,
                                                               private var oAuth2HttpHeaders : OAuth2HttpHeaders? = null,
                                                               private var formParameters: MutableMap<String,String> = mutableMapOf()) {
-        //fun tokenEndpointUrl(tokenEndpointUrl : URI?) = this.also { it.tokenEndpointUrl = tokenEndpointUrl }
+        fun tokenEndpointUrl(tokenEndpointUrl : URI?) = this.also { it.tokenEndpointUrl = tokenEndpointUrl }
 
         fun oAuth2HttpHeaders(oAuth2HttpHeaders : OAuth2HttpHeaders?) = this.also { it.oAuth2HttpHeaders = oAuth2HttpHeaders }
 

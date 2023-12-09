@@ -5,6 +5,7 @@ import com.nimbusds.jose.JWSAlgorithm.*
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jose.jwk.RSAKey
+import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.SignedJWT
@@ -26,7 +27,7 @@ class ClientAssertion(private val tokenEndpointUrl : URI?, private val clientId 
                 .expirationTime(Date.from(plusSeconds(expiryInSeconds.toLong())))
                 .issuer(clientId)
                 .subject(clientId)
-                .claim("jti", UUID.randomUUID().toString())
+                .claim(JWT_ID, UUID.randomUUID().toString())
                 .notBeforeTime(Date.from(this))
                 .issueTime(Date.from(this))
                 .build()).serialize()
