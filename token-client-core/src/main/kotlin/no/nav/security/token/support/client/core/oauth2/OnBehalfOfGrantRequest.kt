@@ -1,10 +1,11 @@
 package no.nav.security.token.support.client.core.oauth2
 
 import com.nimbusds.oauth2.sdk.GrantType
+import com.nimbusds.oauth2.sdk.GrantType.*
 import java.util.Objects
 import no.nav.security.token.support.client.core.ClientProperties
 
-class OnBehalfOfGrantRequest(clientProperties : ClientProperties, val assertion : String) : AbstractOAuth2GrantRequest(GrantType.JWT_BEARER, clientProperties) {
+class OnBehalfOfGrantRequest(clientProperties : ClientProperties, val assertion : String) : AbstractOAuth2GrantRequest(JWT_BEARER, clientProperties) {
 
     override fun equals(other : Any?) : Boolean {
         if (this === other) return true

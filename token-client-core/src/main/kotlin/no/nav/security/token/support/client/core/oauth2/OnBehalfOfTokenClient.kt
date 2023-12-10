@@ -8,7 +8,7 @@ class OnBehalfOfTokenClient(oAuth2HttpClient : OAuth2HttpClient) : AbstractOAuth
 
     override fun formParameters(grantRequest : OnBehalfOfGrantRequest)  =
         LinkedHashMap<String, String>().apply {
-             put(ASSERTION,grantRequest.assertion)
+             put(ASSERTION, grantRequest.assertion)
              put(REQUESTED_TOKEN_USE,REQUESTED_TOKEN_USE_VALUE)
          }
 

@@ -1,5 +1,6 @@
 package no.nav.security.token.support.ktor
 
+import com.nimbusds.jwt.JWTClaimNames.SUBJECT
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.ktor.config.MapApplicationConfig
@@ -20,14 +21,14 @@ internal class TokenSupportAuthenticationProviderKtTest {
                 "no.nav.security.jwt.issuers.0.accepted_audience" to "da audienze",
                 "no.nav.security.jwt.issuers.0.jwks_cache.lifespan" to "20",
                 "no.nav.security.jwt.issuers.0.jwks_cache.refreshtime" to "57",
-                "no.nav.security.jwt.issuers.0.validation.optional_claims" to "sub"
+                "no.nav.security.jwt.issuers.0.validation.optional_claims" to SUBJECT
             )
 
             config.asIssuerProps().asClue {
                 it["da issuah"]?.acceptedAudience shouldBe listOf("da audienze")
                 it["da issuah"]?.discoveryUrl shouldBe this.wellKnownUrl("whatever").toUrl()
                 it["da issuah"]?.jwksCache shouldBe IssuerProperties.JwksCache(20, 57)
-                it["da issuah"]?.validation shouldBe IssuerProperties.Validation(listOf("sub"))
+                it["da issuah"]?.validation shouldBe IssuerProperties.Validation(listOf(SUBJECT))
             }
         }
     }

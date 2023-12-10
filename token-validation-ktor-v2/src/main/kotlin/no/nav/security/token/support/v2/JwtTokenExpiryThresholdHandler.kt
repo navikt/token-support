@@ -1,5 +1,7 @@
 package no.nav.security.token.support.v2
 
+import com.nimbusds.jwt.JWTClaimNames
+import com.nimbusds.jwt.JWTClaimNames.*
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.header
 import no.nav.security.token.support.core.context.TokenValidationContext
@@ -31,7 +33,7 @@ class JwtTokenExpiryThresholdHandler(private val expiryThreshold: Int) {
     }
 
     private fun tokenExpiresBeforeThreshold(jwtTokenClaims: JwtTokenClaims): Boolean {
-        val expiryDate = jwtTokenClaims.get("exp") as Date
+        val expiryDate = jwtTokenClaims.get(EXPIRATION_TIME) as Date
         val expiry = LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault())
         val minutesUntilExpiry = LocalDateTime.now().until(expiry, ChronoUnit.MINUTES)
         log.debug("Checking token at time {} with expirationTime {} for how many minutes until expiry: {}",

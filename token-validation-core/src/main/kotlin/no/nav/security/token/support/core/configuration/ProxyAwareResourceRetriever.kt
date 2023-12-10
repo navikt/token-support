@@ -8,6 +8,7 @@ import java.net.Proxy
 import java.net.Proxy.NO_PROXY
 import java.net.Proxy.Type.DIRECT
 import java.net.Proxy.Type.HTTP
+import java.net.URI
 import java.net.URISyntaxException
 import java.net.URL
 import org.slf4j.Logger
@@ -32,7 +33,7 @@ open class ProxyAwareResourceRetriever(proxyUrl : URL?, private val usePlainText
             val newUrl = ("http://" + url.host + ":" + port + url.path
                 + (if (url.query != null && url.query.isNotEmpty()) "?" + url.query else ""))
             LOG.debug("using plaintext connection for https url, new url is {}", newUrl)
-            return URL(newUrl)
+            return URI.create(newUrl).toURL()
         }
         catch (e : URISyntaxException) {
             throw IOException(e)

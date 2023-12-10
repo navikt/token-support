@@ -1,5 +1,7 @@
 package no.nav.security.token.support.v2
 
+import com.nimbusds.jwt.JWTClaimNames
+import com.nimbusds.jwt.JWTClaimNames.*
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.HttpStatusCode
@@ -99,7 +101,7 @@ class ApplicationTest {
         val response = client.get("/hello") {
             val jwt = server.anyToken(
                 server.issuerUrl(ISSUER_ID),
-                mapOf("aud" to ACCEPTED_AUDIENCE)
+                mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
             )
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
@@ -110,7 +112,7 @@ class ApplicationTest {
     fun `token without sub should be accepted if configured as optional claim`() = testApplication {
         environment {
             config = doConfig().apply {
-                put("no.nav.security.jwt.issuers.0.validation.optional_claims", "sub")
+                put("no.nav.security.jwt.issuers.0.validation.optional_claims", SUBJECT)
             }
             module {
                 module()
@@ -120,7 +122,7 @@ class ApplicationTest {
         val response = client.get("/hello") {
             val jwt = server.anyToken(
                 server.issuerUrl(ISSUER_ID),
-                mapOf("aud" to ACCEPTED_AUDIENCE)
+                mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
             )
             header("Authorization", "Bearer ${jwt.serialize()}")
         }
@@ -382,4 +384,3 @@ class ApplicationTest {
         }
     }
 }
-

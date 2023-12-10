@@ -1,6 +1,8 @@
 package no.nav.security.token.support.ktor
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.nimbusds.jwt.JWTClaimNames
+import com.nimbusds.jwt.JWTClaimNames.*
 import io.kotest.assertions.asClue
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
@@ -36,8 +38,8 @@ internal class ApplicationTest {
                     assertSoftly(response) {
                         status() shouldBe HttpStatusCode.OK
                         parseBody<DemoTokenResponse>().asClue {
-                            it.claims["sub"] shouldBe "client1"
-                            it.claims["aud"] shouldBe listOf("targetscope")
+                            it.claims[SUBJECT] shouldBe "client1"
+                            it.claims[AUDIENCE] shouldBe listOf("targetscope")
                         }
                     }
                 }
@@ -49,8 +51,8 @@ internal class ApplicationTest {
                     assertSoftly(response) {
                         status() shouldBe HttpStatusCode.OK
                         parseBody<DemoTokenResponse>().asClue {
-                            it.claims["sub"] shouldBe "foo"
-                            it.claims["aud"] shouldBe listOf("targetscope")
+                            it.claims[SUBJECT] shouldBe "foo"
+                            it.claims[AUDIENCE] shouldBe listOf("targetscope")
                         }
                     }
                 }
@@ -62,8 +64,8 @@ internal class ApplicationTest {
                     assertSoftly(response) {
                         status() shouldBe HttpStatusCode.OK
                         parseBody<DemoTokenResponse>().asClue {
-                            it.claims["sub"] shouldBe "foo"
-                            it.claims["aud"] shouldBe listOf("targetaudience")
+                            it.claims[SUBJECT] shouldBe "foo"
+                            it.claims[AUDIENCE] shouldBe listOf("targetaudience")
                         }
                     }
                 }

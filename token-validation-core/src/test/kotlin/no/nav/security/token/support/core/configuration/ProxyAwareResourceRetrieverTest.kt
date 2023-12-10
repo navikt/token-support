@@ -9,13 +9,13 @@ internal class ProxyAwareResourceRetrieverTest {
 
     @Test
     fun testNoProxy() {
-        ProxyAwareResourceRetriever(URL("http://proxy:8080")).run {
-            assertTrue(shouldProxy(URL("http://www.vg.no")))
-            assertFalse(shouldProxy(URL("http:/www.aetat.no")))
+        ProxyAwareResourceRetriever(URI.create("http://proxy:8080").toURL()).run {
+            assertTrue(shouldProxy(URI.create("http://www.vg.no").toURL()))
+            assertFalse(shouldProxy(URI.create("http:/www.aetat.no").toURL()))
         }
          ProxyAwareResourceRetriever().run {
-            assertFalse(shouldProxy(URL("http:/www.aetat.no")))
-            assertFalse(shouldProxy(URL("http://www.vg.no")))
+            assertFalse(shouldProxy(URI.create("http:/www.aetat.no").toURL()))
+            assertFalse(shouldProxy(URI.create("http://www.vg.no").toURL()))
         }
     }
 

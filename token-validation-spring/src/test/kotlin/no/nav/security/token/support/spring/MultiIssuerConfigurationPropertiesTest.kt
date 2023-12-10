@@ -1,5 +1,7 @@
 package no.nav.security.token.support.spring
 
+import com.nimbusds.jwt.JWTClaimNames
+import com.nimbusds.jwt.JWTClaimNames.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -35,7 +37,7 @@ class MultiIssuerConfigurationPropertiesTest {
         assertTrue(config.issuer["number3"]!!.acceptedAudience.contains("aud3") && config.issuer["number3"]!!.acceptedAudience.contains("aud4"))
         assertTrue(config.issuer.containsKey("number4"))
         assertEquals("http://metadata4", config.issuer["number4"]!!.discoveryUrl.toString())
-        assertThat(config.issuer["number4"]!!.validation.optionalClaims).containsExactly("sub", "aud")
+        assertThat(config.issuer["number4"]!!.validation.optionalClaims).containsExactly(SUBJECT, AUDIENCE)
         assertTrue(config.issuer.containsKey("number5"))
         assertEquals("http://metadata5", config.issuer["number5"]!!.discoveryUrl.toString())
         assertEquals(10L, config.issuer["number5"]!!.jwksCache.lifespan)

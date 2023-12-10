@@ -2,6 +2,7 @@ package no.nav.security.token.support.client.core
 
 import com.nimbusds.jose.util.DefaultResourceRetriever
 import com.nimbusds.oauth2.sdk.GrantType
+import com.nimbusds.oauth2.sdk.GrantType.*
 import com.nimbusds.oauth2.sdk.ParseException
 import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata
 import java.io.IOException
@@ -30,7 +31,7 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
             .tokenExchange(tokenExchange)
 
     companion object {
-        private val GRANT_TYPES = listOf(GrantType.JWT_BEARER, GrantType.CLIENT_CREDENTIALS, GrantType.TOKEN_EXCHANGE)
+        private val GRANT_TYPES = listOf(JWT_BEARER, CLIENT_CREDENTIALS, TOKEN_EXCHANGE)
 
        @JvmStatic
         fun builder(grantType: GrantType, authentication: ClientAuthenticationProperties) = ClientPropertiesBuilder(grantType, authentication)

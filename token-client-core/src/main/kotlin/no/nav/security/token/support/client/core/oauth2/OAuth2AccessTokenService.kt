@@ -26,7 +26,7 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
             JWT_BEARER -> executeOnBehalfOf(clientProperties)
             CLIENT_CREDENTIALS -> executeClientCredentials(clientProperties)
             TOKEN_EXCHANGE -> executeTokenExchange(clientProperties)
-            else -> throw OAuth2ClientException("invalid grant-type=${clientProperties.grantType.value} from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types ($SUPPORTED_GRANT_TYPES)")
+            else -> throw OAuth2ClientException("Invalid grant-type=${clientProperties.grantType.value} from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types ($SUPPORTED_GRANT_TYPES)")
         }
     }
 
@@ -51,8 +51,7 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
                 OAuth2ClientException("no authenticated jwt token found in validation context, cannot do on-behalf-of")
             })
 
-    override fun toString() =
-        "${javaClass.getSimpleName()} [clientCredentialsGrantCache=$clientCredentialsGrantCache,  onBehalfOfGrantCache=$onBehalfOfGrantCache, tokenExchangeClient=$tokenExchangeClient, tokenResolver=$tokenResolver, onBehalfOfTokenClient=$onBehalfOfTokenClient, clientCredentialsTokenClient=$clientCredentialsTokenClient, exchangeGrantCache=$exchangeGrantCache]"
+    override fun toString() = "${javaClass.getSimpleName()} [clientCredentialsGrantCache=$clientCredentialsGrantCache,  onBehalfOfGrantCache=$onBehalfOfGrantCache, tokenExchangeClient=$tokenExchangeClient, tokenResolver=$tokenResolver, onBehalfOfTokenClient=$onBehalfOfTokenClient, clientCredentialsTokenClient=$clientCredentialsTokenClient, exchangeGrantCache=$exchangeGrantCache]"
     companion object {
 
         private val SUPPORTED_GRANT_TYPES = listOf(JWT_BEARER, CLIENT_CREDENTIALS, TOKEN_EXCHANGE

@@ -1,5 +1,7 @@
 package no.nav.security.token.support.filter
 
+import com.nimbusds.jwt.JWTClaimNames
+import com.nimbusds.jwt.JWTClaimNames.*
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.FilterConfig
@@ -59,7 +61,7 @@ class JwtTokenExpiryFilter(private val contextHolder : TokenValidationContextHol
     }
 
     private fun tokenExpiresBeforeThreshold(jwtTokenClaims : JwtTokenClaims) : Boolean {
-        val expiryDate = jwtTokenClaims.get("exp") as Date
+        val expiryDate = jwtTokenClaims.get(EXPIRATION_TIME) as Date
         val expiry = LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault())
         val minutesUntilExpiry = LocalDateTime.now().until(expiry, MINUTES)
         LOG.debug("Checking token at time {} with expirationTime {} for how many minutes until expiry: {}",

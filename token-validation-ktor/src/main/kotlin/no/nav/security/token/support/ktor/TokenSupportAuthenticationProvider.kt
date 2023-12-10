@@ -9,11 +9,12 @@ import io.ktor.auth.Principal
 import io.ktor.auth.UnauthorizedResponse
 import io.ktor.config.ApplicationConfig
 import io.ktor.config.MapApplicationConfig
-import io.ktor.http.CookieEncoding
+import io.ktor.http.CookieEncoding.*
 import io.ktor.http.Headers
 import io.ktor.http.decodeCookieValue
 import io.ktor.request.RequestCookies
 import io.ktor.response.respond
+import java.net.URI
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.context.TokenValidationContext
@@ -22,8 +23,8 @@ import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import org.slf4j.LoggerFactory
-import java.net.URL
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.core.configuration.IssuerProperties.*
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.http.HttpRequest
@@ -41,23 +42,15 @@ class TokenSupportAuthenticationProvider(
 ) : AuthenticationProvider(providerConfig) {
 
     @Deprecated("Provider should be built using configuration that need to be passed via constructor instead.")
-    constructor(
-        name: String?,
-        config: ApplicationConfig,
-        resourceRetriever: ProxyAwareResourceRetriever
+    constructor(name: String?, config: ApplicationConfig, resourceRetriever: ProxyAwareResourceRetriever
     ): this(ProviderConfiguration(name),config, resourceRetriever)
 
     internal val jwtTokenValidationHandler: JwtTokenValidationHandler
     internal val jwtTokenExpiryThresholdHandler: JwtTokenExpiryThresholdHandler
 
     init {
-        val issuerPropertiesMap: Map<String, IssuerProperties> = applicationConfig.asIssuerProps()
-        jwtTokenValidationHandler = JwtTokenValidationHandler(
-            MultiIssuerConfiguration(issuerPropertiesMap, resourceRetriever)
-        )
-
-        val expiryThreshold: Int = applicationConfig.propertyOrNull("no.nav.security.jwt.expirythreshold")?.getString()?.toInt() ?: -1
-        jwtTokenExpiryThresholdHandler = JwtTokenExpiryThresholdHandler(expiryThreshold)
+        jwtTokenValidationHandler = JwtTokenValidationHandler(MultiIssuerConfiguration(applicationConfig.asIssuerProps(), resourceRetriever))
+        jwtTokenExpiryThresholdHandler = JwtTokenExpiryThresholdHandler(applicationConfig.propertyOrNull("no.nav.security.jwt.expirythreshold")?.getString()?.toInt() ?: -1)
     }
 
     class ProviderConfiguration internal constructor(name: String?): Configuration(name)
@@ -69,24 +62,15 @@ fun Authentication.Configuration.tokenValidationSupport(
     requiredClaims: RequiredClaims? = null,
     additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
     resourceRetriever: ProxyAwareResourceRetriever = ProxyAwareResourceRetriever(
-        System.getenv("HTTP_PROXY")?.let { URL(it) }
-                                                                                )
+        System.getenv("HTTP_PROXY")?.let { URI.create(it).toURL() })
 ) {
-    val provider = TokenSupportAuthenticationProvider(
-        TokenSupportAuthenticationProvider.ProviderConfiguration(name),
-        config,
-        resourceRetriever
-    )
+    val provider = TokenSupportAuthenticationProvider(TokenSupportAuthenticationProvider.ProviderConfiguration(name), config, resourceRetriever)
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
-        val tokenValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(
-            JwtTokenHttpRequest(call.request.cookies, call.request.headers)
-        )
+        val tokenValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(JwtTokenHttpRequest(call.request.cookies, call.request.headers))
         try {
             if (tokenValidationContext.hasValidToken()) {
                 if (requiredClaims != null) {
-                    RequiredClaimsHandler(InternalTokenValidationContextHolder(tokenValidationContext)).handleRequiredClaims(
-                        requiredClaims
-                    )
+                    RequiredClaimsHandler(InternalTokenValidationContextHolder(tokenValidationContext)).handleRequiredClaims(requiredClaims)
                 }
                 if (additionalValidation != null) {
                     if (!additionalValidation(tokenValidationContext)) {
@@ -169,28 +153,21 @@ internal data class NameValueCookie(@JvmField val name: String, @JvmField val va
 }
 
 internal data class JwtTokenHttpRequest(private val cookies: RequestCookies, private val headers: Headers) : HttpRequest    {
-    override fun getCookies() : Array<NameValue> =
+    override fun getCookies() =
         cookies.rawCookies.map {
-            NameValueCookie(
-                it.key,
-                decodeCookieValue(it.value, CookieEncoding.URI_ENCODING)
-            )
+            NameValueCookie(it.key, decodeCookieValue(it.value, URI_ENCODING))
         }.toTypedArray()
 
-    override fun getHeader(name: String) = headers[name]
+    override fun getHeader(headerName: String) = headers[headerName]
 }
 
 fun ApplicationConfig.asIssuerProps(): Map<String, IssuerProperties> = this.configList("no.nav.security.jwt.issuers")
-    .associate { issuerConfig ->
-        issuerConfig.property("issuer_name").getString() to IssuerProperties(
-            URL(issuerConfig.property("discoveryurl").getString()),
-            issuerConfig.propertyOrNull("accepted_audience")?.getString()?.split(",") ?: emptyList(),
-            issuerConfig.propertyOrNull("cookie_name")?.getString(),
-            issuerConfig.propertyOrNull("header_name")?.getString() ?: AUTHORIZATION_HEADER,
-            IssuerProperties.Validation(issuerConfig.propertyOrNull("validation.optional_claims")?.getString()?.split(",") ?: emptyList()),
-            IssuerProperties.JwksCache(
-                issuerConfig.propertyOrNull("jwks_cache.lifespan")?.getString()?.toLong() ?: 15,
-                issuerConfig.propertyOrNull("jwks_cache.refreshtime")?.getString()?.toLong() ?:5
-            )
-        )
+    .associate {
+        it.property("issuer_name").getString() to IssuerProperties(
+            URI.create(it.property("discoveryurl").getString()).toURL(),
+            it.propertyOrNull("accepted_audience")?.getString()?.split(",") ?: emptyList(),
+            it.propertyOrNull("cookie_name")?.getString(),
+            it.propertyOrNull("header_name")?.getString() ?: AUTHORIZATION_HEADER,
+            Validation(it.propertyOrNull("validation.optional_claims")?.getString()?.split(",") ?: emptyList()),
+            JwksCache(it.propertyOrNull("jwks_cache.lifespan")?.getString()?.toLong() ?: 15, it.propertyOrNull("jwks_cache.refreshtime")?.getString()?.toLong() ?:5))
     }

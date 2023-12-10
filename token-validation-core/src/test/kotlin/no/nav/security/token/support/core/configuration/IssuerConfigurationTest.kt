@@ -1,5 +1,7 @@
 package no.nav.security.token.support.core.configuration
 
+import com.nimbusds.jwt.JWTClaimNames
+import com.nimbusds.jwt.JWTClaimNames.*
 import java.net.URI
 import java.net.URL
 import org.assertj.core.api.Assertions.*
@@ -42,10 +44,10 @@ internal class IssuerConfigurationTest {
     @Test
     fun issuerConfigurationDiscoveryUrlNotValid() {
         assertThrows<MetaDataNotAvailableException> {
-            IssuerConfiguration("issuer1", IssuerProperties(URL("http://notvalid"), listOf("audience1")))
+            IssuerConfiguration("issuer1", IssuerProperties(URI("http://notvalid").toURL(), listOf("audience1")))
         }
         assertThrows<MetaDataNotAvailableException> {
-            IssuerConfiguration("issuer1", IssuerProperties(URL("http://localhost"), listOf("audience1")))
+            IssuerConfiguration("issuer1", IssuerProperties(URI("http://localhost").toURL(), listOf("audience1")))
         }
         assertThrows<MetaDataNotAvailableException> {
             IssuerConfiguration("issuer1", IssuerProperties(URI.create(issuerMockWebServer.discoveryUrl.toString() + "/pathincorrect").toURL(), listOf("audience1")), ProxyAwareResourceRetriever())
@@ -54,7 +56,7 @@ internal class IssuerConfigurationTest {
 
     @Test
     fun issuerConfigurationWithConfigurableJwtTokenValidator() {
-        val p = IssuerProperties(issuerMockWebServer.discoveryUrl, emptyList(), null, AUTHORIZATION_HEADER, Validation(listOf("sub", "aud")))
+        val p = IssuerProperties(issuerMockWebServer.discoveryUrl, emptyList(), null, AUTHORIZATION_HEADER, Validation(listOf(SUBJECT, AUDIENCE)))
         assertThat(IssuerConfiguration("issuer1", p).metadata)
             .extracting(
                 { it.issuer != null },
@@ -65,7 +67,7 @@ internal class IssuerConfigurationTest {
 
     @Test
     fun issuerConfigurationWithConfigurableJWKSCacheAndConfigurableJwtTokenValidator() {
-        val p = IssuerProperties(issuerMockWebServer.discoveryUrl, emptyList(), null, AUTHORIZATION_HEADER, Validation(listOf("sub", "aud")), JwksCache(15L, 5L))
+        val p = IssuerProperties(issuerMockWebServer.discoveryUrl, emptyList(), null, AUTHORIZATION_HEADER, Validation(listOf(SUBJECT, AUDIENCE)), JwksCache(15L, 5L))
         assertThat(IssuerConfiguration("issuer1", p).metadata)
             .extracting(
                 { it.issuer != null },

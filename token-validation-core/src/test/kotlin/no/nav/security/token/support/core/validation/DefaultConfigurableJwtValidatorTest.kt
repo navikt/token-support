@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.source.JWKSourceBuilder
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimNames
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier.*
+import java.net.URI
 import java.net.URL
 import java.util.Date
 import java.util.concurrent.TimeUnit.SECONDS
@@ -14,7 +15,7 @@ import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException
 
 internal class DefaultConfigurableJwtValidatorTest : AbstractJwtValidatorTest() {
 
-    private val jwksUrl = URL("https://someurl")
+    private val jwksUrl = URI.create("https://someurl").toURL()
     private val jwkSource  = JWKSourceBuilder.create<SecurityContext>(jwksUrl, MockResourceRetriever()).build()
 
     @Test

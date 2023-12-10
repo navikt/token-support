@@ -35,7 +35,7 @@ internal class JwtTokenValidatorFactoryTest {
 
     @Mock
     private lateinit var resourceRetriever : ResourceRetriever
-    private val url = URL("http://url")
+    private val url = URI.create("http://url").toURL()
     private var issuerProperties = IssuerProperties(url, listOf("aud1"))
 
     @BeforeEach

@@ -9,6 +9,8 @@ import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.util.IOUtils
 import com.nimbusds.jose.util.Resource
+import com.nimbusds.jwt.JWTClaimNames
+import com.nimbusds.jwt.JWTClaimNames.*
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.SignedJWT
 import jakarta.servlet.FilterChain
@@ -149,7 +151,7 @@ internal class JwtTokenValidationFilterTest {
 
     private fun mockFilterchainAsserting(issuers : Array<String>, subjects : Array<String>, ctxHolder : TokenValidationContextHolder,
                                          filterCallCounter : IntArray) : FilterChain {
-        return FilterChain { servletRequest : ServletRequest?, servletResponse : ServletResponse? ->
+        return FilterChain { _, _ ->
             // TokenValidationContext is nulled after filter-call, so we check it here:
             filterCallCounter[0]++
             val ctx = ctxHolder.getTokenValidationContext()
@@ -157,7 +159,7 @@ internal class JwtTokenValidationFilterTest {
             assertEquals(issuers.size, ctx.issuers.size)
             for (i in issuers.indices) {
                 assertTrue(ctx.hasTokenFor(issuers[i]))
-                assertEquals(subjects[i], ctx.getClaims(issuers[i]).getStringClaim("sub"))
+                assertEquals(subjects[i], ctx.getClaims(issuers[i]).getStringClaim(SUBJECT))
             }
         }
     }

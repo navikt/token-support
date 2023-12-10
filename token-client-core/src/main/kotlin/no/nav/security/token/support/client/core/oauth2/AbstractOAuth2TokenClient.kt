@@ -5,6 +5,7 @@ import com.nimbusds.common.contenttype.ContentType.APPLICATION_URLENCODED
 import com.nimbusds.oauth2.sdk.GrantType.*
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication
+import com.nimbusds.oauth2.sdk.util.ContentTypeUtils
 import java.lang.String.*
 import java.nio.charset.StandardCharsets.*
 import java.util.Base64
@@ -88,7 +89,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
     private fun basicAuth(username : String, password : String) =
         UTF_8.newEncoder().run {
             if (canEncode(username) && canEncode(password)) {
-                getEncoder().encode("$username:$password".toByteArray(UTF_8)).toString()
+                getEncoder().encode("$username:$password".toByteArray(UTF_8)).toString(UTF_8)
             }
             else {
                 throw IllegalArgumentException("Username or password contains characters that cannot be encoded to ${UTF_8.displayName()}")

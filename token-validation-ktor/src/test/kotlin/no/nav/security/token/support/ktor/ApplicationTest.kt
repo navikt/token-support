@@ -1,5 +1,7 @@
 package no.nav.security.token.support.ktor
 
+import com.nimbusds.jwt.JWTClaimNames
+import com.nimbusds.jwt.JWTClaimNames.*
 import io.ktor.application.Application
 import io.ktor.config.MapApplicationConfig
 import io.ktor.http.HttpMethod
@@ -103,7 +105,7 @@ class ApplicationTest {
             handleRequest(HttpMethod.Get, "/hello") {
                 val jwt = server.anyToken(
                     server.issuerUrl(ISSUER_ID),
-                    mapOf("aud" to ACCEPTED_AUDIENCE)
+                    mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
                 )
                 addHeader("Authorization", "Bearer ${jwt.serialize()}")
             }.apply {
@@ -118,14 +120,14 @@ class ApplicationTest {
         val helloCounterBeforeRequest = helloCounter
         withTestApplication({
             doConfig().apply {
-                put("no.nav.security.jwt.issuers.0.validation.optional_claims", "sub")
+                put("no.nav.security.jwt.issuers.0.validation.optional_claims", SUBJECT)
             }
             module()
         }) {
             handleRequest(HttpMethod.Get, "/hello") {
                 val jwt = server.anyToken(
                     server.issuerUrl(ISSUER_ID),
-                    mapOf("aud" to ACCEPTED_AUDIENCE)
+                    mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
                 )
                 addHeader("Authorization", "Bearer ${jwt.serialize()}")
             }.apply {
