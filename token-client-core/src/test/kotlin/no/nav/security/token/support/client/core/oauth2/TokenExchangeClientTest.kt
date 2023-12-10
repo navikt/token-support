@@ -1,11 +1,13 @@
 package no.nav.security.token.support.client.core.oauth2
 
 import com.nimbusds.oauth2.sdk.GrantType
+import com.nimbusds.oauth2.sdk.GrantType.*
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import java.io.IOException
 import java.net.URI
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,6 +17,9 @@ import no.nav.security.token.support.client.core.ClientProperties.Companion.buil
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.OAuth2ParameterNames
+import no.nav.security.token.support.client.core.OAuth2ParameterNames.GRANT_TYPE
+import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TOKEN
+import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TOKEN_TYPE
 import no.nav.security.token.support.client.core.TestUtils.assertPostMethodAndJsonHeaders
 import no.nav.security.token.support.client.core.TestUtils.clientProperties
 import no.nav.security.token.support.client.core.TestUtils.encodeValue
@@ -24,47 +29,34 @@ import no.nav.security.token.support.client.core.http.SimpleOAuth2HttpClient
 
 internal class TokenExchangeClientTest {
 
-    private var tokenEndpointUrl : String? = null
-    private var server : MockWebServer? = null
-    private var tokenExchangeClient : TokenExchangeClient? = null
-    private var subjectToken : String? = null
+    private  lateinit var tokenEndpointUrl : String
+    private lateinit var server : MockWebServer
+    private lateinit var tokenExchangeClient : TokenExchangeClient
+    private var subjectToken = jwt("somesub").serialize()
     @BeforeEach
-    @Throws(IOException::class)
     fun setup() {
         server = MockWebServer()
-        server!!.start()
-        tokenEndpointUrl = server!!.url("/oauth2/v2/token").toString()
+        server.start()
+        tokenEndpointUrl = server.url("/oauth2/v2/token").toString()
         tokenExchangeClient = TokenExchangeClient(SimpleOAuth2HttpClient())
-        subjectToken = jwt("somesub").serialize()
     }
 
     @AfterEach
-    @Throws(Exception::class)
     fun cleanup() {
-        server!!.shutdown()
+        server.shutdown()
     }
 
     @Test
     fun tokenResponseWithPrivateKeyJwtAndExchangeProperties()  {
-            server!!.enqueue(jsonResponse(TOKEN_RESPONSE))
-            /*  ClientProperties clientProperties = tokenExchangeClientProperties(
-            tokenEndpointUrl,
-            TOKEN_EXCHANGE,
-            "src/test/resources/jwk.json"
-        )
-            .toBuilder()
-            .authentication(ClientAuthenticationProperties.builder("client",PRIVATE_KEY_JWT)
-                .clientJwk("src/test/resources/jwk.json")
-                .build())
-            .build();
-*/
-            val clientProperties = builder(GrantType.TOKEN_EXCHANGE, builder("client1", ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+            server.enqueue(jsonResponse(TOKEN_RESPONSE))
+            val clientProperties = builder(TOKEN_EXCHANGE, builder("client1", ClientAuthenticationMethod.PRIVATE_KEY_JWT)
                 .clientJwk("src/test/resources/jwk.json")
                 .build())
                 .tokenEndpointUrl(URI.create(tokenEndpointUrl))
                 .tokenExchange(TokenExchangeProperties("audience")).build()
-            val response = tokenExchangeClient!!.getTokenResponse(TokenExchangeGrantRequest(clientProperties, subjectToken!!))
-            val recordedRequest = server!!.takeRequest()
+
+            val response = tokenExchangeClient.getTokenResponse(TokenExchangeGrantRequest(clientProperties, subjectToken!!))
+            val recordedRequest = server.takeRequest()
             assertPostMethodAndJsonHeaders(recordedRequest)
             val body = recordedRequest.body.readUtf8()
             assertThatClientAuthMethodIsPrivateKeyJwt(body, clientProperties)
@@ -74,50 +66,48 @@ internal class TokenExchangeClientTest {
 
     @Test
     fun tokenResponseError() {
-            server!!.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400))
-            Assertions.assertThatExceptionOfType(OAuth2ClientException::class.java)
+            server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400))
+            assertThatExceptionOfType(OAuth2ClientException::class.java)
                 .isThrownBy {
-                    tokenExchangeClient!!.getTokenResponse(TokenExchangeGrantRequest(clientProperties(
+                    tokenExchangeClient.getTokenResponse(TokenExchangeGrantRequest(clientProperties(
                         tokenEndpointUrl,
-                        GrantType.TOKEN_EXCHANGE
-                                                                                                     ), subjectToken!!))
+                        TOKEN_EXCHANGE), subjectToken!!))
                 }
         }
 
     private fun assertThatRequestBodyContainsTokenExchangeFormParameters(formParameters : String) {
-        Assertions.assertThat(formParameters).contains(OAuth2ParameterNames.GRANT_TYPE + "=" + encodeValue(GrantType.TOKEN_EXCHANGE.value))
-        Assertions.assertThat(formParameters).contains(OAuth2ParameterNames.AUDIENCE + "=" + "audience")
-        Assertions.assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN_TYPE + "=" + encodeValue("urn:ietf:params:oauth:token-type:jwt"))
-        Assertions.assertThat(formParameters).contains(OAuth2ParameterNames.SUBJECT_TOKEN + "=" + subjectToken)
+        assertThat(formParameters).contains("$GRANT_TYPE=${encodeValue(TOKEN_EXCHANGE.value)}")
+        assertThat(formParameters).contains("${OAuth2ParameterNames.AUDIENCE}=audience")
+        assertThat(formParameters).contains("$SUBJECT_TOKEN_TYPE=${encodeValue("urn:ietf:params:oauth:token-type:jwt")}")
+        assertThat(formParameters).contains("$SUBJECT_TOKEN=$subjectToken")
     }
 
     companion object {
 
-        private const val TOKEN_RESPONSE = "{\n" +
-            "    \"token_type\": \"Bearer\",\n" +
-            "    \"scope\": \"scope1 scope2\",\n" +
-            "    \"expires_at\": 1568141495,\n" +
-            "    \"expires_in\": 3599,\n" +
-            "    \"ext_expires_in\": 3599,\n" +
-            "    \"access_token\": \"<base64URL>\"\n" +
-            "}\n"
-        private const val ERROR_RESPONSE = "{\"error\": \"some client error occurred\"}"
+        private const val TOKEN_RESPONSE = """{
+           "token_type": "Bearer",
+           "scope": "scope1 scope2",
+           "expires_at": 1568141495,
+           "expires_in": 3599,
+           "ext_expires_in": 3599,
+           "access_token": "<base64URL>"
+         }"""
+        private const val ERROR_RESPONSE = """{"error": "some client error occurred"}"""
         private fun assertThatResponseContainsAccessToken(response : OAuth2AccessTokenResponse?) {
-            Assertions.assertThat(response).isNotNull()
-            Assertions.assertThat(response!!.accessToken).isNotBlank()
-            Assertions.assertThat(response.expiresAt).isPositive()
-            Assertions.assertThat(response.expiresIn).isPositive()
+            assertThat(response).isNotNull()
+            assertThat(response!!.accessToken).isNotBlank()
+            assertThat(response.expiresAt).isPositive()
+            assertThat(response.expiresIn).isPositive()
         }
 
         private fun assertThatClientAuthMethodIsPrivateKeyJwt(
             body : String,
             clientProperties : ClientProperties) {
             val auth = clientProperties.authentication
-            Assertions.assertThat(auth.clientAuthMethod.value).isEqualTo("private_key_jwt")
-            Assertions.assertThat(body).contains("client_id=" + encodeValue(auth.clientId))
-            Assertions.assertThat(body).contains("client_assertion_type=" + encodeValue(
-                "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"))
-            Assertions.assertThat(body).contains("client_assertion=" + "ey")
+            assertThat(auth.clientAuthMethod.value).isEqualTo("private_key_jwt")
+            assertThat(body).contains("client_id=${encodeValue(auth.clientId)}")
+            assertThat(body).contains("client_assertion_type=${encodeValue("urn:ietf:params:oauth:client-assertion-type:jwt-bearer")}")
+            assertThat(body).contains("client_assertion=ey")
         }
     }
 }

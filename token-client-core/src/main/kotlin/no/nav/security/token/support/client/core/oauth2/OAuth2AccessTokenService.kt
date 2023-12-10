@@ -11,12 +11,12 @@ import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 
 class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolver : JwtBearerTokenResolver,
-                               private val onBehalfOfTokenClient : OnBehalfOfTokenClient,
-                               private val clientCredentialsTokenClient : ClientCredentialsTokenClient,
-                               private val tokenExchangeClient : TokenExchangeClient,
-                               var clientCredentialsGrantCache : Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse>? = null,
-                               var exchangeGrantCache : Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse>? = null,
-                               var onBehalfOfGrantCache : Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse>? = null) {
+                                                         private val onBehalfOfTokenClient : OnBehalfOfTokenClient,
+                                                         private val clientCredentialsTokenClient : ClientCredentialsTokenClient,
+                                                         private val tokenExchangeClient : TokenExchangeClient,
+                                                         val clientCredentialsGrantCache : Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse>? = null,
+                                                         val exchangeGrantCache : Cache<TokenExchangeGrantRequest, OAuth2AccessTokenResponse>? = null,
+                                                         val onBehalfOfGrantCache : Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse>? = null) {
 
 
 
@@ -26,7 +26,7 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
             JWT_BEARER -> executeOnBehalfOf(clientProperties)
             CLIENT_CREDENTIALS -> executeClientCredentials(clientProperties)
             TOKEN_EXCHANGE -> executeTokenExchange(clientProperties)
-            else -> throw OAuth2ClientException("Invalid grant-type=${clientProperties.grantType.value} from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types ($SUPPORTED_GRANT_TYPES)")
+            else -> throw OAuth2ClientException("Invalid grant-type ${clientProperties.grantType.value} from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types ($SUPPORTED_GRANT_TYPES)")
         }
     }
 

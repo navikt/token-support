@@ -27,19 +27,13 @@ internal class OAuth2ClientConfigurationWithCacheTest {
 
     @Autowired
     private lateinit var oAuth2AccessTokenService: OAuth2AccessTokenService
-    private lateinit var onBehalfOfCache: Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse>
-    private lateinit var clientCredentialsCache: Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse>
-    @BeforeEach
-    fun before() {
-        onBehalfOfCache = oAuth2AccessTokenService.onBehalfOfGrantCache!!
-        clientCredentialsCache = oAuth2AccessTokenService.clientCredentialsGrantCache!!
-    }
 
     @Test
     fun oAuth2AccessTokenServiceCreatedWithCache() {
         assertThat(oAuth2AccessTokenService).isNotNull
-        assertThat(onBehalfOfCache).isNotNull
-        assertThat(clientCredentialsCache).isNotNull
+        assertThat(oAuth2AccessTokenService.clientCredentialsGrantCache).isNotNull
+        assertThat(oAuth2AccessTokenService.onBehalfOfGrantCache).isNotNull
+        assertThat(oAuth2AccessTokenService.exchangeGrantCache).isNotNull
     }
 }
 
@@ -48,7 +42,5 @@ internal class OAuth2ClientConfigurationWithCacheTest {
 internal class ConfigurationWithCacheEnabledTrue {
     @Bean
     @ConditionalOnMissingBean(RestTemplateBuilder::class)
-    fun restTemplateBuilder(): RestTemplateBuilder {
-        return RestTemplateBuilder()
-    }
+    fun restTemplateBuilder() = RestTemplateBuilder()
 }

@@ -1,12 +1,12 @@
 package no.nav.security.token.support.client.core
 
 import com.nimbusds.oauth2.sdk.GrantType
+import com.nimbusds.oauth2.sdk.GrantType.*
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import java.io.IOException
 import java.net.URI
-import java.util.function.Consumer
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.jupiter.api.Assertions
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 import no.nav.security.token.support.client.core.TestUtils.jsonResponse
@@ -24,31 +24,27 @@ internal class ClientPropertiesTest {
             "token_endpoint_auth_signing_alg_values_supported" : [ "RS256" ],
             "subject_types_supported" : [ "public" ]
           }
-          
           """.trimIndent()
 
     @Test
     fun validGrantTypes() {
-        Assertions.assertNotNull(clientPropertiesFromGrantType(GrantType.JWT_BEARER))
-        Assertions.assertNotNull(clientPropertiesFromGrantType(GrantType.CLIENT_CREDENTIALS))
-        Assertions.assertNotNull(clientPropertiesFromGrantType(GrantType.TOKEN_EXCHANGE))
+        assertNotNull(clientPropertiesFromGrantType(JWT_BEARER))
+        assertNotNull(clientPropertiesFromGrantType(CLIENT_CREDENTIALS))
+        assertNotNull(clientPropertiesFromGrantType(TOKEN_EXCHANGE))
     }
 
     @Test
     @Throws(IOException::class)
     fun ifWellKnownUrlIsNotNullShouldRetrieveMetadataAndSetTokenEndpoint() {
-        withMockServer(
-            Consumer { s : MockWebServer? ->
-                s!!.enqueue(jsonResponse(wellKnownJson))
-                Assertions.assertNotNull(clientPropertiesFromWellKnown(s
-                    .url("/well-known").toUri()).tokenEndpointUrl)
-            }
-                      )
+        withMockServer {
+            it.enqueue(jsonResponse(wellKnownJson))
+            assertNotNull(clientPropertiesFromWellKnown(it.url("/well-known").toUri()).tokenEndpointUrl)
+        }
     }
 
     @Test
     fun incorrectWellKnownUrlShouldThrowException() {
-        org.assertj.core.api.Assertions.assertThatExceptionOfType(OAuth2ClientException::class.java)
+        assertThatExceptionOfType(OAuth2ClientException::class.java)
             .isThrownBy { clientPropertiesFromWellKnown(URI.create("http://localhost:1234/notfound")) }
     }
 
@@ -58,26 +54,23 @@ internal class ClientPropertiesTest {
             return ClientProperties(
                 null,
                 wellKnownUrl,
-                GrantType.CLIENT_CREDENTIALS, listOf("scope1", "scope2"),
+                CLIENT_CREDENTIALS, listOf("scope1", "scope2"),
                 clientAuth(),
                 null,
-                tokenExchange()
-                                   )
+                tokenExchange())
         }
 
         private fun clientAuth() : ClientAuthenticationProperties {
             return ClientAuthenticationProperties(
                 "client",
                 ClientAuthenticationMethod.CLIENT_SECRET_BASIC,
-                "secret",
-                null)
+                "secret", null)
         }
 
         private fun tokenExchange() : TokenExchangeProperties {
             return TokenExchangeProperties(
                 "aud1",
-                null
-                                          )
+                null)
         }
 
         private fun clientPropertiesFromGrantType(grantType : GrantType) : ClientProperties {
@@ -87,8 +80,7 @@ internal class ClientPropertiesTest {
                 grantType, listOf("scope1", "scope2"),
                 clientAuth(),
                 null,
-                tokenExchange()
-                                   )
+                tokenExchange())
         }
     }
 }

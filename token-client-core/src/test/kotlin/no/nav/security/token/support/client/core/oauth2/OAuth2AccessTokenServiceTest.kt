@@ -3,6 +3,7 @@ package no.nav.security.token.support.client.core.oauth2
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
 import com.nimbusds.oauth2.sdk.GrantType
+import com.nimbusds.oauth2.sdk.GrantType.*
 import java.time.Instant
 import java.time.LocalDateTime.*
 import java.time.ZoneId.*
@@ -13,6 +14,7 @@ import java.util.UUID
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.never
@@ -21,12 +23,15 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import org.mockito.MockitoAnnotations.*
+import org.mockito.junit.jupiter.MockitoExtension
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 import no.nav.security.token.support.client.core.OAuth2CacheFactory.accessTokenResponseCache
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.TestUtils.clientProperties
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 
+@ExtendWith(MockitoExtension::class)
 internal class OAuth2AccessTokenServiceTest {
 
     private inline fun <reified T> reifiedAny(type: Class<T>): T = Mockito.any(type)
@@ -47,14 +52,10 @@ internal class OAuth2AccessTokenServiceTest {
 
     @BeforeEach
     fun setup() {
-       MockitoAnnotations.openMocks(this)
         val oboCache = accessTokenResponseCache<OnBehalfOfGrantRequest>(10, 1)
         val clientCredentialsCache = accessTokenResponseCache<ClientCredentialsGrantRequest>(10, 1)
         val exchangeTokenCache = accessTokenResponseCache<TokenExchangeGrantRequest>(10, 1)
-        oAuth2AccessTokenService = OAuth2AccessTokenService(assertionResolver, onBehalfOfTokenResponseClient, clientCredentialsTokenResponseClient, exchangeTokeResponseClient)
-        oAuth2AccessTokenService.onBehalfOfGrantCache = oboCache
-        oAuth2AccessTokenService.clientCredentialsGrantCache = clientCredentialsCache
-        oAuth2AccessTokenService.exchangeGrantCache = exchangeTokenCache
+        oAuth2AccessTokenService = OAuth2AccessTokenService(assertionResolver, onBehalfOfTokenResponseClient, clientCredentialsTokenResponseClient, exchangeTokeResponseClient, clientCredentialsCache, exchangeTokenCache,oboCache)
     }
 
 
@@ -206,18 +207,18 @@ internal class OAuth2AccessTokenServiceTest {
         private fun clientCredentialsProperties() = clientCredentialsProperties("scope1", "scope2")
 
         private fun clientCredentialsProperties(vararg scope : String) =
-            clientProperties("http://token", GrantType.CLIENT_CREDENTIALS)
+            clientProperties("http://token", CLIENT_CREDENTIALS)
                 .toBuilder()
                 .scope(Arrays.asList(*scope))
                 .build()
 
         private fun exchangeProperties(audience : String = "audience") =
-            clientProperties("http://token", GrantType.TOKEN_EXCHANGE)
+            clientProperties("http://token", TOKEN_EXCHANGE)
                 .toBuilder()
                 .tokenExchange(TokenExchangeProperties(audience))
                 .build()
 
-        private fun onBehalfOfProperties() = clientProperties("http://token", GrantType.JWT_BEARER)
+        private fun onBehalfOfProperties() = clientProperties("http://token", JWT_BEARER)
 
         private fun accessTokenResponse(assertion : String, expiresIn : Int) =
             OAuth2AccessTokenResponse(assertion, Math.toIntExact(Instant.now().plusSeconds(expiresIn.toLong()).epochSecond), expiresIn)

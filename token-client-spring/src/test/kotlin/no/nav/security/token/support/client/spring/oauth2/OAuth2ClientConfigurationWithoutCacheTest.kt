@@ -21,25 +21,18 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 @SpringBootTest(classes = [ConfigurationWithCacheEnabledFalse::class])
 @ActiveProfiles("test")
 internal class OAuth2ClientConfigurationWithoutCacheTest {
-
     @MockBean
     private val tokenValidationContextHolder: TokenValidationContextHolder? = null
 
     @Autowired
     private lateinit var oAuth2AccessTokenService: OAuth2AccessTokenService
-    private   var onBehalfOfCache: Cache<OnBehalfOfGrantRequest, OAuth2AccessTokenResponse>? = null
-    private   var  clientCredentialsCache: Cache<ClientCredentialsGrantRequest, OAuth2AccessTokenResponse>? = null
-    @BeforeEach
-    fun before() {
-        onBehalfOfCache = oAuth2AccessTokenService.onBehalfOfGrantCache
-        clientCredentialsCache = oAuth2AccessTokenService.clientCredentialsGrantCache
-    }
 
     @Test
     fun oAuth2AccessTokenServiceCreatedWithoutCache() {
         assertThat(oAuth2AccessTokenService).isNotNull
-        assertThat(onBehalfOfCache).isNull()
-        assertThat(clientCredentialsCache).isNull()
+        assertThat(oAuth2AccessTokenService.clientCredentialsGrantCache).isNull()
+        assertThat(oAuth2AccessTokenService.onBehalfOfGrantCache).isNull()
+        assertThat(oAuth2AccessTokenService.exchangeGrantCache).isNull()
     }
 }
 
@@ -48,7 +41,5 @@ internal class OAuth2ClientConfigurationWithoutCacheTest {
 internal class ConfigurationWithCacheEnabledFalse {
     @Bean
     @ConditionalOnMissingBean(RestTemplateBuilder::class)
-    fun restTemplateBuilder(): RestTemplateBuilder {
-        return RestTemplateBuilder()
-    }
+    fun restTemplateBuilder()= RestTemplateBuilder()
 }

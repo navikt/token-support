@@ -26,24 +26,28 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 @EnableConfigurationProperties(ClientConfigurationProperties::class)
 @Configuration
 class OAuth2ClientConfiguration : ImportAware {
-    private var attrs: AnnotationAttributes? = null
+    private  var attrs: AnnotationAttributes? = null
     override fun setImportMetadata(meta: AnnotationMetadata) {
         attrs = requireNotNull(fromMap(meta.getAnnotationAttributes(EnableOAuth2Client::class.java.name, false))) { "@EnableOAuth2Client is not present on importing class $meta.className" }
     }
 
     @Bean
     fun oAuth2AccessTokenService(bearerTokenResolver: JwtBearerTokenResolver, client: OAuth2HttpClient) =
-        OAuth2AccessTokenService(bearerTokenResolver, OnBehalfOfTokenClient(client), ClientCredentialsTokenClient(client),
-                TokenExchangeClient(client)).apply { attrs?.let {
-                if (it.getBoolean("cacheEnabled")) {
-                    val max = it.getNumber<Long>("cacheMaximumSize")
-                    val skew = it.getNumber<Long>("cacheEvictSkew")
-                    clientCredentialsGrantCache = accessTokenResponseCache(max, skew)
-                    onBehalfOfGrantCache = accessTokenResponseCache(max, skew)
-                    exchangeGrantCache = accessTokenResponseCache(max, skew)
-                }
-            }
+        if (attrs?.getBoolean("cacheEnabled") ?: false) {
+            val max =  attrs?.getNumber<Long>("cacheMaximumSize") ?: 0
+            val skew = attrs?.getNumber<Long>("cacheEvictSkew") ?: 0
+            OAuth2AccessTokenService(bearerTokenResolver, OnBehalfOfTokenClient(client), ClientCredentialsTokenClient(client),
+                TokenExchangeClient(client), accessTokenResponseCache(max, skew),
+                accessTokenResponseCache(max, skew), accessTokenResponseCache(max, skew))
         }
+        else  {
+            OAuth2AccessTokenService(
+                bearerTokenResolver,
+                OnBehalfOfTokenClient(client),
+                ClientCredentialsTokenClient(client),
+                TokenExchangeClient(client))
+        }
+
 
     @Bean
     @ConditionalOnMissingBean(OAuth2HttpClient::class)
@@ -61,6 +65,6 @@ class OAuth2ClientConfiguration : ImportAware {
     @ConditionalOnMissingClass("no.nav.security.token.support.core.context.TokenValidationContextHolder")
     fun noopJwtBearerTokenResolver() =
         JwtBearerTokenResolver {
-            throw UnsupportedOperationException("a no-op implementation of ${JwtBearerTokenResolver::class.java}  is registered, cannot get token to exchange required for OnBehalfOf/TokenExchange grant")
+            throw UnsupportedOperationException("A no-op implementation of ${JwtBearerTokenResolver::class.java}  is registered, cannot get token to exchange required for OnBehalfOf/TokenExchange grant")
         }
 }
