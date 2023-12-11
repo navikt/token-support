@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
@@ -103,24 +104,23 @@ internal class ClientCredentialsTokenClientTest {
     @Test
     fun tokenResponseError() {
             server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400))
-            assertThatExceptionOfType(OAuth2ClientException::class.java)
-                .isThrownBy {
-                    client.getTokenResponse(ClientCredentialsGrantRequest(clientProperties(tokenEndpointUrl, CLIENT_CREDENTIALS)))
-                }
+        assertThrows<OAuth2ClientException> {
+            client.getTokenResponse(ClientCredentialsGrantRequest(clientProperties(tokenEndpointUrl, CLIENT_CREDENTIALS)))
         }
+    }
 
     companion object {
 
-        private const val TOKEN_RESPONSE = "{\n" +
-            "    \"token_type\": \"Bearer\",\n" +
-            "    \"scope\": \"scope1 scope2\",\n" +
-            "    \"expires_at\": 1568141495,\n" +
-            "    \"expires_in\": 3599,\n" +
-            "    \"ext_expires_in\": 3599,\n" +
-            "    \"access_token\": \"<base64URL>\",\n" +
-            "    \"refresh_token\": \"<base64URL>\"\n" +
-            "}\n"
-        private const val ERROR_RESPONSE = "{\"error\": \"some client error occurred\"}"
+        private const val TOKEN_RESPONSE = """{
+             "token_type": "Bearer",
+             "scope": "scope1 scope2",
+             "expires_at": 1568141495,
+             "expires_in": 3599,
+             "ext_expires_in": 3599,
+             "access_token": "<base64URL>",
+             "refresh_token": "<base64URL>"
+       }"""
+        private const val ERROR_RESPONSE = """{"error": "some client error occurred"}"""
         private fun assertThatResponseContainsAccessToken(response : OAuth2AccessTokenResponse?) {
             assertThat(response).isNotNull()
             assertThat(response!!.accessToken).isNotBlank()

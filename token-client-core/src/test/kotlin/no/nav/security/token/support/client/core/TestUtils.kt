@@ -34,11 +34,13 @@ object TestUtils {
             .build()
 
     @JvmStatic
-    fun withMockServer(test : Consumer<MockWebServer>) = MockWebServer().run {
-       start()
-       test.accept(this)
-       shutdown()
-   }
+    fun withMockServer(test: (MockWebServer) -> Unit) {
+        MockWebServer().run {
+            start()
+            test(this)
+            shutdown()
+        }
+    }
 
     @JvmStatic
     fun jsonResponse(json : String) = MockResponse().apply {

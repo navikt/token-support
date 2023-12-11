@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
@@ -66,14 +67,13 @@ internal class TokenExchangeClientTest {
 
     @Test
     fun tokenResponseError() {
-            server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400))
-            assertThatExceptionOfType(OAuth2ClientException::class.java)
-                .isThrownBy {
-                    tokenExchangeClient.getTokenResponse(TokenExchangeGrantRequest(clientProperties(
-                        tokenEndpointUrl,
-                        TOKEN_EXCHANGE), subjectToken!!))
-                }
+        server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400))
+        assertThrows<OAuth2ClientException>{
+            tokenExchangeClient.getTokenResponse(TokenExchangeGrantRequest(clientProperties(
+                tokenEndpointUrl,
+                TOKEN_EXCHANGE), subjectToken!!))
         }
+    }
 
     private fun assertThatRequestBodyContainsTokenExchangeFormParameters(formParameters : String) {
         assertThat(formParameters).contains("$GRANT_TYPE=${encodeValue(TOKEN_EXCHANGE.value)}")
