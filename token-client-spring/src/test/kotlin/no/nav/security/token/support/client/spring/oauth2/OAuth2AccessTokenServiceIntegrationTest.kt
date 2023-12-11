@@ -37,6 +37,8 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime
 import java.time.ZoneId
+import org.mockito.kotlin.whenever
+
 @SpringBootTest(classes = [ConfigurationWithCacheEnabledTrue::class])
 @ActiveProfiles("test")
 internal class OAuth2AccessTokenServiceIntegrationTest {
@@ -54,9 +56,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
     private lateinit var server: MockWebServer
     private lateinit var tokenEndpointUrl: URI
     @BeforeEach
-    @Throws(IOException::class)
     fun setup() {
-        MockitoAnnotations.openMocks(this)
         server = MockWebServer()
         server.start()
         tokenEndpointUrl = server.url("/oauth2/token").toUri()
@@ -76,7 +76,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             .tokenEndpointUrl(tokenEndpointUrl)
             .build()
         server.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
-        Mockito.`when`(tokenValidationContextHolder!!.getTokenValidationContext())
+        whenever(tokenValidationContextHolder!!.getTokenValidationContext())
             .thenReturn(tokenValidationContext("sub1"))
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
         val request = server.takeRequest()
@@ -88,20 +88,20 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             .map { s: String -> s.split("Basic ").toTypedArray() }
             .filter { pair: Array<String> -> pair.size == 2 }
             .map { pair: Array<String> -> Base64.getDecoder().decode(pair[1]) }
-            .map { bytes: ByteArray? -> String(bytes!!, StandardCharsets.UTF_8) }
+            .map { bytes: ByteArray? -> String(bytes!!, UTF_8) }
             .orElse("")
         val auth = clientProperties.authentication
         assertThat(usernamePwd).isEqualTo(auth.clientId + ":" + auth.clientSecret)
         assertThat(body).contains(
-            "grant_type=" + URLEncoder.encode(
+            "grant_type=" + encode(
                 GrantType.JWT_BEARER.value,
-                StandardCharsets.UTF_8))
+                UTF_8))
         assertThat(body).contains(
-            "scope=" + URLEncoder.encode(
+            "scope=" + encode(
                 java.lang.String.join(" ", clientProperties.scope),
-                StandardCharsets.UTF_8))
+                UTF_8))
         assertThat(body).contains("requested_token_use=on_behalf_of")
-        assertThat(body).contains("assertion=" + assertionResolver.token().orElse(null))
+        assertThat(body).contains("assertion=" + assertionResolver.token())
         assertThat(response).isNotNull
         assertThat(response?.accessToken).isNotBlank
         assertThat(response?.expiresAt).isGreaterThan(0)
@@ -117,7 +117,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             .tokenEndpointUrl(tokenEndpointUrl)
             .build()
         server.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
-        Mockito.`when`(tokenValidationContextHolder!!.getTokenValidationContext())
+        whenever(tokenValidationContextHolder!!.getTokenValidationContext())
             .thenReturn(tokenValidationContext("sub1"))
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
         val request = server.takeRequest()
@@ -125,10 +125,10 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
         val body = request.body.readUtf8()
         assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
         assertThat(body).contains(
-            "grant_type=" + URLEncoder.encode(
-                GrantType.TOKEN_EXCHANGE.value,
-                StandardCharsets.UTF_8))
-        assertThat(body).contains("subject_token=" + assertionResolver.token().orElse(null))
+            "grant_type=" + encode(
+                TOKEN_EXCHANGE.value,
+                UTF_8))
+        assertThat(body).contains("subject_token=" + assertionResolver.token())
         assertThat(response).isNotNull
         assertThat(response?.accessToken).isNotBlank
         assertThat(response?.expiresAt).isGreaterThan(0)
@@ -153,15 +153,15 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             .map { s: String -> s.split("Basic ").toTypedArray() }
             .filter { pair: Array<String> -> pair.size == 2 }
             .map { pair: Array<String> -> Base64.getDecoder().decode(pair[1]) }
-            .map { bytes: ByteArray? -> String(bytes!!, StandardCharsets.UTF_8) }
+            .map { bytes: ByteArray? -> String(bytes!!, UTF_8) }
             .orElse("")
         val auth = clientProperties.authentication
         assertThat(usernamePwd).isEqualTo(auth.clientId + ":" + auth.clientSecret)
         assertThat(body).contains("grant_type=client_credentials")
         assertThat(body).contains(
-            "scope=" + URLEncoder.encode(
+            "scope=" + encode(
                 java.lang.String.join(" ", clientProperties.scope),
-                StandardCharsets.UTF_8))
+                UTF_8))
         assertThat(body).doesNotContain("requested_token_use=on_behalf_of")
         assertThat(body).doesNotContain("assertion=")
         assertThat(response).isNotNull

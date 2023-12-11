@@ -21,10 +21,9 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.reset
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
 import org.mockito.MockitoAnnotations.*
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.whenever
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 import no.nav.security.token.support.client.core.OAuth2CacheFactory.accessTokenResponseCache
 import no.nav.security.token.support.client.core.OAuth2ClientException
@@ -61,9 +60,9 @@ internal class OAuth2AccessTokenServiceTest {
 
     @Test
     fun accessTokenOnBehalfOf() {
-            `when`(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()))
+            whenever(assertionResolver.token()).thenReturn(jwt("sub1").serialize())
             val firstAccessToken = "first_access_token"
-            `when`(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
+            whenever(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
                 .thenReturn(accessTokenResponse(firstAccessToken, 60))
             val res = oAuth2AccessTokenService.getAccessToken(onBehalfOfProperties())
             verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny( OnBehalfOfGrantRequest::class.java))
@@ -74,7 +73,7 @@ internal class OAuth2AccessTokenServiceTest {
     @Test
     fun accessTokenClientCredentials()  {
         val firstAccessToken = "first_access_token"
-            `when`(clientCredentialsTokenResponseClient.getTokenResponse(reifiedAny(ClientCredentialsGrantRequest::class.java)))
+           whenever(clientCredentialsTokenResponseClient.getTokenResponse(reifiedAny(ClientCredentialsGrantRequest::class.java)))
                 .thenReturn(accessTokenResponse(firstAccessToken, 60))
             val res = oAuth2AccessTokenService.getAccessToken(clientCredentialsProperties())
             verify(clientCredentialsTokenResponseClient).getTokenResponse(reifiedAny(ClientCredentialsGrantRequest::class.java))
@@ -92,11 +91,11 @@ internal class OAuth2AccessTokenServiceTest {
     @Test
     fun accessTokenOnBehalfOf_WithCache_MultipleTimes_SameClientConfig() {
             val clientProperties = onBehalfOfProperties()
-            `when`(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()))
+            whenever(assertionResolver.token()).thenReturn(jwt("sub1").serialize())
 
             //should invoke client and populate cache
             val firstAccessToken = "first_access_token"
-            `when`(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
+            whenever(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
                 .thenReturn(accessTokenResponse(firstAccessToken, 60))
             val res = oAuth2AccessTokenService.getAccessToken(clientProperties)
             verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
@@ -111,10 +110,10 @@ internal class OAuth2AccessTokenServiceTest {
 
             //another user/token but same clientconfig, should invoke client and populate cache
             reset(assertionResolver)
-            `when`(assertionResolver.token()).thenReturn(Optional.of(jwt("sub2").serialize()))
+            whenever(assertionResolver.token()).thenReturn(jwt("sub2").serialize())
             reset(onBehalfOfTokenResponseClient)
             val secondAccessToken = "second_access_token"
-            `when`(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
+            whenever(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
                 .thenReturn(accessTokenResponse(secondAccessToken, 60))
             val res3 = oAuth2AccessTokenService.getAccessToken(clientProperties)
             verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
@@ -127,7 +126,7 @@ internal class OAuth2AccessTokenServiceTest {
 
             //should invoke client and populate cache
             val firstAccessToken = "first_access_token"
-            `when`(clientCredentialsTokenResponseClient.getTokenResponse(reifiedAny(
+            whenever(clientCredentialsTokenResponseClient.getTokenResponse(reifiedAny(
                 ClientCredentialsGrantRequest::class.java)))
                 .thenReturn(accessTokenResponse(firstAccessToken, 60))
             val res1 = oAuth2AccessTokenService.getAccessToken(clientProperties)
@@ -146,7 +145,7 @@ internal class OAuth2AccessTokenServiceTest {
             clientProperties = clientCredentialsProperties("scope3")
             reset(clientCredentialsTokenResponseClient)
             val secondAccessToken = "second_access_token"
-            `when`(clientCredentialsTokenResponseClient.getTokenResponse(reifiedAny(ClientCredentialsGrantRequest::class.java)))
+            whenever(clientCredentialsTokenResponseClient.getTokenResponse(reifiedAny(ClientCredentialsGrantRequest::class.java)))
                 .thenReturn(accessTokenResponse(secondAccessToken, 60))
             val res3 = oAuth2AccessTokenService.getAccessToken(clientProperties)
             verify(clientCredentialsTokenResponseClient).getTokenResponse(reifiedAny(ClientCredentialsGrantRequest::class.java))
@@ -157,11 +156,11 @@ internal class OAuth2AccessTokenServiceTest {
     @Throws(InterruptedException::class)
     fun testCacheEntryIsEvictedOnExpiry() {
         val clientProperties = onBehalfOfProperties()
-        `when`(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()))
+        whenever(assertionResolver.token()).thenReturn(jwt("sub1").serialize())
 
         //should invoke client and populate cache
         val firstAccessToken = "first_access_token"
-        `when`(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
+        whenever(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
             .thenReturn(accessTokenResponse(firstAccessToken, 1))
         val res1 = oAuth2AccessTokenService.getAccessToken(clientProperties)
         verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
@@ -172,7 +171,7 @@ internal class OAuth2AccessTokenServiceTest {
         //entry should be missing from cache due to expiry
         reset(onBehalfOfTokenResponseClient)
         val secondAccessToken = "second_access_token"
-        `when`(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
+        whenever(onBehalfOfTokenResponseClient.getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java)))
             .thenReturn(accessTokenResponse(secondAccessToken, 1))
         val res2 = oAuth2AccessTokenService.getAccessToken(clientProperties)
         verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
@@ -182,9 +181,9 @@ internal class OAuth2AccessTokenServiceTest {
     @Test
     fun accessTokenExchange() {
             val clientProperties = exchangeProperties()
-            `when`(assertionResolver.token()).thenReturn(Optional.of(jwt("sub1").serialize()))
+            whenever(assertionResolver.token()).thenReturn(jwt("sub1").serialize())
             val firstAccessToken = "first_access_token"
-            `when`(exchangeTokeResponseClient.getTokenResponse(reifiedAny(
+            whenever(exchangeTokeResponseClient.getTokenResponse(reifiedAny(
                 TokenExchangeGrantRequest::class.java)))
                 .thenReturn(accessTokenResponse(firstAccessToken, 60))
             val res1 = oAuth2AccessTokenService.getAccessToken(clientProperties)

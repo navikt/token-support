@@ -107,5 +107,5 @@ data class DemoTokenResponse(
 }
 
 internal fun TokenValidationContextPrincipal?.asTokenString(): String =
-    this?.context?.firstValidToken?.map { it.encodedToken }?.orElse(null)
+    this?.context?.firstValidToken?.encodedToken
         ?: throw RuntimeException("no token found in call context")

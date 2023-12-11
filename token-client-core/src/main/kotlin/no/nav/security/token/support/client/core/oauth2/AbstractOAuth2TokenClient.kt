@@ -68,6 +68,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
                 when (authentication.clientAuthMethod) {
                     CLIENT_SECRET_POST -> {
                          LinkedHashMap<String, String>().apply {
+                             put(CLIENT_ID, authentication.clientId)
                             put(CLIENT_ID, authentication.clientId)
                             put(CLIENT_SECRET, authentication.clientSecret!!)
                         }

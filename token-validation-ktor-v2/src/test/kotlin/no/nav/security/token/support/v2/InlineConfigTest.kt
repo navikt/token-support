@@ -8,21 +8,26 @@ import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.nimbusds.jwt.JWTClaimsSet
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.withTestApplication
+import com.nimbusds.jwt.SignedJWT
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.http.HttpStatusCode.Companion.OK
+import io.ktor.http.HttpStatusCode.Companion.Unauthorized
+import io.ktor.server.testing.testApplication
 import no.nav.security.token.support.v2.inlineconfigtestapp.helloCounter
 import no.nav.security.token.support.v2.inlineconfigtestapp.inlineConfiguredModule
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.v2.JwtTokenGenerator.ACR
+import no.nav.security.token.support.v2.JwtTokenGenerator.AUD
+import no.nav.security.token.support.v2.JwtTokenGenerator.EXPIRY
+import no.nav.security.token.support.v2.JwtTokenGenerator.ISS
+import no.nav.security.token.support.v2.JwtTokenGenerator.createSignedJWT
 
-@Disabled
 class InlineConfigTest {
 
     companion object {
@@ -38,111 +43,98 @@ class InlineConfigTest {
         fun after() {
             server.stop()
         }
+        private fun SignedJWT.asBearer() = "Bearer ${serialize()}"
     }
 
     @Test
     fun inlineconfig_withJWTWithUnknownIssuerShouldGive_401_Unauthorized_andHelloCounterIsNOTIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
-            stubOIDCProvider()
-            inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt =
-                    JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer"))
-                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
-            }.apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertEquals(helloCounterBeforeRequest, helloCounter)
+        testApplication{
+            application {
+                stubOIDCProvider()
+                inlineConfiguredModule()
             }
+            val jwt = createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer"))
+            val response = client.get("/inlineconfig") {
+                header(AUTHORIZATION_HEADER, jwt.asBearer())
+            }
+            assertEquals(Unauthorized, response.status)
+            assertEquals(helloCounterBeforeRequest, helloCounter)
         }
     }
 
     @Test
     fun inlineconfig_withoutValidJWTinHeaderShouldGive_401_andHelloCounterIsNotIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
-            stubOIDCProvider()
-            inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
-            }.apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertEquals(helloCounterBeforeRequest, helloCounter)
+        testApplication{
+            application {
+                stubOIDCProvider()
+                inlineConfiguredModule()
             }
+            val response = client.get("/inlineconfig")
+            assertEquals(Unauthorized, response.status)
+            assertEquals(helloCounterBeforeRequest, helloCounter)
         }
     }
 
     @Test
     fun inlineconfig_withValidJWTinHeaderShouldGive_200_OK_andHelloCounterIsIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
-            stubOIDCProvider()
-            inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt = JwtTokenGenerator.createSignedJWT("testuser")
-                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
-            }.apply {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals(helloCounterBeforeRequest + 1, helloCounter)
+        testApplication {
+            application {
+                stubOIDCProvider()
+                inlineConfiguredModule()
             }
+            val jwt = createSignedJWT("testuser")
+            val response = client.get("/inlineconfig") {
+                header(AUTHORIZATION_HEADER, jwt.asBearer())
+            }
+            assertEquals(OK, response.status)
+            assertEquals(helloCounterBeforeRequest + 1, helloCounter)
         }
     }
 
     @Test
     fun inlineconfig_JWTwithAnotherValidAudienceShouldGive_200_OK_andHelloCounterIsIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
-            stubOIDCProvider()
-            inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt =
-                    JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience"))
-                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
-            }.apply {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals(helloCounterBeforeRequest + 1, helloCounter)
+        testApplication {
+            application {
+                stubOIDCProvider()
+                inlineConfiguredModule()
             }
+            val jwt = createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience"))
+            val response = client.get("/inlineconfig") {
+                header(AUTHORIZATION_HEADER, jwt.asBearer())
+            }
+            assertEquals(OK, response.status)
+            assertEquals(helloCounterBeforeRequest + 1, helloCounter)
         }
     }
 
     @Test
     fun inlineconfig_JWTwithUnknownAudienceShouldGive_401_andHelloCounterIsNotIncreased() {
         val helloCounterBeforeRequest = helloCounter
-        withTestApplication({
-            stubOIDCProvider()
-            inlineConfiguredModule()
-        }) {
-            handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt =
-                    JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience"))
-                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
-            }.apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertEquals(helloCounterBeforeRequest, helloCounter)
+        testApplication {
+            application {
+                stubOIDCProvider()
+                inlineConfiguredModule()
             }
+            val jwt = createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience"))
+            val response = client.get("/inlineconfig") {
+                header(AUTHORIZATION_HEADER, jwt.asBearer())
+            }
+            assertEquals(Unauthorized, response.status)
+            assertEquals(helloCounterBeforeRequest, helloCounter)
         }
     }
 
     fun stubOIDCProvider() {
-        stubFor(any(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(
-            okJson("{\"jwks_uri\": \"${server.baseUrl()}/keys\", " +
-                "\"subject_types_supported\": [\"pairwise\"], " +
-                "\"issuer\": \"${JwtTokenGenerator.ISS}\"}")))
+        stubFor(any(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(okJson("""{"jwks_uri": "${server.baseUrl()}/keys", "subject_types_supported": ["pairwise"], "issuer": "${JwtTokenGenerator.ISS}"}""")))
 
-        stubFor(any(urlPathEqualTo("/keys")).willReturn(
-            okJson(JwkGenerator.jWKSet.toPublicJWKSet().toString())))
+        stubFor(any(urlPathEqualTo("/keys")).willReturn(okJson(JwkGenerator.jWKSet.toPublicJWKSet().toString())))
     }
 
-    fun buildClaimSet(subject: String,
-                      issuer: String = JwtTokenGenerator.ISS,
-                      audience: String = JwtTokenGenerator.AUD,
-                      authLevel: String = JwtTokenGenerator.ACR,
-                      expiry: Long = JwtTokenGenerator.EXPIRY,
-                      issuedAt: Date = Date(),
-                      navIdent: String? = null): JWTClaimsSet {
+    fun buildClaimSet(subject: String, issuer: String = ISS, audience: String = AUD, authLevel: String = ACR, expiry: Long = EXPIRY, issuedAt: Date = Date(), navIdent: String? = null): JWTClaimsSet {
         val builder = JWTClaimsSet.Builder()
             .subject(subject)
             .issuer(issuer)

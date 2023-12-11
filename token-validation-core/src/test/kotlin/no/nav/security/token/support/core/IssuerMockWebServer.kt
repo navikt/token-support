@@ -61,11 +61,11 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
 
     @Throws(IOException::class)
     fun shutdown() {
-        server?.shutdown()
+        server.shutdown()
         proxyServer?.shutdown()
     }
 
-    fun getServer(): MockWebServer? = server
+    fun getServer(): MockWebServer = server
     fun getProxyServer(): MockWebServer? = proxyServer
     fun isStartProxyServer(): Boolean = startProxyServer
 

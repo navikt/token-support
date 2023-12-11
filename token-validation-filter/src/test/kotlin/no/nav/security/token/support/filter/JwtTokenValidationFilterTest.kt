@@ -1,21 +1,17 @@
 package no.nav.security.token.support.filter
 
 import com.nimbusds.jose.JOSEException
-import com.nimbusds.jose.JWSAlgorithm
+import com.nimbusds.jose.JWSAlgorithm.*
 import com.nimbusds.jose.JWSHeader
-import com.nimbusds.jose.JWSSigner
 import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.util.IOUtils
 import com.nimbusds.jose.util.Resource
-import com.nimbusds.jwt.JWTClaimNames
 import com.nimbusds.jwt.JWTClaimNames.*
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.SignedJWT
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletRequest
-import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -38,6 +34,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.whenever
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
@@ -68,7 +65,7 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-        `when`(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie(IDTOKENCOOKIENAME, jwt)))
+        whenever(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie(IDTOKENCOOKIENAME, jwt)))
         filter.doFilter(servletRequest, servletResponse!!,
             mockFilterchainAsserting(issuername, "foobar", ctxHolder, filterCallCounter))
 
@@ -88,8 +85,8 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-        `when`(servletRequest!!.cookies).thenReturn(null)
-        `when`(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt")
+       whenever(servletRequest!!.cookies).thenReturn(null)
+       whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt")
         filter.doFilter(servletRequest, servletResponse!!,
             mockFilterchainAsserting(anotherIssuer, "foobar", ctxHolder, filterCallCounter))
 
@@ -113,8 +110,8 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-        `when`(servletRequest!!.cookies).thenReturn(null)
-        `when`(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt1,Bearer $jwt2")
+        whenever(servletRequest!!.cookies).thenReturn(null)
+        whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt1,Bearer $jwt2")
         filter.doFilter(servletRequest, servletResponse!!,
             mockFilterchainAsserting(arrayOf(issuer1, anotherIssuer), arrayOf("foobar", "foobar"), ctxHolder, filterCallCounter))
 
@@ -123,8 +120,8 @@ internal class JwtTokenValidationFilterTest {
 
     @Test
     fun testRequestConverterShouldHandleWhenCookiesAreNULL() {
-        `when`(servletRequest!!.cookies).thenReturn(null)
-        `when`(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn(null)
+        whenever(servletRequest!!.cookies).thenReturn(null)
+        whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn(null)
 
         val req = fromHttpServletRequest(servletRequest)
         assertNull(req.getCookies())
@@ -133,8 +130,8 @@ internal class JwtTokenValidationFilterTest {
 
     @Test
     fun testRequestConverterShouldConvertCorrectly() {
-        `when`(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie("IDTOKEN", "THETOKEN")))
-        `when`(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA")
+        whenever(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie("IDTOKEN", "THETOKEN")))
+        whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA")
 
         val req = fromHttpServletRequest(servletRequest)
         req.getCookies()?.get(0)?.getName()
@@ -187,14 +184,15 @@ internal class JwtTokenValidationFilterTest {
     private fun createJWT(issuer : String, signingKey : RSAPrivateKey) : String {
         val now = Date()
         val claimsSet = Builder()
-            .subject("foobar").issuer(issuer).audience(AUDIENCE).notBeforeTime(now).issueTime(now)
+            .subject("foobar")
+            .issuer(issuer)
+            .audience(AUDIENCE)
+            .notBeforeTime(now)
+            .issueTime(now)
             .expirationTime(Date(now.time + 3600)).build()
-
-        val signer : JWSSigner = RSASSASigner(signingKey)
-        val signedJWT = SignedJWT(
-            JWSHeader(JWSAlgorithm.RS256, null, null, null, null, null, null, null, null, null, KEYID, null, null), claimsSet)
-        signedJWT.sign(signer)
-        return signedJWT.serialize()
+        return SignedJWT(JWSHeader.Builder(RS256).keyID(KEYID).build(), claimsSet).apply {
+            sign(RSASSASigner(signingKey))
+       }.serialize()
     }
 
     private class TestTokenValidationContextHolder : TokenValidationContextHolder {

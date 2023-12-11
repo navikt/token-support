@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.whenever
 import no.nav.security.token.support.core.JwtTokenConstants
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
@@ -61,11 +62,11 @@ internal class JwtTokenExpiryFilterTest {
     private fun setupMocks(expiry : LocalDateTime) {
         tokenValidationContextHolder = mock(TokenValidationContextHolder::class.java)
         val tokenValidationContext = mock(TokenValidationContext::class.java)
-        `when`(tokenValidationContextHolder.getTokenValidationContext()).thenReturn(tokenValidationContext)
-        `when`(tokenValidationContext.issuers).thenReturn(listOf("issuer1"))
+        whenever(tokenValidationContextHolder.getTokenValidationContext()).thenReturn(tokenValidationContext)
+        whenever(tokenValidationContext.issuers).thenReturn(listOf("issuer1"))
 
         val expiryDate = Date.from(expiry.atZone(ZoneId.systemDefault()).toInstant())
-        `when`(tokenValidationContext.getClaims(anyString())).thenReturn(createOIDCClaims(expiryDate))
+        whenever(tokenValidationContext.getClaims(anyString())).thenReturn(createOIDCClaims(expiryDate))
     }
 
     companion object {

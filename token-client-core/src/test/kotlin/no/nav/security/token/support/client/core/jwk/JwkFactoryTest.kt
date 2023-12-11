@@ -1,6 +1,7 @@
 package no.nav.security.token.support.client.core.jwk
 
 import com.nimbusds.jose.util.Base64URL
+import com.nimbusds.jose.util.Base64URL.*
 import java.io.IOException
 import java.io.InputStream
 import java.security.KeyStore
@@ -45,7 +46,7 @@ internal class JwkFactoryTest {
                 keyStore.load(inputStream(KEY_STORE_FILE), "Test1234".toCharArray())
                 val cert = keyStore.getCertificate(ALIAS)
                 val sha1 = MessageDigest.getInstance("SHA-1")
-                Base64URL.encode(sha1.digest(cert.encoded)).toString()
+                encode(sha1.digest(cert.encoded)).toString()
             }
             catch (e : Exception) {
                 throw RuntimeException(e)

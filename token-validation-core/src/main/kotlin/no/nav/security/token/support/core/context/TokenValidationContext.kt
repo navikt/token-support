@@ -7,7 +7,7 @@ class TokenValidationContext(private val validatedTokens : Map<String, JwtToken>
 
     fun getJwtTokenAsOptional(issuerName : String) = jwtToken(issuerName)?.let { Optional.of(it) } ?: Optional.empty()
 
-    val firstValidToken get() = validatedTokens.values.firstOrNull()?.let { Optional.of(it) } ?: Optional.empty()
+    val firstValidToken get() = validatedTokens.values.firstOrNull()
     fun getJwtToken(issuerName : String) = jwtToken(issuerName)
 
     fun getClaims(issuerName : String) = jwtToken(issuerName)?.jwtTokenClaims ?: throw IllegalArgumentException("No token found for issuer $issuerName")

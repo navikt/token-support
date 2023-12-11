@@ -19,6 +19,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.junit.jupiter.MockitoSettings
+import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness.LENIENT
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties
@@ -40,8 +41,8 @@ internal class JwtTokenValidatorFactoryTest {
 
     @BeforeEach
     fun setup() {
-        Mockito.`when`(metadata.jwkSetURI).thenReturn(URI.create("http://someurl"))
-        Mockito.`when`(metadata.issuer).thenReturn(Issuer("myissuer"))
+        whenever(metadata.jwkSetURI).thenReturn(URI.create("http://someurl"))
+        whenever(metadata.issuer).thenReturn(Issuer("myissuer"))
     }
 
     @Test

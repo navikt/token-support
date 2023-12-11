@@ -40,16 +40,10 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
         getFromCacheIfEnabled(ClientCredentialsGrantRequest(clientProperties), clientCredentialsGrantCache, clientCredentialsTokenClient::getTokenResponse)
 
     private fun tokenExchangeGrantRequest(clientProperties : ClientProperties) =
-        TokenExchangeGrantRequest(clientProperties, tokenResolver.token()
-            .orElseThrow {
-                OAuth2ClientException("No authenticated jwt token found in validation context, cannot do token exchange")
-            })
+        TokenExchangeGrantRequest(clientProperties, tokenResolver.token() ?: throw OAuth2ClientException("no authenticated jwt token found in validation context, cannot do token exchange"))
 
     private fun onBehalfOfGrantRequest(clientProperties : ClientProperties) =
-        OnBehalfOfGrantRequest(clientProperties, tokenResolver.token()
-            .orElseThrow {
-                OAuth2ClientException("no authenticated jwt token found in validation context, cannot do on-behalf-of")
-            })
+        OnBehalfOfGrantRequest(clientProperties, tokenResolver.token() ?: throw OAuth2ClientException("no authenticated jwt token found in validation context, cannot do on-behalf-of"))
 
     override fun toString() = "${javaClass.getSimpleName()} [clientCredentialsGrantCache=$clientCredentialsGrantCache,  onBehalfOfGrantCache=$onBehalfOfGrantCache, tokenExchangeClient=$tokenExchangeClient, tokenResolver=$tokenResolver, onBehalfOfTokenClient=$onBehalfOfTokenClient, clientCredentialsTokenClient=$clientCredentialsTokenClient, exchangeGrantCache=$exchangeGrantCache]"
     companion object {

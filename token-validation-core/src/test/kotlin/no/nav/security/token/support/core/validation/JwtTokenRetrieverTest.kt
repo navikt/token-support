@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.whenever
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
@@ -37,7 +37,7 @@ internal class JwtTokenRetrieverTest {
     fun testRetrieveTokensInHeader() {
         val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
             NoopResourceRetriever())
-        Mockito.`when`(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer ${createJWT("issuer1")}")
+        whenever(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer ${createJWT("issuer1")}")
         assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
     }
 
@@ -47,7 +47,7 @@ internal class JwtTokenRetrieverTest {
         val config = MultiIssuerConfiguration(
             createIssuerPropertiesMap("issuer1", "cookie1", "TokenXAuthorization"),
             NoopResourceRetriever())
-        Mockito.`when`(request.getHeader("TokenXAuthorization")).thenReturn("Bearer ${createJWT("issuer1")}")
+        whenever(request.getHeader("TokenXAuthorization")).thenReturn("Bearer ${createJWT("issuer1")}")
         assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
     }
 
@@ -56,7 +56,7 @@ internal class JwtTokenRetrieverTest {
     fun testRetrieveTokensInHeaderIssuerNotConfigured() {
         val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
             NoopResourceRetriever())
-        Mockito.`when`(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer ${createJWT("issuerNotConfigured")}")
+        whenever(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer ${createJWT("issuerNotConfigured")}")
         assertEquals(0, retrieveUnvalidatedTokens(config, request).size)
     }
 
@@ -65,7 +65,7 @@ internal class JwtTokenRetrieverTest {
     fun testRetrieveTokensInCookie() {
         val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
             NoopResourceRetriever())
-        Mockito.`when`(request.getCookies()).thenReturn(arrayOf(Cookie("cookie1", createJWT("issuer1"))))
+        whenever(request.getCookies()).thenReturn(arrayOf(Cookie("cookie1", createJWT("issuer1"))))
         assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
     }
 
@@ -74,8 +74,8 @@ internal class JwtTokenRetrieverTest {
     fun testRetrieveTokensWhenCookieNameNotConfigured() {
         val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", null),
             NoopResourceRetriever())
-        Mockito.`when`(request.getCookies()).thenReturn(arrayOf(Cookie("cookie1", "somerandomcookie")))
-        Mockito.`when`(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer ${createJWT("issuer1")}")
+        whenever(request.getCookies()).thenReturn(arrayOf(Cookie("cookie1", "somerandomcookie")))
+        whenever(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer ${createJWT("issuer1")}")
         assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
     }
 
@@ -87,7 +87,7 @@ internal class JwtTokenRetrieverTest {
 
         val config = MultiIssuerConfiguration(issuerPropertiesMap, NoopResourceRetriever())
 
-        Mockito.`when`(request.getCookies()).thenReturn(arrayOf(Cookie("cookie1", createJWT("issuer1"))))
+        whenever(request.getCookies()).thenReturn(arrayOf(Cookie("cookie1", createJWT("issuer1"))))
         assertEquals(1, retrieveUnvalidatedTokens(config, request).size)
         assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
     }
