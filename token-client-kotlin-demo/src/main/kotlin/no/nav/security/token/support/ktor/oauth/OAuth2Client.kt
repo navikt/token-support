@@ -37,6 +37,7 @@ import no.nav.security.token.support.client.core.OAuth2ParameterNames.REQUESTED_
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SCOPE
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TOKEN
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TOKEN_TYPE
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
 class OAuth2Client(
     private val httpClient: HttpClient,
@@ -88,7 +89,7 @@ internal suspend fun HttpClient.tokenRequest(tokenEndpointUrl: String, clientAut
         }
     ) {
         if (clientAuthProperties.clientAuthMethod == CLIENT_SECRET_BASIC) {
-            header("Authorization", "Basic ${basicAuth(clientAuthProperties.clientId, clientAuthProperties.clientSecret!!)}")
+            header(AUTHORIZATION_HEADER, "Basic ${basicAuth(clientAuthProperties.clientId, clientAuthProperties.clientSecret!!)}")
         }
     }
 

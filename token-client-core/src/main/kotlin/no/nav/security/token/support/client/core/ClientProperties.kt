@@ -2,11 +2,14 @@ package no.nav.security.token.support.client.core
 
 import com.nimbusds.jose.util.DefaultResourceRetriever
 import com.nimbusds.oauth2.sdk.GrantType
-import com.nimbusds.oauth2.sdk.GrantType.*
+import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
+import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
+import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import com.nimbusds.oauth2.sdk.ParseException
 import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata
 import java.io.IOException
 import java.net.URI
+
 class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = null,
                                                  private val wellKnownUrl: URI? = null,
                                                  val grantType: GrantType,

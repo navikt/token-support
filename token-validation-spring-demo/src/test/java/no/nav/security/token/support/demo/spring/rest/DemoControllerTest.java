@@ -24,6 +24,7 @@ import java.util.List;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
 @SpringBootTest(classes = DemoApplication.class, webEnvironment = RANDOM_PORT)
@@ -67,7 +68,7 @@ class DemoControllerTest {
         String uri = "/demo/protected";
 
         given()
-            .header("Authorization", "Bearer " + token1)
+            .header(AUTHORIZATION_HEADER, "Bearer " + token1)
             .when()
             .get(uri)
             .then()
@@ -75,7 +76,7 @@ class DemoControllerTest {
             .statusCode(HttpStatus.OK.value());
 
         given()
-            .header("Authorization", "Bearer " + token2)
+            .header(AUTHORIZATION_HEADER, "Bearer " + token2)
             .when()
             .get(uri)
             .then()

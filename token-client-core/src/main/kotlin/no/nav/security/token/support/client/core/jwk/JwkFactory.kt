@@ -1,6 +1,5 @@
 package no.nav.security.token.support.client.core.jwk
 
-import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.JWKSet.*
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.RSAKey.Builder
@@ -20,7 +19,6 @@ object JwkFactory {
     @JvmStatic
     fun fromJsonFile(filePath : String) =
         runCatching {
-            LOG.debug("Attempting to read JWK from path: {}", of(filePath).toAbsolutePath())
             fromJson(readString(of(filePath), UTF_8))
         }.getOrElse {
             throw JwkInvalidException(it)

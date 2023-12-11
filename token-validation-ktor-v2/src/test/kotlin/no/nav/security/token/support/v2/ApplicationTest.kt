@@ -16,6 +16,7 @@ import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
 class ApplicationTest {
 
@@ -68,7 +69,7 @@ class ApplicationTest {
 
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = "unknown", subject = "testuser")
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -84,7 +85,7 @@ class ApplicationTest {
 
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -103,7 +104,7 @@ class ApplicationTest {
                 server.issuerUrl(ISSUER_ID),
                 mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -124,7 +125,7 @@ class ApplicationTest {
                 server.issuerUrl(ISSUER_ID),
                 mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -211,7 +212,7 @@ class ApplicationTest {
 
         val response = client.get("/hello_person") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -231,7 +232,7 @@ class ApplicationTest {
                 subject = "testuser",
                 claims = mapOf("NAVident" to "X112233")
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -262,7 +263,7 @@ class ApplicationTest {
 
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -288,7 +289,7 @@ class ApplicationTest {
                     "groups" to listOf("group1", "group2")
                 )
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -311,7 +312,7 @@ class ApplicationTest {
                     "NAVident" to "X112233",
                 )
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -335,7 +336,7 @@ class ApplicationTest {
                     "groups" to listOf("group1", "group2", "THEGROUP")
                 )
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -359,7 +360,7 @@ class ApplicationTest {
                         "groups" to listOf("group1", "group2", "THEGROUP")
                     )
                 )
-                header("Authorization", "Bearer ${jwt.serialize()}")
+                header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }
             assertEquals(HttpStatusCode.Unauthorized, response.status)
         }

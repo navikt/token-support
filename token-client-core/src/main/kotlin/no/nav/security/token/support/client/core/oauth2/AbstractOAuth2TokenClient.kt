@@ -5,10 +5,8 @@ import com.nimbusds.common.contenttype.ContentType.APPLICATION_URLENCODED
 import com.nimbusds.oauth2.sdk.GrantType.*
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication
-import com.nimbusds.oauth2.sdk.util.ContentTypeUtils
 import java.lang.String.*
 import java.nio.charset.StandardCharsets.*
-import java.util.Base64
 import java.util.Base64.*
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException

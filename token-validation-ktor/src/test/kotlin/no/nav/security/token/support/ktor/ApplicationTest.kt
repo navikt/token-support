@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import java.time.Duration
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
 @Disabled
 class ApplicationTest {
@@ -70,7 +71,7 @@ class ApplicationTest {
         }) {
             handleRequest(HttpMethod.Get, "/hello") {
                 val jwt = server.issueToken(issuerId = "unknown", subject = "testuser")
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertEquals(helloCounterBeforeRequest, helloCounter)
@@ -87,7 +88,7 @@ class ApplicationTest {
         }) {
             handleRequest(HttpMethod.Get, "/hello") {
                 val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(helloCounterBeforeRequest + 1, helloCounter)
@@ -107,7 +108,7 @@ class ApplicationTest {
                     server.issuerUrl(ISSUER_ID),
                     mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
                 )
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertEquals(helloCounterBeforeRequest, helloCounter)
@@ -129,7 +130,7 @@ class ApplicationTest {
                     server.issuerUrl(ISSUER_ID),
                     mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
                 )
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(helloCounterBeforeRequest + 1, helloCounter)
@@ -218,7 +219,7 @@ class ApplicationTest {
         }) {
             handleRequest(HttpMethod.Get, "/hello_person") {
                 val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertEquals(helloCounterBeforeRequest, helloPersonCounter)
@@ -239,7 +240,7 @@ class ApplicationTest {
                     subject = "testuser",
                     claims = mapOf("NAVident" to "X112233")
                 )
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(helloCounterBeforeRequest + 1, helloPersonCounter)
@@ -272,7 +273,7 @@ class ApplicationTest {
         }) {
             handleRequest(HttpMethod.Get, "/hello") {
                 val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(helloCounterBeforeRequest + 1, helloCounter)
@@ -298,7 +299,7 @@ class ApplicationTest {
                         "groups" to listOf("group1", "group2")
                     )
                 )
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertEquals(helloGroupCounterBeforeRequest, helloGroupCounter)
@@ -321,7 +322,7 @@ class ApplicationTest {
                         "NAVident" to "X112233",
                     )
                 )
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertEquals(helloGroupCounterBeforeRequest, helloGroupCounter)
@@ -345,7 +346,7 @@ class ApplicationTest {
                         "groups" to listOf("group1", "group2", "THEGROUP")
                     )
                 )
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(helloGroupCounterBeforeRequest + 1, helloGroupCounter)
@@ -368,7 +369,7 @@ class ApplicationTest {
                         "groups" to listOf("group1", "group2", "THEGROUP")
                     )
                 )
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertEquals(helloGroupCounterBeforeRequest, helloGroupCounter)

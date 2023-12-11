@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
 @Disabled
 class InlineConfigTest {
@@ -49,7 +50,7 @@ class InlineConfigTest {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
                 val jwt =
                     JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer"))
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertEquals(helloCounterBeforeRequest, helloCounter)
@@ -81,7 +82,7 @@ class InlineConfigTest {
         }) {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
                 val jwt = JwtTokenGenerator.createSignedJWT("testuser")
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(helloCounterBeforeRequest + 1, helloCounter)
@@ -99,7 +100,7 @@ class InlineConfigTest {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
                 val jwt =
                     JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience"))
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertEquals(helloCounterBeforeRequest + 1, helloCounter)
@@ -117,7 +118,7 @@ class InlineConfigTest {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
                 val jwt =
                     JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience"))
-                addHeader("Authorization", "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }.apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertEquals(helloCounterBeforeRequest, helloCounter)

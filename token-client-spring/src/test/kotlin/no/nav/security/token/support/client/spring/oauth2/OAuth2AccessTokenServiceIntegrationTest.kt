@@ -28,6 +28,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 import org.assertj.core.api.Assertions.*
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [ConfigurationWithCacheEnabledTrue::class])
@@ -76,8 +77,8 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             val headers = request.headers
             val body = request.body.readUtf8()
             assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
-            assertThat(headers["Authorization"]).isNotBlank
-            val usernamePwd = Optional.ofNullable(headers["Authorization"])
+            assertThat(headers[AUTHORIZATION_HEADER]).isNotBlank
+            val usernamePwd = Optional.ofNullable(headers[AUTHORIZATION_HEADER])
                 .map { s: String -> s.split("Basic ").toTypedArray() }
                 .filter { pair: Array<String> -> pair.size == 2 }
                 .map { pair: Array<String> -> Base64.getDecoder().decode(pair[1]) }
@@ -141,7 +142,7 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
             val headers = request.headers
             val body = request.body.readUtf8()
             assertThat(headers["Content-Type"]).contains("application/x-www-form-urlencoded")
-            assertThat(headers["Authorization"]).isNotBlank
+            assertThat(headers[AUTHORIZATION_HEADER]).isNotBlank
             val usernamePwd = Optional.ofNullable(headers["Authorization"])
                 .map { s: String -> s.split("Basic ").toTypedArray() }
                 .filter { pair: Array<String> -> pair.size == 2 }

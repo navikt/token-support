@@ -41,6 +41,7 @@ import org.springframework.test.web.servlet.setup.MockMvcConfigurer
 import org.springframework.web.context.WebApplicationContext
 import java.util.*
 import java.util.concurrent.TimeUnit.MINUTES
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
 private const val PROP = "no.nav.security.jwt.dont-propagate-bearertoken"
 
@@ -230,7 +231,7 @@ internal class ProtectedRestControllerIntegrationTest {
     companion object {
         private fun expectStatusCode(uri: String, token: String, httpStatus: HttpStatus) =
             RestAssuredMockMvc.given()
-                .header("Authorization", "Bearer $token")
+                .header(AUTHORIZATION_HEADER, "Bearer $token")
                 .`when`()[uri]
                 .then()
                 .log().ifValidationFails()

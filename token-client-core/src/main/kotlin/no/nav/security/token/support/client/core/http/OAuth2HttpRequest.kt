@@ -15,7 +15,7 @@ class OAuth2HttpRequest (val tokenEndpointUrl : URI?, val oAuth2HttpHeaders : OA
 
         fun formParameter(key : String, value : String) = this.also { formParameters[key] = value }
 
-        fun formParameters(entries: Map<out String, String>): OAuth2HttpRequestBuilder = this.also { formParameters.putAll(entries) }
+        fun formParameters(entries: Map<String, String>): OAuth2HttpRequestBuilder = this.also { formParameters.putAll(entries) }
 
         fun build(): OAuth2HttpRequest  = OAuth2HttpRequest(tokenEndpointUrl, oAuth2HttpHeaders, unmodifiableMap(formParameters))
 

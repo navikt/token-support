@@ -23,7 +23,7 @@ class ClientAssertion(private val tokenEndpointUrl : URI?, private val clientId 
     fun assertion()  =
         now().run {
             createSignedJWT(rsaKey, Builder()
-                .audience(tokenEndpointUrl.toString())
+                .audience("$tokenEndpointUrl")
                 .expirationTime(Date.from(plusSeconds(expiryInSeconds.toLong())))
                 .issuer(clientId)
                 .subject(clientId)

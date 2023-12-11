@@ -17,6 +17,7 @@ import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.withMockOAuth2Server
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
 internal class ApplicationTest {
 
@@ -32,7 +33,6 @@ internal class ApplicationTest {
             }) {
                 with(
                     handleRequest(HttpMethod.Get, "/client_credentials") {
-                        //addHeader("Authorization", "Bearer ${token.serialize()}")
                     }
                 ) {
                     assertSoftly(response) {
@@ -45,7 +45,7 @@ internal class ApplicationTest {
                 }
                 with(
                     handleRequest(HttpMethod.Get, "/onbehalfof") {
-                        addHeader("Authorization", "Bearer ${token.serialize()}")
+                        addHeader(AUTHORIZATION_HEADER, "Bearer ${token.serialize()}")
                     }
                 ) {
                     assertSoftly(response) {
@@ -58,7 +58,7 @@ internal class ApplicationTest {
                 }
                 with(
                     handleRequest(HttpMethod.Get, "/tokenx") {
-                        addHeader("Authorization", "Bearer ${token.serialize()}")
+                        addHeader(AUTHORIZATION_HEADER, "Bearer ${token.serialize()}")
                     }
                 ) {
                     assertSoftly(response) {
