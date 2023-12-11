@@ -4,9 +4,7 @@ import com.nimbusds.oauth2.sdk.GrantType
 import kotlin.DeprecationLevel.WARNING
 
 @Deprecated("Use GrantType from nimbus instead", ReplaceWith("GrantType"), WARNING)
-data class OAuth2GrantType(@JvmField val value : String) {
-     fun value() = value
-
+data class OAuth2GrantType(val value : String) {
     companion object {
        @JvmField
        @Deprecated("Use com.nimbusds.oauth2.sdk.GrantType instead", ReplaceWith("GrantType.JWT_BEARER"), WARNING)

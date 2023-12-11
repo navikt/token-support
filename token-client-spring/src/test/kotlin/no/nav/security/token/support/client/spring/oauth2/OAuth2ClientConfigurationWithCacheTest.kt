@@ -39,8 +39,4 @@ internal class OAuth2ClientConfigurationWithCacheTest {
 
 @Configuration
 @EnableOAuth2Client(cacheEnabled = true, cacheEvictSkew = 5, cacheMaximumSize = 100)
-internal class ConfigurationWithCacheEnabledTrue {
-    @Bean
-    @ConditionalOnMissingBean(RestTemplateBuilder::class)
-    fun restTemplateBuilder() = RestTemplateBuilder()
-}
+internal class ConfigurationWithCacheEnabledTrue

@@ -24,7 +24,7 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
 
     private val log = LoggerFactory.getLogger(IssuerMockWebServer::class.java)
 
-    private var server: MockWebServer? = null
+    private lateinit var server: MockWebServer
     private var proxyServer: MockWebServer? = null
     lateinit var discoveryUrl: URL
     var proxyUrl: URL? = null
@@ -39,7 +39,7 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
                 override fun dispatch(request: RecordedRequest): MockResponse {
                     log.debug("received request on url={} with headers={}", request.requestUrl, request.headers)
                     log.debug("comparing path in request '{}' with '{}'", request.requestUrl!!.encodedPath, DISCOVERY_PATH)
-                    return if (request.requestUrl?.encodedPath?.endsWith(DISCOVERY_PATH) ?: false) {
+                    return if (request.requestUrl?.encodedPath?.endsWith(DISCOVERY_PATH) == true) {
                         log.debug("returning well-known json data")
                         wellKnownJson()
                     } else {

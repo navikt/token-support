@@ -1,12 +1,10 @@
 package no.nav.security.token.support.core.validation
 
-import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.jwk.source.JWKSourceBuilder
 import com.nimbusds.jose.proc.SecurityContext
 import com.nimbusds.jwt.JWTClaimNames
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier.*
 import java.net.URI
-import java.net.URL
 import java.util.Date
 import java.util.concurrent.TimeUnit.SECONDS
 import org.junit.jupiter.api.Assertions.*

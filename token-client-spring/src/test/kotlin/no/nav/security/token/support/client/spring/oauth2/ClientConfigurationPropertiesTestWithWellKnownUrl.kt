@@ -15,9 +15,10 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.support.TestPropertySourceUtils
-import java.io.IOException
 import java.util.function.Supplier
+
+import org.springframework.test.context.support.TestPropertySourceUtils.*
+import no.nav.security.token.support.client.spring.oauth2.TestUtils.jsonResponse
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestTemplateAutoConfiguration::class])
@@ -25,24 +26,21 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 @ActiveProfiles("test-withwellknownurl")
 internal class ClientConfigurationPropertiesTestWithWellKnownUrl {
 
-    @MockBean
-    private val tokenValidationContextHolder: TokenValidationContextHolder? = null
+   @MockBean
+   private val tokenValidationContextHolder: TokenValidationContextHolder? = null
 
     @Autowired
     private lateinit var clientConfigurationProperties: ClientConfigurationProperties
     @Test
     fun testClientConfigIsValid() {
         assertThat(clientConfigurationProperties).isNotNull
-        assertThat(clientConfigurationProperties.registration).isNotNull
-        val clientProperties = clientConfigurationProperties.registration.values.stream().findFirst().orElse(null)
+        val clientProperties = clientConfigurationProperties.registration.values.firstOrNull()
         assertThat(clientProperties).isNotNull
-        val auth = clientProperties.authentication
-        assertThat(auth).isNotNull
-        assertThat(auth.clientAuthMethod).isNotNull
-        assertThat(auth.clientId).isNotNull
-        assertThat(auth.clientRsaKey).isNotNull
-        assertThat(clientProperties.tokenEndpointUrl).isNotNull
-        assertThat(clientProperties.grantType.value).isNotNull
+        val auth = clientProperties?.authentication
+        assertThat(auth?.clientId).isNotNull
+        assertThat(auth?.clientRsaKey).isNotNull
+        assertThat(clientProperties?.tokenEndpointUrl).isNotNull
+        assertThat(clientProperties?.grantType?.value).isNotNull
     }
 
     class RandomPortInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -57,18 +55,11 @@ internal class ClientConfigurationPropertiesTestWithWellKnownUrl {
                     }"""
 
         override fun initialize(applicationContext: ConfigurableApplicationContext) {
-            val ctx = applicationContext as GenericApplicationContext
             val server = MockWebServer()
-            ctx.registerBean("mockWebServer", MockWebServer::class.java, Supplier { server })
-            try {
-                server.start()
-            } catch (e: IOException) {
-                throw RuntimeException(e)
-            }
-            TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
-                    applicationContext,
-                    "mockwebserver.port=" + server.port)
-            server.enqueue(TestUtils.jsonResponse(wellKnown))
+            (applicationContext as GenericApplicationContext).registerBean("mockWebServer", MockWebServer::class.java, Supplier { server })
+            server.start()
+            addInlinedPropertiesToEnvironment(applicationContext, "mockwebserver.port=" + server.port)
+            server.enqueue(jsonResponse(wellKnown))
         }
     }
 }

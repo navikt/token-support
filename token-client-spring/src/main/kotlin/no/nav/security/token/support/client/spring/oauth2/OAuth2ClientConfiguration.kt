@@ -33,7 +33,7 @@ class OAuth2ClientConfiguration : ImportAware {
 
     @Bean
     fun oAuth2AccessTokenService(bearerTokenResolver: JwtBearerTokenResolver, client: OAuth2HttpClient) =
-        if (attrs?.getBoolean("cacheEnabled") ?: false) {
+        if (attrs?.getBoolean("cacheEnabled") == true) {
             val max =  attrs?.getNumber<Long>("cacheMaximumSize") ?: 0
             val skew = attrs?.getNumber<Long>("cacheEvictSkew") ?: 0
             OAuth2AccessTokenService(bearerTokenResolver, OnBehalfOfTokenClient(client), ClientCredentialsTokenClient(client),

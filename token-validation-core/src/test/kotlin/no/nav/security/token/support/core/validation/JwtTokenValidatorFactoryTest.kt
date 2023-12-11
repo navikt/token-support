@@ -40,8 +40,8 @@ internal class JwtTokenValidatorFactoryTest {
 
     @BeforeEach
     fun setup() {
-        Mockito.`when`(metadata.getJWKSetURI()).thenReturn(URI.create("http://someurl"))
-        Mockito.`when`(metadata.getIssuer()).thenReturn(Issuer("myissuer"))
+        Mockito.`when`(metadata.jwkSetURI).thenReturn(URI.create("http://someurl"))
+        Mockito.`when`(metadata.issuer).thenReturn(Issuer("myissuer"))
     }
 
     @Test

@@ -20,7 +20,7 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
 
 
     init {
-        tokenEndpointUrl = tokenEndpointUrl ?: endpointUrlFromMetadata(wellKnownUrl)
+        tokenEndpointUrl = tokenEndpointUrl ?: endpointUrlFromMetadata(requireNotNull(wellKnownUrl))
         require(grantType in GRANT_TYPES) { "Unsupported grantType $grantType, must be one of $GRANT_TYPES" }
     }
 

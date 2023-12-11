@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PRO
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.net.URLEncoder
+import java.net.URLEncoder.*
 import java.net.http.HttpClient.*
 import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
@@ -19,13 +20,11 @@ class SimpleOAuth2HttpClient : OAuth2HttpClient {
         try {
             val httpRequest = HttpRequest.newBuilder().apply {
                 with(oAuth2HttpRequest) {
-                    oAuth2HttpHeaders?.let { h ->
-                        h.headers.forEach { (key,value) ->
-                            value.forEach { header(key, it) }
-                        }
+                    oAuth2HttpHeaders?.headers?.forEach { (key, values) ->
+                        values.forEach { value -> header(key, value) }
                     }
                     uri(tokenEndpointUrl)
-                    POST(BodyPublishers.ofString(formParameters.entries.joinToString("&") { (key, value) -> "$key=${URLEncoder.encode(value, UTF_8)}" }))
+                    POST(BodyPublishers.ofString(formParameters.entries.joinToString("&") { (key, value) -> "$key=${encode(value, UTF_8)}" }))
                 } }.build()
             MAPPER.readValue<OAuth2AccessTokenResponse>(bodyAsString(newHttpClient().send(httpRequest, ofString())))
         }

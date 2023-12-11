@@ -24,23 +24,19 @@ internal class ClientConfigurationPropertiesTest {
     private lateinit var clientConfigurationProperties: ClientConfigurationProperties
     @Test
     fun testClientConfigIsValid() {
-        assertThat(clientConfigurationProperties).isNotNull
-        assertThat(clientConfigurationProperties.registration).isNotNull
-        val clientProperties = clientConfigurationProperties.registration.values.stream().findFirst().orElse(null)
+        val clientProperties = clientConfigurationProperties.registration.values.firstOrNull()
         assertThat(clientProperties).isNotNull
-        val auth = clientProperties.authentication
-        assertThat(auth).isNotNull
-        assertThat(auth.clientAuthMethod).isNotNull
-        assertThat(auth.clientId).isNotNull
-        assertThat(auth.clientSecret).isNotNull
-        assertThat(clientProperties.scope).isNotEmpty
-        assertThat(clientProperties.tokenEndpointUrl).isNotNull
-        assertThat(clientProperties.grantType.value).isNotNull
+        val auth = clientProperties?.authentication
+        assertThat(auth?.clientAuthMethod).isNotNull
+        assertThat(auth?.clientId).isNotNull
+        assertThat(auth?.clientSecret).isNotNull
+        assertThat(clientProperties?.scope).isNotEmpty
+        assertThat(clientProperties?.tokenEndpointUrl).isNotNull
+        assertThat(clientProperties?.grantType?.value).isNotNull
     }
 
     @Test
     fun testTokenExchangeProperties() {
-        assertThat(clientConfigurationProperties).isNotNull
         assertThat(clientConfigurationProperties.registration).isNotNull
         val clientProperties = clientConfigurationProperties.registration["example1-token-exchange1"]
         assertThat(clientProperties).isNotNull
@@ -49,30 +45,29 @@ internal class ClientConfigurationPropertiesTest {
 
     @Test
     fun testClientConfigWithClientAuthMethodAsPrivateKeyJwt() {
-        assertThat(clientConfigurationProperties).isNotNull
         assertThat(clientConfigurationProperties.registration).isNotNull
         val clientProperties = clientConfigurationProperties.registration["example1-clientcredentials3"]
         assertThat(clientProperties).isNotNull
-        val auth = clientProperties!!.authentication
-        assertThat(auth).isNotNull
-        assertThat(auth.clientAuthMethod).isEqualTo(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
-        assertThat(auth.clientId).isNotNull
-        assertThat(auth.clientRsaKey).isNotNull
-        assertThat(clientProperties.scope).isNotEmpty
-        assertThat(clientProperties.tokenEndpointUrl).isNotNull
-        assertThat(clientProperties.grantType.value).isNotNull
+        val auth = clientProperties?.authentication
+        assertThat(auth)?.isNotNull
+        assertThat(auth?.clientAuthMethod).isEqualTo(ClientAuthenticationMethod.PRIVATE_KEY_JWT)
+        assertThat(auth?.clientId).isNotNull
+        assertThat(auth?.clientRsaKey).isNotNull
+        assertThat(clientProperties?.scope).isNotEmpty
+        assertThat(clientProperties?.tokenEndpointUrl).isNotNull
+        assertThat(clientProperties?.grantType?.value).isNotNull
     }
 
     @Test
     fun testDifferentClientPropsShouldNOTBeEqualAndShouldMakeSurroundingRequestsUnequalToo() {
         val props = clientConfigurationProperties.registration
         assertThat(props.size).isGreaterThan(1)
-        val p1 = props.get("example1-onbehalfof")!!
-        val p2 = props.get("example1-onbehalfof2")!!
+        val p1 = props.get("example1-onbehalfof")
+        val p2 = props.get("example1-onbehalfof2")
         assertThat(p1 == p2).isFalse
         val assertion = "123"
-        val r1 = OnBehalfOfGrantRequest(p1, assertion)
-        val r2 = OnBehalfOfGrantRequest(p2, assertion)
+        val r1 = OnBehalfOfGrantRequest(p1!!, assertion)
+        val r2 = OnBehalfOfGrantRequest(p2!!, assertion)
         assertThat(r1 == r2).isFalse
     }
 }

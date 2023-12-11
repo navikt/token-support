@@ -1,4 +1,4 @@
-package no.nav.security.token.support.core.context;
+package no.nav.security.token.support.core.context
 
 interface TokenValidationContextHolder {
 

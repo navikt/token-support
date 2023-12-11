@@ -1,6 +1,5 @@
 package no.nav.security.token.support.spring.test;
 
-import jdk.jshell.EvalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
@@ -26,7 +25,6 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
 
     @Override
     public void onApplicationEvent(ApplicationPreparedEvent event) {
-        System.out.println("XXXXXXX");
         log.debug("received ApplicationPreparedEvent, register random port with environment if not set.");
         registerPort(event);
     }
@@ -38,13 +36,11 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
             int port = findAvailableTcpPort();
             MutablePropertySources propertySources = environment.getPropertySources();
             addPropertySource(propertySources);
-            //var source = new MapPropertySource(PROPERTY_PREFIX, Map.of(PROPERTY_PREFIX +"." +PORT_PROPERTY, port, PROPERTY_PREFIX +"." +RANDOM_PORT_PROPERTY, true));
            Map<String, Object> source =
               ((MapPropertySource) Objects.requireNonNull(propertySources.get(PROPERTY_PREFIX))).getSource();
             source.put(PORT_PROPERTY, port);
             source.put(RANDOM_PORT_PROPERTY, true);
             source.put(PROPERTY_PREFIX +".interactive-login", false);
-            //propertySources.addFirst(source);
             log.debug("Registered property source for dynamic http port={}", port);
            var p =environment.getProperty(PORT_PROPERTY, Integer.class);
         } else {
