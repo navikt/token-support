@@ -6,7 +6,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.configureFor
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import io.ktor.client.request.get
@@ -21,6 +20,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
+import org.slf4j.LoggerFactory
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.v2.JwtTokenGenerator.ACR
 import no.nav.security.token.support.v2.JwtTokenGenerator.AUD
@@ -31,17 +31,24 @@ import no.nav.security.token.support.v2.JwtTokenGenerator.createSignedJWT
 class InlineConfigTest {
 
     companion object {
-        val server: WireMockServer = WireMockServer(WireMockConfiguration.options().port(33445))
+        private val logger = LoggerFactory.getLogger(ApplicationTest::class.java)
+        val server = WireMockServer(33445)
         @BeforeAll
         @JvmStatic
         fun before() {
+            logger.info("Starting server")
             server.start()
             configureFor(server.port())
+            logger.info("Started server på ${server.baseUrl()}")
+
         }
         @AfterAll
         @JvmStatic
         fun after() {
+            logger.info("Starting server")
             server.stop()
+            logger.info("Stopped server")
+
         }
         private fun SignedJWT.asBearer() = "Bearer ${serialize()}"
     }
@@ -54,9 +61,8 @@ class InlineConfigTest {
                 stubOIDCProvider()
                 inlineConfiguredModule()
             }
-            val jwt = createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer"))
             val response = client.get("/inlineconfig") {
-                header(AUTHORIZATION_HEADER, jwt.asBearer())
+                header(AUTHORIZATION_HEADER, createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer")).asBearer())
             }
             assertEquals(Unauthorized, response.status)
             assertEquals(helloCounterBeforeRequest, helloCounter)
@@ -85,9 +91,8 @@ class InlineConfigTest {
                 stubOIDCProvider()
                 inlineConfiguredModule()
             }
-            val jwt = createSignedJWT("testuser")
             val response = client.get("/inlineconfig") {
-                header(AUTHORIZATION_HEADER, jwt.asBearer())
+                header(AUTHORIZATION_HEADER, createSignedJWT("testuser").asBearer())
             }
             assertEquals(OK, response.status)
             assertEquals(helloCounterBeforeRequest + 1, helloCounter)
@@ -102,9 +107,8 @@ class InlineConfigTest {
                 stubOIDCProvider()
                 inlineConfiguredModule()
             }
-            val jwt = createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience"))
             val response = client.get("/inlineconfig") {
-                header(AUTHORIZATION_HEADER, jwt.asBearer())
+                header(AUTHORIZATION_HEADER, createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience")).asBearer())
             }
             assertEquals(OK, response.status)
             assertEquals(helloCounterBeforeRequest + 1, helloCounter)
@@ -119,9 +123,8 @@ class InlineConfigTest {
                 stubOIDCProvider()
                 inlineConfiguredModule()
             }
-            val jwt = createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience"))
             val response = client.get("/inlineconfig") {
-                header(AUTHORIZATION_HEADER, jwt.asBearer())
+                header(AUTHORIZATION_HEADER, createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience")).asBearer())
             }
             assertEquals(Unauthorized, response.status)
             assertEquals(helloCounterBeforeRequest, helloCounter)

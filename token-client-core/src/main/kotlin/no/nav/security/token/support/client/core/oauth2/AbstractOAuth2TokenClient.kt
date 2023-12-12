@@ -54,7 +54,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
 
     private fun defaultFormParameters(grantRequest : T) =
         grantRequest?.clientProperties?.let {
-            clientAuthenticationFormParameters(grantRequest).apply {
+            defaultClientAuthenticationFormParameters(grantRequest).apply {
                 put(GRANT_TYPE,grantRequest.grantType.value)
                 if (it.grantType != TOKEN_EXCHANGE) {
                     put(SCOPE,  join(" ", it.scope))
@@ -62,13 +62,12 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
             }
         } ?: throw OAuth2ClientException("ClientProperties cannot be null")
 
-    private fun clientAuthenticationFormParameters(grantRequest : T) =
+    private fun defaultClientAuthenticationFormParameters(grantRequest : T) =
         grantRequest?.clientProperties?.let {
             with(it) {
                 when (authentication.clientAuthMethod) {
                     CLIENT_SECRET_POST -> {
                         LinkedHashMap<String, String>().apply {
-                            put(CLIENT_ID, authentication.clientId)
                             put(CLIENT_ID, authentication.clientId)
                             put(CLIENT_SECRET, authentication.clientSecret!!)
                         }
