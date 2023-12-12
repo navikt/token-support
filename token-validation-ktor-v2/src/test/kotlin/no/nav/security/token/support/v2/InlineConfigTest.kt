@@ -55,6 +55,7 @@ class InlineConfigTest {
         val helloCounterBeforeRequest = helloCounter
         testApplication{
             application {
+                stubOIDCProvider()
                 inlineConfiguredModule()
             }
             val response = client.get("/inlineconfig") {
@@ -70,6 +71,7 @@ class InlineConfigTest {
         val helloCounterBeforeRequest = helloCounter
         testApplication{
             application {
+                stubOIDCProvider()
                 inlineConfiguredModule()
             }
             val response = client.get("/inlineconfig")
@@ -115,6 +117,7 @@ class InlineConfigTest {
         val helloCounterBeforeRequest = helloCounter
         testApplication {
             application {
+                stubOIDCProvider()
                 inlineConfiguredModule()
             }
             val response = client.get("/inlineconfig") {
