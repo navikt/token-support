@@ -30,7 +30,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
             runCatching {
                 oAuth2HttpClient.post(OAuth2HttpRequest.builder(it.tokenEndpointUrl)
                     .oAuth2HttpHeaders(OAuth2HttpHeaders.of(tokenRequestHeaders(it)))
-                    .formParameters(createDefaultFormParameters(grantRequest).apply {
+                    .formParameters(defaultFormParameters(grantRequest).apply {
                         putAll(formParameters(grantRequest))
                     })
                     .build())
@@ -52,7 +52,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
             }
         }
 
-    private fun createDefaultFormParameters(grantRequest : T) =
+    private fun defaultFormParameters(grantRequest : T) =
         grantRequest?.clientProperties?.let {
             clientAuthenticationFormParameters(grantRequest).apply {
                 put(GRANT_TYPE,grantRequest.grantType.value)
@@ -63,18 +63,18 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
         } ?: throw OAuth2ClientException("ClientProperties cannot be null")
 
     private fun clientAuthenticationFormParameters(grantRequest : T) =
-         grantRequest?.clientProperties?.let {
+        grantRequest?.clientProperties?.let {
             with(it) {
                 when (authentication.clientAuthMethod) {
                     CLIENT_SECRET_POST -> {
-                         LinkedHashMap<String, String>().apply {
-                             put(CLIENT_ID, authentication.clientId)
+                        LinkedHashMap<String, String>().apply {
+                            put(CLIENT_ID, authentication.clientId)
                             put(CLIENT_ID, authentication.clientId)
                             put(CLIENT_SECRET, authentication.clientSecret!!)
                         }
                     }
                     PRIVATE_KEY_JWT -> {
-                         LinkedHashMap<String, String>().apply {
+                        LinkedHashMap<String, String>().apply {
                             put(CLIENT_ID, authentication.clientId)
                             put(CLIENT_ASSERTION_TYPE, JWTAuthentication.CLIENT_ASSERTION_TYPE)
                             put(CLIENT_ASSERTION, ClientAssertion(tokenEndpointUrl, authentication).assertion())
