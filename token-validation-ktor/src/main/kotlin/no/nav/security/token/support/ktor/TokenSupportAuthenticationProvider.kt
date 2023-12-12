@@ -1,5 +1,6 @@
 package no.nav.security.token.support.ktor
 
+import com.nimbusds.jose.util.ResourceRetriever
 import io.ktor.application.call
 import io.ktor.auth.Authentication
 import io.ktor.auth.AuthenticationFailedCause
@@ -38,11 +39,11 @@ private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::cl
 class TokenSupportAuthenticationProvider(
     providerConfig: ProviderConfiguration,
     applicationConfig: ApplicationConfig,
-    resourceRetriever: ProxyAwareResourceRetriever
+    resourceRetriever: ResourceRetriever
 ) : AuthenticationProvider(providerConfig) {
 
     @Deprecated("Provider should be built using configuration that need to be passed via constructor instead.")
-    constructor(name: String?, config: ApplicationConfig, resourceRetriever: ProxyAwareResourceRetriever
+    constructor(name: String?, config: ApplicationConfig, resourceRetriever: ResourceRetriever
     ): this(ProviderConfiguration(name),config, resourceRetriever)
 
     internal val jwtTokenValidationHandler: JwtTokenValidationHandler
@@ -61,9 +62,7 @@ fun Authentication.Configuration.tokenValidationSupport(
     config: ApplicationConfig,
     requiredClaims: RequiredClaims? = null,
     additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
-    resourceRetriever: ProxyAwareResourceRetriever = ProxyAwareResourceRetriever(
-        System.getenv("HTTP_PROXY")?.let { URI.create(it).toURL() })
-) {
+    resourceRetriever: ResourceRetriever) {
     val provider = TokenSupportAuthenticationProvider(TokenSupportAuthenticationProvider.ProviderConfiguration(name), config, resourceRetriever)
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
         val tokenValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(JwtTokenHttpRequest(call.request.cookies, call.request.headers))

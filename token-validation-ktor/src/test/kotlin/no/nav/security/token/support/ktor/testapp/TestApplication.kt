@@ -1,5 +1,6 @@
 package no.nav.security.token.support.ktor.testapp
 
+import com.nimbusds.jose.util.DefaultResourceRetriever
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -28,8 +29,8 @@ fun Application.module() {
     val acceptedIssuer = "default"
 
     install(Authentication) {
-        tokenValidationSupport("validToken", config = config)
-        tokenValidationSupport("validUser", config = config,
+        tokenValidationSupport("validToken", config = config, resourceRetriever = DefaultResourceRetriever())
+        tokenValidationSupport("validUser", config = config,resourceRetriever = DefaultResourceRetriever(),
             requiredClaims = RequiredClaims(issuer = acceptedIssuer, claimMap = arrayOf("NAVident=X112233"))
         )
         tokenValidationSupport("validGroup", config = config,
@@ -39,7 +40,8 @@ fun Application.module() {
                 val hasGroup = groups != null && groups.contains("THEGROUP")
                 val hasIdentRequiredForAuditLog = claims.getStringClaim("NAVident") != null
                 hasGroup && hasIdentRequiredForAuditLog
-            })
+            },
+            resourceRetriever = DefaultResourceRetriever())
     }
 
     routing {

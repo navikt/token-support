@@ -1,5 +1,6 @@
 package no.nav.security.token.support.ktor.inlineconfigtestapp
 
+import com.nimbusds.jose.util.DefaultResourceRetriever
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -27,7 +28,7 @@ fun Application.inlineConfiguredModule() {
                 acceptedAudience = listOf("aud-localhost", "anotherAudience"),
                 discoveryUrl = "http://localhost:33445/.well-known/openid-configuration"
             )
-        )
+        ), resourceRetriever = DefaultResourceRetriever()
         )
     }
 

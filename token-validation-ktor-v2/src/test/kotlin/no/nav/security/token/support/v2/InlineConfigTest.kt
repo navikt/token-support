@@ -22,6 +22,7 @@ import java.util.*
 import kotlin.test.assertEquals
 import org.slf4j.LoggerFactory
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.v2.JwkGenerator.jWKSet
 import no.nav.security.token.support.v2.JwtTokenGenerator.ACR
 import no.nav.security.token.support.v2.JwtTokenGenerator.AUD
 import no.nav.security.token.support.v2.JwtTokenGenerator.EXPIRY
@@ -36,20 +37,14 @@ class InlineConfigTest {
         @BeforeAll
         @JvmStatic
         fun before() {
-            System.setProperty("HTTP_PROXY","http://localhost:33445")
-            logger.info("Starting server")
             server.start()
             configureFor(server.port())
-            logger.info("Started server på ${server.baseUrl()}")
 
         }
         @AfterAll
         @JvmStatic
         fun after() {
-            logger.info("Starting server")
             server.stop()
-            logger.info("Stopped server")
-
         }
         private fun SignedJWT.asBearer() = "Bearer ${serialize()}"
     }
@@ -130,8 +125,8 @@ class InlineConfigTest {
     }
 
     fun stubOIDCProvider() {
-        stubFor(any(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(okJson("""{"jwks_uri": "${server.baseUrl()}/keys", "subject_types_supported": ["pairwise"], "issuer": "${JwtTokenGenerator.ISS}"}""")))
-        stubFor(any(urlPathEqualTo("/keys")).willReturn(okJson(JwkGenerator.jWKSet.toPublicJWKSet().toString())))
+        stubFor(any(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(okJson("""{"jwks_uri": "${server.baseUrl()}/keys", "subject_types_supported": ["pairwise"], "issuer": "$ISS"}""")))
+        stubFor(any(urlPathEqualTo("/keys")).willReturn(okJson(jWKSet.toPublicJWKSet().toString())))
     }
 
     fun buildClaimSet(subject: String, issuer: String = ISS, audience: String = AUD, authLevel: String = ACR, expiry: Long = EXPIRY, issuedAt: Date = Date(), navIdent: String? = null): JWTClaimsSet {

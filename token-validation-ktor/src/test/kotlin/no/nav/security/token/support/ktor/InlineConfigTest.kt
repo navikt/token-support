@@ -6,13 +6,13 @@ import com.github.tomakehurst.wiremock.client.WireMock.configureFor
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.nimbusds.jwt.JWTClaimsSet
+import com.nimbusds.jwt.SignedJWT
 import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpStatusCode.Companion.OK
+import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
-import no.nav.security.token.support.ktor.ApplicationTest.Companion.server
 import no.nav.security.token.support.ktor.inlineconfigtestapp.helloCounter
 import no.nav.security.token.support.ktor.inlineconfigtestapp.inlineConfiguredModule
 import org.junit.jupiter.api.AfterAll
@@ -22,23 +22,28 @@ import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.ktor.JwkGenerator.jWKSet
+import no.nav.security.token.support.ktor.JwtTokenGenerator.ISS
+import no.nav.security.token.support.ktor.JwtTokenGenerator.createSignedJWT
 
-@Disabled
 class InlineConfigTest {
 
     companion object {
-        val server: WireMockServer = WireMockServer(WireMockConfiguration.options().port(33445))
+        val server: WireMockServer = WireMockServer(33445)
         @BeforeAll
         @JvmStatic
         fun before() {
             server.start()
-           configureFor(server.port())
+            configureFor(server.port())
         }
         @AfterAll
         @JvmStatic
         fun after() {
-          //  server.stop()
+            server.stop()
         }
+
+        private fun SignedJWT.asBearer() = "Bearer ${serialize()}"
+
     }
 
     @Test
@@ -49,10 +54,9 @@ class InlineConfigTest {
             inlineConfiguredModule()
         }) {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer"))
-                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, createSignedJWT(buildClaimSet(subject = "testuser", issuer = "someUnknownISsuer")).asBearer())
             }.apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertEquals(Unauthorized, response.status())
                 assertEquals(helloCounterBeforeRequest, helloCounter)
             }
         }
@@ -67,7 +71,7 @@ class InlineConfigTest {
         }) {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
             }.apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertEquals(Unauthorized, response.status())
                 assertEquals(helloCounterBeforeRequest, helloCounter)
             }
         }
@@ -81,10 +85,9 @@ class InlineConfigTest {
             inlineConfiguredModule()
         }) {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt = JwtTokenGenerator.createSignedJWT("testuser")
-                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, createSignedJWT("testuser").asBearer())
             }.apply {
-                assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals(OK, response.status())
                 assertEquals(helloCounterBeforeRequest + 1, helloCounter)
             }
         }
@@ -98,17 +101,15 @@ class InlineConfigTest {
             inlineConfiguredModule()
         }) {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience"))
-                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, createSignedJWT(buildClaimSet(subject = "testuser", audience = "anotherAudience")).asBearer())
             }.apply {
-                assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals(OK, response.status())
                 assertEquals(helloCounterBeforeRequest + 1, helloCounter)
             }
         }
     }
 
     @Test
-    @Disabled
     fun inlineconfig_JWTwithUnknownAudienceShouldGive_401_andHelloCounterIsNotIncreased() {
         val helloCounterBeforeRequest = helloCounter
         withTestApplication({
@@ -116,23 +117,17 @@ class InlineConfigTest {
             inlineConfiguredModule()
         }) {
             handleRequest(HttpMethod.Get, "/inlineconfig") {
-                val jwt = JwtTokenGenerator.createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience"))
-                addHeader(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
+                addHeader(AUTHORIZATION_HEADER, createSignedJWT(buildClaimSet(subject = "testuser", audience = "unknownAudience")).asBearer())
             }.apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertEquals(Unauthorized, response.status())
                 assertEquals(helloCounterBeforeRequest, helloCounter)
             }
         }
     }
 
     fun stubOIDCProvider() {
-        stubFor(any(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(
-            okJson("{\"jwks_uri\": \"${server.baseUrl()}/keys\", " +
-                "\"subject_types_supported\": [\"pairwise\"], " +
-                "\"issuer\": \"${JwtTokenGenerator.ISS}\"}")))
-
-        stubFor(any(urlPathEqualTo("/keys")).willReturn(
-            okJson(JwkGenerator.jWKSet.toPublicJWKSet().toString())))
+        stubFor(any(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(okJson("""{"jwks_uri": "${server.baseUrl()}/keys", "subject_types_supported": ["pairwise"], "issuer": "$ISS"}""")))
+        stubFor(any(urlPathEqualTo("/keys")).willReturn(okJson(jWKSet.toPublicJWKSet().toString())))
     }
 
     fun buildClaimSet(subject: String,
