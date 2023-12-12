@@ -1,6 +1,7 @@
 package no.nav.security.token.support.v2
 
 
+import com.nimbusds.jose.util.ResourceRetriever
 import io.ktor.http.CookieEncoding.*
 import io.ktor.http.Headers
 import io.ktor.http.decodeCookieValue
@@ -41,7 +42,7 @@ class TokenSupportAuthenticationProvider(
     applicationConfig: ApplicationConfig,
     private val requiredClaims: RequiredClaims? = null,
     private val additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
-    resourceRetriever: ProxyAwareResourceRetriever
+    resourceRetriever: ResourceRetriever
 ) : AuthenticationProvider(providerConfig) {
 
     private val jwtTokenValidationHandler: JwtTokenValidationHandler
@@ -99,7 +100,7 @@ fun AuthenticationConfig.tokenValidationSupport(
     config: ApplicationConfig,
     requiredClaims: RequiredClaims? = null,
     additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
-    resourceRetriever: ProxyAwareResourceRetriever = ProxyAwareResourceRetriever(System.getenv("HTTP_PROXY")?.let { URI.create(it).toURL() })
+    resourceRetriever: ResourceRetriever = ProxyAwareResourceRetriever(System.getenv("HTTP_PROXY")?.let { URI.create(it).toURL() })
 ) {
     val provider = TokenSupportAuthenticationProvider(TokenSupportAuthenticationProvider.ProviderConfiguration(name), config, requiredClaims, additionalValidation, resourceRetriever)
     register(provider)
