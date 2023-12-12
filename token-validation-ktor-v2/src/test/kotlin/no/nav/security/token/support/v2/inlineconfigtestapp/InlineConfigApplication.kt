@@ -18,7 +18,6 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 var helloCounter = 0
 
-@Suppress("unused") // Referenced in application.conf
 fun Application.inlineConfiguredModule() {
     install(Authentication) {
         tokenValidationSupport(config = TokenSupportConfig(IssuerConfig("iss-localhost", "http://localhost:33445/.well-known/openid-configuration", listOf("aud-localhost", "anotherAudience"))))

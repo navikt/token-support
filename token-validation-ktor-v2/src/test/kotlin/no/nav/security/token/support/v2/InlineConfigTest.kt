@@ -58,7 +58,6 @@ class InlineConfigTest {
         val helloCounterBeforeRequest = helloCounter
         testApplication{
             application {
-                stubOIDCProvider()
                 inlineConfiguredModule()
             }
             val response = client.get("/inlineconfig") {
@@ -74,7 +73,6 @@ class InlineConfigTest {
         val helloCounterBeforeRequest = helloCounter
         testApplication{
             application {
-                stubOIDCProvider()
                 inlineConfiguredModule()
             }
             val response = client.get("/inlineconfig")
@@ -120,7 +118,6 @@ class InlineConfigTest {
         val helloCounterBeforeRequest = helloCounter
         testApplication {
             application {
-                stubOIDCProvider()
                 inlineConfiguredModule()
             }
             val response = client.get("/inlineconfig") {
@@ -133,7 +130,6 @@ class InlineConfigTest {
 
     fun stubOIDCProvider() {
         stubFor(any(urlPathEqualTo("/.well-known/openid-configuration")).willReturn(okJson("""{"jwks_uri": "${server.baseUrl()}/keys", "subject_types_supported": ["pairwise"], "issuer": "${JwtTokenGenerator.ISS}"}""")))
-
         stubFor(any(urlPathEqualTo("/keys")).willReturn(okJson(JwkGenerator.jWKSet.toPublicJWKSet().toString())))
     }
 
@@ -155,5 +151,4 @@ class InlineConfigTest {
         }
         return builder.build()
     }
-
 }
