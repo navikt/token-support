@@ -36,6 +36,7 @@ class InlineConfigTest {
         @BeforeAll
         @JvmStatic
         fun before() {
+            System.setProperty("HTTP_PROXY","localhost:8080")
             logger.info("Starting server")
             server.start()
             configureFor(server.port())
