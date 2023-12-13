@@ -1,5 +1,6 @@
 package no.nav.security.token.support.ktor
 
+import com.nimbusds.jose.util.DefaultResourceRetriever
 import com.nimbusds.jose.util.ResourceRetriever
 import io.ktor.application.call
 import io.ktor.auth.Authentication
@@ -62,7 +63,7 @@ fun Authentication.Configuration.tokenValidationSupport(
     config: ApplicationConfig,
     requiredClaims: RequiredClaims? = null,
     additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
-    resourceRetriever: ResourceRetriever) {
+    resourceRetriever: ResourceRetriever = DefaultResourceRetriever()) {
     val provider = TokenSupportAuthenticationProvider(TokenSupportAuthenticationProvider.ProviderConfiguration(name), config, resourceRetriever)
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
         val tokenValidationContext = provider.jwtTokenValidationHandler.getValidatedTokens(JwtTokenHttpRequest(call.request.cookies, call.request.headers))

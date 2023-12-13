@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.configureFor
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import io.ktor.http.HttpMethod
@@ -23,13 +24,16 @@ import java.util.*
 import kotlin.test.assertEquals
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.ktor.JwkGenerator.jWKSet
+import no.nav.security.token.support.ktor.JwtTokenGenerator.ACR
+import no.nav.security.token.support.ktor.JwtTokenGenerator.AUD
+import no.nav.security.token.support.ktor.JwtTokenGenerator.EXPIRY
 import no.nav.security.token.support.ktor.JwtTokenGenerator.ISS
 import no.nav.security.token.support.ktor.JwtTokenGenerator.createSignedJWT
 
 class InlineConfigTest {
 
     companion object {
-        val server: WireMockServer = WireMockServer(33445)
+        val server: WireMockServer = WireMockServer(WireMockConfiguration.options().port(33445))
         @BeforeAll
         @JvmStatic
         fun before() {
@@ -131,10 +135,10 @@ class InlineConfigTest {
     }
 
     fun buildClaimSet(subject: String,
-                      issuer: String = JwtTokenGenerator.ISS,
-                      audience: String = JwtTokenGenerator.AUD,
-                      authLevel: String = JwtTokenGenerator.ACR,
-                      expiry: Long = JwtTokenGenerator.EXPIRY,
+                      issuer: String = ISS,
+                      audience: String = AUD,
+                      authLevel: String =ACR,
+                      expiry: Long = EXPIRY,
                       issuedAt: Date = Date(),
                       navIdent: String? = null): JWTClaimsSet {
         val builder = JWTClaimsSet.Builder()

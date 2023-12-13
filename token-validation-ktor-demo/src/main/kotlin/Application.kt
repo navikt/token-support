@@ -1,5 +1,6 @@
 package com.example
 
+import com.nimbusds.jose.util.DefaultResourceRetriever
 import io.ktor.application.Application
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
@@ -25,7 +26,7 @@ fun Application.module() {
 
     install(Authentication) {
         // Default validation
-        tokenValidationSupport(config = config)
+        tokenValidationSupport(config = config, resourceRetriever = DefaultResourceRetriever())
 
         // Only allow token with specific claim and claim value
         tokenValidationSupport(
