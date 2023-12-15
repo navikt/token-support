@@ -1,48 +1,49 @@
 package no.nav.security.token.support.ktor
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
+
+import io.ktor.server.application.call
+import com.fasterxml.jackson.annotation.JsonInclude.*
+import com.fasterxml.jackson.annotation.JsonInclude.Include.*
+import com.fasterxml.jackson.databind.DeserializationFeature.*
+import com.fasterxml.jackson.databind.SerializationFeature.*
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.oauth2.sdk.GrantType
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
-import io.ktor.auth.principal
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.features.ContentNegotiation
+import io.ktor.client.plugins.jackson.JacksonSerializer
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.jackson.JacksonConverter
-import io.ktor.response.respond
-import io.ktor.routing.get
-import io.ktor.routing.routing
+import io.ktor.server.application.Application
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
+import io.ktor.server.routing.routing
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.ktor.oauth.ClientConfig
+import no.nav.security.token.support.v2.TokenValidationContextPrincipal
+import io.ktor.server.application.*
+import io.ktor.server.auth.principal
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import no.nav.security.token.support.v2.tokenValidationSupport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 val defaultHttpClient = HttpClient(CIO) {
     install(JsonFeature) {
         serializer = JacksonSerializer {
-            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+            setSerializationInclusion(NON_NULL)
         }
     }
 }
 
-val defaultMapper: ObjectMapper = jacksonObjectMapper().apply {
-    configure(SerializationFeature.INDENT_OUTPUT, true)
-    configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    setSerializationInclusion(JsonInclude.Include.NON_NULL)
+val defaultMapper = jacksonObjectMapper().apply {
+    configure(INDENT_OUTPUT, true)
+    configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+    setSerializationInclusion(NON_NULL)
 }
 
 @Suppress("unused") // Referenced in application.conf

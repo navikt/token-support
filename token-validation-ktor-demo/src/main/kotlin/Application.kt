@@ -1,20 +1,20 @@
 package com.example
 
 import com.nimbusds.jose.util.DefaultResourceRetriever
-import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
 import io.ktor.http.ContentType
-import io.ktor.response.respondText
-import io.ktor.routing.get
-import io.ktor.routing.routing
-import no.nav.security.token.support.ktor.RequiredClaims
-import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
-import no.nav.security.token.support.ktor.tokenValidationSupport
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.authentication
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import no.nav.security.token.support.v2.RequiredClaims
+import no.nav.security.token.support.v2.TokenValidationContextPrincipal
+import no.nav.security.token.support.v2.tokenValidationSupport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 

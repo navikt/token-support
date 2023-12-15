@@ -2,7 +2,7 @@ package no.nav.security.token.support.v2
 
 
 import com.nimbusds.jose.util.ResourceRetriever
-import io.ktor.http.CookieEncoding.*
+import io.ktor.http.CookieEncoding.URI_ENCODING
 import io.ktor.http.Headers
 import io.ktor.http.decodeCookieValue
 import io.ktor.server.auth.AuthenticationConfig
@@ -24,7 +24,6 @@ import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import org.slf4j.LoggerFactory
-import java.net.URL
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties.*
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
@@ -33,7 +32,8 @@ import no.nav.security.token.support.core.http.HttpRequest
 import no.nav.security.token.support.core.http.HttpRequest.NameValue
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 
-data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
+data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal {
+}
 
 private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::class.java.name)
 

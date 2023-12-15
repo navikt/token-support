@@ -33,7 +33,6 @@
         <module>token-validation-spring-test</module>
         <module>token-validation-jaxrs</module>
         <module>token-validation-spring-demo</module>
-        <module>token-validation-ktor</module>
         <module>token-validation-ktor-v2</module>
         <module>token-validation-ktor-demo</module>
         <module>token-client-spring</module>
@@ -59,7 +58,7 @@
         <mockwebserver.version>4.12.0</mockwebserver.version>
         <caffeine.version>3.1.8</caffeine.version>
         <okhttp3.version>4.12.0</okhttp3.version>
-        <ktor.version>1.6.8</ktor.version>
+        <ktor.version>2.3.6</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>1.9.21</kotlin.version>
         <mock-oauth2-server.version>2.0.1</mock-oauth2-server.version>

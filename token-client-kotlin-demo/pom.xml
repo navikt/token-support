@@ -17,12 +17,33 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>token-client-core</artifactId>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-content-negotiation-jvm</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-content-negotiation</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-serialization-jackson</artifactId>
+            <version>${ktor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server</artifactId>
+            <version>${ktor.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>token-validation-ktor</artifactId>
+            <artifactId>token-client-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>token-validation-ktor-v2</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -41,12 +62,7 @@
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>
-            <artifactId>ktor-client-jackson</artifactId>
-            <version>${ktor.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.ktor</groupId>
-            <artifactId>ktor-jackson</artifactId>
+            <artifactId>ktor-client-jackson-jvm</artifactId>
             <version>${ktor.version}</version>
         </dependency>
         <dependency>
@@ -56,7 +72,7 @@
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>
-            <artifactId>ktor-server-netty</artifactId>
+            <artifactId>ktor-server-netty-jvm</artifactId>
             <version>${ktor.version}</version>
         </dependency>
         <dependency>
@@ -85,6 +101,16 @@
             <artifactId>ktor-server-test-host</artifactId>
             <version>${ktor.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
+            <version>2.16.0</version>
         </dependency>
     </dependencies>
     <build>
