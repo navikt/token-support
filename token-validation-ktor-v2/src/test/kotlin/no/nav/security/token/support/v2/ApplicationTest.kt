@@ -190,10 +190,7 @@ class ApplicationTest {
         }
 
         val response = client.get("/hello") {
-            val jwt = server.issueToken(
-                issuerId = ISSUER_ID,
-                subject = "testuser",
-                expiry = Duration.ofMinutes(30).toSeconds()
+            val jwt = server.issueToken(ISSUER_ID, "testuser", expiry = Duration.ofMinutes(30).toSeconds()
             )
             header("Cookie", "$idTokenCookieName=${jwt.serialize()}")
         }
@@ -365,11 +362,7 @@ class ApplicationTest {
             assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
 
-    private fun doConfig(
-        acceptedIssuer: String = ISSUER_ID,
-        acceptedAudience: String = ACCEPTED_AUDIENCE,
-        hasCookieConfig: Boolean = true
-    ): MapApplicationConfig {
+    private fun doConfig(acceptedIssuer: String = ISSUER_ID, acceptedAudience: String = ACCEPTED_AUDIENCE, hasCookieConfig: Boolean = true): MapApplicationConfig {
         return MapApplicationConfig().apply {
             put("no.nav.security.jwt.expirythreshold", "5")
             put("no.nav.security.jwt.issuers.size", "1")

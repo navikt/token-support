@@ -9,6 +9,8 @@ import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication.*
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -39,17 +41,10 @@ import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TO
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TOKEN_TYPE
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
-class OAuth2Client(
-    private val httpClient: HttpClient,
-    private val wellKnownUrl: String,
-    private val clientAuthProperties: ClientAuthenticationProperties,
-    private val cacheConfig: OAuth2CacheConfig = OAuth2CacheConfig(true, 1000,  5)
-) {
-    private val wellKnown: WellKnown = runBlocking { httpClient.get(wellKnownUrl) }
-
+class OAuth2Client(private val httpClient: HttpClient, private val wellKnownUrl: String, private val clientAuthProperties: ClientAuthenticationProperties, private val cacheConfig: OAuth2CacheConfig = OAuth2CacheConfig(true, 1000,  5)) {
+    private val wellKnown: WellKnown = runBlocking { httpClient.get(wellKnownUrl).body() }
     private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-
-    private val cache: AsyncLoadingCache<GrantRequest, OAuth2AccessTokenResponse> =
+    private val cache =
         cacheConfig.cache(coroutineScope) {
             httpClient.tokenRequest(wellKnown.tokenEndpointUrl, clientAuthProperties, it)
         }
@@ -66,7 +61,6 @@ class OAuth2Client(
         } else {
             httpClient.tokenRequest(wellKnown.tokenEndpointUrl, clientAuthProperties, grantRequest)
         }
-
     data class WellKnown(@JsonProperty("token_endpoint") val tokenEndpointUrl: String)
 }
 
@@ -74,24 +68,26 @@ data class GrantRequest(val grantType: GrantType, val params: Map<String, String
     companion object {
         fun tokenExchange(token: String, audience: String) = GrantRequest(TOKEN_EXCHANGE, mapOf(SUBJECT_TOKEN_TYPE to "urn:ietf:params:oauth:token-type:jwt", SUBJECT_TOKEN to token, AUDIENCE to audience))
         fun onBehalfOf(token: String, scope: String) = GrantRequest(JWT_BEARER, mapOf(SCOPE to scope, REQUESTED_TOKEN_USE to "on_behalf_of", ASSERTION to token))
-        fun clientCredentials(scope: String) = GrantRequest(CLIENT_CREDENTIALS, mapOf(SCOPE to scope, ))
+        fun clientCredentials(scope: String) = GrantRequest(CLIENT_CREDENTIALS, mapOf(SCOPE to scope))
     }
 }
 
 internal suspend fun HttpClient.tokenRequest(tokenEndpointUrl: String, clientAuthProperties: ClientAuthenticationProperties, grantRequest: GrantRequest
-): OAuth2AccessTokenResponse =
-    submitForm(tokenEndpointUrl, Parameters.build {
-            appendClientAuthParams(tokenEndpointUrl, clientAuthProperties)
-            append(GRANT_TYPE, grantRequest.grantType.value)
-            grantRequest.params.forEach {
-                append(it.key, it.value)
-            }
+): OAuth2AccessTokenResponse {
+    val p = Parameters.build {
+        appendClientAuthParams(tokenEndpointUrl, clientAuthProperties)
+        append(GRANT_TYPE, grantRequest.grantType.value)
+        grantRequest.params.forEach {
+            append(it.key, it.value)
         }
-    ) {
+    }
+    val res: OAuth2AccessTokenResponse = submitForm(tokenEndpointUrl,p) {
         if (clientAuthProperties.clientAuthMethod == CLIENT_SECRET_BASIC) {
             header(AUTHORIZATION_HEADER, "Basic ${basicAuth(clientAuthProperties.clientId, clientAuthProperties.clientSecret!!)}")
         }
-    }
+    }.body()
+    return res
+}
 
 private fun ParametersBuilder.appendClientAuthParams(tokenEndpointUrl: String, clientAuthProperties: ClientAuthenticationProperties) = apply {
     when (clientAuthProperties.clientAuthMethod) {

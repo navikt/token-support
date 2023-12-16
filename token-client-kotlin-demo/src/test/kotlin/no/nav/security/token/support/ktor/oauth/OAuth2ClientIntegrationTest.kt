@@ -1,17 +1,15 @@
 package no.nav.security.token.support.ktor.oauth
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.*
 import com.fasterxml.jackson.annotation.JsonInclude.Include.*
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.DeserializationFeature.*
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
+import io.ktor.serialization.jackson.jackson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
@@ -21,12 +19,14 @@ import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
+import org.junit.jupiter.api.DisplayName
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ContentNegotiationClient
 
 internal class OAuth2ClientIntegrationTest {
 
-    private val httpClient: HttpClient = HttpClient(CIO) {
-        install(JsonFeature) {
-            serializer = JacksonSerializer {
+    private val httpClient = HttpClient(CIO) {
+        install(ContentNegotiationClient) {
+            jackson {
                 configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
                 setSerializationInclusion(NON_NULL)
             }
@@ -35,26 +35,12 @@ internal class OAuth2ClientIntegrationTest {
 
     // TODO: fix test on github actions
     @Test
-   @Disabled("fails on github actions, but runs fine in Idea and mvn locally, maybe something with clock/time")
-    fun `token request should return cached response on second request with same request`() {
+   //@Disabled("fails on github actions, but runs fine in Idea and mvn locally, maybe something with clock/time")
+   @DisplayName("token request should return cached response on second request with same request")
+    fun cacheTest() {
         withMockOAuth2Server {
-            this.enqueueCallback(
-                DefaultOAuth2TokenCallback(
-                    issuerId = "tokenx",
-                    expiry = Duration.ofMillis(3000).toSeconds()
-                )
-            )
-            val client = OAuth2Client(
-                httpClient = httpClient,
-                wellKnownUrl = this.wellKnownUrl("tokenx").toString(),
-                clientAuthProperties = ClientAuthenticationProperties(
-                    "clientId",
-                    ClientAuthenticationMethod.PRIVATE_KEY_JWT,
-                    null,
-                    jwk
-                ),
-                cacheConfig = OAuth2CacheConfig(enabled = true, evictSkew = 0)
-            )
+            enqueueCallback(DefaultOAuth2TokenCallback(issuerId = "tokenx", expiry = Duration.ofMillis(3000).toSeconds()))
+            val client = OAuth2Client(httpClient, wellKnownUrl("tokenx").toString(), ClientAuthenticationProperties("clientId", PRIVATE_KEY_JWT, null, jwk), OAuth2CacheConfig(enabled = true, evictSkew = 0))
             val initialToken = this.issueToken(issuerId = "initialIdp", subject = "foo")
 
             val firstResponse = runBlocking {
@@ -67,7 +53,6 @@ internal class OAuth2ClientIntegrationTest {
                 delay(Duration.ofSeconds(2).toMillis())
                 client.accessToken(GrantRequest.tokenExchange(initialToken.serialize(), "targetaud"))
             }
-
             //response should be cached
             firstResponse shouldBe secondResponse
             //response should have been evicted from cache

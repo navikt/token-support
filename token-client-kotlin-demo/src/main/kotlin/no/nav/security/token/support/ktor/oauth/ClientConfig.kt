@@ -5,37 +5,22 @@ import io.ktor.client.HttpClient
 import io.ktor.server.config.ApplicationConfig
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 
-class ClientConfig(
-    applicationConfig: ApplicationConfig,
-    httpClient: HttpClient
-) {
+class ClientConfig(applicationConfig: ApplicationConfig, httpClient: HttpClient) {
     private val cacheConfig: OAuth2CacheConfig =
         with(applicationConfig.config(CACHE_PATH)) {
-            OAuth2CacheConfig(
-                enabled = propertyToStringOrNull("cache.enabled")?.toBoolean() ?: false,
-                maximumSize = propertyToStringOrNull("cache.maximumSize")?.toLong() ?: 0,
-                evictSkew = propertyToStringOrNull("cache.evictSkew")?.toLong() ?: 0
-            )
+            OAuth2CacheConfig(propertyToStringOrNull("cache.enabled")?.toBoolean() ?: false, propertyToStringOrNull("cache.maximumSize")?.toLong() ?: 0, propertyToStringOrNull("cache.evictSkew")?.toLong() ?: 0)
         }
 
     internal val clients: Map<String, OAuth2Client> =
         applicationConfig.configList(CLIENTS_PATH)
-            .associate { clientConfig ->
-                val wellKnownUrl = clientConfig.propertyToString("well_known_url")
+            .associate {
+                val wellKnownUrl = it.propertyToString("well_known_url")
                 val clientAuth = ClientAuthenticationProperties(
-                    clientConfig.propertyToString("authentication.client_id"),
-                    ClientAuthenticationMethod(
-                        clientConfig.propertyToString("authentication.client_auth_method")
-                    ),
-                    clientConfig.propertyToStringOrNull("client_secret"),
-                    clientConfig.propertyToStringOrNull("authentication.client_jwk")
-                )
-                clientConfig.propertyToString(CLIENT_NAME) to OAuth2Client(
-                    httpClient = httpClient,
-                    wellKnownUrl = wellKnownUrl,
-                    clientAuthProperties = clientAuth,
-                    cacheConfig = cacheConfig
-                )
+                    it.propertyToString("authentication.client_id"),
+                    ClientAuthenticationMethod(it.propertyToString("authentication.client_auth_method")),
+                    it.propertyToStringOrNull("client_secret"),
+                    it.propertyToStringOrNull("authentication.client_jwk"))
+                it.propertyToString(CLIENT_NAME) to OAuth2Client(httpClient, wellKnownUrl, clientAuth, cacheConfig)
             }
 
     companion object CommonConfigurationAttributes {
@@ -46,5 +31,5 @@ class ClientConfig(
     }
 }
 
-internal fun ApplicationConfig.propertyToString(prop: String) = this.property(prop).getString()
-internal fun ApplicationConfig.propertyToStringOrNull(prop: String) = this.propertyOrNull(prop)?.getString()
+internal fun ApplicationConfig.propertyToString(prop: String) = property(prop).getString()
+internal fun ApplicationConfig.propertyToStringOrNull(prop: String) = propertyOrNull(prop)?.getString()
