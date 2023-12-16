@@ -8,7 +8,6 @@
     </parent>
     <artifactId>token-validation-ktor-v2</artifactId>
     <name>token-validation-ktor-v2</name>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
