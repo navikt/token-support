@@ -1,13 +1,10 @@
 package no.nav.security.token.support.client.core.oauth2
 
-import com.nimbusds.oauth2.sdk.GrantType
-import com.nimbusds.oauth2.sdk.GrantType.*
+import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
-import java.io.IOException
 import java.net.URI
 import okhttp3.mockwebserver.MockWebServer
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

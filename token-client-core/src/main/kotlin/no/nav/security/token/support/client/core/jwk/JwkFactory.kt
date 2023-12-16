@@ -1,6 +1,6 @@
 package no.nav.security.token.support.client.core.jwk
 
-import com.nimbusds.jose.jwk.JWKSet.*
+import com.nimbusds.jose.jwk.JWKSet.load
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.RSAKey.Builder
 import com.nimbusds.jose.jwk.RSAKey.parse
@@ -11,11 +11,9 @@ import java.nio.file.Files.readString
 import java.nio.file.Path.of
 import java.security.KeyStore
 import java.security.MessageDigest.getInstance
-import org.slf4j.LoggerFactory
 
 object JwkFactory {
 
-    private val LOG = LoggerFactory.getLogger(JwkFactory::class.java)
     @JvmStatic
     fun fromJsonFile(filePath : String) =
         runCatching {

@@ -1,13 +1,14 @@
 package no.nav.security.token.support.ktor.oauth
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.github.benmanes.caffeine.cache.AsyncLoadingCache
 import com.nimbusds.oauth2.sdk.GrantType
-import com.nimbusds.oauth2.sdk.GrantType.*
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
-import com.nimbusds.oauth2.sdk.auth.JWTAuthentication
-import com.nimbusds.oauth2.sdk.auth.JWTAuthentication.*
+import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
+import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
+import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_POST
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT
+import com.nimbusds.oauth2.sdk.auth.JWTAuthentication.CLIENT_ASSERTION_TYPE
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
@@ -16,6 +17,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.Parameters
 import io.ktor.http.ParametersBuilder
+import java.net.URI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,12 +25,6 @@ import kotlinx.coroutines.future.await
 import kotlinx.coroutines.runBlocking
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import no.nav.security.token.support.client.core.OAuth2ParameterNames
-import no.nav.security.token.support.client.core.auth.ClientAssertion
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
-import java.net.URI
-import java.nio.charset.StandardCharsets
-import java.nio.charset.StandardCharsets.*
-import java.util.*
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.ASSERTION
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.AUDIENCE
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.CLIENT_ASSERTION
@@ -39,6 +35,8 @@ import no.nav.security.token.support.client.core.OAuth2ParameterNames.REQUESTED_
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SCOPE
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TOKEN
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TOKEN_TYPE
+import no.nav.security.token.support.client.core.auth.ClientAssertion
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
 class OAuth2Client(private val httpClient: HttpClient, private val wellKnownUrl: String, private val clientAuthProperties: ClientAuthenticationProperties, private val cacheConfig: OAuth2CacheConfig = OAuth2CacheConfig(true, 1000,  5)) {
@@ -103,6 +101,3 @@ private fun ParametersBuilder.appendClientAuthParams(tokenEndpointUrl: String, c
         }
     }
 }
-
-private fun basicAuth(clientId: String, clientSecret: String) =
-    Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray(UTF_8))

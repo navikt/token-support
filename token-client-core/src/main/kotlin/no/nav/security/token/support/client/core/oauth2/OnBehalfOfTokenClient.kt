@@ -1,6 +1,5 @@
 package no.nav.security.token.support.client.core.oauth2
 
-import no.nav.security.token.support.client.core.OAuth2ParameterNames
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.ASSERTION
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.REQUESTED_TOKEN_USE
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SCOPE

@@ -1,16 +1,9 @@
 package no.nav.security.token.support.client.core.jwk
 
-import com.nimbusds.jose.util.Base64URL
-import com.nimbusds.jose.util.Base64URL.*
-import java.io.IOException
-import java.io.InputStream
+import com.nimbusds.jose.util.Base64URL.encode
 import java.security.KeyStore
-import java.security.KeyStoreException
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
-import java.security.cert.CertificateException
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
+import java.security.MessageDigest.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import no.nav.security.token.support.client.core.jwk.JwkFactory.fromJsonFile
@@ -28,9 +21,7 @@ internal class JwkFactoryTest {
 
     @Test
     fun keyFromKeystore()  {
-            val rsaKey = fromKeyStore(ALIAS,
-                JwkFactoryTest::class.java.getResourceAsStream(KEY_STORE_FILE),
-                "Test1234")
+            val rsaKey = fromKeyStore(ALIAS, inputStream(KEY_STORE_FILE), "Test1234")
             assertThat(rsaKey.keyID).isEqualTo(certificateThumbprintSHA1())
             assertThat(rsaKey.isPrivate).isTrue()
         }
@@ -39,21 +30,19 @@ internal class JwkFactoryTest {
 
         private const val KEY_STORE_FILE = "/selfsigned.jks"
         private const val ALIAS = "client_assertion"
-        private val log = LoggerFactory.getLogger(JwkFactoryTest::class.java)
         private fun certificateThumbprintSHA1() : String {
             return try {
-                val keyStore = KeyStore.getInstance("JKS")
-                keyStore.load(inputStream(KEY_STORE_FILE), "Test1234".toCharArray())
-                val cert = keyStore.getCertificate(ALIAS)
-                val sha1 = MessageDigest.getInstance("SHA-1")
-                encode(sha1.digest(cert.encoded)).toString()
+                val keyStore = KeyStore.getInstance("JKS").apply {
+                    load(inputStream(KEY_STORE_FILE), "Test1234".toCharArray())
+                }
+                "${encode(getInstance("SHA-1").digest(keyStore.getCertificate(ALIAS).encoded))}"
             }
             catch (e : Exception) {
                 throw RuntimeException(e)
             }
         }
 
-        private fun inputStream(resource : String) = JwkFactoryTest::class.java.getResourceAsStream(resource)
+        private fun inputStream(resource : String) = JwkFactoryTest::class.java.getResourceAsStream(resource) ?: throw IllegalArgumentException("resource not found: $resource")
 
     }
 }

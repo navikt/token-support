@@ -2,12 +2,14 @@ package no.nav.security.token.support.client.core.oauth2
 
 import com.nimbusds.common.contenttype.ContentType.APPLICATION_JSON
 import com.nimbusds.common.contenttype.ContentType.APPLICATION_URLENCODED
-import com.nimbusds.oauth2.sdk.GrantType.*
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
+import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_POST
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication
-import java.lang.String.*
-import java.nio.charset.StandardCharsets.*
-import java.util.Base64.*
+import java.lang.String.join
+import java.nio.charset.StandardCharsets.UTF_8
+import java.util.Base64.getEncoder
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.CLIENT_ASSERTION

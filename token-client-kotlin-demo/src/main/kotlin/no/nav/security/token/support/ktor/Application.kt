@@ -1,36 +1,35 @@
 package no.nav.security.token.support.ktor
 
-import io.ktor.server.application.call
-import com.fasterxml.jackson.annotation.JsonInclude.Include.*
-import com.fasterxml.jackson.databind.DeserializationFeature.*
-import com.fasterxml.jackson.databind.SerializationFeature.*
+import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
+import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jwt.SignedJWT
-import com.nimbusds.oauth2.sdk.GrantType.*
+import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
+import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
+import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.jackson.JacksonSerializer
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ContentNegotiationClient
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ContentNegotiationServer
 import io.ktor.http.ContentType.Application.Json
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.serialization.jackson.JacksonConverter
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.principal
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ContentNegotiationClient
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ContentNegotiationServer
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.ktor.oauth.ClientConfig
 import no.nav.security.token.support.v2.TokenValidationContextPrincipal
-import io.ktor.server.application.*
-import io.ktor.server.auth.principal
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
 import no.nav.security.token.support.v2.tokenValidationSupport
-
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 

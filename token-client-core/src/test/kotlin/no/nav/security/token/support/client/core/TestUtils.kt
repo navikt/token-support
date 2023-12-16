@@ -1,25 +1,25 @@
 package no.nav.security.token.support.client.core
 
-import com.nimbusds.common.contenttype.ContentType.*
+import com.nimbusds.common.contenttype.ContentType.APPLICATION_JSON
+import com.nimbusds.common.contenttype.ContentType.APPLICATION_URLENCODED
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
 import com.nimbusds.oauth2.sdk.GrantType
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC
 import java.io.UnsupportedEncodingException
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.time.LocalDateTime.*
-import java.time.ZoneId.*
+import java.time.LocalDateTime.now
+import java.time.ZoneId.systemDefault
 import java.util.Base64
 import java.util.Date
 import java.util.Optional
 import java.util.UUID
-import java.util.function.Consumer
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
 

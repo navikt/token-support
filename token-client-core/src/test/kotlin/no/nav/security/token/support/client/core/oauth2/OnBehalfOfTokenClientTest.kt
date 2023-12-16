@@ -1,19 +1,14 @@
 package no.nav.security.token.support.client.core.oauth2
 
-import com.nimbusds.oauth2.sdk.GrantType
-import com.nimbusds.oauth2.sdk.GrantType.*
-import java.io.IOException
+import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
 import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
-import java.nio.charset.StandardCharsets.*
+import java.nio.charset.StandardCharsets.UTF_8
 import okhttp3.mockwebserver.MockWebServer
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.MockitoAnnotations
-import org.mockito.MockitoAnnotations.*
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.TestUtils.assertPostMethodAndJsonHeaders
 import no.nav.security.token.support.client.core.TestUtils.clientProperties

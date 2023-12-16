@@ -53,15 +53,19 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
             }
     }
 
-    class ClientPropertiesBuilder @JvmOverloads constructor(private val grantType: GrantType, val authentication: ClientAuthenticationProperties,
+    class ClientPropertiesBuilder @JvmOverloads constructor(private val grantType: GrantType,
+                                                            val authentication: ClientAuthenticationProperties,
                                                             private var tokenEndpointUrl: URI? = null,
                                                             private var wellKnownUrl: URI? = null,
                                                             private var scope: List<String> = emptyList(),
                                                             private var resourceUrl: URI? = null,
                                                             private var tokenExchange: TokenExchangeProperties? = null) {
 
+        fun tokenEndpointUrl(endpointURI: String?) = endpointURI?.let { tokenEndpointUrl(URI.create(it)) } ?: this
         fun tokenEndpointUrl(endpointURI: URI?) = this.also { it.tokenEndpointUrl = endpointURI }
+        fun wellKnownUrl(wellKnownURI: String?) = wellKnownURI?.let { wellKnownUrl(URI.create(it)) } ?: this
         fun wellKnownUrl(wellKnownURI: URI?) = this.also { it.wellKnownUrl = wellKnownURI }
+        fun scopes(vararg scopes:  String) =   scope(scopes.toList())
         fun scope(scope: List<String>) =  this.also { it.scope = scope}
         fun resourceUrl(resourceUrl: URI?) = this.also { it.resourceUrl = resourceUrl }
         fun tokenExchange(tokenExchange: TokenExchangeProperties?) = this.also { it.tokenExchange = tokenExchange }

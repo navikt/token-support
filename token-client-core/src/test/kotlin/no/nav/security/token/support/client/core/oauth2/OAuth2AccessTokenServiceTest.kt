@@ -2,14 +2,12 @@ package no.nav.security.token.support.client.core.oauth2
 
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
-import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.GrantType.*
 import java.time.Instant
 import java.time.LocalDateTime.*
 import java.time.ZoneId.*
 import java.util.Arrays
 import java.util.Date
-import java.util.Optional
 import java.util.UUID
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach

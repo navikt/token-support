@@ -3,14 +3,13 @@ package no.nav.security.token.support.client.core.http
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import java.net.URLEncoder
-import java.net.URLEncoder.*
-import java.net.http.HttpClient.*
+import java.net.URLEncoder.encode
+import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
 import java.net.http.HttpResponse
-import java.net.http.HttpResponse.BodyHandlers.*
-import java.nio.charset.StandardCharsets.*
+import java.net.http.HttpResponse.BodyHandlers.ofString
+import java.nio.charset.StandardCharsets.UTF_8
 import org.slf4j.LoggerFactory
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 

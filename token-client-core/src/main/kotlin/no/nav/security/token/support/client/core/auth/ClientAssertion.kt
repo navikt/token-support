@@ -1,7 +1,7 @@
 package no.nav.security.token.support.client.core.auth
 
-import com.nimbusds.jose.JOSEObjectType.*
-import com.nimbusds.jose.JWSAlgorithm.*
+import com.nimbusds.jose.JOSEObjectType.JWT
+import com.nimbusds.jose.JWSAlgorithm.RS256
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jose.jwk.RSAKey
@@ -9,9 +9,9 @@ import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.SignedJWT
-import com.nimbusds.oauth2.sdk.auth.JWTAuthentication.*
+import com.nimbusds.oauth2.sdk.auth.JWTAuthentication.CLIENT_ASSERTION_TYPE
 import java.net.URI
-import java.time.Instant.*
+import java.time.Instant.now
 import java.util.Date
 import java.util.UUID
 import kotlin.DeprecationLevel.WARNING
