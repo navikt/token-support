@@ -8,22 +8,9 @@ import com.nimbusds.oauth2.sdk.TokenRequest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.webAppContextSetup
 import jakarta.servlet.Filter
-import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.mock.oauth2.token.OAuth2TokenCallback
-import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
-import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED
-import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS
-import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS2
-import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS_ANY_CLAIMS
-import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_MULTIPLE
-import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.UNPROTECTED
-import no.nav.security.token.support.spring.integrationtest.JwkGenerator.DEFAULT_KEYID
-import no.nav.security.token.support.spring.integrationtest.JwkGenerator.createJWK
-import no.nav.security.token.support.spring.integrationtest.JwkGenerator.generateKeyPair
-import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.ACR
-import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.AUD
-import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.createSignedJWT
-import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor
+import java.util.Date
+import java.util.UUID
+import java.util.concurrent.TimeUnit.MINUTES
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -39,9 +26,23 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcConfigurer
 import org.springframework.web.context.WebApplicationContext
-import java.util.*
-import java.util.concurrent.TimeUnit.MINUTES
+import no.nav.security.mock.oauth2.MockOAuth2Server
+import no.nav.security.mock.oauth2.token.OAuth2TokenCallback
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS2
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS_ANY_CLAIMS
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_MULTIPLE
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.UNPROTECTED
+import no.nav.security.token.support.spring.integrationtest.JwkGenerator.DEFAULT_KEYID
+import no.nav.security.token.support.spring.integrationtest.JwkGenerator.createJWK
+import no.nav.security.token.support.spring.integrationtest.JwkGenerator.generateKeyPair
+import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.ACR
+import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.AUD
+import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.createSignedJWT
+import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor
 
 private const val PROP = "no.nav.security.jwt.dont-propagate-bearertoken"
 

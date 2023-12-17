@@ -1,10 +1,14 @@
 package no.nav.security.token.support.core.validation
 
-import com.nimbusds.jose.JWSAlgorithm.*
+import com.nimbusds.jose.JWSAlgorithm.RS256
 import com.nimbusds.jose.jwk.source.JWKSource
 import com.nimbusds.jose.proc.JWSVerificationKeySelector
 import com.nimbusds.jose.proc.SecurityContext
-import com.nimbusds.jwt.JWTClaimNames.*
+import com.nimbusds.jwt.JWTClaimNames.AUDIENCE
+import com.nimbusds.jwt.JWTClaimNames.EXPIRATION_TIME
+import com.nimbusds.jwt.JWTClaimNames.ISSUED_AT
+import com.nimbusds.jwt.JWTClaimNames.ISSUER
+import com.nimbusds.jwt.JWTClaimNames.SUBJECT
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.proc.DefaultJWTProcessor
 import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException

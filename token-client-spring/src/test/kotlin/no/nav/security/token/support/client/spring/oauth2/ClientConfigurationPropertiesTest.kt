@@ -1,8 +1,6 @@
 package no.nav.security.token.support.client.spring.oauth2
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
-import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +8,8 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
+import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestTemplateAutoConfiguration::class])

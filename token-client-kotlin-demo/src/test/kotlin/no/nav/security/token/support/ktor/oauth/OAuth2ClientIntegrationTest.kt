@@ -1,26 +1,23 @@
 package no.nav.security.token.support.ktor.oauth
 
-import com.fasterxml.jackson.annotation.JsonInclude.*
-import com.fasterxml.jackson.annotation.JsonInclude.Include.*
-import com.fasterxml.jackson.databind.DeserializationFeature.*
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
+import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
+import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.serialization.jackson.jackson
+import java.time.Duration
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ContentNegotiationClient
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
-import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Test
-import java.time.Duration
-import org.junit.jupiter.api.DisplayName
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ContentNegotiationClient
 
 internal class OAuth2ClientIntegrationTest {
 

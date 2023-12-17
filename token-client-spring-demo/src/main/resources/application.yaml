@@ -2,13 +2,13 @@ no.nav.security.jwt:
 
   issuer:
     someshortname:
-      discoveryurl: http://metadata
+      discovery-url: http://metadata
       accepted_audience: aud-localhost
       cookie_name: localhost-idtoken
 
   client:
     registration:
-      democlient1:
+      demoserver1:
         token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
         grant-type: client_credentials
         scope: scope3, scope4
@@ -17,7 +17,7 @@ no.nav.security.jwt:
           client-jwk: token-client-spring-demo/src/main/resources/jwk.json
           client-auth-method: private_key_jwt
 
-      democlient2:
+      demoserver2:
         token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
         grant-type: urn:ietf:params:oauth:grant-type:jwt-bearer
         scope: scope1, scope2
@@ -26,7 +26,7 @@ no.nav.security.jwt:
           client-secret: testsecret
           client-auth-method: client_secret_basic
 
-      democlient3:
+      demoserver3:
         token-endpoint-url: http://localhost:8181/oauth2/v2.0/token
         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
         authentication:
@@ -37,12 +37,9 @@ no.nav.security.jwt:
           audience: cluster:namespace:app2
 
 
-democlient1.url: http://localhost:8181
-democlient2.url: http://localhost:8181
-democlient3.url: http://localhost:8181
+democlient1.url: http://demoserver1:8181
+democlient2.url: http://demoserver2:8181
+democlient3.url: http://demoserver2:8181
 
 mockwebserver:
   port: 8181
-
-logging.level.org.springframework: INFO
-logging.level.no.nav: DEBUG

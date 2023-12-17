@@ -2,10 +2,8 @@ package no.nav.security.token.support.core.jwt
 
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
-import java.text.ParseException
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import no.nav.security.token.support.core.jwt.JwtTokenClaims
 
 internal class JwtTokenClaimsTest {
 

@@ -1,10 +1,11 @@
 package no.nav.security.token.support.client.core
 
 import com.nimbusds.oauth2.sdk.GrantType
-import com.nimbusds.oauth2.sdk.GrantType.*
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.*
-import org.junit.jupiter.api.Assertions.*
+import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
+import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
+import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import no.nav.security.token.support.client.core.ClientProperties.ClientPropertiesBuilder

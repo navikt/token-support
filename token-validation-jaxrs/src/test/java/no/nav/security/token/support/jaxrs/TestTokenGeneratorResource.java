@@ -14,7 +14,6 @@ import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
 import no.nav.security.token.support.core.api.Unprotected;
 
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;

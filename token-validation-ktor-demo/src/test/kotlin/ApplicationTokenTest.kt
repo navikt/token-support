@@ -6,11 +6,11 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.testApplication
-import no.nav.security.mock.oauth2.MockOAuth2Server
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
+import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
 private const val idTokenCookieName = "selvbetjening-idtoken"

@@ -1,7 +1,6 @@
 package no.nav.security.token.support.filter
 
-import com.nimbusds.jwt.JWTClaimNames
-import com.nimbusds.jwt.JWTClaimNames.*
+import com.nimbusds.jwt.JWTClaimNames.EXPIRATION_TIME
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.FilterConfig

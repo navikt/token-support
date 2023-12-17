@@ -1,11 +1,8 @@
 package no.nav.security.token.support.client.spring.oauth2
 
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import java.net.URI
-import java.net.URI.*
-import java.net.URLEncoder
-import java.util.*
-import kotlin.DeprecationLevel.*
+import java.net.URI.create
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 
 /**
  *

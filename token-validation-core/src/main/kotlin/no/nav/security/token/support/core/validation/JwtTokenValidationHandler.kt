@@ -2,7 +2,6 @@ package no.nav.security.token.support.core.validation
 
 import java.util.AbstractMap.SimpleImmutableEntry
 import java.util.concurrent.ConcurrentHashMap
-import jdk.incubator.vector.VectorOperators.LOG
 import kotlin.collections.Map.Entry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

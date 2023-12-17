@@ -1,9 +1,9 @@
 package no.nav.security.token.support.core.configuration
 
 import com.nimbusds.jose.util.DefaultResourceRetriever
-import java.net.Proxy.Type.*
+import java.net.Proxy.Type.HTTP
 import java.net.URL
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

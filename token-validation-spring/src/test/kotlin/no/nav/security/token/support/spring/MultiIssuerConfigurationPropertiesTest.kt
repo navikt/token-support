@@ -1,7 +1,7 @@
 package no.nav.security.token.support.spring
 
-import com.nimbusds.jwt.JWTClaimNames
-import com.nimbusds.jwt.JWTClaimNames.*
+import com.nimbusds.jwt.JWTClaimNames.AUDIENCE
+import com.nimbusds.jwt.JWTClaimNames.SUBJECT
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

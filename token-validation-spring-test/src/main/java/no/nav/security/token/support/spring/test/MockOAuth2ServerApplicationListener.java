@@ -34,7 +34,7 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
         Integer httpPortProperty = environment.getProperty(PORT_PROPERTY, Integer.class);
         if (isRandomPort(httpPortProperty)) {
             int port = findAvailableTcpPort();
-            MutablePropertySources propertySources = environment.getPropertySources();
+            var propertySources = environment.getPropertySources();
             addPropertySource(propertySources);
            Map<String, Object> source =
               ((MapPropertySource) Objects.requireNonNull(propertySources.get(PROPERTY_PREFIX))).getSource();
@@ -49,7 +49,7 @@ public class MockOAuth2ServerApplicationListener implements ApplicationListener<
     }
 
     private int findAvailableTcpPort()  {
-            try (ServerSocket serverSocket = new ServerSocket(0)) {
+            try (var serverSocket = new ServerSocket(0)) {
                 return serverSocket.getLocalPort();
             }
             catch (IOException e) {

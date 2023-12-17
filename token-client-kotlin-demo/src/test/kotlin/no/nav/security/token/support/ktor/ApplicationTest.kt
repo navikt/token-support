@@ -13,7 +13,6 @@ import io.ktor.client.request.header
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.testApplication
-import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import no.nav.security.mock.oauth2.MockOAuth2Server

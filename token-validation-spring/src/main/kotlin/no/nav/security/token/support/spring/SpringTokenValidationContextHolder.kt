@@ -1,8 +1,8 @@
 package no.nav.security.token.support.spring
 
-import no.nav.security.token.support.core.context.TokenValidationContext
 import org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST
 import org.springframework.web.context.request.RequestContextHolder.currentRequestAttributes
+import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 class SpringTokenValidationContextHolder : TokenValidationContextHolder {

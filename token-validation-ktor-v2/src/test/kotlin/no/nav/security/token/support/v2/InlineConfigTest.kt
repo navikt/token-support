@@ -13,14 +13,13 @@ import io.ktor.client.request.header
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import io.ktor.server.testing.testApplication
-import no.nav.security.token.support.v2.inlineconfigtestapp.helloCounter
-import no.nav.security.token.support.v2.inlineconfigtestapp.inlineConfiguredModule
+import java.util.Date
+import java.util.UUID
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import java.util.*
-import kotlin.test.assertEquals
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.v2.JwkGenerator.jWKSet
@@ -29,6 +28,8 @@ import no.nav.security.token.support.v2.JwtTokenGenerator.AUD
 import no.nav.security.token.support.v2.JwtTokenGenerator.EXPIRY
 import no.nav.security.token.support.v2.JwtTokenGenerator.ISS
 import no.nav.security.token.support.v2.JwtTokenGenerator.createSignedJWT
+import no.nav.security.token.support.v2.inlineconfigtestapp.helloCounter
+import no.nav.security.token.support.v2.inlineconfigtestapp.inlineConfiguredModule
 
 @Disabled("Skjønner ikke hvorfor den kjører lokalt, men ikke i GHA")
 class InlineConfigTest {

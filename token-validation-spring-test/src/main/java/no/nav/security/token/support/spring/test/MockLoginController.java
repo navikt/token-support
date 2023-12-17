@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static com.nimbusds.jose.JOSEObjectType.*;
+
 @RestController
 @RequestMapping("/local")
 public class MockLoginController {
@@ -41,7 +43,7 @@ public class MockLoginController {
                 new DefaultOAuth2TokenCallback(
                     issuerId,
                     subject,
-                    JOSEObjectType.JWT.getType(),
+                    JWT.getType(),
                     List.of(audience),
                     Map.of("acr", "Level4"),
                     expiry != null ? Long.parseLong(expiry) : 3600

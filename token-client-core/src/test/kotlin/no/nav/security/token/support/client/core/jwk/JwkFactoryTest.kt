@@ -2,10 +2,9 @@ package no.nav.security.token.support.client.core.jwk
 
 import com.nimbusds.jose.util.Base64URL.encode
 import java.security.KeyStore
-import java.security.MessageDigest.*
+import java.security.MessageDigest.getInstance
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
 import no.nav.security.token.support.client.core.jwk.JwkFactory.fromJsonFile
 import no.nav.security.token.support.client.core.jwk.JwkFactory.fromKeyStore
 

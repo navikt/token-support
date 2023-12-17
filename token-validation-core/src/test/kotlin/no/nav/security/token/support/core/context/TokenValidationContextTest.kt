@@ -3,7 +3,7 @@ package no.nav.security.token.support.core.context
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
 import java.util.concurrent.ConcurrentHashMap
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import no.nav.security.token.support.core.jwt.JwtToken
 

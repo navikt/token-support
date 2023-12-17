@@ -2,7 +2,7 @@ package no.nav.security.token.support.core.configuration
 
 import com.nimbusds.jose.util.ResourceRetriever
 import java.util.Optional
-import kotlin.DeprecationLevel.*
+import kotlin.DeprecationLevel.WARNING
 
 class MultiIssuerConfiguration @JvmOverloads constructor(private val properties : Map<String, IssuerProperties>, val retriever : ResourceRetriever = ProxyAwareResourceRetriever()) {
 

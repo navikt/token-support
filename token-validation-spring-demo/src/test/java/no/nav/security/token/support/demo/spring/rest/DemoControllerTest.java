@@ -1,7 +1,6 @@
 package no.nav.security.token.support.demo.spring.rest;
 
 import com.nimbusds.jose.JOSEObjectType;
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import jakarta.servlet.Filter;
 import no.nav.security.mock.oauth2.MockOAuth2Server;
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback;
@@ -11,21 +10,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.setup.ConfigurableMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.webAppContextSetup;
 import static no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(classes = DemoApplication.class, webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
