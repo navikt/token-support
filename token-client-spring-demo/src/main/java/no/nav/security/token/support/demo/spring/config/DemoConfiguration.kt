@@ -27,16 +27,11 @@ import no.nav.security.token.support.client.spring.oauth2.OAuth2ClientRequestInt
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 
 /***
- * JUST AN EXAMPLE ON HOW RESTTEMPLATES CAN BE CONFIGURED
- * TO DYNAMICALLY REQUEST ACCESS TOKENS BASED ON YAML CONFIG
+ * You may only need one rest client if the short name in the config matches the canonical
+ * hostname of the remote service. If not, you will need one rest client per remote service.
+ * The rest client is configured with a base url, and the rest client customizer is used to register
+ * a filter that will exchange add the access token to the request.
  *
- * THE ANNOTATIONS @DemoClient1 AND @DemoClient2 ARE MADE SOLELY FOR THIS DEMO,
- * JUST TO BE MORE EXPLICIT ON QUALIFING BEANS AND AUTOWIRING CANDIDATES, AND SHOW THAT
- * YOU WILL PROBABLY NEED ONE RESTTEMPLATE PER OAUTH 2.0 CLIENT CONFIGURATION.
- *
- * THE ONLY REQUIRED ELEMENTS IN THIS CONFIGURATION ARE:
- * * THE @EnableOAuth2Client ANNOTATION
- * * THE ClientConfigurationProperties AND OAuth2AccessTokenService WHICH CAN BE UTILIZED TO GET TOKENS
  */
 @EnableOAuth2Client(cacheEnabled = true)
 @EnableJwtTokenValidation

@@ -6,12 +6,12 @@ import io.ktor.server.config.ApplicationConfig
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 
 class ClientConfig(applicationConfig: ApplicationConfig, httpClient: HttpClient) {
-    private val cacheConfig: OAuth2CacheConfig =
+    private val cacheConfig =
         with(applicationConfig.config(CACHE_PATH)) {
             OAuth2CacheConfig(propertyToStringOrNull("cache.enabled")?.toBoolean() ?: false, propertyToStringOrNull("cache.maximumSize")?.toLong() ?: 0, propertyToStringOrNull("cache.evictSkew")?.toLong() ?: 0)
         }
 
-    internal val clients: Map<String, OAuth2Client> =
+    internal val clients =
         applicationConfig.configList(CLIENTS_PATH)
             .associate {
                 val wellKnownUrl = it.propertyToString("well_known_url")
