@@ -64,7 +64,7 @@
         <mock-oauth2-server.version>2.1.0</mock-oauth2-server.version>
         <nimbus.jose.jwt.version>9.37.3</nimbus.jose.jwt.version>
         <kotest.version>5.8.0</kotest.version>
-        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
     </properties>
 
     <scm>
