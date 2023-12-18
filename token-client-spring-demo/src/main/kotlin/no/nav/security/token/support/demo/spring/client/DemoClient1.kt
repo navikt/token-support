@@ -9,7 +9,7 @@ import org.springframework.web.client.body
 class DemoClient1(@Value("\${democlient1.url}") url : String, builder : Builder) {
 
     private val client = builder.baseUrl(url).build()
-    fun ping() = client.get()
+    fun ping() = client.get() 
         .uri { b -> b.path("/ping").build() }
         .retrieve()
         .body<String>()
