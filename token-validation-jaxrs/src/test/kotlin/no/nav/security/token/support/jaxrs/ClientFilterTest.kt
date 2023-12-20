@@ -1,8 +1,6 @@
 package no.nav.security.token.support.jaxrs
 
 import jakarta.ws.rs.client.ClientBuilder
-import jakarta.ws.rs.client.Invocation.Builder
-import java.text.ParseException
 import java.util.concurrent.ConcurrentHashMap
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
@@ -16,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.jwt.JwtToken
 import no.nav.security.token.support.jaxrs.JaxrsTokenValidationContextHolder.getHolder
-import no.nav.security.token.support.jaxrs.JwtTokenClientRequestFilter
 
 @ActiveProfiles("protected")
 @DirtiesContext
@@ -51,10 +48,9 @@ internal class ClientFilterTest {
 
     companion object {
 
-        private fun createOidcValidationContext(issuerShortName : String, jwtToken : JwtToken) : TokenValidationContext {
-            val map : MutableMap<String, JwtToken> = ConcurrentHashMap()
-            map[issuerShortName] = jwtToken
-            return TokenValidationContext(map)
-        }
+        private fun createOidcValidationContext(issuerShortName : String, jwtToken : JwtToken) =
+            TokenValidationContext(ConcurrentHashMap<String, JwtToken>().apply {
+                put(issuerShortName, jwtToken)
+            })
     }
 }

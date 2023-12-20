@@ -6,6 +6,7 @@ import org.glassfish.jersey.servlet.ServletProperties.*
 import org.springframework.boot.SpringBootConfiguration
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.boot.web.servlet.ServletRegistrationBean
@@ -28,7 +29,7 @@ import no.nav.security.token.support.spring.MultiIssuerProperties
 class Config {
 
     @Bean
-    fun servletWebServerFactory()  = TomcatServletWebServerFactory(0)
+    fun servletWebServerFactory()  = JettyServletWebServerFactory(0)
 
     @Bean
     fun jerseyServletRegistration() =
