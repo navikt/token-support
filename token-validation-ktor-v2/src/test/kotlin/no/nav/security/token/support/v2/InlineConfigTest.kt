@@ -31,7 +31,7 @@ import no.nav.security.token.support.v2.JwtTokenGenerator.createSignedJWT
 import no.nav.security.token.support.v2.inlineconfigtestapp.helloCounter
 import no.nav.security.token.support.v2.inlineconfigtestapp.inlineConfiguredModule
 
-@Disabled("Skjønner ikke hvorfor den kjører lokalt, men ikke i GHA")
+//@Disabled("Skjønner ikke hvorfor den kjører lokalt, men ikke i GHA")
 class InlineConfigTest {
 
     companion object {
