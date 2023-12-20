@@ -1,6 +1,6 @@
 package no.nav.security.token.support.jaxrs
 
-import com.nimbusds.common.contenttype.ContentType.*
+import com.nimbusds.common.contenttype.ContentType.APPLICATION_JSON
 import com.nimbusds.jose.util.IOUtils
 import com.nimbusds.jose.util.Resource
 import java.io.IOException

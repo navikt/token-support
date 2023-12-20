@@ -1,6 +1,6 @@
 package no.nav.security.token.support.spring.test
 
-import com.nimbusds.jose.JOSEObjectType.*
+import com.nimbusds.jose.JOSEObjectType.JWT
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.web.bind.annotation.GetMapping

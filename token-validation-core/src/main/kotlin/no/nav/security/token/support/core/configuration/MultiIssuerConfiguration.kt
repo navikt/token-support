@@ -21,7 +21,7 @@ class MultiIssuerConfiguration @JvmOverloads constructor(private val properties 
              createIssuerConfiguration(shortName, p).run {
                 issuerShortNames.add(shortName)
                 issuers[shortName] = this
-                issuers[metadata.issuer.toString()] = this
+                issuers["${metadata.issuer}"] = this
             }
         }
 

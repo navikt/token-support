@@ -37,29 +37,22 @@ data class TokenValidationContextPrincipal(val context: TokenValidationContext) 
 
 private val log = LoggerFactory.getLogger(TokenSupportAuthenticationProvider::class.java.name)
 
-class TokenSupportAuthenticationProvider(
-    providerConfig: ProviderConfiguration,
-    applicationConfig: ApplicationConfig,
-    private val requiredClaims: RequiredClaims? = null,
-    private val additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
-    resourceRetriever: ResourceRetriever
-) : AuthenticationProvider(providerConfig) {
+class TokenSupportAuthenticationProvider(providerConfig: ProviderConfiguration, config: ApplicationConfig,
+                                         private val requiredClaims: RequiredClaims? = null,
+                                         private val additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
+                                         resourceRetriever: ResourceRetriever) : AuthenticationProvider(providerConfig) {
 
     private val jwtTokenValidationHandler: JwtTokenValidationHandler
     private val jwtTokenExpiryThresholdHandler: JwtTokenExpiryThresholdHandler
 
     init {
-        val issuerPropertiesMap: Map<String, IssuerProperties> = applicationConfig.asIssuerProps()
-        jwtTokenValidationHandler = JwtTokenValidationHandler(
-            MultiIssuerConfiguration(issuerPropertiesMap, resourceRetriever)
-        )
+        jwtTokenValidationHandler = JwtTokenValidationHandler(MultiIssuerConfiguration(config.asIssuerProps(), resourceRetriever))
 
-        val expiryThreshold: Int =
-            applicationConfig.propertyOrNull("no.nav.security.jwt.expirythreshold")?.getString()?.toInt() ?: -1
+        val expiryThreshold = config.propertyOrNull("no.nav.security.jwt.expirythreshold")?.getString()?.toInt() ?: -1
         jwtTokenExpiryThresholdHandler = JwtTokenExpiryThresholdHandler(expiryThreshold)
     }
 
-    class ProviderConfiguration internal constructor(name: String?) : Config(name)
+    class ProviderConfiguration internal constructor(name: String) : Config(name)
 
     override suspend fun onAuthenticate(context: AuthenticationContext) {
         val applicationCall = context.call
@@ -96,7 +89,7 @@ class TokenSupportAuthenticationProvider(
 }
 
 fun AuthenticationConfig.tokenValidationSupport(
-    name: String? = null,
+    name: String,
     config: ApplicationConfig,
     requiredClaims: RequiredClaims? = null,
     additionalValidation: ((TokenValidationContext) -> Boolean)? = null,

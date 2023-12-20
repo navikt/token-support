@@ -3,10 +3,9 @@ package no.nav.security.token.support.v2
 import com.nimbusds.jwt.JWTClaimNames.EXPIRATION_TIME
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.header
-import java.time.LocalDateTime
-import java.time.LocalDateTime.*
-import java.time.ZoneId
-import java.time.ZoneId.*
+import java.time.LocalDateTime.now
+import java.time.LocalDateTime.ofInstant
+import java.time.ZoneId.systemDefault
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import org.slf4j.LoggerFactory

@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.*
-import org.springframework.http.HttpStatusCode
+import org.springframework.http.HttpStatus.OK
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER

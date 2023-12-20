@@ -1,8 +1,7 @@
 package no.nav.security.token.support.jaxrs;
 
-import kotlin.jvm.JvmStatic;
-import no.nav.security.token.support.core.context.TokenValidationContext;
-import no.nav.security.token.support.core.context.TokenValidationContextHolder;
+import no.nav.security.token.support.core.context.TokenValidationContext
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 object JaxrsTokenValidationContextHolder : TokenValidationContextHolder {
 

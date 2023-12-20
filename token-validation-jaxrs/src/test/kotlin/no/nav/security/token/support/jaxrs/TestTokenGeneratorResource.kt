@@ -1,8 +1,7 @@
 package no.nav.security.token.support.jaxrs
 
-import com.nimbusds.jose.util.IOUtils.*
+import com.nimbusds.jose.util.IOUtils.readInputStreamToString
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import jakarta.ws.rs.DefaultValue
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
@@ -13,8 +12,8 @@ import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.Response.Status.FOUND
 import jakarta.ws.rs.core.Response.Status.OK
 import java.net.URI
-import java.nio.charset.Charset.*
-import java.util.Objects.*
+import java.nio.charset.Charset.defaultCharset
+import java.util.Objects.requireNonNull
 import no.nav.security.token.support.core.api.Unprotected
 import no.nav.security.token.support.jaxrs.JwkGenerator.DEFAULT_JWKSET_FILE
 import no.nav.security.token.support.jaxrs.JwkGenerator.jWKSet
@@ -48,8 +47,7 @@ class TestTokenGeneratorResource {
     fun addCookie(
         @QueryParam("subject") @DefaultValue("12345678910") subject : String?,
         @QueryParam("cookiename") @DefaultValue("localhost-idtoken") cookieName : String?,
-        @QueryParam("redirect") redirect : String?,
-        @Context response : HttpServletResponse) =
+        @QueryParam("redirect") redirect : String?) =
         Response.status(if (redirect == null) OK else FOUND)
             .location(if (redirect == null) null else URI.create(redirect))
             .cookie(Builder(cookieName).value(createSignedJWT(subject).serialize()).path("/").domain("localhost").maxAge(-1).secure(false).build())

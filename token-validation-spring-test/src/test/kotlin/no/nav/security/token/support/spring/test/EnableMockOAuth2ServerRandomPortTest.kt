@@ -1,8 +1,7 @@
 package no.nav.security.token.support.spring.test
 
 
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,7 +30,7 @@ internal class EnableMockOAuth2ServerRandomPortTest {
 
     @Test
     fun serverStartsOnRandomPortAndIsUpdatedInEnv() {
-        assertEquals(server.baseUrl().port,properties!!.port)
+        assertEquals(server.baseUrl().port,properties.port)
         assertThat(server.wellKnownUrl("test")).hasToString(discoveryUrl)
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
-import no.nav.security.token.support.core.JwtTokenConstants
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.jwt.JwtToken.Companion.asBearer
 import no.nav.security.token.support.jaxrs.JwtTokenGenerator.createSignedJWT

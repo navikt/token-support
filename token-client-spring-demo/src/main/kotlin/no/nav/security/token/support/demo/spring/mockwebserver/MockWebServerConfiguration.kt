@@ -1,12 +1,9 @@
 package no.nav.security.token.support.demo.spring.mockwebserver
 
 import jakarta.annotation.PreDestroy
-import java.net.URLDecoder.*
-import java.nio.charset.StandardCharsets.*
+import java.net.URLDecoder.decode
+import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Instant
-import java.util.Arrays
-import java.util.function.Function
-import java.util.stream.Collectors
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -15,8 +12,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpHeaders.*
-import org.springframework.http.MediaType.*
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 
 @Configuration
 class MockWebServerConfiguration(@param:Value("\${mockwebserver.port}") private val port : Int) {

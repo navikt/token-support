@@ -17,7 +17,6 @@ object JwkFactory {
     @JvmStatic
     fun fromJsonFile(filePath : String) =
         runCatching {
-          //  println(of(filePath).toAbsolutePath())
             fromJson(readString(of(filePath).toAbsolutePath(), UTF_8))
         }.getOrElse {
             throw JwkInvalidException(it)

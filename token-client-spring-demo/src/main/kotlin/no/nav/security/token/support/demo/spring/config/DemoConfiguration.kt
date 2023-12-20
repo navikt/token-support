@@ -1,24 +1,8 @@
 package no.nav.security.token.support.demo.spring.config
 
-import java.util.Optional
-import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
-import kotlin.annotation.AnnotationTarget.CLASS
-import kotlin.annotation.AnnotationTarget.FIELD
-import kotlin.annotation.AnnotationTarget.FUNCTION
-import kotlin.annotation.AnnotationTarget.PROPERTY_GETTER
-import kotlin.annotation.AnnotationTarget.PROPERTY_SETTER
-import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.web.client.RestClientCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpRequest
-import org.springframework.http.client.ClientHttpRequestExecution
-import org.springframework.http.client.ClientHttpRequestInterceptor
-import org.springframework.web.client.RestClient
-import org.springframework.web.client.RestClient.Builder
-import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher

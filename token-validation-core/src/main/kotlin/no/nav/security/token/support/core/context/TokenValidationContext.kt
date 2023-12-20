@@ -13,9 +13,10 @@ class TokenValidationContext(private val validatedTokens : Map<String, JwtToken>
     fun getClaims(issuerName : String) = jwtToken(issuerName)?.jwtTokenClaims ?: throw IllegalArgumentException("No token found for issuer $issuerName")
 
     val anyValidClaims get() =
-        Optional.ofNullable(validatedTokens.values
+        validatedTokens.values
             .map(JwtToken::jwtTokenClaims)
-            .firstOrNull())
+            .firstOrNull()
+
 
     fun hasValidToken()  = validatedTokens.isNotEmpty()
 

@@ -1,14 +1,9 @@
 package no.nav.security.token.support.jaxrs
 
-import com.nimbusds.jose.jwk.JWKSet
-import com.nimbusds.jose.jwk.JWKSet.*
+import com.nimbusds.jose.jwk.JWKSet.parse
 import com.nimbusds.jose.jwk.RSAKey
-import com.nimbusds.jose.util.IOUtils
-import com.nimbusds.jose.util.IOUtils.*
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.nio.charset.StandardCharsets.*
-import java.text.ParseException
+import com.nimbusds.jose.util.IOUtils.readInputStreamToString
+import java.nio.charset.StandardCharsets.UTF_8
 
 internal object JwkGenerator {
 

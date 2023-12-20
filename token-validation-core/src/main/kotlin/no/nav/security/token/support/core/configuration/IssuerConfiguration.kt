@@ -16,8 +16,8 @@ open class IssuerConfiguration(val name : String, properties : IssuerProperties,
     val tokenValidator : JwtTokenValidator
 
     init {
-        this.metadata = providerMetadata(resourceRetriever, properties.discoveryUrl)
-        this.tokenValidator = tokenValidator(properties, metadata, resourceRetriever)
+        metadata = providerMetadata(resourceRetriever, properties.discoveryUrl)
+        tokenValidator = tokenValidator(properties, metadata, resourceRetriever)
     }
 
     override fun toString() = ("${javaClass.simpleName} [name=$name, metaData=$metadata, acceptedAudience=$acceptedAudience, cookieName=$cookieName, headerName=$headerName, tokenValidator=$tokenValidator, resourceRetriever=$resourceRetriever]")

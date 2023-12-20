@@ -1,9 +1,7 @@
 package no.nav.security.token.support.jaxrs
 
-import com.nimbusds.jose.JOSEException
-import com.nimbusds.jose.JOSEObjectType
-import com.nimbusds.jose.JOSEObjectType.*
-import com.nimbusds.jose.JWSAlgorithm.*
+import com.nimbusds.jose.JOSEObjectType.JWT
+import com.nimbusds.jose.JWSAlgorithm.RS256
 import com.nimbusds.jose.JWSHeader
 import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jose.jwk.RSAKey
