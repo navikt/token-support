@@ -14,38 +14,8 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit.MINUTES
 
 object JwtTokenGenerator {
-    const val ISS = "iss-localhost"
     const val AUD = "aud-localhost"
     const val ACR = "Level4"
-    private const val EXPIRY = (60 * 60 * 3600).toLong()
-
-    @JvmOverloads
-    fun createSignedJWT(subject: String?, expiryInMinutes: Long = EXPIRY): SignedJWT {
-        return createSignedJWT(
-                JwkGenerator.defaultRSAKey,
-                buildClaimSet(subject, ISS, AUD, ACR, MINUTES.toMillis(expiryInMinutes)))
-    }
-
-    fun createSignedJWT(claimsSet: JWTClaimsSet?): SignedJWT {
-        return createSignedJWT(JwkGenerator.defaultRSAKey, claimsSet)
-    }
-
-    fun buildClaimSet(subject: String?, issuer: String?, audience: String?, authLevel: String?,
-                      expiry: Long): JWTClaimsSet {
-        val now = Date()
-        return Builder()
-            .subject(subject)
-            .issuer(issuer)
-            .audience(audience)
-            .jwtID(UUID.randomUUID().toString())
-            .claim("acr", authLevel)
-            .claim("ver", "1.0")
-            .claim("nonce", "myNonce")
-            .claim("auth_time", now)
-            .notBeforeTime(now)
-            .issueTime(now)
-            .expirationTime(Date(now.time + expiry)).build()
-    }
 
     fun createSignedJWT(rsaJwk: RSAKey, claimsSet: JWTClaimsSet?): SignedJWT {
         return try {

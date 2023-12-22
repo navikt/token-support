@@ -1,10 +1,6 @@
 package no.nav.security.token.support.spring.integrationtest
 
-import com.nimbusds.jose.jwk.JWKSet.parse
-import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.RSAKey.Builder
-import com.nimbusds.jose.util.IOUtils
-import java.nio.charset.StandardCharsets.UTF_8
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.NoSuchAlgorithmException
@@ -13,15 +9,6 @@ import java.security.interfaces.RSAPublicKey
 
 object JwkGenerator {
     const val DEFAULT_KEYID = "localhost-signer"
-    private const val DEFAULT_JWKSET_FILE = "/jwkset.json"
-
-    val jWKSet =
-        try {
-            parse(IOUtils.readInputStreamToString(JwkGenerator::class.java.getResourceAsStream(DEFAULT_JWKSET_FILE), UTF_8))
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
-    val defaultRSAKey: RSAKey get() = jWKSet.getKeyByKeyId(DEFAULT_KEYID) as RSAKey
 
     fun generateKeyPair() =
          try {
