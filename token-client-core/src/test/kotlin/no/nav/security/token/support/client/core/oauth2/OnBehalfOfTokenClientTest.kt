@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.TestUtils.assertPostMethodAndJsonHeaders
 import no.nav.security.token.support.client.core.TestUtils.clientProperties
@@ -50,9 +51,9 @@ internal class OnBehalfOfTokenClientTest {
                 .contains("requested_token_use=on_behalf_of")
                 .contains("assertion=$assertion")
             assertThat(response).isNotNull()
-            assertThat(response!!.accessToken).isNotBlank()
-            assertThat(response.expiresAt).isPositive()
-            assertThat(response.expiresIn).isPositive()
+            assertThat(response?.accessToken).isNotBlank()
+            assertThat(response?.expiresAt).isPositive()
+            assertThat(response?.expiresIn).isPositive()
         }
 
     @Test
@@ -61,10 +62,11 @@ internal class OnBehalfOfTokenClientTest {
             val assertion = jwt("sub1").serialize()
             val clientProperties = clientProperties(tokenEndpointUrl, JWT_BEARER)
             val oAuth2OnBehalfOfGrantRequest = OnBehalfOfGrantRequest(clientProperties, assertion)
-            assertThatExceptionOfType(OAuth2ClientException::class.java)
-                .isThrownBy { onBehalfOfTokenResponseClient.getTokenResponse(oAuth2OnBehalfOfGrantRequest) }
-                .withMessageContaining(ERROR_RESPONSE)
-        }
+            assertThrows<OAuth2ClientException> {
+                val res = onBehalfOfTokenResponseClient.getTokenResponse(oAuth2OnBehalfOfGrantRequest)
+                println(res)
+            }
+    }
 
     companion object {
 

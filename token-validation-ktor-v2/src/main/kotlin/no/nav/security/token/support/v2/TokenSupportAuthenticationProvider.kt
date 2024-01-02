@@ -32,6 +32,7 @@ import no.nav.security.token.support.core.http.HttpRequest.NameValue
 import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
+import no.nav.security.token.support.v2.TokenSupportAuthenticationProvider.ProviderConfiguration
 
 data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 
@@ -75,28 +76,19 @@ class TokenSupportAuthenticationProvider(providerConfig: ProviderConfiguration, 
                 context.principal(TokenValidationContextPrincipal(tokenValidationContext))
             }
         } catch (e: Throwable) {
-            val message = e.message ?: e.javaClass.simpleName
-            log.trace("Token verification failed: {}", message)
+            log.trace("Token verification failed: {}", e.message ?: e.javaClass.simpleName)
         }
-        context.challenge(
-            key = "JWTAuthKey",
-            cause = AuthenticationFailedCause.InvalidCredentials
-        ) { authenticationProcedureChallenge, call ->
+        context.challenge("JWTAuthKey", AuthenticationFailedCause.InvalidCredentials) { authenticationProcedureChallenge, call ->
             call.respond(UnauthorizedResponse())
             authenticationProcedureChallenge.complete()
         }
     }
 }
 
-fun AuthenticationConfig.tokenValidationSupport(
-    name: String? = null,
-    config: ApplicationConfig,
-    requiredClaims: RequiredClaims? = null,
-    additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
-    resourceRetriever: ResourceRetriever = ProxyAwareResourceRetriever(System.getenv("HTTP_PROXY")?.let { URI.create(it).toURL() })
-) {
-    val provider = TokenSupportAuthenticationProvider(TokenSupportAuthenticationProvider.ProviderConfiguration(name), config, requiredClaims, additionalValidation, resourceRetriever)
-    register(provider)
+fun AuthenticationConfig.tokenValidationSupport(name: String? = null, config: ApplicationConfig, requiredClaims: RequiredClaims? = null,
+                                                additionalValidation: ((TokenValidationContext) -> Boolean)? = null,
+                                                resourceRetriever: ResourceRetriever = ProxyAwareResourceRetriever(System.getenv("HTTP_PROXY")?.let { URI.create(it).toURL() })) {
+    register(TokenSupportAuthenticationProvider(ProviderConfiguration(name), config, requiredClaims, additionalValidation, resourceRetriever))
 }
 
 
@@ -120,38 +112,29 @@ class TokenSupportConfig(vararg issuers: IssuerConfig) : MapApplicationConfig(
     }.flatten().plus("no.nav.security.jwt.issuers.size" to issuers.size.toString()).toTypedArray())
 )
 
-private class InternalTokenValidationContextHolder(private var tokenValidationContext: TokenValidationContext) :
-    TokenValidationContextHolder {
+private class InternalTokenValidationContextHolder(private var tokenValidationContext: TokenValidationContext) : TokenValidationContextHolder {
     override fun getTokenValidationContext() = tokenValidationContext
     override fun setTokenValidationContext(tokenValidationContext: TokenValidationContext?) {
-        if (tokenValidationContext != null)
-        this.tokenValidationContext = tokenValidationContext
+        tokenValidationContext?.let { this.tokenValidationContext = tokenValidationContext }
     }
 }
 
 internal class AdditionalValidationReturnedFalse : RuntimeException()
 
-internal class RequiredClaimsException(message: String, cause: Exception) : RuntimeException(message, cause)
-internal class RequiredClaimsHandler(private val tokenValidationContextHolder: TokenValidationContextHolder) :
-    JwtTokenAnnotationHandler(tokenValidationContextHolder) {
+internal class RequiredClaimsException(message: String, cause: Throwable) : RuntimeException(message, cause)
+internal class RequiredClaimsHandler(private val tokenValidationContextHolder: TokenValidationContextHolder) : JwtTokenAnnotationHandler(tokenValidationContextHolder) {
     internal fun handleRequiredClaims(requiredClaims: RequiredClaims) {
-        try {
-            val jwtToken = getJwtToken(requiredClaims.issuer, tokenValidationContextHolder)
-            if (jwtToken.isEmpty) {
-                throw JwtTokenMissingException("no valid token found in validation context")
+        runCatching {
+            with(requiredClaims) {
+                log.debug("Checking required claims for issuer: {}, claims: {}, combineWithOr: {}", issuer, claimMap, combineWithOr)
+                val jwtToken = getJwtToken(issuer, tokenValidationContextHolder)
+                if (jwtToken.isEmpty) {
+                    throw JwtTokenMissingException("No valid token found in validation context")
+                }
+                if (!handleProtectedWithClaims(issuer, claimMap, combineWithOr, jwtToken.get()))
+                    throw JwtTokenInvalidClaimException("Required claims not present in token." + requiredClaims.claimMap)
             }
-            if (!handleProtectedWithClaims(
-                    requiredClaims.issuer,
-                    requiredClaims.claimMap,
-                    requiredClaims.combineWithOr,
-                    jwtToken.get()
-                )
-            )
-                throw JwtTokenInvalidClaimException("required claims not present in token." + requiredClaims.claimMap)
-
-        } catch (e: RuntimeException) {
-            throw RequiredClaimsException(e.message ?: "", e)
-        }
+        }.getOrElse {  e -> throw RequiredClaimsException(e.message ?: "", e) }
     }
 }
 

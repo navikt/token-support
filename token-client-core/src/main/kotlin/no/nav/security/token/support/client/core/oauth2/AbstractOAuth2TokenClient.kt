@@ -48,17 +48,19 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
         HashMap<String, List<String>>().apply {
             put("Accept",listOf("$APPLICATION_JSON"))
             put("Content-Type",listOf("$APPLICATION_URLENCODED"))
-            val auth = clientProperties.authentication
-            if (CLIENT_SECRET_BASIC == auth.clientAuthMethod) {
-                put("Authorization",listOf("Basic ${basicAuth(auth.clientId, auth.clientSecret!!)}"))
+            with(clientProperties.authentication) {
+                if (CLIENT_SECRET_BASIC == clientAuthMethod) {
+                    put("Authorization",listOf("Basic ${basicAuth(clientId, clientSecret!!)}"))
+                }
             }
+
         }
 
     private fun defaultFormParameters(grantRequest : T) =
         grantRequest?.clientProperties?.let {
             defaultClientAuthenticationFormParameters(grantRequest).apply {
                 put(GRANT_TYPE,grantRequest.grantType.value)
-                if (it.grantType != TOKEN_EXCHANGE) {
+                if (TOKEN_EXCHANGE != it.grantType) {
                     put(SCOPE,  join(" ", it.scope))
                 }
             }
@@ -68,18 +70,14 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
         grantRequest?.clientProperties?.let {
             with(it) {
                 when (authentication.clientAuthMethod) {
-                    CLIENT_SECRET_POST -> {
-                        LinkedHashMap<String, String>().apply {
-                            put(CLIENT_ID, authentication.clientId)
-                            put(CLIENT_SECRET, authentication.clientSecret!!)
-                        }
+                    CLIENT_SECRET_POST -> LinkedHashMap<String, String>().apply {
+                        put(CLIENT_ID, authentication.clientId)
+                        put(CLIENT_SECRET, authentication.clientSecret!!)
                     }
-                    PRIVATE_KEY_JWT -> {
-                        LinkedHashMap<String, String>().apply {
-                            put(CLIENT_ID, authentication.clientId)
-                            put(CLIENT_ASSERTION_TYPE, JWTAuthentication.CLIENT_ASSERTION_TYPE)
-                            put(CLIENT_ASSERTION, ClientAssertion(tokenEndpointUrl, authentication).assertion())
-                        }
+                    PRIVATE_KEY_JWT -> LinkedHashMap<String, String>().apply {
+                        put(CLIENT_ID, authentication.clientId)
+                        put(CLIENT_ASSERTION_TYPE, JWTAuthentication.CLIENT_ASSERTION_TYPE)
+                        put(CLIENT_ASSERTION, ClientAssertion(tokenEndpointUrl, authentication).assertion())
                     }
                     else ->  mutableMapOf()
                 }

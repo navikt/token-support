@@ -15,20 +15,13 @@ import no.nav.security.mock.oauth2.OAuth2Config
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.mock.oauth2.token.OAuth2TokenProvider
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
-import no.nav.security.token.support.spring.test.MockOAuth2ServerProperties
 
 @Configuration
 @EnableConfigurationProperties(MockOAuth2ServerProperties::class)
 class MockOAuth2ServerAutoConfiguration(private val properties : MockOAuth2ServerProperties) {
 
     private val log : Logger = LoggerFactory.getLogger(MockOAuth2ServerAutoConfiguration::class.java)
-    private val mockOAuth2Server = MockOAuth2Server(
-        OAuth2Config(
-            properties.isInteractiveLogin,
-            null,
-            null,
-            OAuth2TokenProvider(),
-            setOf(DefaultOAuth2TokenCallback())))
+    private val mockOAuth2Server = MockOAuth2Server(OAuth2Config(properties.isInteractiveLogin, null, null, OAuth2TokenProvider(), setOf(DefaultOAuth2TokenCallback())))
 
     @Bean
     @Primary
@@ -40,14 +33,8 @@ class MockOAuth2ServerAutoConfiguration(private val properties : MockOAuth2Serve
 
     @PostConstruct
     fun start() {
-        val port = properties.port
-        if (port > 0) {
-            log.debug("starting mock oauth2 server on port {}", port)
-            mockOAuth2Server.start(port)
-        }
-        else {
-            throw RuntimeException("could not find mock-oauth2-server.port in environment. cannot start server.")
-        }
+        log.debug("starting the mock oauth2 server on {}.port", properties)
+        mockOAuth2Server.start(properties.port)
     }
 
     @PreDestroy
@@ -59,6 +46,10 @@ class MockOAuth2ServerAutoConfiguration(private val properties : MockOAuth2Serve
 
 @ConfigurationProperties(MockOAuth2ServerProperties.PREFIX)
 class MockOAuth2ServerProperties(val port : Int, val isInteractiveLogin : Boolean = false) {
+
+    init {
+        require(port > 0) { "port must be set" }
+    }
 
     companion object {
 

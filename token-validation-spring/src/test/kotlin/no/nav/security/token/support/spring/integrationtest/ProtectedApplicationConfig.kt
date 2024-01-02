@@ -1,6 +1,5 @@
 package no.nav.security.token.support.spring.integrationtest
 
-import java.io.IOException
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,7 +21,6 @@ class ProtectedApplicationConfig {
 
 
     @Bean
-    @Throws(IOException::class)
     fun mockOAuth2Server() =
         MockOAuth2Server().apply {
             start(1111)

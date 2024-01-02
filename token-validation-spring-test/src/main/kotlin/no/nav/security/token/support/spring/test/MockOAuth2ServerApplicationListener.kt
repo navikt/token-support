@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationPreparedEvent
 import org.springframework.context.ApplicationListener
 import org.springframework.core.annotation.Order
+import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.MapPropertySource
 import org.springframework.core.env.MutablePropertySources
 
@@ -14,12 +15,12 @@ class MockOAuth2ServerApplicationListener : ApplicationListener<ApplicationPrepa
 
     private val log : Logger = LoggerFactory.getLogger(MockOAuth2ServerApplicationListener::class.java)
     override fun onApplicationEvent(event : ApplicationPreparedEvent) =
-        registerPort(event).also {
-            log.debug("received ApplicationPreparedEvent, register random port with environment if ot set")
+        registerPort(event.applicationContext.environment).also {
+            log.debug("Received ApplicationPreparedEvent, register random port with environment if ot set")
         }
 
-    private fun registerPort(event : ApplicationPreparedEvent) {
-        with(event.applicationContext.environment) {
+    private fun registerPort(env : ConfigurableEnvironment) {
+        with(env) {
             val port = getProperty(PORT_PROPERTY,Int::class.java)
             if (isRandomPort(port)) {
                 with(propertySources) {
@@ -33,7 +34,7 @@ class MockOAuth2ServerApplicationListener : ApplicationListener<ApplicationPrepa
                 }
             }
             else {
-                log.debug("port provided explicitly from annotation ({}), nothing to register.", port)
+                log.debug("Port provided explicitly from annotation ({}), nothing to register.", port)
             }
         }
 
@@ -45,8 +46,7 @@ class MockOAuth2ServerApplicationListener : ApplicationListener<ApplicationPrepa
 
     private fun addPropertySource(propertySources : MutablePropertySources) {
         if (!propertySources.contains(PROPERTY_PREFIX)) {
-            propertySources.addFirst(
-                MapPropertySource(PROPERTY_PREFIX, HashMap()))
+            propertySources.addFirst(MapPropertySource(PROPERTY_PREFIX, HashMap()))
         }
         else {
             val source = propertySources.remove(PROPERTY_PREFIX)!!

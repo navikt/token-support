@@ -47,8 +47,7 @@ internal class ClientCredentialsTokenClientTest {
             val recordedRequest = server.takeRequest()
             assertPostMethodAndJsonHeaders(recordedRequest)
             assertThatClientAuthMethodIsClientSecretBasic(recordedRequest, clientProperties)
-            val body = recordedRequest.body.readUtf8()
-            assertThatRequestBodyContainsFormParameters(body)
+            assertThatRequestBodyContainsFormParameters(recordedRequest.body.readUtf8())
             assertThatResponseContainsAccessToken(response)
         }
 
@@ -60,8 +59,7 @@ internal class ClientCredentialsTokenClientTest {
             val recordedRequest = server.takeRequest()
             assertPostMethodAndJsonHeaders(recordedRequest)
             assertThatClientAuthMethodIsClientSecretBasic(recordedRequest, clientProperties)
-            val body = recordedRequest.body.readUtf8()
-            assertThatRequestBodyContainsFormParameters(body)
+            assertThatRequestBodyContainsFormParameters(recordedRequest.body.readUtf8())
             assertThatResponseContainsAccessToken(response)
         }
 
@@ -103,7 +101,7 @@ internal class ClientCredentialsTokenClientTest {
 
     @Test
     fun tokenResponseError() {
-            server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400))
+        server.enqueue(jsonResponse(ERROR_RESPONSE).setResponseCode(400))
         assertThrows<OAuth2ClientException> {
             client.getTokenResponse(ClientCredentialsGrantRequest(clientProperties(tokenEndpointUrl, CLIENT_CREDENTIALS)))
         }

@@ -27,7 +27,7 @@ class ClientAssertion(private val tokenEndpointUrl : URI?, private val clientId 
                 .expirationTime(Date.from(plusSeconds(expiryInSeconds.toLong())))
                 .issuer(clientId)
                 .subject(clientId)
-                .claim(JWT_ID, UUID.randomUUID().toString())
+                .claim(JWT_ID, "${UUID.randomUUID()}")
                 .notBeforeTime(Date.from(this))
                 .issueTime(Date.from(this))
                 .build()).serialize()

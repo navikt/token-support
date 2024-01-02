@@ -4,5 +4,5 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenRespons
 
 interface OAuth2HttpClient {
 
-    fun post(oAuth2HttpRequest : OAuth2HttpRequest) : OAuth2AccessTokenResponse?
+    fun post(request : OAuth2HttpRequest) : OAuth2AccessTokenResponse?
 }
