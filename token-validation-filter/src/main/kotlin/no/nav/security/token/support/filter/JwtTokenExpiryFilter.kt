@@ -1,14 +1,13 @@
 package no.nav.security.token.support.filter
 
+import com.nimbusds.jwt.JWTClaimNames.EXPIRATION_TIME
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.FilterConfig
-import jakarta.servlet.ServletException
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.io.IOException
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit.MINUTES
@@ -43,7 +42,7 @@ class JwtTokenExpiryFilter(private val contextHolder : TokenValidationContextHol
     override fun init(filterConfig : FilterConfig) {}
 
     private fun addHeaderOnTokenExpiryThreshold(response : HttpServletResponse) {
-        val tokenValidationContext = contextHolder.tokenValidationContext
+        val tokenValidationContext = contextHolder.getTokenValidationContext()
         LOG.debug("Getting TokenValidationContext: {}", tokenValidationContext)
         if (tokenValidationContext != null) {
             LOG.debug("Getting issuers from validationcontext {}", tokenValidationContext.issuers)
@@ -61,7 +60,7 @@ class JwtTokenExpiryFilter(private val contextHolder : TokenValidationContextHol
     }
 
     private fun tokenExpiresBeforeThreshold(jwtTokenClaims : JwtTokenClaims) : Boolean {
-        val expiryDate = jwtTokenClaims["exp"] as Date
+        val expiryDate = jwtTokenClaims.get(EXPIRATION_TIME) as Date
         val expiry = LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault())
         val minutesUntilExpiry = LocalDateTime.now().until(expiry, MINUTES)
         LOG.debug("Checking token at time {} with expirationTime {} for how many minutes until expiry: {}",

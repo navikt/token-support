@@ -1,74 +1,43 @@
 package no.nav.security.token.support.client.core.http
 
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import java.io.IOException
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import java.net.URLEncoder
-import java.net.http.HttpClient
+import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpRequest.BodyPublishers
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
-import java.nio.charset.StandardCharsets
-import java.util.Optional
-import java.util.function.Consumer
-import java.util.stream.Collectors
-import kotlin.collections.Map.Entry
-import org.slf4j.LoggerFactory
+import java.nio.charset.StandardCharsets.UTF_8
+import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 
 class SimpleOAuth2HttpClient : OAuth2HttpClient {
 
-    private val objectMapper : ObjectMapper
+    override fun post(request: OAuth2HttpRequest) =
+        HttpRequest.newBuilder().apply {
+            configureRequest(request)
+        }.build()
+            .sendRequest()
+            .processResponse()
 
-    init {
-        objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
-            .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+    private fun HttpRequest.Builder.configureRequest(request: OAuth2HttpRequest): HttpRequest.Builder {
+        request.oAuth2HttpHeaders?.headers?.forEach { (key, values) -> values.forEach { header(key, it) } }
+        uri(request.tokenEndpointUrl)
+        POST(BodyPublishers.ofString(request.formParameters.toUrlEncodedString()))
+        return this
     }
 
-    override fun post(oAuth2HttpRequest : OAuth2HttpRequest) : OAuth2AccessTokenResponse? {
-        return try {
-            val requestBuilder = HttpRequest.newBuilder()
-            oAuth2HttpRequest.oAuth2HttpHeaders!!
-                .headers.forEach { (key : String?, value : List<String?>) ->
-                    value.forEach(
-                        Consumer { v : String? -> requestBuilder.header(key, v) })
-                }
-            val body = oAuth2HttpRequest.formParameters.entries.stream()
-                .map { (key, value) : Entry<String, String?> -> key + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8) }
-                .collect(Collectors.joining("&"))
-            val httpRequest = requestBuilder
-                .uri(oAuth2HttpRequest.tokenEndpointUrl)
-                .POST(BodyPublishers.ofString(body))
-                .build()
-            val response = HttpClient.newHttpClient().send(httpRequest, BodyHandlers.ofString())
-            objectMapper.readValue(bodyAsString(response), OAuth2AccessTokenResponse::class.java)
+    private fun HttpRequest.sendRequest() = newHttpClient().send(this, BodyHandlers.ofString())
+    private fun HttpResponse<String>.processResponse() =
+        if (this.statusCode() in 200..299) {
+            MAPPER.readValue<OAuth2AccessTokenResponse>(body())
+        } else {
+            throw OAuth2ClientException("Error response from token endpoint: ${this.statusCode()} ${this.body()}")
         }
-        catch (e : IOException) {
-            throw RuntimeException(e)
-        }
-        catch (e : InterruptedException) {
-            throw RuntimeException(e)
-        }
-    }
-
-    private fun bodyAsString(response : HttpResponse<String>?) : String {
-        if (response != null) {
-            log.debug("received response in client, body={}", response.body())
-            return Optional.of(response)
-                .filter { r : HttpResponse<String> -> r.statusCode() == 200 }
-                .map { obj : HttpResponse<String> -> obj.body() }
-                .orElseThrow {
-                    RuntimeException("received status code=" + response.statusCode()
-                        + " and response body=" + response.body() + " from authorization server.")
-                }
-        }
-        throw RuntimeException("response cannot be null.")
-    }
-
+    private fun Map<String, String>.toUrlEncodedString() = entries.joinToString("&") { (key, value) -> "$key=${URLEncoder.encode(value, UTF_8)}" }
     companion object {
-
-        private val log = LoggerFactory.getLogger(SimpleOAuth2HttpClient::class.java)
+        private val MAPPER = jacksonObjectMapper().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 }

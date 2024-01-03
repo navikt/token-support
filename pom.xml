@@ -33,7 +33,6 @@
         <module>token-validation-spring-test</module>
         <module>token-validation-jaxrs</module>
         <module>token-validation-spring-demo</module>
-        <module>token-validation-ktor</module>
         <module>token-validation-ktor-v2</module>
         <module>token-validation-ktor-demo</module>
         <module>token-client-spring</module>
@@ -42,6 +41,7 @@
         <module>token-client-core</module>
     </modules>
     <properties>
+        <kotlin.version>1.9.22</kotlin.version>
         <kotlin-coroutines.version>1.6.2</kotlin-coroutines.version>
         <doclint>none</doclint>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -55,11 +55,10 @@
         <spring-boot.version>3.2.1</spring-boot.version>
         <oauth2-oidc-sdk.version>11.9</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <rest-assured.version>5.4.0</rest-assured.version>
         <mockwebserver.version>4.12.0</mockwebserver.version>
         <caffeine.version>3.1.8</caffeine.version>
         <okhttp3.version>4.12.0</okhttp3.version>
-        <ktor.version>1.6.8</ktor.version>
+        <ktor.version>2.3.6</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>1.9.22</kotlin.version>
         <mock-oauth2-server.version>2.1.0</mock-oauth2-server.version>
@@ -67,7 +66,6 @@
         <kotest.version>5.8.0</kotest.version>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
     </properties>
-
     <scm>
         <url>https://github.com/navikt/token-support</url>
         <connection>scm:git:git@github.com:navikt/token-support.git</connection>
@@ -75,43 +73,8 @@
         <tag>HEAD</tag>
     </scm>
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.3</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.11</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.12.1</version>
-                    <configuration>
-                        <compilerArgs>
-                            <arg>-parameters</arg>
-                        </compilerArgs>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
@@ -262,6 +225,13 @@
     </profiles>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-bom</artifactId>
+                <version>${kotlin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -430,6 +400,12 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito.kotlin</groupId>
+            <artifactId>mockito-kotlin</artifactId>
+            <version>5.2.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

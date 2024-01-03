@@ -25,7 +25,7 @@ with valid JWKS uris, and should work nicely together with the validation from [
 
 - For local use of your app there should now be RestController available in your app at <app-contextroot>**/local**
 
-    - providing the following endpoint: **/cookie** with query params as defined in: [MockLoginController.java](src/main/java/no/nav/security/token/support/spring/test/MockLoginController.java)
+    - providing the following endpoint: **/cookie** with query params as defined in: [MockLoginController.java](src/main/kotlin/no/nav/security/token/support/spring/test/MockLoginController.java)
       
       The query param `issuerId` must match the path after port in the `discoveryurl` - e.g. `issuer1` in `http://localhost:${mock-oauth2-server.port}/issuer1/.well-known/openid-configuration`  
 
@@ -37,7 +37,3 @@ See [token-validation-spring-demo](../token-validation-spring-demo) for usage sc
 For **JUnit** tests, your Spring application context should contain a bean of the type `MockOAuth2Server` which can be used to issue tokens and provides a JWKS endpoint for validation.
 * Usage: [DemoControllerTest.java](../token-validation-spring-demo/src/test/java/no/nav/security/token/support/demo/spring/rest/DemoControllerTest.java)
 * For detailed usage and features see the [mock-oauth2-server](https://github.com/navikt/mock-oauth2-server) documentation.
-
-
-
-

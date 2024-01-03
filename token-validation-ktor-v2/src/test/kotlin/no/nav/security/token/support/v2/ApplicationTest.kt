@@ -1,19 +1,22 @@
 package no.nav.security.token.support.v2
 
+import com.nimbusds.jwt.JWTClaimNames.AUDIENCE
+import com.nimbusds.jwt.JWTClaimNames.SUBJECT
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.testApplication
-import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.token.support.v2.testapp.module
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.slf4j.LoggerFactory
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.slf4j.LoggerFactory
+import no.nav.security.mock.oauth2.MockOAuth2Server
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.v2.testapp.module
 
 class ApplicationTest {
 
@@ -66,7 +69,7 @@ class ApplicationTest {
 
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = "unknown", subject = "testuser")
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -82,7 +85,7 @@ class ApplicationTest {
 
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -99,9 +102,9 @@ class ApplicationTest {
         val response = client.get("/hello") {
             val jwt = server.anyToken(
                 server.issuerUrl(ISSUER_ID),
-                mapOf("aud" to ACCEPTED_AUDIENCE)
+                mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -110,7 +113,7 @@ class ApplicationTest {
     fun `token without sub should be accepted if configured as optional claim`() = testApplication {
         environment {
             config = doConfig().apply {
-                put("no.nav.security.jwt.issuers.0.validation.optional_claims", "sub")
+                put("no.nav.security.jwt.issuers.0.validation.optional_claims", SUBJECT)
             }
             module {
                 module()
@@ -120,9 +123,9 @@ class ApplicationTest {
         val response = client.get("/hello") {
             val jwt = server.anyToken(
                 server.issuerUrl(ISSUER_ID),
-                mapOf("aud" to ACCEPTED_AUDIENCE)
+                mapOf(AUDIENCE to ACCEPTED_AUDIENCE)
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -187,10 +190,7 @@ class ApplicationTest {
         }
 
         val response = client.get("/hello") {
-            val jwt = server.issueToken(
-                issuerId = ISSUER_ID,
-                subject = "testuser",
-                expiry = Duration.ofMinutes(30).toSeconds()
+            val jwt = server.issueToken(ISSUER_ID, "testuser", expiry = Duration.ofMinutes(30).toSeconds()
             )
             header("Cookie", "$idTokenCookieName=${jwt.serialize()}")
         }
@@ -209,7 +209,7 @@ class ApplicationTest {
 
         val response = client.get("/hello_person") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -229,7 +229,7 @@ class ApplicationTest {
                 subject = "testuser",
                 claims = mapOf("NAVident" to "X112233")
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -260,7 +260,7 @@ class ApplicationTest {
 
         val response = client.get("/hello") {
             val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -286,7 +286,7 @@ class ApplicationTest {
                     "groups" to listOf("group1", "group2")
                 )
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -309,7 +309,7 @@ class ApplicationTest {
                     "NAVident" to "X112233",
                 )
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.Unauthorized, response.status)
     }
@@ -333,7 +333,7 @@ class ApplicationTest {
                     "groups" to listOf("group1", "group2", "THEGROUP")
                 )
             )
-            header("Authorization", "Bearer ${jwt.serialize()}")
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
         }
         assertEquals(HttpStatusCode.OK, response.status)
     }
@@ -357,16 +357,12 @@ class ApplicationTest {
                         "groups" to listOf("group1", "group2", "THEGROUP")
                     )
                 )
-                header("Authorization", "Bearer ${jwt.serialize()}")
+                header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
             }
             assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
 
-    private fun doConfig(
-        acceptedIssuer: String = ISSUER_ID,
-        acceptedAudience: String = ACCEPTED_AUDIENCE,
-        hasCookieConfig: Boolean = true
-    ): MapApplicationConfig {
+    private fun doConfig(acceptedIssuer: String = ISSUER_ID, acceptedAudience: String = ACCEPTED_AUDIENCE, hasCookieConfig: Boolean = true): MapApplicationConfig {
         return MapApplicationConfig().apply {
             put("no.nav.security.jwt.expirythreshold", "5")
             put("no.nav.security.jwt.issuers.size", "1")
@@ -382,4 +378,3 @@ class ApplicationTest {
         }
     }
 }
-

@@ -1,7 +1,6 @@
 package no.nav.security.token.support.client.core.jwk
 
-import com.nimbusds.jose.jwk.JWKSet
-import com.nimbusds.jose.jwk.JWKSet.*
+import com.nimbusds.jose.jwk.JWKSet.load
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.RSAKey.Builder
 import com.nimbusds.jose.jwk.RSAKey.parse
@@ -12,16 +11,13 @@ import java.nio.file.Files.readString
 import java.nio.file.Path.of
 import java.security.KeyStore
 import java.security.MessageDigest.getInstance
-import org.slf4j.LoggerFactory
 
 object JwkFactory {
 
-    private val LOG = LoggerFactory.getLogger(JwkFactory::class.java)
     @JvmStatic
     fun fromJsonFile(filePath : String) =
         runCatching {
-            LOG.debug("Attempting to read JWK from path: {}", of(filePath).toAbsolutePath())
-            fromJson(readString(of(filePath), UTF_8))
+            fromJson(readString(of(filePath).toAbsolutePath(), UTF_8))
         }.getOrElse {
             throw JwkInvalidException(it)
         }
@@ -57,19 +53,16 @@ object JwkFactory {
         }
 
 
-    private fun getX509CertSHA1Thumbprint(rsaKey : RSAKey) : String? {
-        return runCatching {
-            rsaKey.parsedX509CertChain.stream()
-                .findFirst()
-                .orElse(null)?.let { createSHA1DigestBase64Url(it.encoded) }
-        }.getOrElse {
-            throw RuntimeException(it)
-        }
-    }
+    private fun getX509CertSHA1Thumbprint(rsaKey: RSAKey) =
+        runCatching {
+            rsaKey.parsedX509CertChain.firstOrNull()?.let { cert ->
+                createSHA1DigestBase64Url(cert.encoded)
+            }
+        }.getOrElse { throw RuntimeException(it) }
 
     private fun createSHA1DigestBase64Url(bytes : ByteArray) =
         runCatching {
-            encode(getInstance("SHA-1").digest(bytes)).toString()
+            "${encode(getInstance("SHA-1").digest(bytes))}"
         }.getOrElse {
             throw RuntimeException(it)
         }

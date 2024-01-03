@@ -1,11 +1,11 @@
 package no.nav.security.token.support.client.spring.oauth2
 
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.http.client.ClientHttpResponse
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 
 /**
  *
@@ -23,8 +23,9 @@ class OAuth2ClientRequestInterceptor(private val properties: ClientConfiguration
                                      private val service: OAuth2AccessTokenService,
                                      private val matcher: ClientConfigurationPropertiesMatcher) : ClientHttpRequestInterceptor {
     override fun intercept(req: HttpRequest, body: ByteArray, execution: ClientHttpRequestExecution): ClientHttpResponse {
-        matcher.findProperties(properties, req.uri).orElse(null)
-            ?.let { service.getAccessToken(it)?.accessToken?.let { it1 -> req.headers.setBearerAuth(it1) } }
+        matcher.findProperties(properties, req.uri)?.let {
+            service.getAccessToken(it)?.accessToken?.let { it1 -> req.headers.setBearerAuth(it1) }
+        }
         return execution.execute(req, body)
     }
 

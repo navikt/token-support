@@ -1,19 +1,19 @@
 package no.nav.security.token.support.client.spring.oauth2
-import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders
-import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
+import java.io.IOException
+import java.net.URI
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.MockitoAnnotations
-import org.springframework.boot.web.client.RestTemplateBuilder
-import java.io.IOException
-import java.net.URI
+import org.springframework.web.client.RestClient
+import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders
+import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 
 internal class DefaultOAuth2HttpClientTest {
     private lateinit var server: MockWebServer
-    private var tokenEndpointUrl: URI? = null
+    private lateinit var tokenEndpointUrl: URI
     private lateinit var client: DefaultOAuth2HttpClient
     @BeforeEach
     @Throws(IOException::class)
@@ -22,7 +22,7 @@ internal class DefaultOAuth2HttpClientTest {
         server = MockWebServer()
         server.start()
         tokenEndpointUrl = server.url("/oauth2/token").toUri()
-        client = DefaultOAuth2HttpClient(RestTemplateBuilder())
+        client = DefaultOAuth2HttpClient(RestClient.create())
     }
 
     @AfterEach
@@ -35,8 +35,7 @@ internal class DefaultOAuth2HttpClientTest {
     @Throws(InterruptedException::class)
     fun testPostAllHeadersAndFormParametersShouldBePresent() {
         server.enqueue(TestUtils.jsonResponse(TOKEN_RESPONSE))
-        val request = OAuth2HttpRequest.builder()
-            .tokenEndpointUrl(tokenEndpointUrl)
+        val request = OAuth2HttpRequest.builder(tokenEndpointUrl)
             .formParameter("param1", "value1")
             .formParameter("param2", "value2")
             .oAuth2HttpHeaders(
@@ -55,14 +54,14 @@ internal class DefaultOAuth2HttpClientTest {
     }
 
     companion object {
-        private const val TOKEN_RESPONSE = "{\n" +
-                "    \"token_type\": \"Bearer\",\n" +
-                "    \"scope\": \"scope1 scope2\",\n" +
-                "    \"expires_at\": 1568141495,\n" +
-                "    \"ext_expires_in\": 3599,\n" +
-                "    \"expires_in\": 3599,\n" +
-                "    \"access_token\": \"<base64URL>\",\n" +
-                "    \"refresh_token\": \"<base64URL>\"\n" +
-                "}\n"
+        private const val TOKEN_RESPONSE = """{
+           "token_type": "Bearer",
+           "scope": "scope1 scope2",
+           "expires_at": 1568141495,
+           "ext_expires_in": 3599,
+           "expires_in": 3599,
+           "access_token": "<base64URL>",
+           "refresh_token": "<base64URL>"
+       }"""
     }
 }

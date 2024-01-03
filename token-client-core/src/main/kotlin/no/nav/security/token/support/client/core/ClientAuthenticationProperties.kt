@@ -1,4 +1,4 @@
-package no.nav.security.token.support.client.core;
+package no.nav.security.token.support.client.core
 
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
@@ -43,5 +43,5 @@ class ClientAuthenticationProperties @JvmOverloads constructor(val clientId: Str
 class ClientAuthenticationPropertiesBuilder @JvmOverloads constructor(private val clientId: String, private val clientAuthMethod: ClientAuthenticationMethod, private var clientSecret: String? = null, private var clientJwk: String? = null) {
     fun  clientSecret(clientSecret: String)= this.also { it.clientSecret = clientSecret }
     fun  clientJwk(clientJwk: String)= this.also { it.clientJwk = clientJwk }
-    fun  build() = ClientAuthenticationProperties(clientId, clientAuthMethod, clientSecret, clientJwk);
+    fun  build() = ClientAuthenticationProperties(clientId, clientAuthMethod, clientSecret, clientJwk)
 }

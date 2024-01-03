@@ -1,53 +1,42 @@
 package com.example
 
-import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
-import io.ktor.http.ContentType
-import io.ktor.response.respondText
-import io.ktor.routing.get
-import io.ktor.routing.routing
-import no.nav.security.token.support.ktor.RequiredClaims
-import no.nav.security.token.support.ktor.TokenValidationContextPrincipal
-import no.nav.security.token.support.ktor.tokenValidationSupport
+import com.nimbusds.jose.util.DefaultResourceRetriever
+import io.ktor.http.ContentType.Text.Html
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.authentication
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
+import no.nav.security.token.support.v2.RequiredClaims
+import no.nav.security.token.support.v2.TokenValidationContextPrincipal
+import no.nav.security.token.support.v2.tokenValidationSupport
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
 
-    val config = this.environment.config
-    val acceptedIssuer = config.property("no.nav.security.jwt.issuers.0.issuer_name").getString()
+    val acceptedIssuer = environment.config.property("no.nav.security.jwt.issuers.0.issuer_name").getString()
 
     install(Authentication) {
         // Default validation
-        tokenValidationSupport(config = config)
+        tokenValidationSupport(config = this@module.environment.config, resourceRetriever = DefaultResourceRetriever())
 
         // Only allow token with specific claim and claim value
-        tokenValidationSupport(
-            name = "ValidUser", config = config, requiredClaims = RequiredClaims(
-                issuer = acceptedIssuer,
-                claimMap = arrayOf("NAVident=X12345")
-            )
-        )
+        tokenValidationSupport("ValidUser", this@module.environment.config, RequiredClaims(acceptedIssuer, arrayOf("NAVident=X12345")))
 
         // Only allow token that contains at least one matching claim and claim value
-        tokenValidationSupport(
-            name = "ValidUsers", config = config, requiredClaims = RequiredClaims(
-                issuer = acceptedIssuer,
-                claimMap = arrayOf("NAVident=X12345", "NAVident=Z12345"),
-                combineWithOr = true
-            )
-        )
+        tokenValidationSupport("ValidUsers", this@module.environment.config, RequiredClaims(acceptedIssuer, arrayOf("NAVident=X12345", "NAVident=Z12345"), true))
 
         // Only allow token that has a claim "scope" with space-separated value, where at least one scope must match
-        tokenValidationSupport(name = "ValidScope", config = config, additionalValidation = { ctx ->
-            val scopes = ctx.getClaims(acceptedIssuer)
-                ?.getStringClaim("scope")
+        tokenValidationSupport(name = "ValidScope",  this@module.environment.config, additionalValidation = {
+            val scopes = it.getClaims(acceptedIssuer)
+                .getStringClaim("scope")
                 ?.split(" ")
                 ?: emptyList()
 
@@ -59,39 +48,39 @@ fun Application.module() {
     routing {
         authenticate {
             get("/hello") {
-                call.respondText("<b>Authenticated hello</b>", ContentType.Text.Html)
+                call.respondText("<b>Authenticated hello</b>", Html)
             }
         }
 
         authenticate("ValidUser") {
             get("/user") {
                 val user = call.getClaim(acceptedIssuer, "NAVident")
-                call.respondText("<b>Authenticated hello. NAVident: $user</b>", ContentType.Text.Html)
+                call.respondText("<b>Authenticated hello. NAVident: $user</b>", Html)
             }
         }
 
         authenticate("ValidUsers") {
             get("/users") {
                 val user = call.getClaim(acceptedIssuer, "NAVident")
-                call.respondText("<b>Authenticated hello. NAVident: $user</b>", ContentType.Text.Html)
+                call.respondText("<b>Authenticated hello. NAVident: $user</b>", Html)
             }
         }
 
         authenticate("ValidScope") {
             get("/scope") {
                 val scope = call.getClaim(acceptedIssuer, "scope")
-                call.respondText("<b>Authenticated hello. Scope: $scope</b>", ContentType.Text.Html)
+                call.respondText("<b>Authenticated hello. Scope: $scope</b>", Html)
             }
         }
 
         get("/openhello") {
-            call.respondText("<b>Hello in the open</b>", ContentType.Text.Html)
+            call.respondText("<b>Hello in the open</b>", Html)
         }
     }
 }
 
-private fun ApplicationCall.getClaim(issuer: String, name: String): String? =
-    this.authentication.principal<TokenValidationContextPrincipal>()
+private fun ApplicationCall.getClaim(issuer: String, name: String) =
+    authentication.principal<TokenValidationContextPrincipal>()
         ?.context
         ?.getClaims(issuer)
         ?.getStringClaim(name)

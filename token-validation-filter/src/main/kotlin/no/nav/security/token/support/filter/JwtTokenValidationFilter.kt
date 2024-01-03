@@ -28,12 +28,12 @@ open class JwtTokenValidationFilter(private val jwtTokenValidationHandler : JwtT
     override fun init(filterConfig : FilterConfig) {}
 
     private fun doTokenValidation(request : HttpServletRequest, response : HttpServletResponse, chain : FilterChain) {
-        contextHolder.tokenValidationContext = jwtTokenValidationHandler.getValidatedTokens(fromHttpServletRequest(request))
+        contextHolder.setTokenValidationContext(jwtTokenValidationHandler.getValidatedTokens(fromHttpServletRequest(request)))
         try {
             chain.doFilter(request, response)
         }
         finally {
-            contextHolder.tokenValidationContext = null
+            contextHolder.setTokenValidationContext(null)
         }
     }
 
@@ -42,7 +42,7 @@ open class JwtTokenValidationFilter(private val jwtTokenValidationHandler : JwtT
         @JvmStatic
         fun fromHttpServletRequest(request: HttpServletRequest) = object : HttpRequest {
             override fun getHeader(headerName: String) = request.getHeader(headerName)
-            override fun getCookies() = request.cookies?.map {
+            override fun getCookies() : Array<NameValue>? = request.cookies?.map {
                 object : NameValue {
                     override fun getName() = it.name
                     override fun getValue() = it.value

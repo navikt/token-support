@@ -1,22 +1,12 @@
 package no.nav.security.token.support.spring
 
+import com.nimbusds.jose.util.ResourceRetriever
 import jakarta.servlet.DispatcherType.ASYNC
 import jakarta.servlet.DispatcherType.FORWARD
 import jakarta.servlet.DispatcherType.REQUEST
 import jakarta.servlet.Filter
-import no.nav.security.token.support.core.JwtTokenConstants.BEARER_TOKEN_DONT_PROPAGATE_ENV_PROPERTY
-import no.nav.security.token.support.core.JwtTokenConstants.EXPIRY_THRESHOLD_ENV_PROPERTY
-import no.nav.security.token.support.core.JwtTokenConstants.TOKEN_VALIDATION_FILTER_ORDER_PROPERTY
-import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
-import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
-import no.nav.security.token.support.filter.JwtTokenExpiryFilter
-import no.nav.security.token.support.filter.JwtTokenValidationFilter
-import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
-import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor
-import no.nav.security.token.support.spring.validation.interceptor.JwtTokenHandlerInterceptor
-import no.nav.security.token.support.spring.validation.interceptor.SpringJwtTokenAnnotationHandler
+import java.net.URL
+import java.util.EnumSet
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -33,8 +23,19 @@ import org.springframework.core.type.AnnotationMetadata
 import org.springframework.web.context.request.RequestContextListener
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import java.net.URL
-import java.util.*
+import no.nav.security.token.support.core.JwtTokenConstants.BEARER_TOKEN_DONT_PROPAGATE_ENV_PROPERTY
+import no.nav.security.token.support.core.JwtTokenConstants.EXPIRY_THRESHOLD_ENV_PROPERTY
+import no.nav.security.token.support.core.JwtTokenConstants.TOKEN_VALIDATION_FILTER_ORDER_PROPERTY
+import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
+import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
+import no.nav.security.token.support.filter.JwtTokenExpiryFilter
+import no.nav.security.token.support.filter.JwtTokenValidationFilter
+import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
+import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor
+import no.nav.security.token.support.spring.validation.interceptor.JwtTokenHandlerInterceptor
+import no.nav.security.token.support.spring.validation.interceptor.SpringJwtTokenAnnotationHandler
 
 @Configuration
 @EnableConfigurationProperties(MultiIssuerProperties::class)
@@ -55,7 +56,7 @@ class EnableJwtTokenValidationConfiguration (private val env: Environment) : Web
     fun oidcResourceRetriever() = ProxyAwareResourceRetriever(configuredProxy(), env.getProperty("https.plaintext", Boolean::class.java, false))
 
     @Bean
-    fun multiIssuerConfiguration(issuerProperties: MultiIssuerProperties, resourceRetriever: ProxyAwareResourceRetriever?) = MultiIssuerConfiguration(issuerProperties.issuer, resourceRetriever)
+    fun multiIssuerConfiguration(issuerProperties: MultiIssuerProperties, resourceRetriever: ResourceRetriever) = MultiIssuerConfiguration(issuerProperties.issuer, resourceRetriever)
 
     @Bean
     fun oidcRequestContextHolder() = SpringTokenValidationContextHolder()
@@ -64,11 +65,11 @@ class EnableJwtTokenValidationConfiguration (private val env: Environment) : Web
     fun requestContextListener() = RequestContextListener()
 
     @Bean
-    fun tokenValidationFilter(config: MultiIssuerConfiguration?, h: TokenValidationContextHolder) = JwtTokenValidationFilter(JwtTokenValidationHandler(config), h)
+    fun tokenValidationFilter(config: MultiIssuerConfiguration, h: TokenValidationContextHolder) = JwtTokenValidationFilter(JwtTokenValidationHandler(config), h)
 
     @Bean
     @ConditionalOnProperty(EXPIRY_THRESHOLD_ENV_PROPERTY)
-    fun expiryFilter(h: TokenValidationContextHolder,@Value("\${$EXPIRY_THRESHOLD_ENV_PROPERTY}") threshold: Long) = JwtTokenExpiryFilter(h,threshold)
+    fun expiryFilter(h: TokenValidationContextHolder, @Value("\${$EXPIRY_THRESHOLD_ENV_PROPERTY}") threshold: Long) = JwtTokenExpiryFilter(h,threshold)
 
     @Bean
     @ConditionalOnProperty(BEARER_TOKEN_DONT_PROPAGATE_ENV_PROPERTY, matchIfMissing = true)

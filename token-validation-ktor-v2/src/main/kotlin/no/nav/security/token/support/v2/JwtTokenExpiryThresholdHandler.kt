@@ -1,26 +1,27 @@
 package no.nav.security.token.support.v2
 
+import com.nimbusds.jwt.JWTClaimNames.EXPIRATION_TIME
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.header
-import no.nav.security.token.support.core.JwtTokenConstants
+import java.time.LocalDateTime.now
+import java.time.LocalDateTime.ofInstant
+import java.time.ZoneId.systemDefault
+import java.time.temporal.ChronoUnit.*
+import java.util.Date
+import org.slf4j.LoggerFactory
+import no.nav.security.token.support.core.JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.jwt.JwtTokenClaims
-import org.slf4j.LoggerFactory
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
-import java.util.*
 
 class JwtTokenExpiryThresholdHandler(private val expiryThreshold: Int) {
 
     private val log = LoggerFactory.getLogger(JwtTokenExpiryThresholdHandler::class.java.name)
 
-    fun addHeaderOnTokenExpiryThreshold(call: ApplicationCall, tokenValidationContext: TokenValidationContext) {
+    fun addHeaderOnTokenExpiryThreshold(call: ApplicationCall, ctx: TokenValidationContext) {
         if(expiryThreshold > 0) {
-            tokenValidationContext.issuers.forEach { issuer ->
-                val jwtTokenClaims = tokenValidationContext.getClaims(issuer)
-                if (tokenExpiresBeforeThreshold(jwtTokenClaims)) {
-                    call.response.header(JwtTokenConstants.TOKEN_EXPIRES_SOON_HEADER, "true")
+            ctx.issuers.forEach {
+                if (tokenExpiresBeforeThreshold(ctx.getClaims(it))) {
+                    call.response.header(TOKEN_EXPIRES_SOON_HEADER, "true")
                 } else {
                     log.debug("Token is still within expiry threshold.")
                 }
@@ -31,11 +32,11 @@ class JwtTokenExpiryThresholdHandler(private val expiryThreshold: Int) {
     }
 
     private fun tokenExpiresBeforeThreshold(jwtTokenClaims: JwtTokenClaims): Boolean {
-        val expiryDate = jwtTokenClaims["exp"] as Date
-        val expiry = LocalDateTime.ofInstant(expiryDate.toInstant(), ZoneId.systemDefault())
-        val minutesUntilExpiry = LocalDateTime.now().until(expiry, ChronoUnit.MINUTES)
+        val expiryDate = jwtTokenClaims.get(EXPIRATION_TIME) as Date
+        val expiry = ofInstant(expiryDate.toInstant(), systemDefault())
+        val minutesUntilExpiry = now().until(expiry, MINUTES)
         log.debug("Checking token at time {} with expirationTime {} for how many minutes until expiry: {}",
-            LocalDateTime.now(), expiry, minutesUntilExpiry)
+            now(), expiry, minutesUntilExpiry)
         if (minutesUntilExpiry <= expiryThreshold) {
             log.debug("There are {} minutes until expiry which is equal to or less than the configured threshold {}",
                 minutesUntilExpiry, expiryThreshold)

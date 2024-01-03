@@ -2,65 +2,65 @@ package no.nav.security.token.support.spring.validation.interceptor
 
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
+import java.util.concurrent.ConcurrentHashMap
 import net.minidev.json.JSONArray
-import no.nav.security.token.support.core.api.Protected
-import no.nav.security.token.support.core.api.ProtectedWithClaims
-import no.nav.security.token.support.core.api.Unprotected
-import no.nav.security.token.support.core.context.TokenValidationContext
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import no.nav.security.token.support.core.jwt.JwtToken
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.core.annotation.AnnotationAttributes.fromMap
 import org.springframework.http.HttpStatus.NOT_IMPLEMENTED
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.server.ResponseStatusException
-import java.util.concurrent.ConcurrentHashMap
-import no.nav.security.token.support.core.utils.Cluster
+import no.nav.security.token.support.core.api.Protected
+import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.api.Unprotected
+import no.nav.security.token.support.core.context.TokenValidationContext
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import no.nav.security.token.support.core.jwt.JwtToken
+import no.nav.security.token.support.core.utils.Cluster.*
 
 internal class JwtTokenHandlerInterceptorTest {
     private val contextHolder  = createContextHolder()
-    private lateinit var interceptor: JwtTokenHandlerInterceptor
+    private  var interceptor = JwtTokenHandlerInterceptor(fromMap(HashMap<String, Any>().apply {
+        put("ignore", arrayOf("org.springframework", IgnoreClass::class.java.name))
+    }), SpringJwtTokenAnnotationHandler(contextHolder))
     private val request: MockHttpServletRequest = MockHttpServletRequest()
     private val response: MockHttpServletResponse = MockHttpServletResponse()
 
-    @BeforeEach
-    fun setup() {
-        val annotationAttributesMap: MutableMap<String, Any> = HashMap()
-        annotationAttributesMap["ignore"] = arrayOf("org.springframework", IgnoreClass::class.java.name)
-        interceptor = JwtTokenHandlerInterceptor(fromMap(annotationAttributesMap), SpringJwtTokenAnnotationHandler(contextHolder))
+
+    @Test
+    fun classIsMarkedAsIgnore()  {
+        assertTrue(interceptor.preHandle(request, response, handlerMethod(IgnoreClass(), "test")))
+    }
+
+
+    @Test
+    fun notAnnotatedShouldThrowException() {
+        assertThatExceptionOfType(ResponseStatusException::class.java).isThrownBy {
+            interceptor.preHandle(request, response, handlerMethod(NotAnnotatedClass(), "test"))
+        }.withMessageContaining("$NOT_IMPLEMENTED")
     }
 
     @Test
-    fun classIsMarkedAsIgnore() = assertTrue(interceptor.preHandle(request, response, handlerMethod(IgnoreClass(), "test")))
-
-
-    @Test
-    fun notAnnotatedShouldThrowException() =
-        assertThatExceptionOfType(ResponseStatusException::class.java).isThrownBy {
-            interceptor.preHandle(request, response, handlerMethod(NotAnnotatedClass(), "test"))
-        }.withMessageContaining(NOT_IMPLEMENTED.toString())
-
-    @Test
-    fun methodIsUnprotectedAccessShouldBeAllowed() = assertTrue(interceptor.preHandle(request, response, handlerMethod(UnprotectedClass(), "test")))
+    fun methodIsUnprotectedAccessShouldBeAllowed() {
+        assertTrue(interceptor.preHandle(request, response, handlerMethod(UnprotectedClass(), "test")))
+    }
 
 
     @Test
     fun methodShouldBeProtected() {
         val handlerMethod = handlerMethod(ProtectedClass(), "test")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
     @Test
     fun methodExcludedShouldNotThrow() {
         val handlerMethod = handlerMethod(ProtectedClass(), "test")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
@@ -68,18 +68,20 @@ internal class JwtTokenHandlerInterceptorTest {
     @Test
     fun methodShouldBeProtectedOnUnprotectedClass() {
         val handlerMethod = handlerMethod(UnprotectedClassProtectedMethod(), "protectedMethod")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
 
     @Test
-    fun methodShouldBeUnprotectedOnProtectedClass() = assertTrue(interceptor.preHandle(request, response, handlerMethod(ProtectedClassUnprotectedMethod(), "unprotectedMethod")))
+    fun methodShouldBeUnprotectedOnProtectedClass() {
+        assertTrue(interceptor.preHandle(request, response, handlerMethod(ProtectedClassUnprotectedMethod(), "unprotectedMethod")))
+    }
 
     @Test
     fun methodShouldBeProtectedWithClaims() {
         val handlerMethod = handlerMethod(ProtectedClassProtectedWithClaimsMethod(), "protectedMethod")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
@@ -93,14 +95,14 @@ internal class JwtTokenHandlerInterceptorTest {
     @Test
     fun methodShouldBeProtectedOnClassProtectedWithClaims() {
         val handlerMethod = handlerMethod(ProtectedWithClaimsClassProtectedMethod(), "protectedMethod")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
     @Test
     fun methodShouldBeProtectedOnClassProtectedWithClaimsButExcluded() {
         val handlerMethod = handlerMethod(ProtectedWithClaimsCButExcludedClassProtectedMethod(), "protectedMethod")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
@@ -117,7 +119,7 @@ internal class JwtTokenHandlerInterceptorTest {
     @Test
     fun methodShouldBeProtectedOnUnprotectedClassMeta() {
         val handlerMethod = handlerMethod(UnprotectedClassProtectedMethodMeta(), "protectedMethod")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
@@ -129,7 +131,7 @@ internal class JwtTokenHandlerInterceptorTest {
     @Test
     fun methodShouldBeProtectedOnProtectedSuperClassMeta() {
         val handlerMethod = handlerMethod(ProtectedSubClassMeta(), "test")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
@@ -137,7 +139,7 @@ internal class JwtTokenHandlerInterceptorTest {
     @Test
     fun unprotectedMetaClassProtectedMethodMeta() {
         val handlerMethod = handlerMethod(UnprotectedClassProtectedMethodMeta(), "protectedMethod")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
@@ -145,13 +147,13 @@ internal class JwtTokenHandlerInterceptorTest {
     @Test
     fun methodShouldBeProtectedOnClassProtectedWithClaimsMeta() {
         val handlerMethod = handlerMethod(ProtectedWithClaimsClassProtectedMethodMeta(), "protectedMethod")
-        assertThrows(JwtTokenUnauthorizedException::class.java) { interceptor.preHandle(request, response, handlerMethod) }
+        assertThrows<JwtTokenUnauthorizedException> { interceptor.preHandle(request, response, handlerMethod) }
         setupValidOidcContext()
         assertTrue(interceptor.preHandle(request, response, handlerMethod))
     }
 
     private fun setupValidOidcContext() {
-        contextHolder.tokenValidationContext = createOidcValidationContext("issuer1", createJwtToken("aclaim", "value"))
+        contextHolder.setTokenValidationContext(createOidcValidationContext("issuer1", createJwtToken("aclaim", "value")))
     }
 
     private inner class IgnoreClass {
@@ -195,7 +197,7 @@ internal class JwtTokenHandlerInterceptorTest {
         @ProtectedWithClaims(issuer = "issuer1")
         fun protectedMethod() {
         }
-        @ProtectedWithClaims(issuer = "issuer1", excludedClusters = [Cluster.LOCAL])
+        @ProtectedWithClaims(issuer = "issuer1", excludedClusters = [LOCAL])
         fun protectedExcludedMethod() {
         }
 
@@ -218,7 +220,7 @@ internal class JwtTokenHandlerInterceptorTest {
 
         fun protectedWithClaimsMethod() {}
     }
-    @ProtectedWithClaims(issuer = "issuer1",excludedClusters = [Cluster.LOCAL])
+    @ProtectedWithClaims(issuer = "issuer1",excludedClusters = [LOCAL])
     private inner class ProtectedWithClaimsCButExcludedClassProtectedMethod {
         @Protected
         fun protectedMethod() {
@@ -277,11 +279,10 @@ internal class JwtTokenHandlerInterceptorTest {
     }
 
     companion object {
-        private fun createOidcValidationContext(issuerShortName: String, jwtToken: JwtToken): TokenValidationContext {
-            val map: MutableMap<String, JwtToken> = ConcurrentHashMap()
-            map[issuerShortName] = jwtToken
-            return TokenValidationContext(map)
-        }
+        private fun createOidcValidationContext(issuerShortName: String, jwtToken: JwtToken) =
+            TokenValidationContext(ConcurrentHashMap<String, JwtToken>().apply {
+                put(issuerShortName, jwtToken)
+            })
 
         private fun createJwtToken(claimName: String, claimValue: String): JwtToken {
             val groupsValues = JSONArray()
@@ -304,8 +305,8 @@ internal class JwtTokenHandlerInterceptorTest {
                     return validationContext
                 }
 
-                override fun setTokenValidationContext(tokenValidationContext: TokenValidationContext) {
-                    validationContext = tokenValidationContext
+                override fun setTokenValidationContext(tokenValidationContext: TokenValidationContext?) {
+                    validationContext = tokenValidationContext?: TokenValidationContext(emptyMap())
                 }
             }
         }

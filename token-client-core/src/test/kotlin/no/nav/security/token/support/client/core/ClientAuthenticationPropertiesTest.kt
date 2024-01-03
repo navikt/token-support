@@ -1,37 +1,27 @@
 package no.nav.security.token.support.client.core
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
-import org.assertj.core.api.Assertions
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_JWT
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.NONE
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.SELF_SIGNED_TLS_CLIENT_AUTH
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.TLS_CLIENT_AUTH
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 
 internal class ClientAuthenticationPropertiesTest {
 
     @Test
     fun invalidAuthenticationProperties() {
-        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java)
-            .isThrownBy { instanceWith(ClientAuthenticationMethod.TLS_CLIENT_AUTH) }
-        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java)
-            .isThrownBy { instanceWith(ClientAuthenticationMethod.SELF_SIGNED_TLS_CLIENT_AUTH) }
-        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java)
-            .isThrownBy { instanceWith(ClientAuthenticationMethod.CLIENT_SECRET_JWT) }
-        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java)
-            .isThrownBy { instanceWith(ClientAuthenticationMethod.NONE) }
-        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java)
-            .isThrownBy {
-                builder("client1", ClientAuthenticationMethod.NONE)
-                    .build()
-            }
+        assertThrows<IllegalArgumentException> { instanceWith(TLS_CLIENT_AUTH) }
+        assertThrows<IllegalArgumentException> { instanceWith(SELF_SIGNED_TLS_CLIENT_AUTH) }
+        assertThrows<IllegalArgumentException> { instanceWith(CLIENT_SECRET_JWT) }
+        assertThrows<IllegalArgumentException> { instanceWith(NONE) }
+        assertThrows<IllegalArgumentException> {  builder("client1", NONE).build() }
     }
 
-    companion object {
+    private fun instanceWith(clientAuthenticationMethod : ClientAuthenticationMethod) =
+        ClientAuthenticationProperties("client", clientAuthenticationMethod, "secret",
+            null)
 
-        private fun instanceWith(clientAuthenticationMethod : ClientAuthenticationMethod) {
-            ClientAuthenticationProperties(
-                "client",
-                clientAuthenticationMethod,
-                "secret",
-                null)
-        }
-    }
 }

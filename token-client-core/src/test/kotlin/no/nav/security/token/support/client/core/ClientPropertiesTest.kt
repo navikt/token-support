@@ -1,13 +1,14 @@
 package no.nav.security.token.support.client.core
 
 import com.nimbusds.oauth2.sdk.GrantType
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
-import java.io.IOException
-import java.net.URI
-import java.util.function.Consumer
-import okhttp3.mockwebserver.MockWebServer
-import org.junit.jupiter.api.Assertions
+import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
+import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
+import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import no.nav.security.token.support.client.core.ClientProperties.ClientPropertiesBuilder
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 import no.nav.security.token.support.client.core.TestUtils.jsonResponse
 import no.nav.security.token.support.client.core.TestUtils.withMockServer
@@ -24,71 +25,48 @@ internal class ClientPropertiesTest {
             "token_endpoint_auth_signing_alg_values_supported" : [ "RS256" ],
             "subject_types_supported" : [ "public" ]
           }
-          
           """.trimIndent()
 
     @Test
     fun validGrantTypes() {
-        Assertions.assertNotNull(clientPropertiesFromGrantType(GrantType.JWT_BEARER))
-        Assertions.assertNotNull(clientPropertiesFromGrantType(GrantType.CLIENT_CREDENTIALS))
-        Assertions.assertNotNull(clientPropertiesFromGrantType(GrantType.TOKEN_EXCHANGE))
+        assertNotNull(clientPropertiesFromGrantType(JWT_BEARER))
+        assertNotNull(clientPropertiesFromGrantType(CLIENT_CREDENTIALS))
+        assertNotNull(clientPropertiesFromGrantType(TOKEN_EXCHANGE))
     }
 
     @Test
-    @Throws(IOException::class)
     fun ifWellKnownUrlIsNotNullShouldRetrieveMetadataAndSetTokenEndpoint() {
-        withMockServer(
-            Consumer { s : MockWebServer? ->
-                s!!.enqueue(jsonResponse(wellKnownJson))
-                Assertions.assertNotNull(clientPropertiesFromWellKnown(s
-                    .url("/well-known").toUri()).tokenEndpointUrl)
-            }
-                      )
+        withMockServer {
+            it.enqueue(jsonResponse(wellKnownJson))
+            assertNotNull(clientPropertiesFromWellKnown(it.url("/well-known").toString()).tokenEndpointUrl)
+        }
     }
 
     @Test
     fun incorrectWellKnownUrlShouldThrowException() {
-        org.assertj.core.api.Assertions.assertThatExceptionOfType(OAuth2ClientException::class.java)
-            .isThrownBy { clientPropertiesFromWellKnown(URI.create("http://localhost:1234/notfound")) }
+        assertThrows<OAuth2ClientException> { clientPropertiesFromWellKnown("http://localhost:1234/notfound")}
     }
 
-    companion object {
 
-        private fun clientPropertiesFromWellKnown(wellKnownUrl : URI) : ClientProperties {
-            return ClientProperties(
-                null,
-                wellKnownUrl,
-                GrantType.CLIENT_CREDENTIALS, listOf("scope1", "scope2"),
-                clientAuth(),
-                null,
-                tokenExchange()
-                                   )
-        }
+    private fun clientPropertiesFromWellKnown(wellKnownUrl : String) =
+        ClientPropertiesBuilder(CLIENT_CREDENTIALS,clientAuth())
+            .wellKnownUrl(wellKnownUrl)
+            .scopes("scope1", "scope2")
+            .tokenExchange(tokenExchange())
+            .build()
 
-        private fun clientAuth() : ClientAuthenticationProperties {
-            return ClientAuthenticationProperties(
-                "client",
-                ClientAuthenticationMethod.CLIENT_SECRET_BASIC,
-                "secret",
-                null)
-        }
+    private fun clientPropertiesFromGrantType(grantType : GrantType) =
+        ClientPropertiesBuilder(grantType, clientAuth())
+            .tokenEndpointUrl("http://token")
+            .scopes("scope1", "scope2")
+            .tokenExchange(tokenExchange())
+            .build()
 
-        private fun tokenExchange() : TokenExchangeProperties {
-            return TokenExchangeProperties(
-                "aud1",
-                null
-                                          )
-        }
+    private fun clientAuth() =
+        ClientAuthenticationPropertiesBuilder("client",CLIENT_SECRET_BASIC)
+            .clientSecret("secret")
+            .build()
+    private fun tokenExchange() = TokenExchangeProperties("aud1")
 
-        private fun clientPropertiesFromGrantType(grantType : GrantType) : ClientProperties {
-            return ClientProperties(
-                URI.create("http://token"),
-                null,
-                grantType, listOf("scope1", "scope2"),
-                clientAuth(),
-                null,
-                tokenExchange()
-                                   )
-        }
-    }
+
 }
