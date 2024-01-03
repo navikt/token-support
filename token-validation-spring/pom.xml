@@ -8,6 +8,9 @@
     </parent>
     <artifactId>token-validation-spring</artifactId>
     <name>token-validation-spring</name>
+    <properties>
+        <kotlin.version>1.9.22</kotlin.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
