@@ -17,7 +17,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNAUTHORIZED
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -46,7 +45,6 @@ private const val PROP = "no.nav.security.jwt.dont-propagate-bearertoken"
 
 @WebMvcTest(controllers = [AProtectedRestController::class])
 @ContextConfiguration(classes = [ProtectedApplication::class, ProtectedApplicationConfig::class])
-@ActiveProfiles("test")
 internal class ProtectedRestControllerIntegrationTest {
     @Autowired
     private lateinit var ctx: WebApplicationContext
@@ -56,6 +54,7 @@ internal class ProtectedRestControllerIntegrationTest {
 
     @Autowired
     private lateinit var mockOAuth2Server: MockOAuth2Server
+
 
     @Test
     fun registerInterceptorDefault() {
@@ -78,13 +77,17 @@ internal class ProtectedRestControllerIntegrationTest {
     @Test
     fun unprotectedMethod() {
         mockMvc.perform(get(UNPROTECTED))
-            .andExpect(status().isOk)
+            .andExpect {
+                status().isOk
+            }
     }
 
   @Test
     fun noTokenInRequest() {
         mockMvc.perform(get(PROTECTED))
-            .andExpect(status().isUnauthorized)
+            .andExpect {
+                status().isUnauthorized
+            }
     }
 
     @Test
@@ -134,10 +137,8 @@ internal class ProtectedRestControllerIntegrationTest {
     @Test
     @DisplayName("Token matches one of the configured issuers, including claims")
     fun multipleIssuersOneOKIncludingClaims() {
-        expectStatusCode(
-            PROTECTED_WITH_MULTIPLE,
-            issueToken(
-                "knownissuer", defaultJwtClaimsSetBuilder()
+        expectStatusCode(PROTECTED_WITH_MULTIPLE,
+            issueToken("knownissuer", defaultJwtClaimsSetBuilder()
                     .claim("claim1", "3")
                     .claim("claim2", "4")
                     .claim("acr", "Level4")
@@ -148,8 +149,7 @@ internal class ProtectedRestControllerIntegrationTest {
     @Test
     @DisplayName("Token matches one of the configured issuers, but not all claims match")
     fun multipleIssuersOneIssuerMatchesButClaimsDont() {
-        expectStatusCode(
-            PROTECTED_WITH_MULTIPLE,
+        expectStatusCode(PROTECTED_WITH_MULTIPLE,
             issueToken("knownissuer", jwtClaimsSetKnownIssuer()).serialize(),
             UNAUTHORIZED)
     }
@@ -158,8 +158,7 @@ internal class ProtectedRestControllerIntegrationTest {
     @Test
     @DisplayName("Token matches none of the configured issuers")
     fun multipleIssuersNoIssuerMatches() {
-        expectStatusCode(
-            PROTECTED_WITH_MULTIPLE,
+        expectStatusCode(PROTECTED_WITH_MULTIPLE,
             issueToken("knownissuer3", jwtClaimsSetKnownIssuer()).serialize(),
             UNAUTHORIZED)
     }
@@ -169,15 +168,13 @@ internal class ProtectedRestControllerIntegrationTest {
     fun signedTokenInRequestProtectedWithClaimsMethodShouldBeOk() {
         expectStatusCode(
                 PROTECTED_WITH_CLAIMS,
-                issueToken(
-                        "knownissuer", defaultJwtClaimsSetBuilder()
+                issueToken("knownissuer", defaultJwtClaimsSetBuilder()
                     .claim("importantclaim", "vip")
                     .claim("acr", "Level4")
                     .build()).serialize(), OK)
         expectStatusCode(
                 PROTECTED_WITH_CLAIMS_ANY_CLAIMS,
-                issueToken(
-                        "knownissuer", defaultJwtClaimsSetBuilder()
+                issueToken("knownissuer", defaultJwtClaimsSetBuilder()
                     .claim("claim1", "1")
                     .build()).serialize(), OK)
     }
@@ -186,8 +183,7 @@ internal class ProtectedRestControllerIntegrationTest {
     fun signedTokenInRequestProtectedWithArrayClaimsMethodShouldBeOk() {
         expectStatusCode(
             PROTECTED_WITH_CLAIMS_ANY_CLAIMS,
-            issueToken(
-                "knownissuer", defaultJwtClaimsSetBuilder()
+            issueToken("knownissuer", defaultJwtClaimsSetBuilder()
                     .claim("claim1", listOf("1"))
                     .build()).serialize(), OK)
     }
@@ -198,8 +194,7 @@ internal class ProtectedRestControllerIntegrationTest {
         val now = Date()
         expectStatusCode(
                 PROTECTED_WITH_CLAIMS2,
-                issueToken(
-                        "knownissuer2", Builder()
+                issueToken("knownissuer2", Builder()
                     .jwtID(UUID.randomUUID().toString())
                     .claim("auth_time", now)
                     .notBeforeTime(now)
@@ -236,7 +231,8 @@ internal class ProtectedRestControllerIntegrationTest {
         })
 
     private fun expectStatusCode(uri : String, token : String, httpStatus : HttpStatus) {
-        mockMvc.perform(get(uri).header(AUTHORIZATION_HEADER, "Bearer $token"))
+        mockMvc.perform(get(uri)
+            .header(AUTHORIZATION_HEADER, "Bearer $token"))
             .andDo(print())
             .andExpect { status().`is`(httpStatus.value()) }
     }
@@ -259,8 +255,7 @@ internal class ProtectedRestControllerIntegrationTest {
         private fun jwtClaimsSet(audience: String) = buildClaimSet("testsub", audience, ACR, MINUTES.toMillis(1))
 
 
-        fun buildClaimSet(subject: String?, audience: String?, authLevel: String?,
-                          expiry: Long): JWTClaimsSet {
+        fun buildClaimSet(subject: String, audience: String, authLevel: String, expiry: Long): JWTClaimsSet {
             val now = Date()
             return Builder()
                 .subject(subject)

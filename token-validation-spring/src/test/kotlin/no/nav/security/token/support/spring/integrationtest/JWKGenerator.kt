@@ -10,12 +10,11 @@ object JwkGenerator {
     const val DEFAULT_KEYID = "localhost-signer"
 
     fun generateKeyPair() =
-         runCatching {
+        run {
             KeyPairGenerator.getInstance("RSA").apply {
                 initialize(2048)
             }.genKeyPair()
-        }.getOrThrow()
-
+        }
 
     fun createJWK(keyID: String, keyPair: KeyPair) =
          Builder(keyPair.public as RSAPublicKey)

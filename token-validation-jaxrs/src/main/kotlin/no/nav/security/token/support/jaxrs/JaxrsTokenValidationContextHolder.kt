@@ -1,4 +1,4 @@
-package no.nav.security.token.support.jaxrs;
+package no.nav.security.token.support.jaxrs
 
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder

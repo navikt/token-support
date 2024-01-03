@@ -17,9 +17,9 @@ class BearerTokenClientHttpRequestInterceptor(private val holder: TokenValidatio
         holder.getTokenValidationContext().apply {
             if (hasValidToken()) {
                 log.debug("Adding tokens to Authorization header")
-                req.headers.add(AUTHORIZATION_HEADER, issuers.joinToString { "Bearer " + getJwtToken(it)?.encodedToken })
+                req.headers.add(AUTHORIZATION_HEADER, issuers.joinToString { "${getJwtToken(it)?.asBearer()}" })
             }
+            return execution.execute(req, body)
         }
-        return execution.execute(req, body)
     }
 }

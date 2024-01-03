@@ -10,9 +10,9 @@ import no.nav.security.token.support.core.api.Unprotected
 class DemoController {
 
     @GetMapping("/demo/protected")
-    fun protectedPath() = "i am protected"
+    fun protectedPath() = "I am protected"
 
     @Unprotected
     @GetMapping("/demo/unprotected")
-    fun unprotectedPath() = "i am unprotected"
+    fun unprotectedPath() = "I am unprotected"
 }

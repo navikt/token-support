@@ -17,9 +17,11 @@ open class JwtToken(val encodedToken : String, protected val jwt : JWT, val jwtT
     @Deprecated("Use getEncodedToken instead", ReplaceWith("getEncodedToken()"), WARNING)
     val tokenAsString = encodedToken
 
+    fun asBearer() = "Bearer $encodedToken"
+
     fun containsClaim(name : String, value : String)  = jwtTokenClaims.containsClaim(name, value)
 
     companion object {
-         fun SignedJWT.asBearer() = "Bearer " + serialize()
+         fun SignedJWT.asBearer() = "Bearer ${serialize()}"
     }
 }
