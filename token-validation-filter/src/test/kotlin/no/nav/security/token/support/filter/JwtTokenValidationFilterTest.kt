@@ -48,10 +48,10 @@ import no.nav.security.token.support.filter.JwtTokenValidationFilter.Companion.f
 internal class JwtTokenValidationFilterTest {
 
     @Mock
-    private val servletRequest : HttpServletRequest? = null
+    private lateinit var servletRequest : HttpServletRequest
 
     @Mock
-    private val servletResponse : HttpServletResponse? = null
+    private lateinit var servletResponse : HttpServletResponse
 
     @Test
     fun testSingleValidIdTokenInCookie() {
@@ -65,8 +65,8 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-        whenever(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie(IDTOKENCOOKIENAME, jwt)))
-        filter.doFilter(servletRequest, servletResponse!!,
+        whenever(servletRequest.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie(IDTOKENCOOKIENAME, jwt)))
+        filter.doFilter(servletRequest, servletResponse,
             mockFilterchainAsserting(issuername, "foobar", ctxHolder, filterCallCounter))
 
         assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
@@ -85,9 +85,9 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-       whenever(servletRequest!!.cookies).thenReturn(null)
+       whenever(servletRequest.cookies).thenReturn(null)
        whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt")
-        filter.doFilter(servletRequest, servletResponse!!,
+        filter.doFilter(servletRequest, servletResponse,
             mockFilterchainAsserting(anotherIssuer, "foobar", ctxHolder, filterCallCounter))
 
         assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
@@ -110,9 +110,9 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-        whenever(servletRequest!!.cookies).thenReturn(null)
+        whenever(servletRequest.cookies).thenReturn(null)
         whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt1,Bearer $jwt2")
-        filter.doFilter(servletRequest, servletResponse!!,
+        filter.doFilter(servletRequest, servletResponse,
             mockFilterchainAsserting(arrayOf(issuer1, anotherIssuer), arrayOf("foobar", "foobar"), ctxHolder, filterCallCounter))
 
         assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
@@ -120,7 +120,7 @@ internal class JwtTokenValidationFilterTest {
 
     @Test
     fun testRequestConverterShouldHandleWhenCookiesAreNULL() {
-        whenever(servletRequest!!.cookies).thenReturn(null)
+        whenever(servletRequest.cookies).thenReturn(null)
         whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn(null)
 
         val req = fromHttpServletRequest(servletRequest)
@@ -130,7 +130,7 @@ internal class JwtTokenValidationFilterTest {
 
     @Test
     fun testRequestConverterShouldConvertCorrectly() {
-        whenever(servletRequest!!.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie("IDTOKEN", "THETOKEN")))
+        whenever(servletRequest.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie("IDTOKEN", "THETOKEN")))
         whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA")
 
         val req = fromHttpServletRequest(servletRequest)
