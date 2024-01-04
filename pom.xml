@@ -29,7 +29,7 @@
     <modules>
         <module>token-validation-core</module>
         <module>token-validation-filter</module>
-        <module>token-validation-spring</module>
+        <module>token-validation-spring</module> 
         <module>token-validation-spring-test</module>
         <module>token-validation-jaxrs</module>
         <module>token-validation-spring-demo</module>
@@ -41,6 +41,7 @@
         <module>token-client-core</module>
     </modules>
     <properties>
+        <dokka.version>1.9.0</dokka.version>
         <kotlin.version>1.9.22</kotlin.version>
         <kotlin-coroutines.version>1.6.2</kotlin-coroutines.version>
         <doclint>none</doclint>
@@ -49,9 +50,9 @@
         <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <java.version>17</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>21</java.version>
         <spring-boot.version>3.2.1</spring-boot.version>
         <oauth2-oidc-sdk.version>11.9</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
@@ -76,43 +77,81 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.jetbrains.dokka</groupId>
+                    <artifactId>dokka-maven-plugin</artifactId>
+                    <version>${dokka.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>javadocJar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <version>${kotlin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>test-compile</id>
+                            <goals>
+                                <goal>test-compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                     <configuration>
-                            <javaParameters>true</javaParameters>
-                            <args>
-                                <arg>-Xjsr305=strict</arg>
-                            </args>
-                            <compilerPlugins>
-                                <plugin>all-open</plugin>
-                                <plugin>spring</plugin>
-                            </compilerPlugins>
-                        <jvmTarget>${maven.compiler.target}</jvmTarget>
+                        <args>
+                            <arg>-Xjsr305=strict</arg>
+                        </args>
+                        <compilerPlugins>
+                            <plugin>spring</plugin>
+                            <plugin>jpa</plugin>
+                        </compilerPlugins>
+                        <jvmTarget>${java.version}</jvmTarget>
                     </configuration>
                     <dependencies>
+                        <dependency>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-noarg</artifactId>
+                            <version>${kotlin.version}</version>
+                        </dependency>
                         <dependency>
                             <groupId>org.jetbrains.kotlin</groupId>
                             <artifactId>kotlin-maven-allopen</artifactId>
                             <version>${kotlin.version}</version>
                         </dependency>
                     </dependencies>
-                    <extensions>true</extensions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+               <groupId>org.jetbrains.dokka</groupId>
+               <artifactId>dokka-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
     <profiles>
         <profile>
@@ -284,12 +323,6 @@
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>spring-mock-mvc</artifactId>
-                <version>${rest-assured.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.rest-assured</groupId>
-                <artifactId>spring-commons</artifactId>
                 <version>${rest-assured.version}</version>
                 <scope>test</scope>
             </dependency>

@@ -40,9 +40,6 @@ import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.AU
 import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.createSignedJWT
 import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-
-private const val PROP = "no.nav.security.jwt.dont-propagate-bearertoken"
-
 @WebMvcTest(controllers = [AProtectedRestController::class])
 @ContextConfiguration(classes = [ProtectedApplication::class, ProtectedApplicationConfig::class])
 internal class ProtectedRestControllerIntegrationTest {
@@ -62,32 +59,17 @@ internal class ProtectedRestControllerIntegrationTest {
     }
 
     @Test
-    fun registerInterceptorExplicitly() {
-   //     runner.withPropertyValues(PROP,"false").run { assertThat(it).hasSingleBean(BearerTokenClientHttpRequestInterceptor::class.java)}
-    }
-    
-    @Test
-    @Disabled("This test fails because the interceptor is registered even though the property is set to true")
-    fun doNotRegisterInterceptor() {
-    //    runner.withPropertyValues(PROP,"true").run { assertThat(it).doesNotHaveBean(BearerTokenClientHttpRequestInterceptor::class.java) }
-    }
-
-
-
-    @Test
     fun unprotectedMethod() {
         mockMvc.perform(get(UNPROTECTED))
-            .andExpect {
-                status().isOk
-            }
+            .andDo(print())
+            .andExpect { status().isOk }
     }
 
   @Test
     fun noTokenInRequest() {
         mockMvc.perform(get(PROTECTED))
-            .andExpect {
-                status().isUnauthorized
-            }
+            .andDo(print())
+            .andExpect { status().isUnauthorized }
     }
 
     @Test
