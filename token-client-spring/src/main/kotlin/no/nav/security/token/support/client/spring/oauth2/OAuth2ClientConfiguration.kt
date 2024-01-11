@@ -24,7 +24,7 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 @EnableConfigurationProperties(ClientConfigurationProperties::class)
 @Configuration
 class OAuth2ClientConfiguration : ImportAware {
-    private  var attrs: AnnotationAttributes? = null
+    private var attrs: AnnotationAttributes? = null
     override fun setImportMetadata(meta: AnnotationMetadata) {
         attrs = requireNotNull(fromMap(meta.getAnnotationAttributes(EnableOAuth2Client::class.java.name, false))) { "@EnableOAuth2Client is not present on importing class $meta.className" }
     }
@@ -32,11 +32,11 @@ class OAuth2ClientConfiguration : ImportAware {
     @Bean
     fun oAuth2AccessTokenService(bearerTokenResolver: JwtBearerTokenResolver, client: OAuth2HttpClient) =
         if (attrs?.getBoolean("cacheEnabled") == true) {
-            val max =  attrs?.getNumber<Long>("cacheMaximumSize") ?: 0
+            val maxx =  attrs?.getNumber<Long>("cacheMaximumSize") ?: 0
             val skew = attrs?.getNumber<Long>("cacheEvictSkew") ?: 0
             OAuth2AccessTokenService(bearerTokenResolver, OnBehalfOfTokenClient(client), ClientCredentialsTokenClient(client),
-                TokenExchangeClient(client), accessTokenResponseCache(max, skew),
-                accessTokenResponseCache(max, skew), accessTokenResponseCache(max, skew))
+                TokenExchangeClient(client), accessTokenResponseCache(maxx, skew),
+                accessTokenResponseCache(maxx, skew), accessTokenResponseCache(maxx, skew))
         }
         else  {
             OAuth2AccessTokenService(
@@ -49,7 +49,7 @@ class OAuth2ClientConfiguration : ImportAware {
 
     @Bean
     @ConditionalOnMissingBean(OAuth2HttpClient::class)
-    fun oAuth2HttpClient(builder: RestClient.Builder ) = DefaultOAuth2HttpClient(builder.build())
+    fun oAuth2HttpClient(builder: RestClient.Builder) = DefaultOAuth2HttpClient(builder.build())
 
     @Bean
     @ConditionalOnClass(TokenValidationContextHolder::class)
