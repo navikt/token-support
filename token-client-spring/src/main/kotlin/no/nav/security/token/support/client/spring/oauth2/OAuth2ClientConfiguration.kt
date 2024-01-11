@@ -49,7 +49,7 @@ class OAuth2ClientConfiguration : ImportAware {
 
     @Bean
     @ConditionalOnMissingBean(OAuth2HttpClient::class)
-    fun oAuth2HttpClient() = DefaultOAuth2HttpClient(RestClient.create())
+    fun oAuth2HttpClient(builder: RestClient.Builder ) = DefaultOAuth2HttpClient(builder.build())
 
     @Bean
     @ConditionalOnClass(TokenValidationContextHolder::class)
