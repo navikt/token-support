@@ -6,7 +6,6 @@ no.nav.security.jwt:
     knownissuer:
       discovery-url: http://localhost:1111/knownissuer/.well-known/openid-configuration
       accepted-audience: aud-localhost
-      cookie-name: localhost-idtoken
     knownissuer2:
       discovery-url: http://localhost:1111/knownissuer2/.well-known/openid-configuration
       validation:

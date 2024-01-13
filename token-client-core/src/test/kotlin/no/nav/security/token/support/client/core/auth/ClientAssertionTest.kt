@@ -20,7 +20,7 @@ internal class ClientAssertionTest {
     fun testCreateAssertion() {
         val clientAuth = builder("client1", PRIVATE_KEY_JWT).clientJwk("src/test/resources/jwk.json").build()
         val p = builder(CLIENT_CREDENTIALS, clientAuth).tokenEndpointUrl(URI.create("http://token")).build()
-        val signedJWT = SignedJWT.parse(ClientAssertion(p.tokenEndpointUrl, p.authentication).assertion())
+        val signedJWT = SignedJWT.parse(ClientAssertion(p.tokenEndpointUrl!!, p.authentication).assertion())
         assertThat(signedJWT.header.keyID).isEqualTo(p.authentication.clientRsaKey?.keyID)
         assertThat(signedJWT.header.type).isEqualTo(JWT)
         assertThat(signedJWT.header.algorithm).isEqualTo(RS256)

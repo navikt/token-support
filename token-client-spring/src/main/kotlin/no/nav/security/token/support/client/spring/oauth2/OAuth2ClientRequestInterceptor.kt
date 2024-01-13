@@ -24,7 +24,7 @@ class OAuth2ClientRequestInterceptor(private val properties: ClientConfiguration
                                      private val matcher: ClientConfigurationPropertiesMatcher) : ClientHttpRequestInterceptor {
     override fun intercept(req: HttpRequest, body: ByteArray, execution: ClientHttpRequestExecution): ClientHttpResponse {
         matcher.findProperties(properties, req.uri)?.let {
-            service.getAccessToken(it)?.accessToken?.let { it1 -> req.headers.setBearerAuth(it1) }
+            service.getAccessToken(it)?.accessToken?.let { token -> req.headers.setBearerAuth(token) }
         }
         return execution.execute(req, body)
     }

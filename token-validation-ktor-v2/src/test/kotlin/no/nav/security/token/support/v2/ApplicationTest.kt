@@ -43,8 +43,6 @@ class ApplicationTest {
         }
     }
 
-    private val idTokenCookieName = "selvbetjening-idtoken"
-
     @Test
     fun hello_withMissingJWTShouldGive_401_Unauthorized_andHelloCounterIsNOTIncreased() = testApplication {
         environment {
@@ -131,74 +129,6 @@ class ApplicationTest {
     }
 
     @Test
-    fun hello_withValidJWTinCookieShouldGive_200_OK_andHelloCounterIsIncreased() = testApplication {
-        environment {
-            config = doConfig()
-            module {
-                module()
-            }
-        }
-
-        val response = client.get("/hello") {
-            val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-            header("Cookie", "$idTokenCookieName=${jwt.serialize()}")
-        }
-        assertEquals(HttpStatusCode.OK, response.status)
-    }
-
-    @Test
-    fun hello_withExpiredJWTinCookieShouldGive_401_Unauthorized_andHelloCounterIsNOTIncreased() = testApplication {
-        environment {
-            config = doConfig()
-            module {
-                module()
-            }
-        }
-
-        val response = client.get("/hello") {
-            val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser", expiry = -120)
-            header("Cookie", "$idTokenCookieName=${jwt.serialize()}")
-        }
-        assertEquals(HttpStatusCode.Unauthorized, response.status)
-    }
-
-    @Test
-    fun hello_withSoonExpiringJWTinCookieShouldGive_200_OK_andSetTokenExpiresSoonHeader_andHelloCounterIsIncreased() =
-        testApplication {
-            environment {
-                config = doConfig()
-                module {
-                    module()
-                }
-            }
-
-            val response = client.get("/hello") {
-                val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser", expiry = 60)
-                header("Cookie", "$idTokenCookieName=${jwt.serialize()}")
-            }
-            assertEquals(HttpStatusCode.OK, response.status)
-            assertEquals("true", response.headers["x-token-expires-soon"])
-        }
-
-    @Test
-    fun hello_withoutSoonExpiringJWTinCookieShouldGive_200_OK_andNotSetTokenExpiresSoonHeader() = testApplication {
-        environment {
-            config = doConfig()
-            module {
-                module()
-            }
-        }
-
-        val response = client.get("/hello") {
-            val jwt = server.issueToken(ISSUER_ID, "testuser", expiry = Duration.ofMinutes(30).toSeconds()
-            )
-            header("Cookie", "$idTokenCookieName=${jwt.serialize()}")
-        }
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertNull(response.headers["x-token-expires-soon"])
-    }
-
-    @Test
     fun helloPerson_withMissingRequiredClaimShouldGive_401_andHelloCounterIsNotIncreased() = testApplication {
         environment {
             config = doConfig()
@@ -249,29 +179,11 @@ class ApplicationTest {
         assertEquals(HttpStatusCode.OK, response.status)
     }
 
-    @Test
-    fun shouldWorkForJWTInHeaderWithhoutCookieConfig() = testApplication {
-        environment {
-            config = doConfig(hasCookieConfig = false)
-            module {
-                module()
-            }
-        }
-
-        val response = client.get("/hello") {
-            val jwt = server.issueToken(issuerId = ISSUER_ID, subject = "testuser")
-            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
-        }
-        assertEquals(HttpStatusCode.OK, response.status)
-    }
-
-
-//// hello_group ////
 
     @Test
     fun helloGroup_withoutRequiredGroup_ShouldGive_401_OK_andHelloGroupCounterIsNOTIncreased() = testApplication {
         environment {
-            config = doConfig(hasCookieConfig = false)
+            config = doConfig()
             module {
                 module()
             }
@@ -295,7 +207,7 @@ class ApplicationTest {
     @Test
     fun helloGroup_withNoGroupClaim_ShouldGive_401_andHelloGroupCounterIsNOTIncreased() = testApplication {
         environment {
-            config = doConfig(hasCookieConfig = false)
+            config = doConfig()
             module {
                 module()
             }
@@ -318,7 +230,7 @@ class ApplicationTest {
     @Test
     fun helloGroup_withRequiredGroup_ShouldGive_200_OK_andHelloGroupCounterIsIncreased() = testApplication {
         environment {
-            config = doConfig(hasCookieConfig = false)
+            config = doConfig()
             module {
                 module()
             }
@@ -346,7 +258,7 @@ class ApplicationTest {
                 module()
             }
             environment {
-                config = doConfig(hasCookieConfig = false)
+                config = doConfig()
             }
 
             val response = client.get("/hello_group") {
@@ -362,7 +274,7 @@ class ApplicationTest {
             assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
 
-    private fun doConfig(acceptedIssuer: String = ISSUER_ID, acceptedAudience: String = ACCEPTED_AUDIENCE, hasCookieConfig: Boolean = true): MapApplicationConfig {
+    private fun doConfig(acceptedIssuer: String = ISSUER_ID, acceptedAudience: String = ACCEPTED_AUDIENCE): MapApplicationConfig {
         return MapApplicationConfig().apply {
             put("no.nav.security.jwt.expirythreshold", "5")
             put("no.nav.security.jwt.issuers.size", "1")
@@ -372,9 +284,6 @@ class ApplicationTest {
                 server.wellKnownUrl(ISSUER_ID).toString()
             )//server.baseUrl() + "/.well-known/openid-configuration")
             put("no.nav.security.jwt.issuers.0.accepted_audience", acceptedAudience)
-            if (hasCookieConfig) {
-                put("no.nav.security.jwt.issuers.0.cookie_name", idTokenCookieName)
-            }
         }
     }
 }

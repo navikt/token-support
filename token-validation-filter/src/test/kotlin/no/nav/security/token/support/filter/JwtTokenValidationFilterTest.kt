@@ -54,28 +54,9 @@ internal class JwtTokenValidationFilterTest {
     private lateinit var servletResponse : HttpServletResponse
 
     @Test
-    fun testSingleValidIdTokenInCookie() {
-        val issuername = "myissuer"
-        val issuerProps = createIssuerPropertiesMap(issuername, IDTOKENCOOKIENAME)
-        val mockResources = MockResourceRetriever(issuername)
-        val ctxHolder : TokenValidationContextHolder = TestTokenValidationContextHolder()
-
-        val filter = createFilterToTest(issuerProps, mockResources, ctxHolder)
-        val jwt = createJWT(issuername, mockResources.keysForIssuer(issuername)!!.toRSAPrivateKey())
-
-        val filterCallCounter = intArrayOf(0)
-
-        whenever(servletRequest.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie(IDTOKENCOOKIENAME, jwt)))
-        filter.doFilter(servletRequest, servletResponse,
-            mockFilterchainAsserting(issuername, "foobar", ctxHolder, filterCallCounter))
-
-        assertEquals(1, filterCallCounter[0], "doFilter should have been called once")
-    }
-
-    @Test
     fun testSingleValidIdTokenInHeader() {
         val anotherIssuer = "anotherIssuer"
-        val issuerProps = createIssuerPropertiesMap(anotherIssuer, IDTOKENCOOKIENAME)
+        val issuerProps = createIssuerPropertiesMap(anotherIssuer)
 
         val mockResources = MockResourceRetriever(anotherIssuer)
         val ctxHolder : TokenValidationContextHolder = TestTokenValidationContextHolder()
@@ -84,9 +65,7 @@ internal class JwtTokenValidationFilterTest {
         val jwt = createJWT(anotherIssuer, mockResources.keysForIssuer(anotherIssuer)!!.toRSAPrivateKey())
 
         val filterCallCounter = intArrayOf(0)
-
-       whenever(servletRequest.cookies).thenReturn(null)
-       whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt")
+        whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt")
         filter.doFilter(servletRequest, servletResponse,
             mockFilterchainAsserting(anotherIssuer, "foobar", ctxHolder, filterCallCounter))
 
@@ -98,8 +77,8 @@ internal class JwtTokenValidationFilterTest {
         val issuer1 = "issuer1"
         val anotherIssuer = "issuerNumberTwo"
         val issuerProps : MutableMap<String, IssuerProperties> = HashMap()
-        issuerProps.putAll(createIssuerPropertiesMap(issuer1, null))
-        issuerProps.putAll(createIssuerPropertiesMap(anotherIssuer, null))
+        issuerProps.putAll(createIssuerPropertiesMap(issuer1))
+        issuerProps.putAll(createIssuerPropertiesMap(anotherIssuer))
 
         val mockResources = MockResourceRetriever(issuer1, anotherIssuer)
         val ctxHolder : TokenValidationContextHolder = TestTokenValidationContextHolder()
@@ -110,7 +89,6 @@ internal class JwtTokenValidationFilterTest {
 
         val filterCallCounter = intArrayOf(0)
 
-        whenever(servletRequest.cookies).thenReturn(null)
         whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer $jwt1,Bearer $jwt2")
         filter.doFilter(servletRequest, servletResponse,
             mockFilterchainAsserting(arrayOf(issuer1, anotherIssuer), arrayOf("foobar", "foobar"), ctxHolder, filterCallCounter))
@@ -120,25 +98,15 @@ internal class JwtTokenValidationFilterTest {
 
     @Test
     fun testRequestConverterShouldHandleWhenCookiesAreNULL() {
-        whenever(servletRequest.cookies).thenReturn(null)
         whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn(null)
-
         val req = fromHttpServletRequest(servletRequest)
-        assertNull(req.getCookies())
         assertNull(req.getHeader(AUTHORIZATION_HEADER))
     }
 
     @Test
     fun testRequestConverterShouldConvertCorrectly() {
-        whenever(servletRequest.cookies).thenReturn(arrayOf(Cookie("JSESSIONID", "ABCDEF"), Cookie("IDTOKEN", "THETOKEN")))
         whenever(servletRequest.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer eyAAA")
-
         val req = fromHttpServletRequest(servletRequest)
-        req.getCookies()?.get(0)?.getName()
-        assertEquals("JSESSIONID", req.getCookies()?.first()?.getName())
-        assertEquals("ABCDEF", req.getCookies()?.first()?.getValue())
-        assertEquals("IDTOKEN", req.getCookies()?.get(1)?.getName())
-        assertEquals("THETOKEN", req.getCookies()?.get(1)?.getValue())
         assertEquals("Bearer eyAAA", req.getHeader(AUTHORIZATION_HEADER))
     }
 
@@ -160,10 +128,6 @@ internal class JwtTokenValidationFilterTest {
             }
         }
     }
-
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
     private fun createFilterToTest(issuerProps : Map<String, IssuerProperties>,
                                    mockResources : MockResourceRetriever, ctxHolder : TokenValidationContextHolder) : JwtTokenValidationFilter {
         val conf = MultiIssuerConfiguration(issuerProps, mockResources)
@@ -172,11 +136,10 @@ internal class JwtTokenValidationFilterTest {
     }
 
     @Throws(URISyntaxException::class, MalformedURLException::class)
-    private fun createIssuerPropertiesMap(issuer : String, cookieName : String?) : Map<String, IssuerProperties> {
+    private fun createIssuerPropertiesMap(issuer : String) : Map<String, IssuerProperties> {
         val issuerPropertiesMap : MutableMap<String, IssuerProperties> = HashMap()
         issuerPropertiesMap[issuer] = IssuerProperties(URI("https://$issuer").toURL(),
-            listOf(AUDIENCE),
-            cookieName)
+            listOf(AUDIENCE))
         return issuerPropertiesMap
     }
 
@@ -273,6 +236,5 @@ internal class JwtTokenValidationFilterTest {
 
         private const val KEYID = "myKeyId"
         private const val AUDIENCE = "aud1"
-        private const val IDTOKENCOOKIENAME = "idtokencookie"
     }
 }

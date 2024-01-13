@@ -5,9 +5,8 @@ no.nav.security.jwt:
   expirythreshold: 1 #threshold in minutes until token expires
   issuer:
     issuer1:
-      discoveryurl: https://someissuer/.well-known/openid-configuration
+      discovery-url: https://someissuer/.well-known/openid-configuration
       accepted_audience: demoapplication
-      cookie_name: issuer1-idtoken
 
 logging.level.org.springframework: INFO
 logging.level.no.nav: DEBUG

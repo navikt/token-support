@@ -30,7 +30,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
     fun getTokenResponse(grantRequest : T) =
         grantRequest?.clientProperties?.let {
             runCatching {
-                oAuth2HttpClient.post(OAuth2HttpRequest.builder(it.tokenEndpointUrl)
+                oAuth2HttpClient.post(OAuth2HttpRequest.builder(it.tokenEndpointUrl!!)
                     .oAuth2HttpHeaders(OAuth2HttpHeaders.of(tokenRequestHeaders(it)))
                     .formParameters(defaultFormParameters(grantRequest).apply {
                         putAll(formParameters(grantRequest))
@@ -77,7 +77,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
                     PRIVATE_KEY_JWT -> LinkedHashMap<String, String>().apply {
                         put(CLIENT_ID, authentication.clientId)
                         put(CLIENT_ASSERTION_TYPE, JWTAuthentication.CLIENT_ASSERTION_TYPE)
-                        put(CLIENT_ASSERTION, ClientAssertion(tokenEndpointUrl, authentication).assertion())
+                        put(CLIENT_ASSERTION, ClientAssertion(tokenEndpointUrl!!, authentication).assertion())
                     }
                     else ->  mutableMapOf()
                 }

@@ -11,7 +11,6 @@ open class IssuerConfiguration(val name : String, properties : IssuerProperties,
 
     val metadata : AuthorizationServerMetadata
     val acceptedAudience  = properties.acceptedAudience
-    val cookieName = properties.cookieName
     val headerName = properties.headerName
     val tokenValidator : JwtTokenValidator
 
@@ -20,7 +19,7 @@ open class IssuerConfiguration(val name : String, properties : IssuerProperties,
         tokenValidator = tokenValidator(properties, metadata, resourceRetriever)
     }
 
-    override fun toString() = ("${javaClass.simpleName} [name=$name, metaData=$metadata, acceptedAudience=$acceptedAudience, cookieName=$cookieName, headerName=$headerName, tokenValidator=$tokenValidator, resourceRetriever=$resourceRetriever]")
+    override fun toString() = ("${javaClass.simpleName} [name=$name, metaData=$metadata, acceptedAudience=$acceptedAudience, headerName=$headerName, tokenValidator=$tokenValidator, resourceRetriever=$resourceRetriever]")
 
     companion object {
 

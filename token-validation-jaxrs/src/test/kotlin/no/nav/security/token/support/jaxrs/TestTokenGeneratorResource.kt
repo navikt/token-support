@@ -27,7 +27,6 @@ class TestTokenGeneratorResource {
     fun endpoints(@Context request: HttpServletRequest) = arrayOf(
         TokenEndpoint("Get JWT as serialized string", "${request.requestURL}/jwt", "subject"),
         TokenEndpoint("Get JWT as SignedJWT object with claims", "${request.requestURL}/claims", "subject"),
-        TokenEndpoint("Add JWT as a cookie, (optional) redirect to secured uri", "${request.requestURL}/cookie", "subject", "redirect", "cookiename"),
         TokenEndpoint("Get JWKS used to sign token", "${request.requestURL}/jwks"),
         TokenEndpoint("Get JWKS used to sign token as JWKSet object", "${request.requestURL}/jwkset"),
         TokenEndpoint("Get token issuer metadata (ref oidc .well-known)", "${request.requestURL}/metadata"))
@@ -40,18 +39,6 @@ class TestTokenGeneratorResource {
     @Path("/claims")
     @GET
     fun jwtClaims(@QueryParam("subject") @DefaultValue("12345678910") subject : String?) = createSignedJWT(subject)
-
-    @Unprotected
-    @Path("cookie")
-    @GET
-    fun addCookie(
-        @QueryParam("subject") @DefaultValue("12345678910") subject : String?,
-        @QueryParam("cookiename") @DefaultValue("localhost-idtoken") cookieName : String?,
-        @QueryParam("redirect") redirect : String?) =
-        Response.status(if (redirect == null) OK else FOUND)
-            .location(if (redirect == null) null else URI.create(redirect))
-            .cookie(Builder(cookieName).value(createSignedJWT(subject).serialize()).path("/").domain("localhost").maxAge(-1).secure(false).build())
-            .build()
 
     @Unprotected
     @GET

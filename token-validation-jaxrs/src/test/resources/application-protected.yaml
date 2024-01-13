@@ -4,5 +4,4 @@ no.nav.security.jwt:
   issuer.protected:
      discoveryurl: http://metadata
      accepted_audience: aud-localhost
-     cookie_name: localhost-idtoken
 debug: false

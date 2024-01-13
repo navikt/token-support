@@ -4,7 +4,6 @@ no.nav.security.jwt:
     someshortname:
       discovery-url: http://metadata
       accepted_audience: aud-localhost
-      cookie_name: localhost-idtoken
 
   client:
     registration:

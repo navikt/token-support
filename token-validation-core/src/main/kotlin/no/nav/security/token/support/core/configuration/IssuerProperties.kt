@@ -12,20 +12,18 @@ import no.nav.security.token.support.core.configuration.IssuerProperties.Validat
 
 class IssuerProperties @JvmOverloads constructor(val discoveryUrl : URL,
                                                  val acceptedAudience : List<String> = listOf(),
-                                                 val cookieName : String? = null,
+                                                 cookieName : String? = null,
                                                  val headerName : String = AUTHORIZATION_HEADER,
                                                  val validation : Validation = EMPTY,
                                                  val jwksCache : JwksCache = EMPTY_CACHE,
                                                  val proxyUrl: URL? = null,
                                                  val usePlaintextForHttps: Boolean = false) {
 
-    private val LOG : Logger = LoggerFactory.getLogger(IssuerProperties::class.java)
-
     init {
-        cookieName?.let { LOG.warn("Cookie-support will be discontinued in future versions, please consider changing your configuration now") }
+        cookieName?.let { throw IllegalArgumentException("Cookie-support is discontinued, please remove $it from ypur configuration now") }
     }
 
-    override fun toString() = "IssuerProperties(discoveryUrl=$discoveryUrl, acceptedAudience=$acceptedAudience, cookieName=$cookieName, headerName=$headerName, proxyUrl=$proxyUrl, usePlaintextForHttps=$usePlaintextForHttps, validation=$validation, jwksCache=$jwksCache)"
+    override fun toString() = "IssuerProperties(discoveryUrl=$discoveryUrl, acceptedAudience=$acceptedAudience, headerName=$headerName, proxyUrl=$proxyUrl, usePlaintextForHttps=$usePlaintextForHttps, validation=$validation, jwksCache=$jwksCache)"
 
     class Validation(val optionalClaims : List<String> = emptyList()) {
 
