@@ -14,7 +14,7 @@ object JwtTokenRetriever {
 
    @JvmStatic
     fun retrieveUnvalidatedTokens(config: MultiIssuerConfiguration, request: HttpRequest) =
-        getTokensFromHeader(config, request) + getTokensFromCookies(config, request)
+        getTokensFromHeader(config, request)
 
     private fun getTokensFromHeader(config: MultiIssuerConfiguration, request: HttpRequest): List<JwtToken> = try {
         LOG.debug("Checking authorization header for tokens using config {}", config)
@@ -32,22 +32,6 @@ object JwtTokenRetriever {
             LOG.warn("Received exception when attempting to extract and parse token from Authorization header", e)
         }
     }
-    private fun getTokensFromCookies(config: MultiIssuerConfiguration, request: HttpRequest) = try {
-        request.getCookies()?.asList()
-            ?.filter { containsCookieName(config, it.getName()) }
-            ?.map { JwtToken(it.getValue()) }
-            ?: emptyList<JwtToken>().also {
-                LOG.debug("No tokens found in cookies")
-            }
-    } catch (e: Exception) {
-        LOG.warn("Received exception when attempting to extract and parse token from cookie", e)
-        listOf()
-    }
-
-    private fun containsCookieName(configuration: MultiIssuerConfiguration, cookieName: String) =
-        configuration.issuers.values.any {
-            cookieName.equals(it.cookieName, ignoreCase = true)
-        }
 
     private fun extractBearerTokens(headerValues: List<String>) =
         headerValues

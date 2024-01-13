@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
-private const val idTokenCookieName = "selvbetjening-idtoken"
-
 class ApplicationTokenTest {
     @Test
     fun hello_withMissingJWTShouldGive_401_Unauthorized()=
@@ -104,20 +102,6 @@ class ApplicationTokenTest {
         }
 
     @Test
-    fun hello_withValidJWTinCookieShouldGive_200_OK() =
-        testApplication {
-            environment {
-                config = doConfig()
-                module {
-                    module()
-                }
-            }
-            assertEquals(OK, client.get("/hello") {
-                header("Cookie", "$idTokenCookieName=${server.issueToken().serialize()}")
-            }.status)
-        }
-
-    @Test
     fun openhello_withMissingJWTShouldGive_200() =
         testApplication {
             environment {
@@ -198,7 +182,6 @@ class ApplicationTokenTest {
                 put("no.nav.security.jwt.issuers.0.issuer_name", acceptedIssuer)
                 put("no.nav.security.jwt.issuers.0.discoveryurl", "${server.wellKnownUrl(acceptedIssuer)}")
                 put("no.nav.security.jwt.issuers.0.accepted_audience", acceptedAudience)
-                put("no.nav.security.jwt.issuers.0.cookie_name", idTokenCookieName)
             }
         }
         val server = MockOAuth2Server()

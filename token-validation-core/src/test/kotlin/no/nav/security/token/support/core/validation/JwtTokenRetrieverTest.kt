@@ -22,7 +22,6 @@ import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 import no.nav.security.token.support.core.http.HttpRequest
-import no.nav.security.token.support.core.http.HttpRequest.NameValue
 import no.nav.security.token.support.core.validation.JwtTokenRetriever.retrieveUnvalidatedTokens
 
 //TODO more tests, including multiple issuers setup, and multiple tokens in one header etc
@@ -35,7 +34,7 @@ internal class JwtTokenRetrieverTest {
     @Test
     @Throws(URISyntaxException::class, MalformedURLException::class)
     fun testRetrieveTokensInHeader() {
-        val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
+        val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", AUTHORIZATION_HEADER),
             NoopResourceRetriever())
         whenever(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer ${createJWT("issuer1")}")
         assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
@@ -45,7 +44,7 @@ internal class JwtTokenRetrieverTest {
     @Throws(URISyntaxException::class, MalformedURLException::class)
     fun testRetrieveTokensInHeader2() {
         val config = MultiIssuerConfiguration(
-            createIssuerPropertiesMap("issuer1", "cookie1", "TokenXAuthorization"),
+            createIssuerPropertiesMap("issuer1", "TokenXAuthorization"),
             NoopResourceRetriever())
         whenever(request.getHeader("TokenXAuthorization")).thenReturn("Bearer ${createJWT("issuer1")}")
         assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
@@ -54,58 +53,19 @@ internal class JwtTokenRetrieverTest {
     @Test
     @Throws(URISyntaxException::class, MalformedURLException::class)
     fun testRetrieveTokensInHeaderIssuerNotConfigured() {
-        val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
+        val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "header1"),
             NoopResourceRetriever())
         whenever(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer ${createJWT("issuerNotConfigured")}")
         assertEquals(0, retrieveUnvalidatedTokens(config, request).size)
     }
 
-    @Test
     @Throws(URISyntaxException::class, MalformedURLException::class)
-    fun testRetrieveTokensInCookie() {
-        val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", "cookie1"),
-            NoopResourceRetriever())
-        whenever(request.getCookies()).thenReturn(arrayOf(Cookie("cookie1", createJWT("issuer1"))))
-        assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
-    }
-
-    @Test
-    @Throws(URISyntaxException::class, MalformedURLException::class)
-    fun testRetrieveTokensWhenCookieNameNotConfigured() {
-        val config = MultiIssuerConfiguration(createIssuerPropertiesMap("issuer1", null),
-            NoopResourceRetriever())
-        whenever(request.getCookies()).thenReturn(arrayOf(Cookie("cookie1", "somerandomcookie")))
-        whenever(request.getHeader(AUTHORIZATION_HEADER)).thenReturn("Bearer ${createJWT("issuer1")}")
-        assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
-    }
-
-    @Test
-    @Throws(URISyntaxException::class, MalformedURLException::class)
-    fun testRetrieveTokensMultipleIssuersWithSameCookieName() {
-        val issuerPropertiesMap = createIssuerPropertiesMap("issuer1", "cookie1")
-        issuerPropertiesMap.putAll(createIssuerPropertiesMap("issuer2", "cookie1"))
-
-        val config = MultiIssuerConfiguration(issuerPropertiesMap, NoopResourceRetriever())
-
-        whenever(request.getCookies()).thenReturn(arrayOf(Cookie("cookie1", createJWT("issuer1"))))
-        assertEquals(1, retrieveUnvalidatedTokens(config, request).size)
-        assertEquals("issuer1", retrieveUnvalidatedTokens(config, request)[0].issuer)
-    }
-
-    @Throws(URISyntaxException::class, MalformedURLException::class)
-    private fun createIssuerPropertiesMap(issuer : String, cookieName : String?) : MutableMap<String, IssuerProperties> {
-        val issuerPropertiesMap : MutableMap<String, IssuerProperties> = HashMap()
-        issuerPropertiesMap[issuer] = IssuerProperties(URI("https://$issuer").toURL(), listOf("aud1"), cookieName)
-        return issuerPropertiesMap
-    }
-
-    @Throws(URISyntaxException::class, MalformedURLException::class)
-    private fun createIssuerPropertiesMap(issuer : String, cookieName : String, headerName : String) : Map<String, IssuerProperties> {
+    private fun createIssuerPropertiesMap(issuer : String,  headerName : String = AUTHORIZATION_HEADER) : Map<String, IssuerProperties> {
         val issuerPropertiesMap : MutableMap<String, IssuerProperties> = HashMap()
         issuerPropertiesMap[issuer] = IssuerProperties(
             URI("https://$issuer").toURL(),
             listOf("aud1"),
-            cookieName,
+            null,
             headerName)
         return issuerPropertiesMap
     }
@@ -132,10 +92,4 @@ internal class JwtTokenRetrieverTest {
         private fun getInputStream(file : String) = NoopResourceRetriever::class.java.getResourceAsStream(file)
     }
 
-    private inner class Cookie(private val name : String, private val value : String) : NameValue {
-
-        override fun getName()  = name
-
-        override fun getValue() = value
-    }
 }

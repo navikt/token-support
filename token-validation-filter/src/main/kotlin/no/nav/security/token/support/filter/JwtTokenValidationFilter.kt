@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.http.HttpRequest
-import no.nav.security.token.support.core.http.HttpRequest.NameValue
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 
 open class JwtTokenValidationFilter(private val jwtTokenValidationHandler : JwtTokenValidationHandler, private val contextHolder : TokenValidationContextHolder) : Filter {
@@ -42,12 +41,6 @@ open class JwtTokenValidationFilter(private val jwtTokenValidationHandler : JwtT
         @JvmStatic
         fun fromHttpServletRequest(request: HttpServletRequest) = object : HttpRequest {
             override fun getHeader(headerName: String) = request.getHeader(headerName)
-            override fun getCookies() : Array<NameValue>? = request.cookies?.map {
-                object : NameValue {
-                    override fun getName() = it.name
-                    override fun getValue() = it.value
-                }
-            }?.toTypedArray()
         }
     }
 }

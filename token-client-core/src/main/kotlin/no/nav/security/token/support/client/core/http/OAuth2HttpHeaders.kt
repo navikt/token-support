@@ -25,6 +25,9 @@ class OAuth2HttpHeaders (val headers : Map<String, List<String>>) {
     }
 
     companion object {
+
+        @JvmField
+        val NONE = OAuth2HttpHeaders(emptyMap())
        @JvmStatic
         fun of(headers : Map<String, List<String>>) = OAuth2HttpHeaders(headers)
 

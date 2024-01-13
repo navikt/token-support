@@ -18,9 +18,7 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 @ActiveProfiles("test-withresourceurl")
 internal class ClientConfigurationPropertiesTestWithResourceUrl {
 
-    private  val matcher = object: ClientConfigurationPropertiesMatcher {
-
-    }
+    private  val matcher = object: ClientConfigurationPropertiesMatcher {}
     @MockBean
     private val tokenValidationContextHolder: TokenValidationContextHolder? = null
 

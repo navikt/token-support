@@ -49,8 +49,9 @@ internal class DefaultOAuth2HttpClientTest {
         val body = recordedRequest.body.readUtf8()
         assertThat(recordedRequest.headers["header1"]).isEqualTo("headervalue1")
         assertThat(recordedRequest.headers["header2"]).isEqualTo("headervalue2")
-        assertThat(body).contains("param1=value1")
-        assertThat(body).contains("param2=value2")
+        assertThat(body)
+            .contains("param1=value1")
+            .contains("param2=value2")
     }
 
     companion object {

@@ -11,15 +11,15 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenRespons
 open class DefaultOAuth2HttpClient(val restClient: RestClient) : OAuth2HttpClient {
 
 
-    override fun post(oAuth2HttpRequest: OAuth2HttpRequest) =
+    override fun post(request: OAuth2HttpRequest) =
         restClient.post()
-            .uri(oAuth2HttpRequest.tokenEndpointUrl!!)
-            .headers { it.addAll(headers(oAuth2HttpRequest)) }
+            .uri(request.tokenEndpointUrl)
+            .headers { it.addAll(headers(request)) }
             .body(LinkedMultiValueMap<String, String>().apply {
-                setAll(oAuth2HttpRequest.formParameters)
+                setAll(request.formParameters)
             }).retrieve()
             .onStatus({ it.isError }) { _, response ->
-                throw OAuth2ClientException("Received $response.statusCode from $oAuth2HttpRequest.tokenEndpointUrl")
+                throw OAuth2ClientException("Received $response.statusCode from $request.tokenEndpointUrl")
             }
             .body(OAuth2AccessTokenResponse::class.java)
 
