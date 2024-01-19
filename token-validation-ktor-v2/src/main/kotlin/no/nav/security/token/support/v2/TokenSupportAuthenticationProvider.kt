@@ -102,8 +102,13 @@ class TokenSupportConfig(vararg issuers: IssuerConfig) : MapApplicationConfig(
         mutableListOf(
             "no.nav.security.jwt.issuers.$index.issuer_name" to issuerConfig.name,
             "no.nav.security.jwt.issuers.$index.discoveryurl" to issuerConfig.discoveryUrl,
-            "no.nav.security.jwt.issuers.$index.accepted_audience" to issuerConfig.acceptedAudience.joinToString(","),
         ).apply {
+            if (issuerConfig.acceptedAudience.isNotEmpty()) {
+                addLast(
+                    "no.nav.security.jwt.issuers.$index.accepted_audience" to
+                        issuerConfig.acceptedAudience.joinToString(",")
+                )
+            }
             if (issuerConfig.optionalClaims.isNotEmpty()) {
                 addLast(
                     "no.nav.security.jwt.issuers.$index.validation.optional_claims" to
