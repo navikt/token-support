@@ -99,7 +99,7 @@ data class IssuerConfig(
 
 class TokenSupportConfig(vararg issuers: IssuerConfig) : MapApplicationConfig(
     *(issuers.mapIndexed { index, issuerConfig ->
-        mutableListOf(
+        listOf(
             "no.nav.security.jwt.issuers.$index.issuer_name" to issuerConfig.name,
             "no.nav.security.jwt.issuers.$index.discoveryurl" to issuerConfig.discoveryUrl,
             "no.nav.security.jwt.issuers.$index.accepted_audience" to
