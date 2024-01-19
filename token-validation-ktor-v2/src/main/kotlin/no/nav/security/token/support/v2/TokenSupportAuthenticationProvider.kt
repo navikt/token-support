@@ -90,15 +90,27 @@ fun AuthenticationConfig.tokenValidationSupport(name: String? = null, config: Ap
 
 data class RequiredClaims(val issuer: String, val claimMap: Array<String>, val combineWithOr: Boolean = false)
 
-data class IssuerConfig(val name: String, val discoveryUrl: String, val acceptedAudience: List<String>)
+data class IssuerConfig(
+    val name: String,
+    val discoveryUrl: String,
+    val acceptedAudience: List<String>,
+    val optionalClaims: List<String> = emptyList(),
+)
 
 class TokenSupportConfig(vararg issuers: IssuerConfig) : MapApplicationConfig(
     *(issuers.mapIndexed { index, issuerConfig ->
-        listOf(
+        mutableListOf(
             "no.nav.security.jwt.issuers.$index.issuer_name" to issuerConfig.name,
             "no.nav.security.jwt.issuers.$index.discoveryurl" to issuerConfig.discoveryUrl,
-            "no.nav.security.jwt.issuers.$index.accepted_audience" to issuerConfig.acceptedAudience.joinToString(",")//,
-        )
+            "no.nav.security.jwt.issuers.$index.accepted_audience" to issuerConfig.acceptedAudience.joinToString(","),
+        ).apply {
+            if (issuerConfig.optionalClaims.isNotEmpty()) {
+                addLast(
+                    "no.nav.security.jwt.issuers.$index.validation.optional_claims" to
+                        issuerConfig.optionalClaims.joinToString(",")
+                )
+            }
+        }
     }.flatten().plus("no.nav.security.jwt.issuers.size" to issuers.size.toString()).toTypedArray())
 )
 
