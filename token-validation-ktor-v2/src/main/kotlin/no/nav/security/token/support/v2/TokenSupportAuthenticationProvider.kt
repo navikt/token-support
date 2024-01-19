@@ -93,7 +93,7 @@ data class RequiredClaims(val issuer: String, val claimMap: Array<String>, val c
 data class IssuerConfig(
     val name: String,
     val discoveryUrl: String,
-    val acceptedAudience: List<String>,
+    val acceptedAudience: List<String> = emptyList(),
     val optionalClaims: List<String> = emptyList(),
 )
 
@@ -102,20 +102,11 @@ class TokenSupportConfig(vararg issuers: IssuerConfig) : MapApplicationConfig(
         mutableListOf(
             "no.nav.security.jwt.issuers.$index.issuer_name" to issuerConfig.name,
             "no.nav.security.jwt.issuers.$index.discoveryurl" to issuerConfig.discoveryUrl,
-        ).apply {
-            if (issuerConfig.acceptedAudience.isNotEmpty()) {
-                addLast(
-                    "no.nav.security.jwt.issuers.$index.accepted_audience" to
-                        issuerConfig.acceptedAudience.joinToString(",")
-                )
-            }
-            if (issuerConfig.optionalClaims.isNotEmpty()) {
-                addLast(
-                    "no.nav.security.jwt.issuers.$index.validation.optional_claims" to
-                        issuerConfig.optionalClaims.joinToString(",")
-                )
-            }
-        }
+            "no.nav.security.jwt.issuers.$index.accepted_audience" to
+                issuerConfig.acceptedAudience.joinToString(","),
+            "no.nav.security.jwt.issuers.$index.validation.optional_claims" to
+                issuerConfig.optionalClaims.joinToString(","),
+        )
     }.flatten().plus("no.nav.security.jwt.issuers.size" to issuers.size.toString()).toTypedArray())
 )
 
@@ -153,9 +144,15 @@ fun ApplicationConfig.asIssuerProps(): Map<String, IssuerProperties> = configLis
     .associate {
         it.property("issuer_name").getString() to IssuerProperties(
             URI.create(it.property("discoveryurl").getString()).toURL(),
-            it.propertyOrNull("accepted_audience")?.getString()?.split(",") ?: emptyList(),
+            it.propertyOrNull("accepted_audience")?.getString()
+                ?.split(",")
+                ?.filter { aud -> aud.isNotEmpty() }
+                ?: emptyList(),
            null,
             it.propertyOrNull("header_name")?.getString() ?: AUTHORIZATION_HEADER,
-            Validation(it.propertyOrNull("validation.optional_claims")?.getString()?.split(",") ?: emptyList()),
+            Validation(it.propertyOrNull("validation.optional_claims")?.getString()
+                ?.split(",")
+                ?.filter { aud -> aud.isNotEmpty() }
+                ?: emptyList()),
             JwksCache(it.propertyOrNull("jwks_cache.lifespan")?.getString()?.toLong() ?: 15, it.propertyOrNull("jwks_cache.refreshtime")?.getString()?.toLong() ?: 5))
     }
