@@ -23,12 +23,12 @@ import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders
 import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 
-abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> internal constructor(private val oAuth2HttpClient : OAuth2HttpClient) {
+abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest> internal constructor(private val oAuth2HttpClient : OAuth2HttpClient) {
 
     protected abstract fun formParameters(grantRequest : T) : Map<String, String>
 
     fun getTokenResponse(grantRequest : T) =
-        grantRequest?.clientProperties?.let {
+        grantRequest.clientProperties.let {
             runCatching {
                 oAuth2HttpClient.post(OAuth2HttpRequest.builder(it.tokenEndpointUrl!!)
                     .oAuth2HttpHeaders(OAuth2HttpHeaders.of(tokenRequestHeaders(it)))
@@ -56,33 +56,31 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest?> intern
 
         }
 
-    private fun defaultFormParameters(grantRequest : T) =
-        grantRequest?.clientProperties?.let {
+    private fun defaultFormParameters(grantRequest : T) : MutableMap<String, String> =
+        with(grantRequest.clientProperties) {
             defaultClientAuthenticationFormParameters(grantRequest).apply {
                 put(GRANT_TYPE,grantRequest.grantType.value)
-                if (TOKEN_EXCHANGE != it.grantType) {
-                    put(SCOPE,  join(" ", it.scope))
+                if (TOKEN_EXCHANGE != grantType) {
+                    put(SCOPE,  join(" ", scope))
                 }
             }
-        } ?: throw OAuth2ClientException("ClientProperties cannot be null")
+        }
 
     private fun defaultClientAuthenticationFormParameters(grantRequest : T) =
-        grantRequest?.clientProperties?.let {
-            with(it) {
-                when (authentication.clientAuthMethod) {
-                    CLIENT_SECRET_POST -> LinkedHashMap<String, String>().apply {
-                        put(CLIENT_ID, authentication.clientId)
-                        put(CLIENT_SECRET, authentication.clientSecret!!)
-                    }
-                    PRIVATE_KEY_JWT -> LinkedHashMap<String, String>().apply {
-                        put(CLIENT_ID, authentication.clientId)
-                        put(CLIENT_ASSERTION_TYPE, JWTAuthentication.CLIENT_ASSERTION_TYPE)
-                        put(CLIENT_ASSERTION, ClientAssertion(tokenEndpointUrl!!, authentication).assertion())
-                    }
-                    else ->  mutableMapOf()
+        with(grantRequest.clientProperties) {
+            when (authentication.clientAuthMethod) {
+                CLIENT_SECRET_POST -> LinkedHashMap<String, String>().apply {
+                    put(CLIENT_ID, authentication.clientId)
+                    put(CLIENT_SECRET, authentication.clientSecret!!)
                 }
+                PRIVATE_KEY_JWT -> LinkedHashMap<String, String>().apply {
+                    put(CLIENT_ID, authentication.clientId)
+                    put(CLIENT_ASSERTION_TYPE, JWTAuthentication.CLIENT_ASSERTION_TYPE)
+                    put(CLIENT_ASSERTION, ClientAssertion(tokenEndpointUrl!!, authentication).assertion())
+                }
+                else ->  mutableMapOf()
             }
-        } ?:  throw OAuth2ClientException("ClientProperties cannot be null")
+        }
 
     private fun basicAuth(username : String, password : String) =
         UTF_8.newEncoder().run {
