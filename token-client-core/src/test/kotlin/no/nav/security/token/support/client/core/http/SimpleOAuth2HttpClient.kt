@@ -15,9 +15,9 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenRespons
 
 class SimpleOAuth2HttpClient : OAuth2HttpClient {
 
-    override fun post(request: OAuth2HttpRequest) =
+    override fun post(req: OAuth2HttpRequest) =
         HttpRequest.newBuilder().apply {
-            configureRequest(request)
+            configureRequest(req)
         }.build()
             .sendRequest()
             .processResponse()
