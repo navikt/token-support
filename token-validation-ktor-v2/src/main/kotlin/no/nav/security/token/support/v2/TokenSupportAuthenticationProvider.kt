@@ -152,7 +152,7 @@ fun ApplicationConfig.asIssuerProps(): Map<String, IssuerProperties> = configLis
             it.propertyOrNull("header_name")?.getString() ?: AUTHORIZATION_HEADER,
             Validation(it.propertyOrNull("validation.optional_claims")?.getString()
                 ?.split(",")
-                ?.filter { aud -> aud.isNotEmpty() }
+                ?.filter { claim -> claim.isNotEmpty() }
                 ?: emptyList()),
             JwksCache(it.propertyOrNull("jwks_cache.lifespan")?.getString()?.toLong() ?: 15, it.propertyOrNull("jwks_cache.refreshtime")?.getString()?.toLong() ?: 5))
     }
