@@ -23,7 +23,7 @@ import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders
 import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 
-abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest> internal constructor(private val oAuth2HttpClient : OAuth2HttpClient) {
+sealed class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest>(private val oAuth2HttpClient : OAuth2HttpClient) {
 
     protected abstract fun formParameters(grantRequest : T) : Map<String, String>
 
@@ -57,11 +57,11 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest> interna
         }
 
     private fun defaultFormParameters(grantRequest : T) : MutableMap<String, String> =
-        with(grantRequest.clientProperties) {
-            defaultClientAuthenticationFormParameters(grantRequest).apply {
-                put(GRANT_TYPE,grantRequest.grantType.value)
+        with(grantRequest) {
+            defaultClientAuthenticationFormParameters(this).apply {
+                put(GRANT_TYPE,grantType.value)
                 if (TOKEN_EXCHANGE != grantType) {
-                    put(SCOPE,  join(" ", scope))
+                    put(SCOPE,  scopes())
                 }
             }
         }
@@ -91,6 +91,7 @@ abstract class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest> interna
                 throw IllegalArgumentException("Username or password contains characters that cannot be encoded to ${UTF_8.displayName()}")
             }
         }
+
 
     override fun toString() = "${javaClass.getSimpleName()} [oAuth2HttpClient=$oAuth2HttpClient]"
 

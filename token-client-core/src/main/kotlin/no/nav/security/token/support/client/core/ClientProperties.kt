@@ -7,6 +7,7 @@ import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
 import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import com.nimbusds.oauth2.sdk.ParseException
 import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata
+import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata.*
 import java.io.IOException
 import java.net.URI
 
@@ -41,7 +42,7 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
 
         private fun endpointUrlFromMetadata(wellKnown: URI?) =
             runCatching {
-                wellKnown?.let { AuthorizationServerMetadata.parse(DefaultResourceRetriever().retrieveResource(wellKnown.toURL()).content).tokenEndpointURI }
+                wellKnown?.let { parse(DefaultResourceRetriever().retrieveResource(wellKnown.toURL()).content).tokenEndpointURI }
                     ?: throw OAuth2ClientException("Well-known url cannot be null, please check your configuration")
             }.getOrElse {
                 when(it) {
@@ -73,8 +74,9 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
     }
 
 
-    class TokenExchangeProperties @JvmOverloads constructor(val audience: String, var resource: String? = null) {
-
-        fun subjectTokenType() = "urn:ietf:params:oauth:token-type:jwt"
+    data class TokenExchangeProperties @JvmOverloads constructor(val audience: String, var resource: String? = null) {
+        companion object {
+            const val SUBJECT_TOKEN_TYPE_VALUE = "urn:ietf:params:oauth:token-type:jwt"
+        }
     }
 }

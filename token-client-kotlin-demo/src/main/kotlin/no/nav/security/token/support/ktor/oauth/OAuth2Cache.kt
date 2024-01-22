@@ -13,7 +13,7 @@ data class OAuth2CacheConfig(val enabled: Boolean, val maximumSize: Long = 1000,
         Caffeine.newBuilder()
             .expireAfter(evictOnResponseExpiresIn(evictSkew))
             .maximumSize(maximumSize)
-            .buildAsync { key: GrantRequest, _ ->
+            .buildAsync { key, _ ->
                 cacheContext.future {
                     loader(key)
                 }

@@ -22,10 +22,10 @@ class SimpleOAuth2HttpClient : OAuth2HttpClient {
             .sendRequest()
             .processResponse()
 
-    private fun HttpRequest.Builder.configureRequest(request: OAuth2HttpRequest): HttpRequest.Builder {
-        request.oAuth2HttpHeaders.headers.forEach { (key, values) -> values.forEach { header(key, it) } }
-        uri(request.tokenEndpointUrl)
-        POST(BodyPublishers.ofString(request.formParameters.toUrlEncodedString()))
+    private fun HttpRequest.Builder.configureRequest(req: OAuth2HttpRequest): HttpRequest.Builder {
+        req.oAuth2HttpHeaders.headers.forEach { (key, values) -> values.forEach { header(key, it) } }
+        uri(req.tokenEndpointUrl)
+        POST(BodyPublishers.ofString(req.formParameters.toUrlEncodedString()))
         return this
     }
 
