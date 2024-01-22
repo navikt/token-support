@@ -13,6 +13,8 @@ abstract class AbstractOAuth2GrantRequest(val grantType : GrantType, val clientP
         return grantType == that.grantType && clientProperties == that.clientProperties
     }
 
+    fun scopes() = clientProperties.scope.joinToString(" ")
+
     override fun hashCode() = Objects.hash(grantType, clientProperties)
     override fun toString() = "${javaClass.getSimpleName()} [oAuth2GrantType=$grantType, clientProperties=$clientProperties]"
 }

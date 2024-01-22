@@ -11,7 +11,7 @@ class OnBehalfOfTokenClient(oAuth2HttpClient : OAuth2HttpClient) : AbstractOAuth
         LinkedHashMap<String, String>().apply {
             put(ASSERTION, grantRequest.assertion)
             put(REQUESTED_TOKEN_USE,REQUESTED_TOKEN_USE_VALUE)
-            put(SCOPE, grantRequest.clientProperties.scope.joinToString(" "))
+            put(SCOPE, grantRequest.scopes())
 
         }
 

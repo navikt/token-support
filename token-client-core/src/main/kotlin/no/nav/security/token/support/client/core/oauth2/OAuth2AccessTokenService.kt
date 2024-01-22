@@ -20,13 +20,14 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
 
 
 
-    fun getAccessToken(clientProperties : ClientProperties) : OAuth2AccessTokenResponse? {
-        log.trace("Getting access_token for grant={}", clientProperties.grantType)
-        return when (clientProperties.grantType) {
-            JWT_BEARER -> executeOnBehalfOf(clientProperties)
-            CLIENT_CREDENTIALS -> executeClientCredentials(clientProperties)
-            TOKEN_EXCHANGE -> executeTokenExchange(clientProperties)
-            else -> throw OAuth2ClientException("Invalid grant-type ${clientProperties.grantType.value} from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types ($SUPPORTED_GRANT_TYPES)")
+    fun getAccessToken(p : ClientProperties) : OAuth2AccessTokenResponse {
+        return when (p.grantType) {
+            JWT_BEARER -> executeOnBehalfOf(p)
+            CLIENT_CREDENTIALS -> executeClientCredentials(p)
+            TOKEN_EXCHANGE -> executeTokenExchange(p)
+            else -> throw OAuth2ClientException("Invalid grant-type ${p.grantType.value} from OAuth2ClientConfig.OAuth2Client. grant-type not in supported grant-types ($SUPPORTED_GRANT_TYPES)")
+        }.also {
+            log.debug("Got access_token for grant={}", p.grantType)
         }
     }
 
@@ -51,7 +52,7 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
         private val SUPPORTED_GRANT_TYPES = listOf(JWT_BEARER, CLIENT_CREDENTIALS, TOKEN_EXCHANGE
                                                          )
         private val log = LoggerFactory.getLogger(OAuth2AccessTokenService::class.java)
-        private fun <T : AbstractOAuth2GrantRequest?> getFromCacheIfEnabled(grantRequest : T, cache : Cache<T, OAuth2AccessTokenResponse>?, client : Function<T, OAuth2AccessTokenResponse?>) =
+        private fun <T : AbstractOAuth2GrantRequest?> getFromCacheIfEnabled(grantRequest : T, cache : Cache<T, OAuth2AccessTokenResponse>?, client : Function<T, OAuth2AccessTokenResponse>) =
             cache?.let {
                 log.debug("Cache is enabled so attempt to get from cache or update cache if not present.")
                 cache[grantRequest, client]
