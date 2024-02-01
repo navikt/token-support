@@ -16,9 +16,8 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenRespons
 class SimpleOAuth2HttpClient : OAuth2HttpClient {
 
     override fun post(req: OAuth2HttpRequest) =
-        HttpRequest.newBuilder().apply {
-            configureRequest(req)
-        }.build()
+        HttpRequest.newBuilder().configureRequest(req)
+            .build()
             .sendRequest()
             .processResponse()
 
@@ -31,10 +30,10 @@ class SimpleOAuth2HttpClient : OAuth2HttpClient {
 
     private fun HttpRequest.sendRequest() = newHttpClient().send(this, BodyHandlers.ofString())
     private fun HttpResponse<String>.processResponse() =
-        if (this.statusCode() in 200..299) {
+        if (statusCode() in 200..299) {
             MAPPER.readValue<OAuth2AccessTokenResponse>(body())
         } else {
-            throw OAuth2ClientException("Error response from token endpoint: ${this.statusCode()} ${this.body()}")
+            throw OAuth2ClientException("Error response from token endpoint: ${statusCode()} ${body()}")
         }
     private fun Map<String, String>.toUrlEncodedString() = entries.joinToString("&") { (key, value) -> "$key=${URLEncoder.encode(value, UTF_8)}" }
     companion object {
