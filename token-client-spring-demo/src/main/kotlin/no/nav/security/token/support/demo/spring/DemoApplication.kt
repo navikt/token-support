@@ -2,14 +2,13 @@ package no.nav.security.token.support.demo.spring
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
-object DemoApplication {
+class DemoApplication
 
-    @JvmStatic
-    fun main(args : Array<String>) {
-        val app = SpringApplication(DemoApplication::class.java)
-        app.setAdditionalProfiles("mock")
-        app.run(*args)
+fun main(args : Array<String>) {
+    runApplication<DemoApplication>(*args) {
+        setAdditionalProfiles("mock")
     }
 }
