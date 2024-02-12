@@ -20,7 +20,7 @@ class IssuerProperties @JvmOverloads constructor(val discoveryUrl : URL,
                                                  val usePlaintextForHttps: Boolean = false) {
 
     init {
-        cookieName?.let { throw IllegalArgumentException("Cookie-support is discontinued, please remove $it from ypur configuration now") }
+        cookieName?.let { throw IllegalArgumentException("Cookie-support is discontinued, please remove $it from your configuration now") }
     }
 
     override fun toString() = "IssuerProperties(discoveryUrl=$discoveryUrl, acceptedAudience=$acceptedAudience, headerName=$headerName, proxyUrl=$proxyUrl, usePlaintextForHttps=$usePlaintextForHttps, validation=$validation, jwksCache=$jwksCache)"
