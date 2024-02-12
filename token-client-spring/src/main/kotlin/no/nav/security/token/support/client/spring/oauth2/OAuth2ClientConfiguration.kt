@@ -26,7 +26,7 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 class OAuth2ClientConfiguration : ImportAware {
     private var attrs: AnnotationAttributes? = null
     override fun setImportMetadata(meta: AnnotationMetadata) {
-        attrs = requireNotNull(fromMap(meta.getAnnotationAttributes(EnableOAuth2Client::class.java.name, false))) { "@EnableOAuth2Client is not present on importing class $meta.className" }
+        attrs = requireNotNull(fromMap(meta.getAnnotationAttributes(EnableOAuth2Client::class.java.name, false))) { "@EnableOAuth2Client is not present on importing class ${meta.className}" }
     }
 
     @Bean

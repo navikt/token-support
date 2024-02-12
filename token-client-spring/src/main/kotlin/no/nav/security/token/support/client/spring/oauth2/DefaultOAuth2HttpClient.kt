@@ -20,11 +20,11 @@ open class DefaultOAuth2HttpClient(val restClient: RestClient) : OAuth2HttpClien
                 setAll(req.formParameters)
             }).retrieve()
             .onStatus({ it.isError }) { _, response ->
-                throw OAuth2ClientException("Received $response.statusCode from $req.tokenEndpointUrl")
+                throw OAuth2ClientException("Received ${response.statusCode} from ${req.tokenEndpointUrl}")
             }
-            .body<OAuth2AccessTokenResponse>() ?: throw OAuth2ClientException("No body in response from $req.tokenEndpointUrl")
+            .body<OAuth2AccessTokenResponse>() ?: throw OAuth2ClientException("No body in response from ${req.tokenEndpointUrl}")
 
      private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { putAll(req.oAuth2HttpHeaders.headers) }
 
-    override fun toString() = "$javaClass.simpleName  [restClient=$restClient]"
+    override fun toString() = "${javaClass.simpleName}  [restClient=$restClient]"
 }

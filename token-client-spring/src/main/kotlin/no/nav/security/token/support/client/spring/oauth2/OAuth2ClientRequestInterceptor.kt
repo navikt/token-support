@@ -29,6 +29,6 @@ class OAuth2ClientRequestInterceptor(private val properties: ClientConfiguration
         return execution.execute(req, body)
     }
 
-    override fun toString() = "$javaClass.simpleName  [properties=$properties, service=$service, matcher=$matcher]"
+    override fun toString() = "${javaClass.simpleName}  [properties=$properties, service=$service, matcher=$matcher]"
 
 }
