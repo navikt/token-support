@@ -9,6 +9,11 @@ import no.nav.security.token.support.spring.integrationtest.AProtectedRestContro
 
 @ProtectedRestController(issuer = ISSUER_SHORTNAME)
 class AProtectedRestController {
+
+    @ProtectedWithClaims(issuer = ISSUER_SHORTNAME2, claimMap = ["scope=foo.bar"])
+    @GetMapping(PROTECTED_WITH_SCOPE)
+    fun protectedWithClaimsScope() = "protected with required scope"
+    // i companion object:
     @GetMapping(PROTECTED)
     fun protectedMethod() = "protected"
 
@@ -44,6 +49,7 @@ class AProtectedRestController {
         const val ISSUER_SHORTNAME3 = "knownissuer3"
         const val UNPROTECTED = "/unprotected"
         const val PROTECTED = "/protected"
+        const val PROTECTED_WITH_SCOPE = "/protected/scope"
         const val PROTECTED_WITH_CLAIMS = "/protected/withclaims"
         const val PROTECTED_WITH_CLAIMS2 = "/protected/withclaims2"
         const val PROTECTED_WITH_CLAIMS3 = "/protected/withclaims3"

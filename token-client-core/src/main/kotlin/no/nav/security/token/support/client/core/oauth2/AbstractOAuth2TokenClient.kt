@@ -50,7 +50,7 @@ sealed class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest>(private v
             put("Content-Type",listOf("$APPLICATION_URLENCODED"))
             with(clientProperties.authentication) {
                 if (CLIENT_SECRET_BASIC == clientAuthMethod) {
-                    put("Authorization",listOf("Basic ${basicAuth(clientId, clientSecret!!)}"))
+                    put("Authorization",listOf(basicAuth(clientId, clientSecret!!)))
                 }
             }
 
@@ -85,7 +85,7 @@ sealed class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest>(private v
     private fun basicAuth(username : String, password : String) =
         UTF_8.newEncoder().run {
             if (canEncode(username) && canEncode(password)) {
-                getEncoder().encode("$username:$password".toByteArray(UTF_8)).toString(UTF_8)
+                "Basic ${getEncoder().encode("$username:$password".toByteArray(UTF_8)).toString(UTF_8)}"
             }
             else {
                 throw IllegalArgumentException("Username or password contains characters that cannot be encoded to ${UTF_8.displayName()}")

@@ -15,8 +15,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.OK
-import org.springframework.http.HttpStatus.UNAUTHORIZED
+import org.springframework.http.HttpStatus.*
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -40,6 +39,8 @@ import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.AU
 import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.createSignedJWT
 import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_SCOPE
+
 @WebMvcTest(controllers = [AProtectedRestController::class])
 @ContextConfiguration(classes = [ProtectedApplication::class, ProtectedApplicationConfig::class])
 internal class ProtectedRestControllerIntegrationTest {
@@ -186,6 +187,21 @@ internal class ProtectedRestControllerIntegrationTest {
                 OK)
     }
 
+   // @Test
+    fun signedTokenInRequestWithWrongScopeShouldReturn403() {
+        val now = Date()
+        expectStatusCode(
+            PROTECTED_WITH_SCOPE,
+            issueToken("knownissuer2", Builder()
+                .jwtID(UUID.randomUUID().toString())
+                .claim("scope", "foo.foo")
+                .notBeforeTime(now)
+                .issueTime(now)
+                .expirationTime(Date(now.time + MINUTES.toMillis(1)))
+                .build()).serialize(),
+            FORBIDDEN)
+    }
+
     @Test
     fun signedTokenInRequestWithoutSubAndAudClaimsShouldBeNotBeOk() {
         val now = Date()
@@ -216,8 +232,9 @@ internal class ProtectedRestControllerIntegrationTest {
         mockMvc.perform(get(uri)
             .header(AUTHORIZATION_HEADER, "Bearer $token"))
             .andDo(print())
-            .andExpect { status().`is`(httpStatus.value()) }
+            .andExpect(status().`is`(httpStatus.value()))
     }
+
     companion object {
 
         private fun defaultJwtClaimsSetBuilder(): Builder {
