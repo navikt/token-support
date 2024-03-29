@@ -6,19 +6,18 @@ import com.nimbusds.jwt.JWTClaimNames.SUBJECT
 import io.kotest.assertions.asClue
 import io.kotest.assertions.assertSoftly
 import io.kotest.matchers.shouldBe
-import io.ktor.client.call.body
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.serialization.jackson.jackson
-import io.ktor.server.config.MapApplicationConfig
-import io.ktor.server.testing.testApplication
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.serialization.jackson.*
+import io.ktor.server.config.*
+import io.ktor.server.testing.*
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.security.token.support.client.core.jwk.JwkFactory
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
 internal class ApplicationTest {
 

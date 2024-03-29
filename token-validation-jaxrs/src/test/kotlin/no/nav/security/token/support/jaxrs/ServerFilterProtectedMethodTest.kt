@@ -1,6 +1,8 @@
 package no.nav.security.token.support.jaxrs
 
 import jakarta.ws.rs.client.ClientBuilder.newClient
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.jaxrs.JwtTokenGenerator.createSignedJWT
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -11,8 +13,6 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
-import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
-import no.nav.security.token.support.jaxrs.JwtTokenGenerator.createSignedJWT
 
 @ActiveProfiles("protected")
 @DirtiesContext

@@ -2,10 +2,8 @@ package no.nav.security.token.support.core.configuration
 
 import jakarta.validation.Validation
 import java.net.URL
-import java.util.Objects
+import java.util.*
 import java.util.concurrent.TimeUnit.MINUTES
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties.JwksCache.Companion.EMPTY_CACHE
 import no.nav.security.token.support.core.configuration.IssuerProperties.Validation.Companion.EMPTY

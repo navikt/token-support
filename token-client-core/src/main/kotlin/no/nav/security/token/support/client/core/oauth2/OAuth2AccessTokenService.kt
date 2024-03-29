@@ -5,10 +5,10 @@ import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
 import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
 import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import java.util.function.Function
-import org.slf4j.LoggerFactory
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
+import org.slf4j.LoggerFactory
 
 class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolver : JwtBearerTokenResolver,
                                                          private val onBehalfOfTokenClient : OnBehalfOfTokenClient,

@@ -1,12 +1,8 @@
 package no.nav.security.token.support.client.core.oauth2
 
-import com.nimbusds.oauth2.sdk.GrantType
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties.Companion.SUBJECT_TOKEN_TYPE_VALUE
-import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.OAuth2ParameterNames
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.AUDIENCE
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.RESOURCE
-import no.nav.security.token.support.client.core.OAuth2ParameterNames.SCOPE
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TOKEN
 import no.nav.security.token.support.client.core.OAuth2ParameterNames.SUBJECT_TOKEN_TYPE
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient

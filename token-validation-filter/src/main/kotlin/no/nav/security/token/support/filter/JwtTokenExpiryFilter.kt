@@ -11,12 +11,12 @@ import jakarta.servlet.http.HttpServletResponse
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit.MINUTES
-import java.util.Date
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import java.util.*
 import no.nav.security.token.support.core.JwtTokenConstants
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.jwt.JwtTokenClaims
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Checks the expiry time in a validated token against a preconfigured threshold

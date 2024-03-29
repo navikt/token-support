@@ -1,18 +1,18 @@
 package no.nav.security.token.support.client.core.auth
 
-import com.nimbusds.jose.JOSEObjectType.*
-import com.nimbusds.jose.JWSAlgorithm.*
+import com.nimbusds.jose.JOSEObjectType.JWT
+import com.nimbusds.jose.JWSAlgorithm.RS256
 import com.nimbusds.jose.crypto.RSASSAVerifier
 import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT
 import java.net.URI
 import java.time.Instant
-import java.util.Date
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import java.util.*
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 internal class ClientAssertionTest {
 

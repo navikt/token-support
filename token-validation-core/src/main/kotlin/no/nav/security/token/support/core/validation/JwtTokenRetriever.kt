@@ -1,11 +1,11 @@
 package no.nav.security.token.support.core.validation
 
-import java.util.Optional
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import java.util.*
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.http.HttpRequest
 import no.nav.security.token.support.core.jwt.JwtToken
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 object JwtTokenRetriever {
 

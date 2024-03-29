@@ -8,8 +8,7 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.SignedJWT
-import java.util.Date
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit.MINUTES
 import no.nav.security.token.support.jaxrs.JwkGenerator.defaultRSAKey
 

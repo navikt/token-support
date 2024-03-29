@@ -7,7 +7,6 @@ import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BAS
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_POST
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication
-import java.lang.String.join
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.Base64.getEncoder
 import no.nav.security.token.support.client.core.ClientProperties

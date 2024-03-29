@@ -3,10 +3,10 @@ package no.nav.security.token.support.jaxrs
 import jakarta.inject.Inject
 import jakarta.ws.rs.client.ClientRequestContext
 import jakarta.ws.rs.client.ClientRequestFilter
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.jaxrs.JaxrsTokenValidationContextHolder.getHolder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class JwtTokenClientRequestFilter @Inject constructor() : ClientRequestFilter {
 

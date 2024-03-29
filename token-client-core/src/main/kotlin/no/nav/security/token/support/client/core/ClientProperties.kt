@@ -6,8 +6,7 @@ import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
 import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
 import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import com.nimbusds.oauth2.sdk.ParseException
-import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata
-import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata.*
+import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata.parse
 import java.io.IOException
 import java.net.URI
 

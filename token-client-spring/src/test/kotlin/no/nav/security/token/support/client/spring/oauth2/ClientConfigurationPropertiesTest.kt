@@ -1,19 +1,16 @@
 package no.nav.security.token.support.client.spring.oauth2
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
+import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.web.client.RestClient
-import no.nav.security.token.support.client.core.oauth2.OnBehalfOfGrantRequest
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestClientAutoConfiguration::class])
 @ActiveProfiles("test")
@@ -55,7 +52,7 @@ internal class ClientConfigurationPropertiesTest {
         assertThat(auth.clientRsaKey).isNotNull
         assertThat(clientProperties.scope).isNotEmpty
         assertThat(clientProperties.tokenEndpointUrl).isNotNull
-        assertThat(clientProperties.grantType?.value).isNotNull
+        assertThat(clientProperties.grantType.value).isNotNull
     }
 
     @Test

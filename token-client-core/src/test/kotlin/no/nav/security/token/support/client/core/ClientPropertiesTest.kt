@@ -5,13 +5,13 @@ import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
 import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
 import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import no.nav.security.token.support.client.core.ClientProperties.ClientPropertiesBuilder
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 import no.nav.security.token.support.client.core.TestUtils.jsonResponse
 import no.nav.security.token.support.client.core.TestUtils.withMockServer
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class ClientPropertiesTest {
 

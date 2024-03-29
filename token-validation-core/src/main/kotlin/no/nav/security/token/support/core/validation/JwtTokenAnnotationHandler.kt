@@ -1,9 +1,6 @@
 package no.nav.security.token.support.core.validation
 
 import java.lang.reflect.Method
-import kotlin.reflect.KClass
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import no.nav.security.token.support.core.api.Protected
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import no.nav.security.token.support.core.api.RequiredIssuers
@@ -17,6 +14,9 @@ import no.nav.security.token.support.core.utils.Cluster.Companion.currentCluster
 import no.nav.security.token.support.core.utils.Cluster.Companion.isProd
 import no.nav.security.token.support.core.utils.JwtTokenUtil.contextHasValidToken
 import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import kotlin.reflect.KClass
 
 open class JwtTokenAnnotationHandler(private val tokenValidationContextHolder : TokenValidationContextHolder) {
 

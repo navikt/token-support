@@ -2,6 +2,9 @@ package no.nav.security.token.support.jaxrs
 
 import jakarta.ws.rs.client.ClientBuilder
 import jakarta.ws.rs.client.Invocation.Builder
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.core.jwt.JwtToken.Companion.asBearer
+import no.nav.security.token.support.jaxrs.JwtTokenGenerator.createSignedJWT
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.hamcrest.core.Is
@@ -11,9 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
-import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
-import no.nav.security.token.support.core.jwt.JwtToken.Companion.asBearer
-import no.nav.security.token.support.jaxrs.JwtTokenGenerator.createSignedJWT
 
 @ActiveProfiles("invalid")
 @DirtiesContext

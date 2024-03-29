@@ -2,18 +2,11 @@ package no.nav.security.token.support.v2
 
 
 import com.nimbusds.jose.util.ResourceRetriever
-import io.ktor.http.Headers
-import io.ktor.server.auth.AuthenticationConfig
-import io.ktor.server.auth.AuthenticationContext
-import io.ktor.server.auth.AuthenticationFailedCause
-import io.ktor.server.auth.AuthenticationProvider
-import io.ktor.server.auth.Principal
-import io.ktor.server.auth.UnauthorizedResponse
-import io.ktor.server.config.ApplicationConfig
-import io.ktor.server.config.MapApplicationConfig
-import io.ktor.server.response.respond
+import io.ktor.http.*
+import io.ktor.server.auth.*
+import io.ktor.server.config.*
+import io.ktor.server.response.*
 import java.net.URI
-import org.slf4j.LoggerFactory
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.IssuerProperties.JwksCache
@@ -29,6 +22,7 @@ import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
 import no.nav.security.token.support.v2.TokenSupportAuthenticationProvider.ProviderConfiguration
+import org.slf4j.LoggerFactory
 
 data class TokenValidationContextPrincipal(val context: TokenValidationContext) : Principal
 

@@ -12,16 +12,13 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.time.LocalDateTime.now
 import java.time.ZoneId.systemDefault
-import java.util.Base64
-import java.util.Date
-import java.util.Optional
-import java.util.UUID
+import java.util.*
+import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
+import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.assertj.core.api.Assertions.assertThat
-import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
-import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
 
 object TestUtils {
     @JvmStatic

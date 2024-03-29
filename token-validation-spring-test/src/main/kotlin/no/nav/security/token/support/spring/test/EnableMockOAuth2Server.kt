@@ -1,10 +1,10 @@
 package no.nav.security.token.support.spring.test
 
 import java.lang.annotation.Inherited
-import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.annotation.AnnotationTarget.CLASS
 import org.springframework.boot.test.autoconfigure.properties.PropertyMapping
 import org.springframework.context.annotation.Import
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.annotation.AnnotationTarget.CLASS
 
 @MustBeDocumented
 @Inherited

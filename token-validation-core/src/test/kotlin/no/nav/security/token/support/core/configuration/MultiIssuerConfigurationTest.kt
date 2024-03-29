@@ -3,14 +3,14 @@ package no.nav.security.token.support.core.configuration
 import com.nimbusds.jose.util.DefaultResourceRetriever
 import java.net.Proxy.Type.HTTP
 import java.net.URL
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import no.nav.security.token.support.core.IssuerMockWebServer
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.core.configuration.IssuerProperties.JwksCache.Companion.EMPTY_CACHE
 import no.nav.security.token.support.core.configuration.IssuerProperties.Validation.Companion.EMPTY
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 internal class MultiIssuerConfigurationTest {
 

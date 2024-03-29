@@ -9,7 +9,11 @@ import jakarta.servlet.http.HttpServletResponse
 import java.text.ParseException
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Date
+import java.util.*
+import no.nav.security.token.support.core.JwtTokenConstants
+import no.nav.security.token.support.core.context.TokenValidationContext
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import no.nav.security.token.support.core.jwt.JwtTokenClaims
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -19,10 +23,6 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
-import no.nav.security.token.support.core.JwtTokenConstants
-import no.nav.security.token.support.core.context.TokenValidationContext
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import no.nav.security.token.support.core.jwt.JwtTokenClaims
 
 @ExtendWith(MockitoExtension::class)
 internal class JwtTokenExpiryFilterTest {

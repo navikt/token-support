@@ -17,8 +17,7 @@ import java.security.KeyPairGenerator
 import java.security.NoSuchAlgorithmException
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
-import java.util.Date
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit.HOURS
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
 

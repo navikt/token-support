@@ -3,17 +3,17 @@ package no.nav.security.token.support.core.configuration
 import com.nimbusds.jwt.JWTClaimNames.AUDIENCE
 import com.nimbusds.jwt.JWTClaimNames.SUBJECT
 import java.net.URI
+import no.nav.security.token.support.core.IssuerMockWebServer
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.core.configuration.IssuerProperties.JwksCache
+import no.nav.security.token.support.core.configuration.IssuerProperties.Validation
+import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import no.nav.security.token.support.core.IssuerMockWebServer
-import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
-import no.nav.security.token.support.core.configuration.IssuerProperties.JwksCache
-import no.nav.security.token.support.core.configuration.IssuerProperties.Validation
-import no.nav.security.token.support.core.exceptions.MetaDataNotAvailableException
 
 internal class IssuerConfigurationTest {
 

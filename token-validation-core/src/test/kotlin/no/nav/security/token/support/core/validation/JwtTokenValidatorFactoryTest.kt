@@ -10,6 +10,11 @@ import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata
 import com.nimbusds.oauth2.sdk.id.Issuer
 import java.net.URI
 import java.util.concurrent.TimeUnit.MINUTES
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.core.configuration.IssuerProperties
+import no.nav.security.token.support.core.configuration.IssuerProperties.JwksCache
+import no.nav.security.token.support.core.configuration.IssuerProperties.Validation
+import no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,11 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 import org.mockito.quality.Strictness.LENIENT
-import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
-import no.nav.security.token.support.core.configuration.IssuerProperties
-import no.nav.security.token.support.core.configuration.IssuerProperties.JwksCache
-import no.nav.security.token.support.core.configuration.IssuerProperties.Validation
-import no.nav.security.token.support.core.validation.JwtTokenValidatorFactory.tokenValidator
 
 @ExtendWith(MockitoExtension::class)
 @MockitoSettings(strictness = LENIENT)

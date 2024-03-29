@@ -5,9 +5,9 @@ import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_JWT
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.NONE
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.SELF_SIGNED_TLS_CLIENT_AUTH
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.TLS_CLIENT_AUTH
+import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 
 internal class ClientAuthenticationPropertiesTest {
 

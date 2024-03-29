@@ -5,7 +5,7 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier
 import com.nimbusds.jwt.util.DateUtils.isBefore
 import com.nimbusds.openid.connect.sdk.validators.BadJWTExceptions.IAT_CLAIM_AHEAD_EXCEPTION
-import java.util.Date
+import java.util.*
 
 /**
  * Extends [com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier] with a time check for the issued at ("iat") claim.

@@ -1,9 +1,9 @@
 package no.nav.security.token.support.client.spring.oauth2
 
 import java.lang.annotation.Inherited
+import org.springframework.context.annotation.Import
 import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
 import kotlin.annotation.AnnotationTarget.CLASS
-import org.springframework.context.annotation.Import
 
 /**
  * Enables OAuth 2.0 clients for retrieving accesstokens using the

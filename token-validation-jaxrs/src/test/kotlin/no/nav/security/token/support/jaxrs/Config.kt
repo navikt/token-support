@@ -1,16 +1,5 @@
 package no.nav.security.token.support.jaxrs
 
-import org.glassfish.jersey.server.ResourceConfig
-import org.glassfish.jersey.servlet.ServletContainer
-import org.glassfish.jersey.servlet.ServletProperties.JAXRS_APPLICATION_CLASS
-import org.springframework.boot.SpringBootConfiguration
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
-import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory
-import org.springframework.boot.web.servlet.FilterRegistrationBean
-import org.springframework.boot.web.servlet.ServletRegistrationBean
-import org.springframework.context.annotation.Bean
-import org.springframework.web.context.request.RequestContextListener
 import no.nav.security.token.support.core.configuration.IssuerProperties
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetriever
@@ -22,6 +11,17 @@ import no.nav.security.token.support.jaxrs.rest.UnprotectedClassResource
 import no.nav.security.token.support.jaxrs.rest.WithoutAnnotationsResource
 import no.nav.security.token.support.jaxrs.servlet.JaxrsJwtTokenValidationFilter
 import no.nav.security.token.support.spring.MultiIssuerProperties
+import org.glassfish.jersey.server.ResourceConfig
+import org.glassfish.jersey.servlet.ServletContainer
+import org.glassfish.jersey.servlet.ServletProperties.JAXRS_APPLICATION_CLASS
+import org.springframework.boot.SpringBootConfiguration
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory
+import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.boot.web.servlet.ServletRegistrationBean
+import org.springframework.context.annotation.Bean
+import org.springframework.web.context.request.RequestContextListener
 
 @SpringBootConfiguration
 @EnableConfigurationProperties(MultiIssuerProperties::class)

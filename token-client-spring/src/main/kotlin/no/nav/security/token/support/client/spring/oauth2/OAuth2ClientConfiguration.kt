@@ -1,5 +1,14 @@
 package no.nav.security.token.support.client.spring.oauth2
 
+import no.nav.security.token.support.client.core.OAuth2CacheFactory.accessTokenResponseCache
+import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
+import no.nav.security.token.support.client.core.http.OAuth2HttpClient
+import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
+import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass
@@ -11,15 +20,6 @@ import org.springframework.core.annotation.AnnotationAttributes
 import org.springframework.core.annotation.AnnotationAttributes.fromMap
 import org.springframework.core.type.AnnotationMetadata
 import org.springframework.web.client.RestClient
-import no.nav.security.token.support.client.core.OAuth2CacheFactory.accessTokenResponseCache
-import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
-import no.nav.security.token.support.client.core.http.OAuth2HttpClient
-import no.nav.security.token.support.client.core.oauth2.ClientCredentialsTokenClient
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
-import no.nav.security.token.support.client.core.oauth2.OnBehalfOfTokenClient
-import no.nav.security.token.support.client.core.oauth2.TokenExchangeClient
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @EnableConfigurationProperties(ClientConfigurationProperties::class)
 @Configuration

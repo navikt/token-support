@@ -3,12 +3,6 @@ package no.nav.security.token.support.client.core.oauth2
 import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
 import java.net.URI
-import okhttp3.mockwebserver.MockWebServer
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
@@ -24,6 +18,12 @@ import no.nav.security.token.support.client.core.TestUtils.encodeValue
 import no.nav.security.token.support.client.core.TestUtils.jsonResponse
 import no.nav.security.token.support.client.core.TestUtils.jwt
 import no.nav.security.token.support.client.core.http.SimpleOAuth2HttpClient
+import okhttp3.mockwebserver.MockWebServer
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 internal class TokenExchangeClientTest {
 

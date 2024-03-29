@@ -12,10 +12,9 @@ import com.nimbusds.jwt.SignedJWT
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication.CLIENT_ASSERTION_TYPE
 import java.net.URI
 import java.time.Instant.now
-import java.util.Date
-import java.util.UUID
-import kotlin.DeprecationLevel.WARNING
+import java.util.*
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
+import kotlin.DeprecationLevel.WARNING
 
 class ClientAssertion(private val tokenEndpointUrl : URI, private val clientId : String, private val rsaKey : RSAKey, private val expiryInSeconds : Int) {
     constructor(tokenEndpointUrl: URI, auth :  ClientAuthenticationProperties) : this(tokenEndpointUrl, auth.clientId, auth.clientRsaKey!!, EXPIRY_IN_SECONDS)

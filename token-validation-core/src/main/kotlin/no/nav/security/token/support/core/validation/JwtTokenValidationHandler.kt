@@ -2,9 +2,6 @@ package no.nav.security.token.support.core.validation
 
 import java.util.AbstractMap.SimpleImmutableEntry
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.Map.Entry
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import no.nav.security.token.support.core.configuration.MultiIssuerConfiguration
 import no.nav.security.token.support.core.context.TokenValidationContext
 import no.nav.security.token.support.core.exceptions.IssuerConfigurationException
@@ -12,6 +9,9 @@ import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException
 import no.nav.security.token.support.core.http.HttpRequest
 import no.nav.security.token.support.core.jwt.JwtToken
 import no.nav.security.token.support.core.validation.JwtTokenRetriever.retrieveUnvalidatedTokens
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import kotlin.collections.Map.Entry
 
 class JwtTokenValidationHandler(private val config : MultiIssuerConfiguration) {
 

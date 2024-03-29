@@ -5,23 +5,8 @@ import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
 import com.nimbusds.oauth2.sdk.TokenRequest
-import java.util.Date
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit.MINUTES
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.*
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-
-import org.springframework.web.context.WebApplicationContext
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.OAuth2TokenCallback
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
@@ -30,6 +15,7 @@ import no.nav.security.token.support.spring.integrationtest.AProtectedRestContro
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS2
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_CLAIMS_ANY_CLAIMS
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_MULTIPLE
+import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_SCOPE
 import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.UNPROTECTED
 import no.nav.security.token.support.spring.integrationtest.JwkGenerator.DEFAULT_KEYID
 import no.nav.security.token.support.spring.integrationtest.JwkGenerator.createJWK
@@ -38,8 +24,21 @@ import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.AC
 import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.AUD
 import no.nav.security.token.support.spring.integrationtest.JwtTokenGenerator.createSignedJWT
 import no.nav.security.token.support.spring.validation.interceptor.BearerTokenClientHttpRequestInterceptor
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.OK
+import org.springframework.http.HttpStatus.UNAUTHORIZED
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import no.nav.security.token.support.spring.integrationtest.AProtectedRestController.Companion.PROTECTED_WITH_SCOPE
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.context.WebApplicationContext
 
 @WebMvcTest(controllers = [AProtectedRestController::class])
 @ContextConfiguration(classes = [ProtectedApplication::class, ProtectedApplicationConfig::class])

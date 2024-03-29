@@ -2,12 +2,15 @@ package no.nav.security.token.support.client.spring.oauth2
 
 
 import java.util.function.Supplier
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesTestWithWellKnownUrl.RandomPortInitializer
+import no.nav.security.token.support.client.spring.oauth2.TestUtils.jsonResponse
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.ApplicationContextInitializer
@@ -16,10 +19,6 @@ import org.springframework.context.support.GenericApplicationContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.support.TestPropertySourceUtils.addInlinedPropertiesToEnvironment
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesTestWithWellKnownUrl.RandomPortInitializer
-import no.nav.security.token.support.client.spring.oauth2.TestUtils.jsonResponse
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestClientAutoConfiguration::class])
 @ContextConfiguration(initializers = [RandomPortInitializer::class])

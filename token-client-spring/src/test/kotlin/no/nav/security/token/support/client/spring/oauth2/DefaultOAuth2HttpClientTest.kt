@@ -1,6 +1,8 @@
 package no.nav.security.token.support.client.spring.oauth2
 import java.io.IOException
 import java.net.URI
+import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders
+import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -8,8 +10,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.MockitoAnnotations
 import org.springframework.web.client.RestClient
-import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders
-import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 
 internal class DefaultOAuth2HttpClientTest {
     private lateinit var server: MockWebServer

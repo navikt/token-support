@@ -8,19 +8,11 @@ import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import io.ktor.client.request.get
-import io.ktor.client.request.header
+import io.ktor.client.request.*
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
-import io.ktor.server.testing.testApplication
-import java.util.Date
-import java.util.UUID
-import kotlin.test.assertEquals
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
+import io.ktor.server.testing.*
+import java.util.*
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.v2.JwkGenerator.jWKSet
 import no.nav.security.token.support.v2.JwtTokenGenerator.ACR
@@ -30,6 +22,12 @@ import no.nav.security.token.support.v2.JwtTokenGenerator.ISS
 import no.nav.security.token.support.v2.JwtTokenGenerator.createSignedJWT
 import no.nav.security.token.support.v2.inlineconfigtestapp.helloCounter
 import no.nav.security.token.support.v2.inlineconfigtestapp.inlineConfiguredModule
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
+import kotlin.test.assertEquals
 
 @Disabled("Skjønner ikke hvorfor den kjører lokalt, men ikke i GHA")
 class InlineConfigTest {

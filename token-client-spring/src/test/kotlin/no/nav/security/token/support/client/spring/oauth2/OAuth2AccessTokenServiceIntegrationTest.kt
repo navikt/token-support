@@ -14,6 +14,14 @@ import java.time.LocalDateTime.*
 import java.time.ZoneId.*
 import java.util.*
 import java.util.Base64.*
+import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import no.nav.security.token.support.client.spring.oauth2.TestUtils.jsonResponse
+import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
+import no.nav.security.token.support.core.context.TokenValidationContext
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import no.nav.security.token.support.core.jwt.JwtToken
 import okhttp3.Headers
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.*
@@ -25,19 +33,10 @@ import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.*
 import org.springframework.test.context.ActiveProfiles
-import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import no.nav.security.token.support.client.spring.oauth2.TestUtils.jsonResponse
-import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
-import no.nav.security.token.support.core.context.TokenValidationContext
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import no.nav.security.token.support.core.jwt.JwtToken
 
 @SpringBootTest(classes = [ConfigurationWithCacheEnabledTrue::class, RestClientAutoConfiguration::class])
 @ActiveProfiles("test")

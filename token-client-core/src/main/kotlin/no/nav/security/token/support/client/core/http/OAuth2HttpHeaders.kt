@@ -1,8 +1,7 @@
 package no.nav.security.token.support.client.core.http
 
 import java.lang.String.CASE_INSENSITIVE_ORDER
-import java.util.Objects
-import java.util.TreeMap
+import java.util.*
 
 class OAuth2HttpHeaders (val headers : Map<String, List<String>>) {
 

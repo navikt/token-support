@@ -7,11 +7,6 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
-import jakarta.ws.rs.core.NewCookie.Builder
-import jakarta.ws.rs.core.Response
-import jakarta.ws.rs.core.Response.Status.FOUND
-import jakarta.ws.rs.core.Response.Status.OK
-import java.net.URI
 import java.nio.charset.Charset.defaultCharset
 import java.util.Objects.requireNonNull
 import no.nav.security.token.support.core.api.Unprotected

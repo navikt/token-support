@@ -1,8 +1,8 @@
 package no.nav.security.token.support.ktor.oauth
 
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
-import io.ktor.client.HttpClient
-import io.ktor.server.config.ApplicationConfig
+import io.ktor.client.*
+import io.ktor.server.config.*
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 
 class ClientConfig(applicationConfig: ApplicationConfig, httpClient: HttpClient) {

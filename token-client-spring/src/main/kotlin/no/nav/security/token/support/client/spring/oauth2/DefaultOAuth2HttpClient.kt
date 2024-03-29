@@ -1,13 +1,13 @@
 package no.nav.security.token.support.client.spring.oauth2
 
-import org.springframework.http.HttpHeaders
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.web.client.RestClient
-import org.springframework.web.client.body
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
+import org.springframework.http.HttpHeaders
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.body
 
 open class DefaultOAuth2HttpClient(val restClient: RestClient) : OAuth2HttpClient {
 

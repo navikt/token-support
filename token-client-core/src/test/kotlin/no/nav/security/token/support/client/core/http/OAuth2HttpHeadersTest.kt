@@ -1,9 +1,9 @@
 package no.nav.security.token.support.client.core.http
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders.Companion.builder
 import no.nav.security.token.support.client.core.http.OAuth2HttpHeaders.Companion.of
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 internal class OAuth2HttpHeadersTest {
 

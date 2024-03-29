@@ -6,9 +6,12 @@ import com.nimbusds.oauth2.sdk.GrantType.*
 import java.time.Instant
 import java.time.LocalDateTime.*
 import java.time.ZoneId.*
-import java.util.Arrays
-import java.util.Date
-import java.util.UUID
+import java.util.*
+import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
+import no.nav.security.token.support.client.core.OAuth2CacheFactory.accessTokenResponseCache
+import no.nav.security.token.support.client.core.OAuth2ClientException
+import no.nav.security.token.support.client.core.TestUtils.clientProperties
+import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,11 +25,6 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
-import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
-import no.nav.security.token.support.client.core.OAuth2CacheFactory.accessTokenResponseCache
-import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.TestUtils.clientProperties
-import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 
 @ExtendWith(MockitoExtension::class)
 internal class OAuth2AccessTokenServiceTest {

@@ -2,21 +2,18 @@ package no.nav.security.token.support.v2
 
 import com.nimbusds.jwt.JWTClaimNames.AUDIENCE
 import com.nimbusds.jwt.JWTClaimNames.SUBJECT
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.config.MapApplicationConfig
-import io.ktor.server.testing.testApplication
-import java.time.Duration
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.slf4j.LoggerFactory
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.server.config.*
+import io.ktor.server.testing.*
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 import no.nav.security.token.support.v2.testapp.module
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.slf4j.LoggerFactory
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
 

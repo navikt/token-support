@@ -3,10 +3,10 @@ package no.nav.security.token.support.v2
 import com.nimbusds.jwt.JWTClaimNames.SUBJECT
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
-import io.ktor.server.config.MapApplicationConfig
-import org.junit.jupiter.api.Test
+import io.ktor.server.config.*
 import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.security.token.support.core.configuration.IssuerProperties
+import org.junit.jupiter.api.Test
 
 internal class TokenSupportAuthenticationProviderKtTest {
 
