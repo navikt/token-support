@@ -25,4 +25,4 @@ jobs:
             - name: Analyser
               run: |
                   ./mvnw versions:set -DnewVersion=${TAG}
-                  ./mvnw --settings .github/settings.xml test jacoco:prepare-agent jacoco:report  org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.projectKey=navikt_token-support
+                  ./mvnw --settings .github/settings.xml verify jacoco:prepare-agent jacoco:report  org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.projectKey=navikt_token-support
