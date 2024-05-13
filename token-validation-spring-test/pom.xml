@@ -12,7 +12,7 @@
     <artifactId>token-validation-spring-test</artifactId>
 
     <properties>
-        <kotlin.version>1.9.23</kotlin.version>
+        <kotlin.version>1.9.24</kotlin.version>
     </properties>
 
 
