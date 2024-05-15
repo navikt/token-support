@@ -7,7 +7,9 @@ on:
 jobs:
   publish-release:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout latest code
         uses: actions/checkout@v4
@@ -27,7 +29,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Publish artifact to central
+      - name: Set new version and publish artifact to central
         env:
           NEW_VERSION: ${{ github.event.release.tag_name }}
           SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
@@ -42,13 +44,10 @@ jobs:
           echo "-- Build, test and deploy release to Sonatype --"
           ./mvnw -B --settings .github/settings.xml clean deploy -Prelease,deploy-to-sonatype -Dmaven.wagon.http.pool=false
 
-    #  - name: Publish artifact to GPR
-    #    env:
-    #      NEW_VERSION: ${{ github.event.release.tag_name }}
-    #      GITHUB_USERNAME: x-access-token
-    #      GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-    #      GITHUB_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-    #    run: |
-    #      git config user.email "actions@github.com"
-    #      git config user.name "GitHub Actions release"
-    #    ./mvnw  --settings .github/settings.xml -Pgithub --batch-mode -Dmaven.main.skip=true -Dmaven.test.skip=true  deploy
+      - name: Publish artifact to GPR
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./mvnw --settings .github/settings.xml --batch-mode -DskipTests -Dmaven.main.skip=true -Dmaven.test.skip=true  deploy
