@@ -50,4 +50,4 @@ jobs:
           GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./mvnw --settings .github/settings.xml --batch-mode -DskipTests -Dmaven.main.skip=true -Dmaven.test.skip=true  deploy
+          ./mvnw -Pgithub --settings .github/settings.xml --batch-mode -DskipTests -Dmaven.main.skip=true -Dmaven.test.skip=true  deploy
