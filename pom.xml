@@ -41,7 +41,7 @@
     </modules>
     <properties>
         <dokka.version>1.9.20</dokka.version>
-        <kotlin.version>1.9.24</kotlin.version>
+        <kotlin.version>2.0.0</kotlin.version>
         <kotlin-coroutines.version>1.6.2</kotlin-coroutines.version>
         <doclint>none</doclint>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -60,7 +60,7 @@
         <okhttp3.version>4.12.0</okhttp3.version>
         <ktor.version>2.3.11</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.version>1.9.24</kotlin.version>
+        <kotlin.version>2.0.0</kotlin.version>
         <mock-oauth2-server.version>2.1.2</mock-oauth2-server.version>
         <nimbus.jose.jwt.version>9.39.1</nimbus.jose.jwt.version>
         <kotest.version>5.9.0</kotest.version>
