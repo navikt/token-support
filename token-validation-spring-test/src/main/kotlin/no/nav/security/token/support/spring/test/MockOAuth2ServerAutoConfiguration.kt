@@ -21,7 +21,7 @@ import no.nav.security.token.support.core.configuration.ProxyAwareResourceRetrie
 class MockOAuth2ServerAutoConfiguration(private val properties : MockOAuth2ServerProperties) {
 
     private val log : Logger = LoggerFactory.getLogger(MockOAuth2ServerAutoConfiguration::class.java)
-    private val mockOAuth2Server = MockOAuth2Server(OAuth2Config(properties.isInteractiveLogin, null, null,OAuth2TokenProvider(), setOf(DefaultOAuth2TokenCallback())))
+    private val mockOAuth2Server = MockOAuth2Server(OAuth2Config(properties.isInteractiveLogin, null, null,false,OAuth2TokenProvider(), setOf(DefaultOAuth2TokenCallback())))
 
     @Bean
     @Primary
