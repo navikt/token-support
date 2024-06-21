@@ -59,7 +59,7 @@
         <mockwebserver.version>4.12.0</mockwebserver.version>
         <caffeine.version>3.1.8</caffeine.version>
         <okhttp3.version>4.12.0</okhttp3.version>
-        <ktor.version>2.3.11</ktor.version>
+        <ktor.version>2.3.12</ktor.version>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.version>2.0.0</kotlin.version>
         <mock-oauth2-server.version>2.1.7</mock-oauth2-server.version>
