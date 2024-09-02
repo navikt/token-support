@@ -13,7 +13,6 @@
         <kotlin.code.style>official</kotlin.code.style>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.class>io.ktor.server.netty.EngineMain</main.class>
-        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
     </properties>
     <dependencies>
         <dependency>
@@ -62,15 +61,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>token-validation-ktor-v2</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>
