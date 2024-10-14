@@ -161,7 +161,7 @@ internal class OAuth2AccessTokenServiceTest {
         val res1 = oAuth2AccessTokenService.getAccessToken(clientProperties)
         verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
         assertThat(res1).hasNoNullFieldsOrProperties()
-        assertThat(res1.accessToken).isEqualTo("first_access_token")
+        assertThat(res1.getAccessToken()).isEqualTo("first_access_token")
         Thread.sleep(1000)
 
         //entry should be missing from cache due to expiry
