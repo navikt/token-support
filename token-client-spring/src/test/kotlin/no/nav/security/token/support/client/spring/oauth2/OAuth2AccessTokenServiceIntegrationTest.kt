@@ -75,9 +75,9 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
                  whenever(tokenValidationContextHolder!!.getTokenValidationContext()).thenReturn(tokenValidationContext("sub1"))
                  val response = oAuth2AccessTokenService.getAccessToken(this)
 
-                 assertThat(response.accessToken).isNotBlank
-                 assertThat(response.expiresAt).isGreaterThan(0)
-                 assertThat(response.expiresIn).isGreaterThan(0)
+                 assertThat(response.access_token).isNotBlank
+                 assertThat(response.expires_at).isGreaterThan(0)
+                 assertThat(response.expires_in).isGreaterThan(0)
 
                  val request = server.takeRequest()
                  assertThat(request.headers["Content-Type"]).contains(APPLICATION_FORM_URLENCODED_VALUE)
@@ -99,9 +99,9 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
         whenever(tokenValidationContextHolder!!.getTokenValidationContext()).thenReturn(tokenValidationContext("sub1"))
 
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        assertThat(response.accessToken).isNotBlank
-        assertThat(response.expiresAt).isGreaterThan(0)
-        assertThat(response.expiresIn).isGreaterThan(0)
+        assertThat(response.access_token).isNotBlank
+        assertThat(response.expires_in).isGreaterThan(0)
+        assertThat(response.expires_at).isGreaterThan(0)
 
         val request = server.takeRequest()
         val body = request.body.readUtf8()
@@ -115,9 +115,9 @@ internal class OAuth2AccessTokenServiceIntegrationTest {
         val clientProperties = clientConfigurationProperties.registration["example1-clientcredentials1"]?.toBuilder()?.tokenEndpointUrl(tokenEndpointUrl)?.build() ?: fail("clientProperties is null")
         server.enqueue(jsonResponse(TOKEN_RESPONSE))
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        assertThat(response.accessToken).isNotBlank
-        assertThat(response.expiresAt).isGreaterThan(0)
-        assertThat(response.expiresIn).isGreaterThan(0)
+        assertThat(response.access_token).isNotBlank
+        assertThat(response.expires_in).isGreaterThan(0)
+        assertThat(response.expires_at).isGreaterThan(0)
 
         val request = server.takeRequest()
         val body = request.body.readUtf8()

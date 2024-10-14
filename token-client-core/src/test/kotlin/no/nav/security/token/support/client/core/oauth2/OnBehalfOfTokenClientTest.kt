@@ -50,9 +50,9 @@ internal class OnBehalfOfTokenClientTest {
                 .contains("requested_token_use=on_behalf_of")
                 .contains("assertion=$assertion")
             assertThat(response).isNotNull()
-            assertThat(response.accessToken).isNotBlank()
-            assertThat(response.expiresAt).isPositive()
-            assertThat(response.expiresIn).isPositive()
+            assertThat(response.access_token).isNotBlank()
+            assertThat(response.expires_at).isPositive()
+            assertThat(response.expires_in).isPositive()
         }
 
     @Test

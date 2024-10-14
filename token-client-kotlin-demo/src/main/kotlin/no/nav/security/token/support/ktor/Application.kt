@@ -80,7 +80,7 @@ fun Application.module() {
 }
 
 data class DemoTokenResponse(val grantType: String, val tokenResponse: OAuth2AccessTokenResponse) {
-    val claims = SignedJWT.parse(tokenResponse.accessToken).jwtClaimsSet.claims
+    val claims = SignedJWT.parse(tokenResponse.access_token).jwtClaimsSet.claims
 }
 
 internal fun TokenValidationContextPrincipal?.asTokenString() =

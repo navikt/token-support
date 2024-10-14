@@ -92,9 +92,9 @@ internal class TokenExchangeClientTest {
         private const val ERROR_RESPONSE = """{"error": "some client error occurred"}"""
         private fun assertThatResponseContainsAccessToken(response : OAuth2AccessTokenResponse?) {
             assertThat(response).isNotNull()
-            assertThat(response!!.accessToken).isNotBlank()
-            assertThat(response.expiresAt).isPositive()
-            assertThat(response.expiresIn).isPositive()
+            assertThat(response!!.access_token).isNotBlank()
+            assertThat(response.expires_in).isPositive()
+            assertThat(response.expires_at).isPositive()
         }
 
         private fun assertThatClientAuthMethodIsPrivateKeyJwt(

@@ -24,7 +24,7 @@ data class OAuth2CacheConfig(val enabled: Boolean, val maximumSize: Long = 1000,
 
             override fun expireAfterCreate(key: GrantRequest, response: OAuth2AccessTokenResponse, currentTime: Long): Long {
                 val seconds =
-                    if (response.expiresIn!! > skewInSeconds) response.expiresIn!! - skewInSeconds else response.expiresIn!!
+                    if (response.expires_in!! > skewInSeconds) response.expires_in!! - skewInSeconds else response.expires_in!!
                         .toLong()
                 return TimeUnit.SECONDS.toNanos(seconds)
             }

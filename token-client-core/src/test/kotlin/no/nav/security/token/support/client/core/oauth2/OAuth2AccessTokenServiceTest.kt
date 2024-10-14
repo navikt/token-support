@@ -63,7 +63,7 @@ internal class OAuth2AccessTokenServiceTest {
             val res = oAuth2AccessTokenService.getAccessToken(onBehalfOfProperties())
             verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny( OnBehalfOfGrantRequest::class.java))
             assertThat(res).hasNoNullFieldsOrProperties()
-            assertThat(res.accessToken).isEqualTo("first_access_token")
+            assertThat(res.access_token).isEqualTo("first_access_token")
         }
 
     @Test
@@ -74,7 +74,7 @@ internal class OAuth2AccessTokenServiceTest {
             val res = oAuth2AccessTokenService.getAccessToken(clientCredentialsProperties())
             verify(clientCredentialsTokenResponseClient).getTokenResponse(reifiedAny(ClientCredentialsGrantRequest::class.java))
             assertThat(res).hasNoNullFieldsOrProperties()
-            assertThat(res.accessToken).isEqualTo("first_access_token")
+            assertThat(res.access_token).isEqualTo("first_access_token")
         }
 
     @Test
@@ -96,13 +96,13 @@ internal class OAuth2AccessTokenServiceTest {
             val res = oAuth2AccessTokenService.getAccessToken(clientProperties)
             verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
             assertThat(res).hasNoNullFieldsOrProperties()
-            assertThat(res.accessToken).isEqualTo("first_access_token")
+            assertThat(res.access_token).isEqualTo("first_access_token")
 
             //should get response from cache and NOT invoke client
             reset(onBehalfOfTokenResponseClient)
             val res2 = oAuth2AccessTokenService.getAccessToken(clientProperties)
             verify(onBehalfOfTokenResponseClient, never()).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
-            assertThat(res2.accessToken).isEqualTo("first_access_token")
+            assertThat(res2.access_token).isEqualTo("first_access_token")
 
             //another user/token but same clientconfig, should invoke client and populate cache
             reset(assertionResolver)
@@ -113,7 +113,7 @@ internal class OAuth2AccessTokenServiceTest {
                 .thenReturn(accessTokenResponse(secondAccessToken, 60))
             val res3 = oAuth2AccessTokenService.getAccessToken(clientProperties)
             verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
-            assertThat(res3.accessToken).isEqualTo(secondAccessToken)
+            assertThat(res3.access_token).isEqualTo(secondAccessToken)
         }
 
     @Test
@@ -128,14 +128,14 @@ internal class OAuth2AccessTokenServiceTest {
             val res1 = oAuth2AccessTokenService.getAccessToken(clientProperties)
             verify(clientCredentialsTokenResponseClient).getTokenResponse(reifiedAny(ClientCredentialsGrantRequest::class.java))
             assertThat(res1).hasNoNullFieldsOrProperties()
-            assertThat(res1.accessToken).isEqualTo("first_access_token")
+            assertThat(res1.access_token).isEqualTo("first_access_token")
 
             //should get response from cache and NOT invoke client
             reset(clientCredentialsTokenResponseClient)
             val res2 = oAuth2AccessTokenService.getAccessToken(clientProperties)
             verify(clientCredentialsTokenResponseClient, never()).getTokenResponse(reifiedAny(
                 ClientCredentialsGrantRequest::class.java))
-            assertThat(res2.accessToken).isEqualTo("first_access_token")
+            assertThat(res2.access_token).isEqualTo("first_access_token")
 
             //another clientconfig, should invoke client and populate cache
             clientProperties = clientCredentialsProperties("scope3")
@@ -145,7 +145,7 @@ internal class OAuth2AccessTokenServiceTest {
                 .thenReturn(accessTokenResponse(secondAccessToken, 60))
             val res3 = oAuth2AccessTokenService.getAccessToken(clientProperties)
             verify(clientCredentialsTokenResponseClient).getTokenResponse(reifiedAny(ClientCredentialsGrantRequest::class.java))
-            assertThat(res3.accessToken).isEqualTo(secondAccessToken)
+            assertThat(res3.access_token).isEqualTo(secondAccessToken)
         }
 
     @Test
@@ -161,7 +161,7 @@ internal class OAuth2AccessTokenServiceTest {
         val res1 = oAuth2AccessTokenService.getAccessToken(clientProperties)
         verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
         assertThat(res1).hasNoNullFieldsOrProperties()
-        assertThat(res1.getAccessToken()).isEqualTo("first_access_token")
+        assertThat(res1.access_token).isEqualTo("first_access_token")
         Thread.sleep(1000)
 
         //entry should be missing from cache due to expiry
@@ -171,7 +171,7 @@ internal class OAuth2AccessTokenServiceTest {
             .thenReturn(accessTokenResponse(secondAccessToken, 1))
         val res2 = oAuth2AccessTokenService.getAccessToken(clientProperties)
         verify(onBehalfOfTokenResponseClient).getTokenResponse(reifiedAny(OnBehalfOfGrantRequest::class.java))
-        assertThat(res2.accessToken).isEqualTo(secondAccessToken)
+        assertThat(res2.access_token).isEqualTo(secondAccessToken)
     }
 
     @Test
@@ -186,7 +186,7 @@ internal class OAuth2AccessTokenServiceTest {
             verify(exchangeTokeResponseClient, times(1)).getTokenResponse(reifiedAny(
                 TokenExchangeGrantRequest::class.java))
             assertThat(res1).hasNoNullFieldsOrProperties()
-            assertThat(res1.accessToken).isEqualTo("first_access_token")
+            assertThat(res1.access_token).isEqualTo("first_access_token")
         }
 
     companion object {
