@@ -18,7 +18,7 @@ object OAuth2CacheFactory {
     private fun <T> evictOnResponseExpiresIn(skewInSeconds : Long) : Expiry<T, OAuth2AccessTokenResponse> {
         return object : Expiry<T, OAuth2AccessTokenResponse> {
             override fun expireAfterCreate(key : T, response : OAuth2AccessTokenResponse, currentTime : Long) =
-                SECONDS.toNanos(if (response.expiresIn!! > skewInSeconds) response.expiresIn - skewInSeconds else response.expiresIn.toLong())
+                SECONDS.toNanos(if (response.expires_in!! > skewInSeconds) response.expires_in!! - skewInSeconds else response.expires_in!!.toLong())
             override fun expireAfterUpdate(key : T, response : OAuth2AccessTokenResponse, currentTime : Long, currentDuration : Long) = currentDuration
             override fun expireAfterRead(key : T, response : OAuth2AccessTokenResponse, currentTime : Long, currentDuration : Long) = currentDuration
         }
