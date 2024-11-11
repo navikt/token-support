@@ -6,6 +6,7 @@ import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.FilterConfig
 import jakarta.servlet.RequestDispatcher.ERROR_EXCEPTION
+import jakarta.servlet.RequestDispatcher.ERROR_MESSAGE
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
@@ -21,7 +22,7 @@ open class JwtTokenValidationFilter(private val jwtTokenValidationHandler : JwtT
 
     override fun doFilter(request : ServletRequest, response : ServletResponse, chain : FilterChain) {
         if (request is HttpServletRequest) {
-            if (request.dispatcherType == ASYNC && (request.getAttribute(ERROR_EXCEPTION) as? String)?.contains("broken pipe", ignoreCase = true) == true) {
+            if (request.dispatcherType == ASYNC &&(request.getAttribute(ERROR_EXCEPTION) as? Throwable)?.message?.contains("broken pipe", ignoreCase = true) == true) {
                 log.trace("Skipping token validation for async request, client is gone")
                 chain.doFilter(request, response)
             }
