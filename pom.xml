@@ -29,11 +29,12 @@
     <modules>
         <module>token-validation-core</module>
         <module>token-validation-filter</module>
-        <module>token-validation-spring</module> 
+        <module>token-validation-spring</module>
         <module>token-validation-spring-test</module>
         <module>token-validation-jaxrs</module>
         <module>token-validation-spring-demo</module>
         <module>token-validation-ktor-v2</module>
+        <module>token-validation-ktor-v3</module>
         <module>token-validation-ktor-demo</module>
         <module>token-client-spring</module>
         <module>token-client-spring-demo</module>
@@ -43,7 +44,6 @@
     <properties>
         <dokka.version>1.9.20</dokka.version>
         <kotlin.version>1.9.25</kotlin.version>
-        <kotlin-coroutines.version>1.6.2</kotlin-coroutines.version>
         <doclint>none</doclint>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>navikt</sonar.organization>
@@ -60,6 +60,7 @@
         <caffeine.version>3.1.8</caffeine.version>
         <okhttp3.version>4.12.0</okhttp3.version>
         <ktor.version>2.3.12</ktor.version>
+        <ktor3.version>3.0.1</ktor3.version>
         <kotlin.code.style>official</kotlin.code.style>
         <mock-oauth2-server.version>2.1.10</mock-oauth2-server.version>
         <nimbus.jose.jwt.version>9.47</nimbus.jose.jwt.version>
@@ -163,8 +164,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
-               <groupId>org.jetbrains.dokka</groupId>
-               <artifactId>dokka-maven-plugin</artifactId>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
