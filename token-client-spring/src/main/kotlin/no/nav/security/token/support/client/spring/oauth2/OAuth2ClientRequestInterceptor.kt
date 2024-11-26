@@ -21,7 +21,7 @@ import org.springframework.http.client.ClientHttpResponse
  */
 class OAuth2ClientRequestInterceptor(private val properties: ClientConfigurationProperties,
                                      private val service: OAuth2AccessTokenService,
-                                     private val matcher: ClientConfigurationPropertiesMatcher) : ClientHttpRequestInterceptor {
+                                     private val matcher: ClientConfigurationPropertiesMatcher =  object : ClientConfigurationPropertiesMatcher {}) : ClientHttpRequestInterceptor {
     override fun intercept(req: HttpRequest, body: ByteArray, execution: ClientHttpRequestExecution): ClientHttpResponse {
         matcher.findProperties(properties, req.uri)?.let {
             service.getAccessToken(it).access_token?.let { token -> req.headers.setBearerAuth(token) }
