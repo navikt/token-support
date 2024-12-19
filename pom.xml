@@ -42,7 +42,7 @@
         <module>token-client-core</module>
     </modules>
     <properties>
-        <dokka.version>1.9.20</dokka.version>
+        <dokka.version>2.0.0</dokka.version>
         <kotlin.version>1.9.25</kotlin.version>
         <doclint>none</doclint>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
