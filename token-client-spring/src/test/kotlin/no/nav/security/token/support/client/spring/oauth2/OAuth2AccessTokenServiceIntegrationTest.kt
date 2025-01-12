@@ -1,19 +1,19 @@
 package no.nav.security.token.support.client.spring.oauth2
 
-import com.nimbusds.common.contenttype.ContentType.*
 import com.nimbusds.jwt.JWT
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
-import com.nimbusds.oauth2.sdk.GrantType.*
+import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
+import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import java.io.IOException
 import java.net.URI
-import java.net.URLEncoder.*
-import java.nio.charset.StandardCharsets.*
-import java.time.LocalDateTime.*
-import java.time.ZoneId.*
+import java.net.URLEncoder.encode
+import java.nio.charset.StandardCharsets.UTF_8
+import java.time.LocalDateTime.now
+import java.time.ZoneId.systemDefault
 import java.util.*
-import java.util.Base64.*
+import java.util.Base64.getDecoder
 import no.nav.security.token.support.client.core.context.JwtBearerTokenResolver
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -24,24 +24,24 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.jwt.JwtToken
 import okhttp3.Headers
 import okhttp3.mockwebserver.MockWebServer
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.MediaType.*
+import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 
 @SpringBootTest(classes = [ConfigurationWithCacheEnabledTrue::class, RestClientAutoConfiguration::class])
 @ActiveProfiles("test")
 internal class OAuth2AccessTokenServiceIntegrationTest {
-    @MockBean
+    @MockitoBean
     private val tokenValidationContextHolder: TokenValidationContextHolder? = null
 
     @Autowired

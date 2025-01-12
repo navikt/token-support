@@ -9,15 +9,15 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestClientAutoConfiguration::class])
 @ActiveProfiles("test")
 internal class ClientConfigurationPropertiesTest {
 
-    @MockBean
-   private lateinit var tokenValidationContextHolder: TokenValidationContextHolder
+    @MockitoBean
+    private lateinit var tokenValidationContextHolder: TokenValidationContextHolder
 
     @Autowired
     private lateinit var clientConfigurationProperties: ClientConfigurationProperties

@@ -8,18 +8,18 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
+import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 
-@SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestTemplateAutoConfiguration::class])
+@SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestClientAutoConfiguration::class])
 @ExtendWith(MockitoExtension::class)
 @ActiveProfiles("test-withresourceurl")
 internal class ClientConfigurationPropertiesTestWithResourceUrl {
 
     private  val matcher = object: ClientConfigurationPropertiesMatcher {}
-    @MockBean
+    @MockitoBean
     private val tokenValidationContextHolder: TokenValidationContextHolder? = null
 
     @Autowired

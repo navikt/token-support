@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.context.support.TestPropertySourceUtils.addInlinedPropertiesToEnvironment
 
 @SpringBootTest(classes = [OAuth2ClientConfiguration::class, RestClientAutoConfiguration::class])
@@ -25,7 +25,7 @@ import org.springframework.test.context.support.TestPropertySourceUtils.addInlin
 @ActiveProfiles("test-withwellknownurl")
 internal class ClientConfigurationPropertiesTestWithWellKnownUrl {
 
-   @MockBean
+   @MockitoBean
    private val tokenValidationContextHolder: TokenValidationContextHolder? = null
 
     @Autowired
