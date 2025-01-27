@@ -57,9 +57,10 @@ open class JwtTokenAnnotationHandler(private val tokenValidationContextHolder : 
     }
 
     private fun handleRequiredIssuers(a: RequiredIssuers): Boolean {
-        val hasToken = a.value.any { sub ->
-            val jwtToken = getJwtToken(sub.issuer, tokenValidationContextHolder)
-            jwtToken.isPresent && handleProtectedWithClaimsAnnotation(sub, jwtToken.get())
+        val hasToken = a.value.any {
+            getJwtToken(it.issuer, tokenValidationContextHolder).run {
+                isPresent && handleProtectedWithClaimsAnnotation(it, get())
+            }
         }
         return when {
             hasToken -> true

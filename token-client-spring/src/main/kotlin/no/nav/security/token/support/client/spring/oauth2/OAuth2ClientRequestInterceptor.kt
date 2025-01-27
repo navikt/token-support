@@ -2,6 +2,7 @@ package no.nav.security.token.support.client.spring.oauth2
 
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
@@ -22,13 +23,21 @@ import org.springframework.http.client.ClientHttpResponse
 class OAuth2ClientRequestInterceptor(private val properties: ClientConfigurationProperties,
                                      private val service: OAuth2AccessTokenService,
                                      private val matcher: ClientConfigurationPropertiesMatcher =  object : ClientConfigurationPropertiesMatcher {}) : ClientHttpRequestInterceptor {
+
+    private val log = LoggerFactory.getLogger(OAuth2ClientRequestInterceptor::class.java)
+
+
     override fun intercept(req: HttpRequest, body: ByteArray, execution: ClientHttpRequestExecution): ClientHttpResponse {
+        log.trace("Intercepting request to {}", req.uri)
         matcher.findProperties(properties, req.uri)?.let {
-            service.getAccessToken(it).access_token?.let { token -> req.headers.setBearerAuth(token) }
+            log.trace("Found properties {} for uri {}", it, req.uri)
+            service.getAccessToken(it).access_token?.let {
+                token -> req.headers.setBearerAuth(token)
+                log.trace("Finished setting Authorization header with accesstoken OK")
+            }
         }
         return execution.execute(req, body)
     }
-
     override fun toString() = "${javaClass.simpleName}  [properties=$properties, service=$service, matcher=$matcher]"
 
 }

@@ -14,7 +14,7 @@ import java.net.URI
 import java.time.Instant.now
 import java.util.*
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties
-import kotlin.DeprecationLevel.WARNING
+import kotlin.DeprecationLevel.ERROR
 
 class ClientAssertion(private val tokenEndpointUrl : URI, private val clientId : String, private val rsaKey : RSAKey, private val expiryInSeconds : Int) {
     constructor(tokenEndpointUrl: URI, auth :  ClientAuthenticationProperties) : this(tokenEndpointUrl, auth.clientId, auth.clientRsaKey!!, EXPIRY_IN_SECONDS)
@@ -32,7 +32,7 @@ class ClientAssertion(private val tokenEndpointUrl : URI, private val clientId :
                 .build()).serialize()
         }
 
-    @Deprecated("Use com.nimbusds.oauth2.sdk.auth.JWTAuthentication instead", ReplaceWith("JWTAuthentication.CLIENT_ASSERTION_TYPE"), WARNING)
+    @Deprecated("Use com.nimbusds.oauth2.sdk.auth.JWTAuthentication instead", ReplaceWith("JWTAuthentication.CLIENT_ASSERTION_TYPE"),ERROR)
     fun assertionType() = CLIENT_ASSERTION_TYPE
 
     private fun createSignedJWT(rsaJwk : RSAKey, claimsSet : JWTClaimsSet) =

@@ -278,8 +278,7 @@ class ApplicationTest {
             put("no.nav.security.jwt.issuers.0.issuer_name", acceptedIssuer)
             put(
                 "no.nav.security.jwt.issuers.0.discoveryurl",
-                server.wellKnownUrl(ISSUER_ID).toString()
-            )//server.baseUrl() + "/.well-known/openid-configuration")
+                server.wellKnownUrl(ISSUER_ID).toString())
             put("no.nav.security.jwt.issuers.0.accepted_audience", acceptedAudience)
         }
     }

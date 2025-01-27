@@ -2,6 +2,6 @@ spring.autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet
 no.nav.security.jwt:
   issuers: protected
   issuer.protected:
-     discoveryurl: http://metadata
+     discovery-url: http://metadata
      accepted_audience: aud-localhost
 debug: false
