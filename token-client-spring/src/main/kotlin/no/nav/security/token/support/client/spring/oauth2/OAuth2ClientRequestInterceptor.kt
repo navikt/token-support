@@ -30,7 +30,7 @@ class OAuth2ClientRequestInterceptor(private val properties: ClientConfiguration
     override fun intercept(req: HttpRequest, body: ByteArray, execution: ClientHttpRequestExecution): ClientHttpResponse {
         log.trace("Intercepting request to {}", req.uri)
         matcher.findProperties(properties, req.uri)?.let {
-            log.trace("Found properties {} for uri {}", it, req.uri)
+            log.trace("Found properties for uri {}", req.uri)
             service.getAccessToken(it).access_token?.let {
                 token -> req.headers.setBearerAuth(token)
                 log.trace("Finished setting Authorization header with accesstoken OK")
