@@ -40,7 +40,7 @@
         <module>token-client-spring-demo</module>
         <module>token-client-kotlin-demo</module>
         <module>token-client-core</module>
-    </modules>:
+    </modules>
 
     <properties>
         <dokka.version>2.0.0</dokka.version>
