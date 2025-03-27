@@ -51,6 +51,7 @@ class EnableJwtTokenValidationConfiguration (private val env: Environment) : Web
         attrs = fromMap(meta.getAnnotationAttributes(EnableJwtTokenValidation::class.java.name, false)) ?: throw IllegalArgumentException("@EnableJwtTokenValidation is not present on importing class ${meta.className}")
     }
 
+
     //TO-DO remove support for global proxy - should be set per issuer config
     @Bean
     fun oidcResourceRetriever() = ProxyAwareResourceRetriever(configuredProxy(), env.getProperty("https.plaintext", Boolean::class.java, false))
