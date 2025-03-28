@@ -9,8 +9,9 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.body
 
-open class DefaultOAuth2HttpClient(val restClient: RestClient) : OAuth2HttpClient {
+open class DefaultOAuth2HttpClient : OAuth2HttpClient {
 
+    val restClient = RestClient.create()
 
     override fun post(req: OAuth2HttpRequest) =
         restClient.post()

@@ -32,6 +32,10 @@ class OAuth2ClientConfiguration : ImportAware {
     }
 
     @Bean
+    fun oAuth2ClientRequestInterceptor(properties: ClientConfigurationProperties, service: OAuth2AccessTokenService) = OAuth2ClientRequestInterceptor(properties, service)
+
+
+    @Bean
     fun oAuth2AccessTokenService(bearerTokenResolver: JwtBearerTokenResolver, client: OAuth2HttpClient) =
         if (attrs?.getBoolean("cacheEnabled") == true) {
             log.trace("Caching is enabled")
