@@ -22,7 +22,7 @@ internal class DefaultOAuth2HttpClientTest {
         server = MockWebServer()
         server.start()
         tokenEndpointUrl = server.url("/oauth2/token").toUri()
-        client = DefaultOAuth2HttpClient(RestClient.create())
+        client = DefaultOAuth2HttpClient()
     }
 
     @AfterEach
