@@ -8,7 +8,7 @@ import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT
 import no.nav.security.token.support.client.core.jwk.JwkFactory.fromJson
 import no.nav.security.token.support.client.core.jwk.JwkFactory.fromJsonFile
 
-class ClientAuthenticationProperties @JvmOverloads constructor(val clientId: String, val clientAuthMethod: ClientAuthenticationMethod,val clientSecret: String?,val clientJwk: String? = null, val clientRsaKey: RSAKey? = loadKey(clientJwk)) {
+data class ClientAuthenticationProperties @JvmOverloads constructor(val clientId: String, val clientAuthMethod: ClientAuthenticationMethod,val clientSecret: String?,val clientJwk: String? = null, val clientRsaKey: RSAKey? = loadKey(clientJwk)) {
 
     init {
         require(clientAuthMethod in CLIENT_AUTH_METHODS) {
@@ -21,7 +21,6 @@ class ClientAuthenticationProperties @JvmOverloads constructor(val clientId: Str
             requireNotNull(clientJwk) { "Client private key must be set for authentication method $clientAuthMethod" }
         }
     }
-
 
     companion object {
         private val CLIENT_AUTH_METHODS = listOf(CLIENT_SECRET_BASIC, CLIENT_SECRET_POST, PRIVATE_KEY_JWT)

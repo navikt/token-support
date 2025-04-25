@@ -10,7 +10,7 @@ import com.nimbusds.oauth2.sdk.`as`.AuthorizationServerMetadata.parse
 import java.io.IOException
 import java.net.URI
 
-class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = null,
+data class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = null,
                                                  private val wellKnownUrl: URI? = null,
                                                  val grantType: GrantType,
                                                  val scope: List<String> = emptyList(),
@@ -23,7 +23,6 @@ class ClientProperties @JvmOverloads constructor(var tokenEndpointUrl: URI? = nu
         tokenEndpointUrl = tokenEndpointUrl ?: endpointUrlFromMetadata(requireNotNull(wellKnownUrl))
         require(grantType in GRANT_TYPES) { "Unsupported grantType $grantType, must be one of $GRANT_TYPES" }
     }
-
 
     fun toBuilder() =
         ClientPropertiesBuilder(grantType, authentication)
