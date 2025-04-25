@@ -130,6 +130,8 @@ internal class OAuth2AccessTokenServiceTest {
             assertThat(res1).hasNoNullFieldsOrProperties()
             assertThat(res1.access_token).isEqualTo("first_access_token")
 
+            clientProperties = clientCredentialsProperties()
+
             //should get response from cache and NOT invoke client
             reset(clientCredentialsTokenResponseClient)
             val res2 = oAuth2AccessTokenService.getAccessToken(clientProperties)
