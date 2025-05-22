@@ -5,6 +5,7 @@ on:
     branches:
       - master
 permissions:
+  checks: write
   actions: read
   contents: write
   security-events: write
