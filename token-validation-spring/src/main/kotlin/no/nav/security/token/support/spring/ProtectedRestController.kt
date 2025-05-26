@@ -20,7 +20,6 @@ import kotlin.annotation.AnnotationTarget.CLASS
 annotation class ProtectedRestController(@get: AliasFor(annotation = ProtectedWithClaims::class, attribute = "issuer") val issuer: String,
                                          @get: AliasFor(annotation = ProtectedWithClaims::class, attribute = "claimMap") val claimMap: Array<String> = ["acr=Level4"],
                                          @get: AliasFor(annotation = RequestMapping::class, attribute = "value") val value:  Array<String> = ["/"],
-                                         @get: AliasFor(annotation = RequestMapping::class, attribute = "consumes") val consumes: Array<String> = [APPLICATION_JSON_VALUE],
                                          @get: AliasFor(annotation = RequestMapping::class, attribute = "produces") val produces: Array<String> = [APPLICATION_JSON_VALUE])
 
 @RestController
@@ -30,5 +29,4 @@ annotation class ProtectedRestController(@get: AliasFor(annotation = ProtectedWi
 @Retention(RUNTIME)
 @RequestMapping
 annotation class UnprotectedRestController(@get: AliasFor(annotation = RequestMapping::class, attribute = "value") val value:  Array<String> = ["/"],
-                                           @get: AliasFor(annotation = RequestMapping::class, attribute = "consumes") val consumes: Array<String> = [APPLICATION_JSON_VALUE],
                                            @get: AliasFor(annotation = RequestMapping::class, attribute = "produces") val produces: Array<String> = [APPLICATION_JSON_VALUE])
