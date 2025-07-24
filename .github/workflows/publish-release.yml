@@ -29,11 +29,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-
+     
       - name: Publish artifact to GPR
         env:
+          NEW_VERSION: ${{ github.event.release.tag_name }}
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ./mvnw -Pgithub --settings .github/settings.xml --batch-mode -DskipTests -Dmaven.main.skip=true -Dmaven.test  deploy
+          echo "-- Setting new release version ${NEW_VERSION} --"
+          ./mvnw -B versions:set -DnewVersion="${NEW_VERSION}" -DgenerateBackupPoms=false
+          ./mvnw -Pgithub --settings .github/settings.xml --batch-mode -DskipTests -Dmaven.main.skip=true -Dmaven.test.skip=true  deploy
