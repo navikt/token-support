@@ -354,14 +354,13 @@ For apps not using Spring we recommend you use the [mock-oauth2-server](https://
 
 ## Build & Release
 
-### Sonatype OSS & Maven Central 
+### GPR
 
 #### Releases
 
 In order to release a new version go to https://github.com/navikt/token-support/releases and click edit on the draft release. Edit or approve the changelog and click publish. Github Action will trigger a new release.
 
-First, it will appear in [Sonatype OSS releases](https://oss.sonatype.org/content/repositories/releases/no/nav/security/),
-before eventually (a couple of minutes later) it is synced to [Maven Central](http://central.maven.org/maven2/no/nav/security/).
+THis will deply the artifacts to GPR. We no longer publish to Maven Central.
 
 ## Contact
 
