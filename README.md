@@ -360,7 +360,7 @@ For apps not using Spring we recommend you use the [mock-oauth2-server](https://
 
 In order to release a new version go to https://github.com/navikt/token-support/releases and click edit on the draft release. Edit or approve the changelog and click publish. Github Action will trigger a new release.
 
-THis will deply the artifacts to GPR. We no longer publish to Maven Central.
+This will deply the artifacts to GPR. _We no longer publish to Maven Central_.
 
 ## Contact
 
