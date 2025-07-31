@@ -39,4 +39,4 @@ jobs:
         run: |
           echo "-- Setting new release version ${NEW_VERSION} --"
           ./mvnw -B versions:set -DnewVersion="${NEW_VERSION}" -DgenerateBackupPoms=false
-          ./mvnw -Pgithub --settings .github/settings.xml --batch-mode -DskipTests -Dmaven.main.skip=true -Dmaven.test.skip=true  deploy
+          ./mvnw -Pgithub --settings .github/settings.xml --batch-mode deploy
