@@ -1,6 +1,4 @@
 [![Build](https://github.com/navikt/token-support/workflows/Build%20master/badge.svg)](https://github.com/navikt/token-support/actions)
-[![Known Vulnerabilities](https://snyk.io/test/github/navikt/token-support/badge.svg)](https://snyk.io/test/github/navikt/token-support)
-[![Maven Central](https://img.shields.io/maven-central/v/no.nav.security/token-support?color=green&logo=Apache%20Maven)](https://search.maven.org/artifact/no.nav.security/token-support)
 
 # token-support
 This project provides several standalone modules supporting common security token handling in Java and Kotlin applications, e.g. either as an OAuth 2.0 client or a OAuth 2.0 Resource Server with JWT validation. 
