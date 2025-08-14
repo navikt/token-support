@@ -3,7 +3,7 @@ package no.nav.security.token.support.client.core.http
 import java.lang.String.CASE_INSENSITIVE_ORDER
 import java.util.*
 
-class OAuth2HttpHeaders (val headers : Map<String, List<String>>) {
+class OAuth2HttpHeaders (val headers : Map<String,String>) {
 
     override fun equals(other : Any?) : Boolean {
         if (this === other) return true
@@ -16,10 +16,10 @@ class OAuth2HttpHeaders (val headers : Map<String, List<String>>) {
 
     override fun toString() = "${javaClass.getSimpleName()} [headers=$headers]"
 
-    class Builder(private val headers : TreeMap<String, MutableList<String>> =  TreeMap(CASE_INSENSITIVE_ORDER)) {
+    class Builder(private val headers : TreeMap<String, String> =  TreeMap(CASE_INSENSITIVE_ORDER)) {
 
-        fun header(name : String, value : String) = this.also { headers.computeIfAbsent(name) { ArrayList(1) }.add(value) }
-
+        fun header(name : String, value : String) = this.also { headers.computeIfAbsent(name) { value }
+        }
         fun build() = of(headers)
     }
 
@@ -28,7 +28,7 @@ class OAuth2HttpHeaders (val headers : Map<String, List<String>>) {
         @JvmField
         val NONE = OAuth2HttpHeaders(emptyMap())
        @JvmStatic
-        fun of(headers : Map<String, List<String>>) = OAuth2HttpHeaders(headers)
+        fun of(headers : Map<String, String>) = OAuth2HttpHeaders(headers)
 
         @JvmStatic
         fun builder() = Builder()

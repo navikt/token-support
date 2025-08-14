@@ -44,12 +44,12 @@ sealed class AbstractOAuth2TokenClient<T : AbstractOAuth2GrantRequest>(private v
         }
 
     private fun tokenRequestHeaders(clientProperties : ClientProperties) =
-        HashMap<String, List<String>>().apply {
-            put("Accept",listOf("$APPLICATION_JSON"))
-            put("Content-Type",listOf("$APPLICATION_URLENCODED"))
+        HashMap<String, String>().apply {
+            put("Accept","$APPLICATION_JSON")
+            put("Content-Type","$APPLICATION_URLENCODED")
             with(clientProperties.authentication) {
                 if (CLIENT_SECRET_BASIC == clientAuthMethod) {
-                    put("Authorization",listOf(basicAuth(clientId, clientSecret!!)))
+                    put("Authorization",basicAuth(clientId, clientSecret!!))
                 }
             }
 

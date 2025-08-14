@@ -6,7 +6,7 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.client.spring.oauth2.OAuth2ClientRequestInterceptor
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
-import org.springframework.boot.web.client.RestClientCustomizer
+import org.springframework.boot.restclient.RestClientCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -22,7 +22,10 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class DemoConfiguration {
     @Bean
-    fun customizer(reqInterceptor : OAuth2ClientRequestInterceptor) = RestClientCustomizer { it.requestInterceptor(reqInterceptor) }
+    fun customizer(vararg reqInterceptors : OAuth2ClientRequestInterceptor) =
+        RestClientCustomizer { it.requestInterceptors {
+            reqInterceptors
+        } }
 
     @Bean
     fun requestInterceptor(properties : ClientConfigurationProperties, service : OAuth2AccessTokenService, matcher : ClientConfigurationPropertiesMatcher) = OAuth2ClientRequestInterceptor(properties, service, matcher)

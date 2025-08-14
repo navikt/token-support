@@ -22,7 +22,7 @@ class SimpleOAuth2HttpClient : OAuth2HttpClient {
             .processResponse()
 
     private fun HttpRequest.Builder.configureRequest(req: OAuth2HttpRequest): HttpRequest.Builder {
-        req.oAuth2HttpHeaders.headers.forEach { (key, values) -> values.forEach { header(key, it) } }
+        req.oAuth2HttpHeaders.headers.forEach { (key, value) ->  { header(key, value)  }}
         uri(req.tokenEndpointUrl)
         POST(BodyPublishers.ofString(req.formParameters.toUrlEncodedString()))
         return this

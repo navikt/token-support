@@ -1,7 +1,4 @@
 <settings>
-<pluginGroups>
-    <pluginGroup>org.jacoco</pluginGroup>
-</pluginGroups>
     <servers>
         <server>
             <id>github</id>

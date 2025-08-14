@@ -1,22 +1,19 @@
 package no.nav.security.token.support.core
 
 import com.nimbusds.jose.util.IOUtils
+import mockwebserver3.*
+import okhttp3.Headers
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.IOException
 import java.net.URI
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient.Builder
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.mockwebserver.Dispatcher
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import okhttp3.mockwebserver.RecordedRequest
 import okio.BufferedSink
 import org.slf4j.LoggerFactory
 
@@ -37,14 +34,14 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
             discoveryUrl = url(DISCOVERY_PATH).toUrl()
             dispatcher = object : Dispatcher() {
                 override fun dispatch(request: RecordedRequest): MockResponse {
-                    log.debug("received request on url={} with headers={}", request.requestUrl, request.headers)
-                    log.debug("comparing path in request '{}' with '{}'", request.requestUrl!!.encodedPath, DISCOVERY_PATH)
-                    return if (request.requestUrl?.encodedPath?.endsWith(DISCOVERY_PATH) == true) {
+                    log.debug("received request on url={} with headers={}", request.url, request.headers)
+                    log.debug("comparing path in request '{}' with '{}'", request.url.encodedPath, DISCOVERY_PATH)
+                    return if (request.url.encodedPath.endsWith(DISCOVERY_PATH) == true) {
                         log.debug("returning well-known json data")
                         wellKnownJson()
                     } else {
                         log.error("path not found, returning 404")
-                        MockResponse().setResponseCode(404)
+                        MockResponse(code = 404)
                     }
                 }
             }
@@ -61,8 +58,8 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
 
     @Throws(IOException::class)
     fun shutdown() {
-        server.shutdown()
-        proxyServer?.shutdown()
+      //  server.shutdown()
+       // proxyServer?.shutdown()
     }
 
     fun getServer(): MockWebServer = server
@@ -96,10 +93,8 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
         private const val DISCOVERY_PATH = "/.well-known/openid-configuration"
 
         private fun mockResponse(json: String): MockResponse {
-            return MockResponse()
-                    .setResponseCode(200)
-                    .setHeader("Content-Type", "application/json;charset=UTF-8")
-                    .setBody(json)
+            return MockResponse(200,  Headers.Companion.headersOf("Content-Type", "application/json;charset=UTF-8"),json)
+
         }
 
         private fun wellKnownJson(): MockResponse {
@@ -113,7 +108,7 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
     }
 
     class ProxyDispatcher(private val serverUrl: HttpUrl) : Dispatcher() {
-        private val client = Builder().build()
+        private val client = okhttp3.OkHttpClient.Builder().build()
         private val log = LoggerFactory.getLogger(ProxyDispatcher::class.java)
 
 
@@ -124,14 +119,15 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
                     .removeHeader("Host")
 
             if (request.bodySize != 0L) {
-                requestBuilder.method(request.method!!, object : RequestBody() {
+                requestBuilder.method(request.method, object : RequestBody() {
                     override fun contentType(): MediaType? {
-                    return request.getHeader("Content-Type")?.toMediaTypeOrNull()
+
+                    return request.headers.get("Content-Type")?.toMediaTypeOrNull()
                     }
 
                     @Throws(IOException::class)
                     override fun writeTo(sink: BufferedSink) {
-                        request.body.clone().readAll(sink)
+                        //request.body.clone().readAll(sink)
                     }
 
                     override fun contentLength(): Long {
@@ -144,22 +140,12 @@ class IssuerMockWebServer(val startProxyServer: Boolean = true) {
             return try {
                 client.newCall(req).execute().use { response ->
                         response.body?.let { body ->
-                        MockResponse().apply {
-                    headers = response.headers
-                    setBody(body.string())
-                    setResponseCode(response.code)
-                }
-                } ?: MockResponse().apply {
-                    status ="proxy error, response body from destination was null"
-                    setResponseCode(500)
-                }
+                        MockResponse(response.code,response.headers,response.body.toString())
+                } ?: MockResponse(code = 500)
                 }
             } catch (e: IOException) {
                 log.error("got exception when proxying request.", e)
-                MockResponse().apply {
-                    status= "proxy error: ${e.message}"
-                    setResponseCode(500)
-                }
+                MockResponse(code = 500)
             }
         }
     }

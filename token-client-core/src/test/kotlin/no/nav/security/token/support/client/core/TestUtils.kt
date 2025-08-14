@@ -6,6 +6,9 @@ import com.nimbusds.jwt.JWTClaimsSet.Builder
 import com.nimbusds.jwt.PlainJWT
 import com.nimbusds.oauth2.sdk.GrantType
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+import mockwebserver3.MockResponse
+import mockwebserver3.MockWebServer
+import mockwebserver3.RecordedRequest
 import java.io.UnsupportedEncodingException
 import java.net.URI
 import java.net.URLEncoder
@@ -15,9 +18,6 @@ import java.time.ZoneId.systemDefault
 import java.util.*
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties.Companion.builder
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import okhttp3.mockwebserver.RecordedRequest
 import org.assertj.core.api.Assertions.assertThat
 
 object TestUtils {
@@ -32,24 +32,23 @@ object TestUtils {
 
     @JvmStatic
     fun withMockServer(test: (MockWebServer) -> Unit) {
-        MockWebServer().run {
+        MockWebServer().apply {
             start()
             test(this)
-            shutdown()
+            close()
         }
     }
 
     @JvmStatic
-    fun jsonResponse(json : String) = MockResponse().apply {
-        setHeader("Content-Type", "$APPLICATION_JSON")
-        setBody(json)
+    fun jsonResponse(json : String) = MockResponse(body = json).apply {
+        headers.newBuilder().add("Content-Type", "application/json").build()
     }
 
     @JvmStatic
     fun assertPostMethodAndJsonHeaders(recordedRequest : RecordedRequest) {
         assertThat(recordedRequest.method).isEqualTo("POST")
-        assertThat(recordedRequest.getHeader("Accept")).isEqualTo("$APPLICATION_JSON")
-        assertThat(recordedRequest.getHeader("Content-Type")).isEqualTo("$APPLICATION_URLENCODED")
+        assertThat(recordedRequest.headers.get("Accept")).isEqualTo("$APPLICATION_JSON")
+        assertThat(recordedRequest.headers.get("Content-Type")).isEqualTo("$APPLICATION_URLENCODED")
     }
 
     @JvmStatic

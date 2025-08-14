@@ -12,10 +12,11 @@ import org.springframework.web.method.HandlerMethod
 import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.HandlerInterceptor
 
+
 class JwtTokenHandlerInterceptor(attrs: AnnotationAttributes?, private val h: JwtTokenAnnotationHandler) : HandlerInterceptor {
     private val log = LoggerFactory.getLogger(JwtTokenHandlerInterceptor::class.java)
     private val handlerFlags: MutableMap<Any, Boolean> = ConcurrentHashMap()
-    private val ignoreConfig = attrs?.getStringArray("ignore") ?: arrayOfNulls(0) ?: arrayOfNulls(0)
+    private val ignoreConfig = attrs?.getStringArray("ignore") ?: emptyArray() ?: emptyArray()
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (handler is HandlerMethod) {

@@ -25,7 +25,11 @@ open class DefaultOAuth2HttpClient : OAuth2HttpClient {
             }
             .body<OAuth2AccessTokenResponse>() ?: throw OAuth2ClientException("No body in response from ${req.tokenEndpointUrl}")
 
-     private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply { putAll(req.oAuth2HttpHeaders.headers) }
+     private fun headers(req: OAuth2HttpRequest): HttpHeaders  = HttpHeaders().apply {
+         req.oAuth2HttpHeaders.headers.forEach {
+                (key, value) -> this.add(key, value)
+         }
+     }
 
     override fun toString() = "${javaClass.simpleName}  [restClient=$restClient]"
 }

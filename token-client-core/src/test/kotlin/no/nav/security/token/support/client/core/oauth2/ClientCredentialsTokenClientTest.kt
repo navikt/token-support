@@ -2,6 +2,7 @@ package no.nav.security.token.support.client.core.oauth2
 
 import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod
+import mockwebserver3.MockWebServer
 import java.net.URI
 import no.nav.security.token.support.client.core.ClientAuthenticationProperties.Companion.builder
 import no.nav.security.token.support.client.core.ClientProperties
@@ -13,8 +14,6 @@ import no.nav.security.token.support.client.core.TestUtils.decodeBasicAuth
 import no.nav.security.token.support.client.core.TestUtils.encodeValue
 import no.nav.security.token.support.client.core.TestUtils.jsonResponse
 import no.nav.security.token.support.client.core.http.SimpleOAuth2HttpClient
-import okhttp3.mockwebserver.MockWebServer
-import okhttp3.mockwebserver.RecordedRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -36,7 +35,7 @@ internal class ClientCredentialsTokenClientTest {
 
     @AfterEach
     fun cleanup() {
-        server.shutdown()
+        server.close()
     }
 
     @Test
