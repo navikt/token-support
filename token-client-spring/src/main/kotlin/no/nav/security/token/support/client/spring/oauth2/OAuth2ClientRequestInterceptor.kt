@@ -20,7 +20,7 @@ import org.springframework.http.client.ClientHttpResponse
  * This intercptor must be registered by the applications themselves, there is no automatic bean registration.
  *
  */
-class OAuth2ClientRequestInterceptor(private val properties: ClientConfigurationProperties,
+open class OAuth2ClientRequestInterceptor(private val properties: ClientConfigurationProperties,
                                      private val service: OAuth2AccessTokenService,
                                      private val matcher: ClientConfigurationPropertiesMatcher =  object : ClientConfigurationPropertiesMatcher {}) : ClientHttpRequestInterceptor {
 
