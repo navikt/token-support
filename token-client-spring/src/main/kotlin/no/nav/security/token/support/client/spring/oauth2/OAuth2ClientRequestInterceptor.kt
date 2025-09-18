@@ -25,8 +25,7 @@ open class OAuth2ClientRequestInterceptor(private val properties: ClientConfigur
                                      private val matcher: ClientConfigurationPropertiesMatcher =  object : ClientConfigurationPropertiesMatcher {}) : ClientHttpRequestInterceptor {
 
     private val log = LoggerFactory.getLogger(OAuth2ClientRequestInterceptor::class.java)
-
-
+    
     override fun intercept(req: HttpRequest, body: ByteArray, execution: ClientHttpRequestExecution): ClientHttpResponse {
         log.trace("Intercepting request to {}", req.uri)
         matcher.findProperties(properties, req.uri)?.let {
