@@ -124,7 +124,7 @@ internal class RequiredClaimsHandler(private val tokenValidationContextHolder: T
                     throw JwtTokenMissingException("No valid token found in validation context")
                 }
                 if (!handleProtectedWithClaims(issuer, claimMap, combineWithOr, jwtToken.get()))
-                    throw JwtTokenInvalidClaimException("Required claims not present in token." + requiredClaims.claimMap)
+                    throw JwtTokenInvalidClaimException("Required claims not present in token. " + requiredClaims.claimMap.entries.joinToString())
             }
         }.getOrElse {  e -> throw RequiredClaimsException(e.message ?: "", e) }
     }
