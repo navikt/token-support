@@ -43,7 +43,7 @@ class JwtTokenExpiryFilter(private val contextHolder : TokenValidationContextHol
 
     private fun addHeaderOnTokenExpiryThreshold(response : HttpServletResponse) {
         val tokenValidationContext = contextHolder.getTokenValidationContext()
-        LOG.debug("Getting TokenValidationContext: {}", tokenValidationContext)
+        LOG.debug("Got TokenValidationContext")
         if (tokenValidationContext != null) {
             LOG.debug("Getting issuers from validationcontext {}", tokenValidationContext.issuers)
             for (issuer in tokenValidationContext.issuers) {

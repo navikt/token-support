@@ -8,14 +8,14 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenRespons
 object OAuth2CacheFactory {
 
     @JvmStatic
-    fun <T> accessTokenResponseCache(maximumSize : Long, skewInSeconds : Long) =
+    fun <T : Any> accessTokenResponseCache(maximumSize : Long, skewInSeconds : Long) =
         // Evict based on a varying expiration policy
         Caffeine.newBuilder()
             .maximumSize(maximumSize)
             .expireAfter(evictOnResponseExpiresIn<Any>(skewInSeconds))
             .build<T, OAuth2AccessTokenResponse>()
 
-    private fun <T> evictOnResponseExpiresIn(skewInSeconds : Long) : Expiry<T, OAuth2AccessTokenResponse> {
+    private fun <T: Any> evictOnResponseExpiresIn(skewInSeconds : Long) : Expiry<T, OAuth2AccessTokenResponse> {
         return object : Expiry<T, OAuth2AccessTokenResponse> {
             override fun expireAfterCreate(key : T, response : OAuth2AccessTokenResponse, currentTime : Long) =
                 SECONDS.toNanos(if (response.expires_in!! > skewInSeconds) response.expires_in!! - skewInSeconds else response.expires_in!!.toLong())
