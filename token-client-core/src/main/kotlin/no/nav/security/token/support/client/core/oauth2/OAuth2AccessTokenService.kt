@@ -52,7 +52,7 @@ class OAuth2AccessTokenService @JvmOverloads constructor(private val tokenResolv
         private val SUPPORTED_GRANT_TYPES = listOf(JWT_BEARER, CLIENT_CREDENTIALS, TOKEN_EXCHANGE
                                                          )
         private val log = LoggerFactory.getLogger(OAuth2AccessTokenService::class.java)
-        private fun <T : AbstractOAuth2GrantRequest?> getFromCacheIfEnabled(grantRequest : T, cache : Cache<T, OAuth2AccessTokenResponse>?, client : Function<T, OAuth2AccessTokenResponse>) =
+        private fun <T : AbstractOAuth2GrantRequest> getFromCacheIfEnabled(grantRequest : T, cache : Cache<T, OAuth2AccessTokenResponse>?, client : Function<T, OAuth2AccessTokenResponse>) =
             cache?.let {
                 log.debug("Cache is enabled so attempt to get from cache or update cache if not present.")
                 cache[grantRequest, client]
