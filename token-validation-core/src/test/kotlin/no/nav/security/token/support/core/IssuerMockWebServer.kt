@@ -1,12 +1,12 @@
 package no.nav.security.token.support.core
 
 import com.nimbusds.jose.util.IOUtils
+import okhttp3.HttpUrl
 import java.io.IOException
 import java.net.URI
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
