@@ -212,6 +212,99 @@ The claimMap in **`@ProtectedWithClaims`** can contain entries where the expecte
 
 See demo application in **`token-validation-ktor-demo`** for example configurations and setups.
 
+#### Ktor v3 example with required scopes
+
+This example shows how to configure token validation with required claims in Ktor v3. The `RequiredClaims` parameter supports space-separated values, making it easy to validate OAuth 2.0 scopes.
+
+```kotlin
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import no.nav.security.token.support.v3.RequiredClaims
+import no.nav.security.token.support.v3.tokenValidationSupport
+
+fun Application.module() {
+    val config = this.environment.config
+    val acceptedIssuer = "myissuer"
+
+    install(Authentication) {
+        // Basic token validation without additional claims
+        tokenValidationSupport("validToken", config = config)
+
+        // Require specific scope - supports space-separated values in token
+        // Token with "scp: defaultaccess custom-scope" will match "scp=custom-scope"
+        tokenValidationSupport("requiresCustomScope", config = config,
+            requiredClaims = RequiredClaims(
+                issuer = acceptedIssuer,
+                claimMap = arrayOf("scp=custom-scope")
+            )
+        )
+
+        // Require multiple scopes - all must be present (order doesn't matter)
+        tokenValidationSupport("requiresMultipleScopes", config = config,
+            requiredClaims = RequiredClaims(
+                issuer = acceptedIssuer,
+                claimMap = arrayOf("scp=read-access write-access")
+            )
+        )
+
+        // Custom validation logic for complex scenarios
+        tokenValidationSupport("customValidation", config = config,
+            additionalValidation = { context ->
+                val claims = context.getClaims(acceptedIssuer)
+                val groups = claims.getAsList("groups")
+                val hasRequiredGroup = groups?.contains("admin-group") == true
+                val hasIdentForAudit = claims.getStringClaim("sub") != null
+                hasRequiredGroup && hasIdentForAudit
+            }
+        )
+    }
+
+    routing {
+        // Open endpoint - no authentication required
+        get("/public") {
+            call.respondText("Public endpoint")
+        }
+
+        // Protected with basic token validation
+        authenticate("validToken") {
+            get("/protected") {
+                call.respondText("Protected endpoint")
+            }
+        }
+
+        // Requires custom-scope in token
+        authenticate("requiresCustomScope") {
+            get("/api/resource") {
+                call.respondText("Access granted with custom-scope")
+            }
+        }
+
+        // Requires both read and write scopes
+        authenticate("requiresMultipleScopes") {
+            post("/api/resource") {
+                call.respondText("Access granted with read and write scopes")
+            }
+        }
+
+        // Custom validation logic
+        authenticate("customValidation") {
+            delete("/api/resource/{id}") {
+                call.respondText("Access granted with custom validation")
+            }
+        }
+    }
+}
+```
+
+**Note on space-separated claim values:** The `RequiredClaims` validation supports OAuth 2.0 space-separated scope values. For example:
+- Required: `scp=custom-scope`
+- Token claim: `"scp": "defaultaccess custom-scope other-scope"`
+- Result: ✅ Valid (all required parts are present, order doesn't matter)
+
+When checking multiple claims, all must be present in the token for validation to succeed (unless `combineWithOr = true`).
+
 ### token-validation-* configuration
 
 Add the modules that you need as Maven dependencies.

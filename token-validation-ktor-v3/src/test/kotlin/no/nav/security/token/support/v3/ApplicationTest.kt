@@ -4,7 +4,11 @@ import com.nimbusds.jwt.JWTClaimNames.AUDIENCE
 import com.nimbusds.jwt.JWTClaimNames.SUBJECT
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.config.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
@@ -281,6 +285,92 @@ class ApplicationTest {
             }
             assertEquals(HttpStatusCode.Unauthorized, response.status)
         }
+
+    @Test
+    fun `requiredClaim with space separated value should match token with multiple space separated values`() =
+        testRequiredClaims(
+            requiredClaims = arrayOf("scp=custom-scope"),
+            tokenClaims = mapOf("scp" to "defaultaccess custom-scope"),
+            expectedStatus = HttpStatusCode.OK
+        )
+
+    @Test
+    fun `requiredClaim with space separated value should fail when value is missing from token`() =
+        testRequiredClaims(
+            requiredClaims = arrayOf("scp=custom-scope"),
+            tokenClaims = mapOf("scp" to "defaultaccess some-other-scope"),
+            expectedStatus = HttpStatusCode.Unauthorized
+        )
+
+    @Test
+    fun `requiredClaim should match regardless of order in space separated values`() =
+        testRequiredClaims(
+            requiredClaims = arrayOf("scp=scope2 scope1"),
+            tokenClaims = mapOf("scp" to "scope1 scope2 scope3"),
+            expectedStatus = HttpStatusCode.OK
+        )
+
+    @Test
+    fun `requiredClaim with array claim should match when value is in the array`() =
+        testRequiredClaims(
+            requiredClaims = arrayOf("roles=admin"),
+            tokenClaims = mapOf("roles" to listOf("user", "admin", "moderator")),
+            expectedStatus = HttpStatusCode.OK
+        )
+
+    @Test
+    fun `requiredClaim with array claim should fail when value is not in the array`() =
+        testRequiredClaims(
+            requiredClaims = arrayOf("roles=admin"),
+            tokenClaims = mapOf("roles" to listOf("user", "moderator")),
+            expectedStatus = HttpStatusCode.Unauthorized
+        )
+
+    @Test
+    fun `requiredClaim with multiple array claims should all be present`() =
+        testRequiredClaims(
+            requiredClaims = arrayOf("roles=admin", "roles=moderator"),
+            tokenClaims = mapOf("roles" to listOf("user", "admin", "moderator")),
+            expectedStatus = HttpStatusCode.OK
+        )
+
+    private fun testRequiredClaims(
+        requiredClaims: Array<String>,
+        tokenClaims: Map<String, Any>,
+        expectedStatus: HttpStatusCode,
+        endpoint: String = "/test"
+    ) = testApplication {
+        val testConfig = doConfig()
+        environment {
+            config = testConfig
+        }
+
+        application {
+            install(Authentication) {
+                tokenValidationSupport("testAuth", config = testConfig,
+                    requiredClaims = RequiredClaims(issuer = ISSUER_ID, claimMap = requiredClaims)
+                )
+            }
+
+            routing {
+                authenticate("testAuth") {
+                    get(endpoint) {
+                        call.respondText("Success", ContentType.Text.Plain)
+                    }
+                }
+            }
+        }
+
+        val response = client.get(endpoint) {
+            val jwt = server.issueToken(
+                issuerId = ISSUER_ID,
+                subject = "testuser",
+                claims = tokenClaims
+            )
+            header(AUTHORIZATION_HEADER, "Bearer ${jwt.serialize()}")
+        }
+        assertEquals(expectedStatus, response.status)
+    }
 
     private fun doConfig(acceptedIssuer: String = ISSUER_ID, acceptedAudience: String = ACCEPTED_AUDIENCE): MapApplicationConfig {
         return MapApplicationConfig().apply {
