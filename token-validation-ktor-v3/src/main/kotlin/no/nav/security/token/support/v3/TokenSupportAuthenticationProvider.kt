@@ -18,6 +18,7 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.core.exceptions.JwtTokenInvalidClaimException
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.core.http.HttpRequest
+import no.nav.security.token.support.core.jwt.JwtToken
 import no.nav.security.token.support.core.utils.JwtTokenUtil.getJwtToken
 import no.nav.security.token.support.core.validation.JwtTokenAnnotationHandler
 import no.nav.security.token.support.core.validation.JwtTokenValidationHandler
@@ -123,10 +124,52 @@ internal class RequiredClaimsHandler(private val tokenValidationContextHolder: T
                 if (jwtToken.isEmpty) {
                     throw JwtTokenMissingException("No valid token found in validation context")
                 }
-                if (!handleProtectedWithClaims(issuer, claimMap, combineWithOr, jwtToken.get()))
+                if (!handleProtectedWithClaimsWithSpaceSeparatedValues(issuer, claimMap, combineWithOr, jwtToken.get()))
                     throw JwtTokenInvalidClaimException("Required claims not present in token. " + requiredClaims.claimMap.joinToString())
             }
         }.getOrElse {  e -> throw RequiredClaimsException(e.message ?: "", e) }
+    }
+
+    private fun handleProtectedWithClaimsWithSpaceSeparatedValues(issuer: String, requiredClaims: Array<String>, combineWithOr: Boolean, jwtToken: JwtToken): Boolean {
+        if (issuer.isEmpty()) return true
+
+        return if (combineWithOr) containsAnyClaimWithSpaceSeparatedValues(jwtToken, *requiredClaims)
+        else containsAllClaimsWithSpaceSeparatedValues(jwtToken, *requiredClaims)
+    }
+
+    private fun containsAllClaimsWithSpaceSeparatedValues(jwtToken: JwtToken, vararg claims: String) =
+        if (claims.isNotEmpty()) {
+            claims.asSequence()
+                .map { it.split("=", limit = 2) }
+                .filter { it.size == 2 }
+                .all { (key, value) -> containsClaimWithSpaceSeparatedValues(jwtToken, key.trim(), value.trim()) }
+        }
+        else true
+
+    private fun containsAnyClaimWithSpaceSeparatedValues(jwtToken: JwtToken, vararg claims: String) =
+        if (claims.isNotEmpty()) {
+            claims.asSequence()
+                .map { it.split("=", limit = 2) }
+                .filter { it.size == 2 }
+                .any { (key, value) -> containsClaimWithSpaceSeparatedValues(jwtToken, key.trim(), value.trim()) }
+        }
+        else true
+
+    private fun containsClaimWithSpaceSeparatedValues(jwtToken: JwtToken, claimName: String, requiredValue: String): Boolean {
+        val claimValue = jwtToken.jwtTokenClaims.get(claimName) ?: return false
+
+        return when (claimValue) {
+            is String -> {
+                // Split both the required value and the token value by spaces
+                val requiredParts = requiredValue.split(" ").filter { it.isNotEmpty() }
+                val tokenParts = claimValue.split(" ").filter { it.isNotEmpty() }.toSet()
+
+                // Check if all required parts are present in the token value (order doesn't matter)
+                requiredParts.all { it in tokenParts }
+            }
+            is Collection<*> -> requiredValue in claimValue
+            else -> false
+        }
     }
 }
 
