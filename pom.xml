@@ -12,6 +12,7 @@
         architecture, with emphasis on OpenID Connect ID Tokens.
     </description>
     <url>https://github.com/navikt/token-support</url>
+         
     <licenses>
         <license>
             <name>MIT License</name>
