@@ -57,7 +57,7 @@
         <spring-boot.version>3.5.7</spring-boot.version>
         <oauth2-oidc-sdk.version>11.30</oauth2-oidc-sdk.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
-        <mockwebserver.version>5.2.1</mockwebserver.version>
+        <mockwebserver.version>5.3.0</mockwebserver.version>
         <caffeine.version>3.2.3</caffeine.version>
         <ktor.version>2.3.12</ktor.version>
         <ktor3.version>3.0.1</ktor3.version>
