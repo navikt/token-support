@@ -1,7 +1,7 @@
 package no.nav.security.token.support.spring.test
 
+import org.springframework.boot.test.context.PropertyMapping
 import java.lang.annotation.Inherited
-import org.springframework.boot.test.autoconfigure.properties.PropertyMapping
 import org.springframework.context.annotation.Import
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.CLASS

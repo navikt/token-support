@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.whenever
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration
+import org.springframework.boot.restclient.autoconfigure.RestClientAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE
 import org.springframework.test.context.ActiveProfiles
