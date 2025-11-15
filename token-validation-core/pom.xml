@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>no.nav.security</groupId>
 		<artifactId>token-support</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>token-validation-core</artifactId>
 	<name>token-validation-core</name>
