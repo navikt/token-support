@@ -12,7 +12,6 @@
         architecture, with emphasis on OpenID Connect ID Tokens.
     </description>
     <url>https://github.com/navikt/token-support</url>
-         
     <licenses>
         <license>
             <name>MIT License</name>
@@ -246,7 +245,6 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring-boot.version}</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -303,11 +301,6 @@
                 <groupId>no.nav.security</groupId>
                 <artifactId>mock-oauth2-server</artifactId>
                 <version>${mock-oauth2-server.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.nimbusds</groupId>
-                <artifactId>nimbus-jose-jwt</artifactId>
-                <version>${nimbus.jose.jwt.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.kotest</groupId>
