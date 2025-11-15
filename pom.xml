@@ -12,6 +12,7 @@
         architecture, with emphasis on OpenID Connect ID Tokens.
     </description>
     <url>https://github.com/navikt/token-support</url>
+         
     <licenses>
         <license>
             <name>MIT License</name>
@@ -62,8 +63,8 @@
         <ktor.version>2.3.12</ktor.version>
         <ktor3.version>3.0.1</ktor3.version>
         <kotlin.code.style>official</kotlin.code.style>
-        <mock-oauth2-server.version>3.0.0</mock-oauth2-server.version>
-        <nimbus.jose.jwt.version>10.5</nimbus.jose.jwt.version>
+        <mock-oauth2-server.version>3.0.1</mock-oauth2-server.version>
+        <nimbus.jose.jwt.version>10.6</nimbus.jose.jwt.version>
         <kotest.version>5.9.1</kotest.version>
         <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
     </properties>
@@ -84,7 +85,7 @@
                         <dependency>
                             <groupId>org.junit.jupiter</groupId>
                             <artifactId>junit-jupiter-engine</artifactId>
-                            <version>6.0.0</version>
+                            <version>6.0.1</version>
                         </dependency>
                     </dependencies>
                 </plugin>
