@@ -1,8 +1,7 @@
 package no.nav.security.token.support.client.core.http
 
-import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import tools.jackson.module.kotlin.readValue
 import java.net.URLEncoder
 import java.net.http.HttpClient.newHttpClient
 import java.net.http.HttpRequest
@@ -12,6 +11,7 @@ import java.net.http.HttpResponse.BodyHandlers
 import java.nio.charset.StandardCharsets.UTF_8
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
+import tools.jackson.module.kotlin.jacksonObjectMapper
 
 class SimpleOAuth2HttpClient : OAuth2HttpClient {
 
@@ -37,6 +37,8 @@ class SimpleOAuth2HttpClient : OAuth2HttpClient {
         }
     private fun Map<String, String>.toUrlEncodedString() = entries.joinToString("&") { (key, value) -> "$key=${URLEncoder.encode(value, UTF_8)}" }
     companion object {
-        private val MAPPER = jacksonObjectMapper().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+        private val MAPPER = jacksonObjectMapper().apply {
+            //configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+        }//(FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 }
