@@ -1,9 +1,7 @@
 name: Deploy Snapshot to GitHub Packages
 
 on:
-  push:
-    branches-ignore:
-      - master
+  workflow_dispatch:
 
 permissions:
   contents: read
