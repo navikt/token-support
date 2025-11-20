@@ -5,7 +5,7 @@
     <parent>
         <groupId>no.nav.security</groupId>
         <artifactId>token-support</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>6.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>token-client-kotlin-demo</artifactId>
     <name>token-client-kotlin-demo</name>
