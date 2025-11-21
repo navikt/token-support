@@ -36,6 +36,7 @@ import no.nav.security.token.support.client.core.auth.ClientAssertion
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.core.JwtTokenConstants.AUTHORIZATION_HEADER
 
+
 class OAuth2Client(private val httpClient: HttpClient, private val wellKnownUrl: String, private val clientAuthProperties: ClientAuthenticationProperties, private val cacheConfig: OAuth2CacheConfig = OAuth2CacheConfig(true, 1000,  5)) {
     private val wellKnown: WellKnown = runBlocking { httpClient.get(wellKnownUrl).body() }
     private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())

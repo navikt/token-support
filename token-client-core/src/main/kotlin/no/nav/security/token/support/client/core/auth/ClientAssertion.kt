@@ -32,9 +32,6 @@ class ClientAssertion(private val tokenEndpointUrl : URI, private val clientId :
                 .build()).serialize()
         }
 
-    @Deprecated("Use com.nimbusds.oauth2.sdk.auth.JWTAuthentication instead", ReplaceWith("JWTAuthentication.CLIENT_ASSERTION_TYPE"),ERROR)
-    fun assertionType() = CLIENT_ASSERTION_TYPE
-
     private fun createSignedJWT(rsaJwk : RSAKey, claimsSet : JWTClaimsSet) =
         runCatching {
             SignedJWT(JWSHeader.Builder(RS256)

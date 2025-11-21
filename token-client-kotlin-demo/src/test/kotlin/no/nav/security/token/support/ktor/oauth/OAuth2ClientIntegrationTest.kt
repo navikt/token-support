@@ -1,6 +1,6 @@
 package no.nav.security.token.support.ktor.oauth
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.PRIVATE_KEY_JWT
 import io.kotest.matchers.shouldBe
@@ -25,14 +25,12 @@ internal class OAuth2ClientIntegrationTest {
         install(ContentNegotiationClient) {
             jackson {
                 configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
-                setSerializationInclusion(NON_NULL)
+
             }
         }
     }
 
-    // TODO: fix test on github actions
     @Test
-   //@Disabled("fails on github actions, but runs fine in Idea and mvn locally, maybe something with clock/time")
    @DisplayName("token request should return cached response on second request with same request")
     fun cacheTest() {
         withMockOAuth2Server {

@@ -24,7 +24,7 @@ import org.springframework.web.server.ResponseStatusException
 
 internal class JwtTokenHandlerInterceptorTest {
     private val contextHolder  = createContextHolder()
-    private  var interceptor = JwtTokenHandlerInterceptor(fromMap(HashMap<String, Any>().apply {
+    private var interceptor = JwtTokenHandlerInterceptor(fromMap(HashMap<String, Any?>().apply {
         put("ignore", arrayOf("org.springframework", IgnoreClass::class.java.name))
     }), SpringJwtTokenAnnotationHandler(contextHolder))
     private val request: MockHttpServletRequest = MockHttpServletRequest()
