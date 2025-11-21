@@ -11,7 +11,7 @@ import java.net.http.HttpResponse.BodyHandlers
 import java.nio.charset.StandardCharsets.UTF_8
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
-import tools.jackson.module.kotlin.jacksonObjectMapper
+import tools.jackson.databind.json.JsonMapper
 
 class SimpleOAuth2HttpClient : OAuth2HttpClient {
 
@@ -36,9 +36,8 @@ class SimpleOAuth2HttpClient : OAuth2HttpClient {
             throw OAuth2ClientException("Error response from token endpoint: ${statusCode()} ${body()}")
         }
     private fun Map<String, String>.toUrlEncodedString() = entries.joinToString("&") { (key, value) -> "$key=${URLEncoder.encode(value, UTF_8)}" }
+
     companion object {
-        private val MAPPER = jacksonObjectMapper().apply {
-            //configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
-        }//(FAIL_ON_UNKNOWN_PROPERTIES, false)
+        private val MAPPER = JsonMapper.builder().disable(FAIL_ON_UNKNOWN_PROPERTIES).build()
+        }
     }
-}

@@ -6,10 +6,7 @@ data class OAuth2AccessTokenResponse (@get:JvmName("getAccessToken") var access_
                                       private val additionalParameters : Map<String, Any> = emptyMap()) {
 
 
-    @Deprecated(message = "Ikke bruk denne", replaceWith = ReplaceWith("getAccessToken()"))
     fun getAccess_token() = access_token
-    @Deprecated(message = "Ikke bruk denne", replaceWith = ReplaceWith("getExpiresAt()"))
     fun getExpires_at() = expires_at
-    @Deprecated(message = "Ikke bruk denne", replaceWith = ReplaceWith("getExpiresIn()"))
     fun getExpires_in() = expires_in
 }
