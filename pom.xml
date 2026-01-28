@@ -60,7 +60,7 @@
         <mockwebserver.version>5.3.1</mockwebserver.version>
         <caffeine.version>3.2.3</caffeine.version>
         <ktor.version>2.3.12</ktor.version>
-        <ktor3.version>3.0.1</ktor3.version>
+        <ktor3.version>3.4.0</ktor3.version>
         <kotlin.code.style>official</kotlin.code.style>
         <mock-oauth2-server.version>3.0.1</mock-oauth2-server.version>
         <nimbus.jose.jwt.version>10.7</nimbus.jose.jwt.version>
