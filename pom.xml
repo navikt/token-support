@@ -26,6 +26,7 @@
         </developer>
     </developers>
     <modules>
+
         <module>token-validation-core</module>
         <module>token-validation-filter</module>
         <module>token-validation-spring</module>
