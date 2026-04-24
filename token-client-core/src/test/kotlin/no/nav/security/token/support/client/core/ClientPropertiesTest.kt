@@ -5,17 +5,54 @@ import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
 import com.nimbusds.oauth2.sdk.GrantType.JWT_BEARER
 import com.nimbusds.oauth2.sdk.GrantType.TOKEN_EXCHANGE
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
 import no.nav.security.token.support.client.core.ClientProperties.ClientPropertiesBuilder
 import no.nav.security.token.support.client.core.ClientProperties.TokenExchangeProperties
 import no.nav.security.token.support.client.core.TestUtils.jsonResponse
 import no.nav.security.token.support.client.core.TestUtils.withMockServer
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
-internal class ClientPropertiesTest {
+internal class ClientPropertiesTest : BehaviorSpec({
 
-    private val wellKnownJson = """
+    Given("valid grant types") {
+        When("creating client properties") {
+            Then("should create valid properties for JWT_BEARER") {
+                clientPropertiesFromGrantType(JWT_BEARER).shouldNotBeNull()
+            }
+            Then("should create valid properties for CLIENT_CREDENTIALS") {
+                clientPropertiesFromGrantType(CLIENT_CREDENTIALS).shouldNotBeNull()
+            }
+            Then("should create valid properties for TOKEN_EXCHANGE") {
+                clientPropertiesFromGrantType(TOKEN_EXCHANGE).shouldNotBeNull()
+            }
+        }
+    }
+
+    Given("a well-known URL is provided") {
+        When("retrieving metadata") {
+            Then("should set the token endpoint URL") {
+                withMockServer {
+                    it.enqueue(jsonResponse(wellKnownJson))
+                    clientPropertiesFromWellKnown(it.url("/well-known").toString()).tokenEndpointUrl.shouldNotBeNull()
+                }
+            }
+        }
+    }
+
+    Given("an incorrect well-known URL") {
+        When("retrieving metadata") {
+            Then("should throw OAuth2ClientException") {
+                shouldThrow<OAuth2ClientException> {
+                    clientPropertiesFromWellKnown("http://localhost:1234/notfound")
+                }
+            }
+        }
+    }
+
+}) {
+    companion object {
+        private val wellKnownJson = """
           {
             "issuer" : "https://someissuer",
             "token_endpoint" : "https://someissuer/token",
@@ -27,46 +64,25 @@ internal class ClientPropertiesTest {
           }
           """.trimIndent()
 
-    @Test
-    fun validGrantTypes() {
-        assertNotNull(clientPropertiesFromGrantType(JWT_BEARER))
-        assertNotNull(clientPropertiesFromGrantType(CLIENT_CREDENTIALS))
-        assertNotNull(clientPropertiesFromGrantType(TOKEN_EXCHANGE))
+        private fun clientAuth() =
+            ClientAuthenticationPropertiesBuilder("client", CLIENT_SECRET_BASIC)
+                .clientSecret("secret")
+                .build()
+
+        private fun tokenExchange() = TokenExchangeProperties("aud1")
+
+        fun clientPropertiesFromWellKnown(wellKnownUrl: String) =
+            ClientPropertiesBuilder(CLIENT_CREDENTIALS, clientAuth())
+                .wellKnownUrl(wellKnownUrl)
+                .scopes("scope1", "scope2")
+                .tokenExchange(tokenExchange())
+                .build()
+
+        fun clientPropertiesFromGrantType(grantType: GrantType) =
+            ClientPropertiesBuilder(grantType, clientAuth())
+                .tokenEndpointUrl("http://token")
+                .scopes("scope1", "scope2")
+                .tokenExchange(tokenExchange())
+                .build()
     }
-
-    @Test
-    fun ifWellKnownUrlIsNotNullShouldRetrieveMetadataAndSetTokenEndpoint() {
-        withMockServer {
-            it.enqueue(jsonResponse(wellKnownJson))
-            assertNotNull(clientPropertiesFromWellKnown(it.url("/well-known").toString()).tokenEndpointUrl)
-        }
-    }
-
-    @Test
-    fun incorrectWellKnownUrlShouldThrowException() {
-        assertThrows<OAuth2ClientException> { clientPropertiesFromWellKnown("http://localhost:1234/notfound")}
-    }
-
-
-    private fun clientPropertiesFromWellKnown(wellKnownUrl : String) =
-        ClientPropertiesBuilder(CLIENT_CREDENTIALS,clientAuth())
-            .wellKnownUrl(wellKnownUrl)
-            .scopes("scope1", "scope2")
-            .tokenExchange(tokenExchange())
-            .build()
-
-    private fun clientPropertiesFromGrantType(grantType : GrantType) =
-        ClientPropertiesBuilder(grantType, clientAuth())
-            .tokenEndpointUrl("http://token")
-            .scopes("scope1", "scope2")
-            .tokenExchange(tokenExchange())
-            .build()
-
-    private fun clientAuth() =
-        ClientAuthenticationPropertiesBuilder("client",CLIENT_SECRET_BASIC)
-            .clientSecret("secret")
-            .build()
-    private fun tokenExchange() = TokenExchangeProperties("aud1")
-
-
 }

@@ -53,14 +53,12 @@ object TestUtils {
     }
 
     @JvmStatic
-    fun decodeBasicAuth(recordedRequest : RecordedRequest) : String {
-        return Optional.ofNullable(recordedRequest.headers["Authorization"])
-            .map { s : String -> s.split("Basic ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() }
-            .filter { pair : Array<String> -> pair.size == 2 }
-            .map { pair : Array<String> -> Base64.getDecoder().decode(pair[1]) }
-            .map { bytes : ByteArray? -> String(bytes!!, StandardCharsets.UTF_8) }
-            .orElse("")
-    }
+    fun decodeBasicAuth(recordedRequest : RecordedRequest)  = Optional.ofNullable(recordedRequest.headers["Authorization"])
+        .map { s : String -> s.split("Basic ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray() }
+        .filter { pair : Array<String> -> pair.size == 2 }
+        .map { pair : Array<String> -> Base64.getDecoder().decode(pair[1]) }
+        .map { bytes : ByteArray? -> String(bytes!!, StandardCharsets.UTF_8) }
+        .orElse("")
 
     @JvmStatic
     fun jwt(sub : String?) = PlainJWT(Builder()

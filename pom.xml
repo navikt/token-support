@@ -362,5 +362,15 @@
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>${nimbus.jose.jwt.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-assertions-core-jvm</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.kotest</groupId>
+            <artifactId>kotest-runner-junit5-jvm</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
