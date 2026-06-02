@@ -64,7 +64,7 @@
         <ktor3.version>3.4.0</ktor3.version>
         <kotlin.code.style>official</kotlin.code.style>
         <mock-oauth2-server.version>4.0.0</mock-oauth2-server.version>
-        <nimbus.jose.jwt.version>10.9</nimbus.jose.jwt.version>
+        <nimbus.jose.jwt.version>10.9.1</nimbus.jose.jwt.version>
         <kotest.version>6.1.11</kotest.version>
         <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
     </properties>
