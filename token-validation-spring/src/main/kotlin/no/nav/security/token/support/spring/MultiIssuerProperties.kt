@@ -9,4 +9,4 @@ import org.springframework.validation.annotation.Validated
 @ConfigurationProperties("no.nav.security.jwt")
 @EnableConfigurationProperties
 @Validated
-data class MultiIssuerProperties(@Valid val issuer: Map<String,IssuerProperties> = emptyMap())
+data class MultiIssuerProperties(val issuer: Map<String, @Valid IssuerProperties> = emptyMap())
