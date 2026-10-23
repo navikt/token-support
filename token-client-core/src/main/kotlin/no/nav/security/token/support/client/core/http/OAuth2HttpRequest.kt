@@ -21,7 +21,7 @@ class OAuth2HttpRequest(val tokenEndpointUrl : URI, val oAuth2HttpHeaders : OAut
         fun build(): OAuth2HttpRequest  = OAuth2HttpRequest(tokenEndpointUrl, oAuth2HttpHeaders, unmodifiableMap(formParameters))
 
         @Override
-        override fun toString() = "OAuth2HttpRequest.OAuth2HttpRequestBuilder(tokenEndpointUrl=$tokenEndpointUrl, oAuth2HttpHeaders=$oAuth2HttpHeaders, entries=$formParameters"
+        override fun toString() = "OAuth2HttpRequestBuilder(tokenEndpointUrl=$tokenEndpointUrl, oAuth2HttpHeaders=$oAuth2HttpHeaders, entries=$formParameters"
 
 
     }

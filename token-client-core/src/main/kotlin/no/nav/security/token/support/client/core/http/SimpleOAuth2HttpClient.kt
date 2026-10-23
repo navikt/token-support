@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 import no.nav.security.token.support.client.core.OAuth2ClientException
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import tools.jackson.databind.json.JsonMapper
+import java.net.http.HttpRequest.Builder
 
 class SimpleOAuth2HttpClient : OAuth2HttpClient {
 
@@ -21,7 +22,7 @@ class SimpleOAuth2HttpClient : OAuth2HttpClient {
             .sendRequest()
             .processResponse()
 
-    private fun HttpRequest.Builder.configureRequest(req: OAuth2HttpRequest): HttpRequest.Builder {
+    private fun Builder.configureRequest(req: OAuth2HttpRequest): Builder {
         req.oAuth2HttpHeaders.headers.forEach { (key, values) -> values.forEach { header(key, it) } }
         uri(req.tokenEndpointUrl)
         POST(BodyPublishers.ofString(req.formParameters.toUrlEncodedString()))
