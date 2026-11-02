@@ -17,6 +17,7 @@ import no.nav.security.token.support.client.core.ClientAuthenticationProperties
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.milliseconds
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ContentNegotiationClient
 
 internal class OAuth2ClientIntegrationTest {
@@ -34,7 +35,7 @@ internal class OAuth2ClientIntegrationTest {
    @DisplayName("token request should return cached response on second request with same request")
     fun cacheTest() {
         withMockOAuth2Server {
-            enqueueCallback(DefaultOAuth2TokenCallback(issuerId = "tokenx", expiry = Duration.ofMillis(3000).toSeconds()))
+            enqueueCallback(DefaultOAuth2TokenCallback(issuerId = "tokenx", expiry = Duration.ofSeconds(1).toSeconds()))
             val client = OAuth2Client(httpClient, wellKnownUrl("tokenx").toString(), ClientAuthenticationProperties("clientId", PRIVATE_KEY_JWT, null, jwk), OAuth2CacheConfig(enabled = true, evictSkew = 0))
             val initialToken = this.issueToken(issuerId = "initialIdp", subject = "foo")
 
@@ -45,7 +46,7 @@ internal class OAuth2ClientIntegrationTest {
                 client.accessToken(GrantRequest.tokenExchange(initialToken.serialize(), "targetaud"))
             }
             val thirdResponse = runBlocking {
-                delay(Duration.ofSeconds(2).toMillis())
+                delay(Duration.ofSeconds(2).toMillis().milliseconds)
                 client.accessToken(GrantRequest.tokenExchange(initialToken.serialize(), "targetaud"))
             }
             //response should be cached
