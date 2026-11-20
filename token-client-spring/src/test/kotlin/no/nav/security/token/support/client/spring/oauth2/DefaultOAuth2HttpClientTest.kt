@@ -9,7 +9,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.MockitoAnnotations
-import org.springframework.web.client.RestClient
+import org.springframework.http.MediaType
 
 internal class DefaultOAuth2HttpClientTest {
     private lateinit var server: MockWebServer
@@ -49,6 +49,7 @@ internal class DefaultOAuth2HttpClientTest {
         val body = recordedRequest.body.readUtf8()
         assertThat(recordedRequest.headers["header1"]).isEqualTo("headervalue1")
         assertThat(recordedRequest.headers["header2"]).isEqualTo("headervalue2")
+        assertThat(recordedRequest.headers["Content-Type"]).isEqualTo(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
         assertThat(body)
             .contains("param1=value1")
             .contains("param2=value2")
