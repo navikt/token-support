@@ -17,7 +17,7 @@ interface ClientConfigurationPropertiesMatcher {
     fun findProperties(properties: ClientConfigurationProperties, uri: String) = findProperties(properties, create(uri))
 
     fun findProperties(properties: ClientConfigurationProperties, uri: URI) =
-        uri.host.split(".").firstOrNull()?.let {
+        requireNotNull(uri.host) { "Request URI must have a host: $uri" }.split(".").firstOrNull()?.let {
             properties.registration[it]
-    }
+        }
 }

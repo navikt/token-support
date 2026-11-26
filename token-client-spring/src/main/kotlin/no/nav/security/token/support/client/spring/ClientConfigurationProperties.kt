@@ -8,4 +8,4 @@ import org.springframework.validation.annotation.Validated
 
 @Validated
 @ConfigurationProperties("no.nav.security.jwt.client")
-data class ClientConfigurationProperties(val registration: @NotEmpty @Valid Map<String, ClientProperties>)
+data class ClientConfigurationProperties(@field:NotEmpty @field:Valid val registration: Map<String, ClientProperties>)
