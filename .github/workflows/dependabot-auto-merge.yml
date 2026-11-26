@@ -5,10 +5,18 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.base.ref == github.event.repository.default_branch
+    outputs:
+      auto-merge-enabled: ${{ steps.auto-merge.outcome == 'success' }}
     steps:
       - name: Dependabot metadata
         id: metadata
@@ -16,8 +24,89 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       - name: Enable auto-merge for Dependabot PRs
+        id: auto-merge
         if: steps.metadata.outputs.update-type != 'version-update:semver-major'
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  wait-for-merge:
+    needs: dependabot
+    if: needs.dependabot.outputs.auto-merge-enabled == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    permissions:
+      pull-requests: read
+    outputs:
+      merge-sha: ${{ steps.merge.outputs.merge-sha }}
+    steps:
+      - name: Wait for the Dependabot PR to merge
+        id: merge
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for attempt in $(seq 1 120); do
+            pr=$(gh pr view "$PR_URL" --json state,mergeCommit)
+            case "$(jq -r '.state' <<< "$pr")" in
+              MERGED)
+                merge_sha=$(jq -er '.mergeCommit.oid' <<< "$pr")
+                echo "merge-sha=$merge_sha" >> "$GITHUB_OUTPUT"
+                exit 0
+                ;;
+              CLOSED)
+                echo "::error::Dependabot PR was closed without merging."
+                exit 1
+                ;;
+              OPEN)
+                sleep 30
+                ;;
+              *)
+                echo "::error::Unexpected Dependabot PR state."
+                exit 1
+                ;;
+            esac
+          done
+          echo "::error::Timed out waiting for the Dependabot PR to merge."
+          exit 1
+
+  create-release:
+    needs: wait-for-merge
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-drafter
+      cancel-in-progress: false
+    outputs:
+      tag-name: ${{ steps.existing-release.outputs.tag-name || steps.release.outputs.tag_name }}
+    steps:
+      - name: Check for an existing release of this merge
+        id: existing-release
+        env:
+          MERGE_SHA: ${{ needs.wait-for-merge.outputs.merge-sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag=$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate |
+            jq -sr --arg sha "$MERGE_SHA" \
+              '[.[][] | select(.draft == false and .target_commitish == $sha)][0].tag_name // empty')
+          echo "tag-name=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Publish release
+        id: release
+        if: steps.existing-release.outputs.tag-name == ''
+        uses: release-drafter/release-drafter@d1a19e60e81a7e650d00a7de9277f87e439117ea # v7.11.0
+        with:
+          publish: true
+          commitish: ${{ needs.wait-for-merge.outputs.merge-sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-release:
+    needs: [wait-for-merge, create-release]
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/publish-release.yml
+    with:
+      version: ${{ needs.create-release.outputs.tag-name }}
+      ref: ${{ needs.wait-for-merge.outputs.merge-sha }}
