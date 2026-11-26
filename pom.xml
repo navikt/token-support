@@ -62,7 +62,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <mock-oauth2-server.version>7.0.1</mock-oauth2-server.version>
         <nimbus.jose.jwt.version>10.10</nimbus.jose.jwt.version>
-        <kotest.version>6.1.11</kotest.version>
+        <kotest.version>6.2.7</kotest.version>
         <kotlin.compiler.jvmTarget>25</kotlin.compiler.jvmTarget>
     </properties>
     <scm>
